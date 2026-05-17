@@ -5,9 +5,9 @@
     "build_base": false,
     "units": [
         {
-        "name": "nitro/CpuFastSet",
-        "target_path": "build/delinks/_dsd_gap@main_7.o",
-        "base_path": "build/CpuFastSet.o"
+            "name": "nitro/CpuFastSet",
+            "target_path": "build/delinks/_dsd_gap@main_7.o",
+            "base_path": "build/arm9/src/nitro/CpuFastSet.o"
         }
     ]
 }

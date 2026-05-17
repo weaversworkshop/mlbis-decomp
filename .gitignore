@@ -12,6 +12,7 @@ build/
 *.elf
 *.map
 *.lst
+objdiff.json
 
 # Toolchain (lives outside the repo)
 tools/mwccarm/
