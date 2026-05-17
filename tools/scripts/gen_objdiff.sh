@@ -57,9 +57,10 @@ done < <(find "${SRC_DIRS[@]}" -type f -name '*.c' -not -path 'lib/NitroSDK/*' 2
 cat <<EOF
 {
     "min_version": "2.0.0-beta.5",
-    "custom_make": "echo",
+    "custom_make": "make",
     "build_target": false,
-    "build_base": false,
+    "build_base": true,
+    "watch_patterns": ["*.c", "*.h"],
     "units": [${entries}
     ]
 }
