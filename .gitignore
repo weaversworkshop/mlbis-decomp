@@ -1,0 +1,28 @@
+# ROM and extracted assets — never commit copyrighted material
+*.nds
+*.bin
+*.sbin
+rom/
+extract/
+
+# Build artifacts
+build/
+*.o
+*.elf
+*.map
+*.lst
+
+# Toolchain (lives outside the repo)
+tools/mwccarm/
+tools/dsd*
+tools/objdiff*
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# objdiff cache
+.objdiff/
