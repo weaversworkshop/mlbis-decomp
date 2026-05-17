@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# gen_objdiff.sh — emit objdiff.json by scanning arm9/src/**/*.c
+# gen_objdiff.sh — emit objdiff.json by scanning arm9/src/**/*.c and lib/**/*.c
 #
 # Each .c file should contain a line of the form:
 #     // objdiff-target: build/delinks/_dsd_gap@main_7.o
@@ -14,7 +14,7 @@ set -euo pipefail
 # Move to project root (script lives at tools/scripts/, root is two up)
 cd "$(dirname "$0")/../.."
 
-SRC_DIR="arm9/src"
+SRC_DIRS=("arm9/src" "lib")
 BUILD_DIR="build"
 
 first=1
@@ -32,8 +32,9 @@ while IFS= read -r src; do
         continue
     fi
 
-    # Unit name: strip "arm9/src/" prefix and ".c" suffix
-    name="${src#${SRC_DIR}/}"
+    # Unit name: strip leading "arm9/src/" if present (game code), else keep
+    # the path as-is so lib/ entries surface as e.g. "lib/syscall/CpuFastSet".
+    name="${src#arm9/src/}"
     name="${name%.c}"
 
     # Base path: mirror source tree under build/  (matches Makefile rule)
@@ -49,7 +50,9 @@ while IFS= read -r src; do
     entries+=$'\n            "target_path": "'"$target"'",'
     entries+=$'\n            "base_path": "'"$base"'"'
     entries+=$'\n        }'
-done < <(find "$SRC_DIR" -type f -name '*.c' | sort)
+    # lib/NitroSDK is the ntrtwl submodule with its own build system —
+    # don't include its sources in objdiff until we deliberately wire pieces in.
+done < <(find "${SRC_DIRS[@]}" -type f -name '*.c' -not -path 'lib/NitroSDK/*' 2>/dev/null | sort)
 
 cat <<EOF
 {

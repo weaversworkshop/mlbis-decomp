@@ -18,8 +18,12 @@ export LM_LICENSE_FILE := $(abspath $(LICENSE))
 MWC_FLAGS := -proc arm946e -thumb -O4 -inline=on,deferred -enum int -lang c99 -gccext on -msgstyle gcc -nowraplines -i $(INCLUDE_DIR)
 
 # C and .o files
+# arm9/src is game code; lib/ holds SDK shims (syscall thunks, future MSL_C).
+# lib/NitroSDK is the ntrtwl submodule — has its own Meson build and include layout,
+# so we deliberately exclude it from the bulk glob. Pieces get wired in deliberately.
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-C_FILES := $(call rwildcard,arm9/src,*.c)
+LIB_C_FILES := $(filter-out lib/NitroSDK/%,$(call rwildcard,lib,*.c))
+C_FILES := $(call rwildcard,arm9/src,*.c) $(LIB_C_FILES)
 OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o)
 
 # dsd inputs: any file under config/ counts as a prereq for re-delinking
@@ -31,7 +35,7 @@ DSD_CONFIG_DEPS := $(call rwildcard,config,*)
 all: $(OBJ_FILES) objdiff.json
 
 clean:
-	rm -rf $(BUILD_DIR)/arm9
+	rm -rf $(BUILD_DIR)/arm9 $(BUILD_DIR)/lib
 	rm -f objdiff.json
 
 distclean: clean
