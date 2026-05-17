@@ -4,6 +4,7 @@
 *.sbin
 rom/
 extract/
+asm/
 
 # Build artifacts
 build/
