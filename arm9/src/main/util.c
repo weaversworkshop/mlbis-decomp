@@ -2,9 +2,9 @@
 
 #include "globals.h"
 #include "types.h"
+#include "nitro/cache.h"
 
 extern u8 func_02009cc4(void);
-extern void func_02039488(u32 a, u32 b);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
@@ -193,7 +193,7 @@ bool func_02009e7c(void) {
             field24 + data_01ff9504.field10
         );
 
-        func_02039488(field04 + field24, chunk);
+        DC_StoreRange((const void *)(field04 + field24), chunk);
 
         data_01ff9504.field24 += chunk;
         if (data_01ff9504.field24 < data_01ff9504.field0c) {

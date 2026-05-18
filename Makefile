@@ -15,14 +15,15 @@ export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
 # Build flags
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on,noauto -sym on -enum int -lang c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -i $(INCLUDE_DIR)
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on,noauto -sym on -enum int -lang c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -i $(INCLUDE_DIR) -i lib/nitro/include
 
 # C and .o files
-# arm9/src is game code; lib/ holds SDK shims (syscall thunks, future MSL_C).
-# lib/NitroSDK is the ntrtwl submodule — has its own Meson build and include layout,
-# so we deliberately exclude it from the bulk glob. Pieces get wired in deliberately.
+# arm9/src is game code. lib/ holds SDK shims:
+#   lib/nitro/    — hand-authored NitroSDK function stubs, added on demand
+#   lib/syscall/  — BIOS SWI thunks
+# lib/NitroSDK and lib/mw-libraries are submodules kept for reference only,
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-LIB_C_FILES := $(filter-out lib/NitroSDK/%,$(call rwildcard,lib,*.c))
+LIB_C_FILES := $(filter-out lib/NitroSDK/% lib/mw-libraries/%,$(call rwildcard,lib,*.c))
 C_FILES := $(call rwildcard,arm9/src,*.c) $(LIB_C_FILES)
 OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o)
 
