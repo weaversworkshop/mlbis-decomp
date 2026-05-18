@@ -5,4 +5,19 @@
     typedef unsigned short u16;
     typedef unsigned long u32;
     typedef unsigned long long u64;
+
+    typedef signed char s8;
+    typedef signed short s16;
+    typedef signed long s32;
+    typedef signed long long s64;
+
+    typedef int bool;
+    #define TRUE  1
+    #define FALSE 0
+    #define true  1
+    #define false 0
+
+    #ifndef NULL
+        #define NULL ((void *)0)
+    #endif
 #endif
