@@ -6,8 +6,8 @@
 extern void func_02009ab8(void);
 extern u8 func_02009cc4(void);
 extern void func_02039488(u32 a, u32 b);
-extern s32 func_0203dd60(u32* a, u32 b, u32 c);
-extern u32 func_0203dd70(u32* a, u32 b, u32 c);
+extern s32 func_0203dd60(UnkStruct_0203dd70_00 * a, u32 b, u32 c);
+// extern u32 func_0203dd70(u32* a, u32 b, u32 c);
 
 
 #pragma thumb off
@@ -27,106 +27,63 @@ u8 func_02006388(void) {
 
 // MATCHED 100%
 s32 func_020308b0(u32 param1, u32 param2, s32 param3, u32 param4) {
-    // Load data_0205f670 into r4
-    // Copy r2 into r9
-    // Load word 0x0 of r4 into r7
-    UnkStruct_020308b0_00 * r7 = data_0205f670.field00;  // TODO: Make field00 a pointer or array
+    UnkStruct_020308b0_00 * r7 = data_0205f670.field00;
+    UnkStruct_020308b0_01 * r2 = r7->field84;
 
-    // Copy r1 into r10
-    // Load word 0x84 of r7 into r2
-    UnkStruct_020308b0_01 * r2 = r7->field84;  // TODO: Also make this a pointer
-
-    // Copy r3 into r8
-    // Load word 0x8 of r2 into r1
-    // Compare r0,r1
     if (param1 >= r2->field08) {
-        // Return boolean not of 0
         return -1;
     }
 
-    // Load word 0x90 of r7 into r5
     s32 r4;
     UnkStruct_020308b0_02 * r11 = &(r2->entries[param1]);
     s32 r5 = r7->field90;
-    // Set r1 = r2 + 0xc
-
-    // Compare r5, 0x0
-    
-
-    // Set r11 = r1 + r0 left shifted 0x4
-    
 
     if (r5 == 0) {
-        // Set r5 equal to r9
         r5 = param3;
     }
 
-    // Compare r9, 0x0  ; I think this is caching the compare for the loop (i.e. skip past loop if r9 <= 0)
-    // Set r4 = 0x0
     r4 = 0;
     while (r4 < param3) {
-        // Load word 0x4 of r11 into r0
-        // Set r6 = r9 - r4
         s32 r6 = param3 - r4;
 
-        // Compare r6, r5
         if (r6 > r5) {
-            // Copy r5 into r6
             r6 = r5;
         }
 
-        // Reduce r0 by r8
         u32 r0 = r11->field04 - param4;
 
-        // Compare r6, r0
         if (r6 > r0) {
-            // Copy r0 into r6
             r6 = r0;
         }
 
-        // Compare r6, 0x0
         if (r6 == 0) {
-            break; // Jump to end of loop
+            break;
         }
 
-        // Load word 0x0 of r11 into r1
-        // Set r2 to 0
-        // Set r0 to r7 + 0x34
-        u32 * input0 = &(r7->field34);
-        // Increment r1 by r8
-        // Function call
-        u32 result = func_0203dd70( // TODO: Consider changing return type to bool
+        UnkStruct_0203dd70_00 * input0 = &(r7->field34);
+
+        bool result = func_0203dd70(
             input0,
             r11->field00 + param4,
             0
         );  
 
-        // Check result
-        if (result == 0) {
-            // Return boolean not of 0
+        if (result == false) {
             return -1;
         }
 
-        // Set r1 to r10
-        // Set r2 to r6
-        // Set r0 to r7 + 0x34
-        // Function call
         s32 result2 = func_0203dd60( // TODO: Check return type
             input0,
             param2,
             r6
         );
-        // Compare r0, 0x0
+
         if (result2 < 0) {
-            return result2;  // Early return
+            return result2;
         }
 
-        // Increment r4 by r0
         r4 += result2;
-        // Compare r4, r9  ->  (likely cached for loop check)
-        // Increment r8 by r0
         param4 += result2;
-        // Increment r10 by r0
         param2 += result2;
     }
 
@@ -203,6 +160,35 @@ bool func_02009e7c(void) {
         return true;
     false_exit:
         return false;
+}
+
+// MATCHED 100%
+bool func_0203dd70(UnkStruct_0203dd70_00* param1, s32 param2, u32 param3) {
+    switch (param3) {
+        case 0:
+            param2 += param1->field24;
+            break;
+        case 1:
+            param2 += param1->field2c;
+            break;
+        case 2:
+            param2 += param1->field28;
+            break;
+        default:
+            return false;
+    }
+    
+    if (param2 < param1->field24) {
+        param2 = param1->field24;
+    }
+
+    if (param2 > param1->field28) {
+        param2 = param1->field28;
+    }
+
+    param1->field2c = param2;
+
+    return true;
 }
 
 #pragma thumb reset

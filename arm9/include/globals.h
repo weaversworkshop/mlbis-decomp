@@ -38,7 +38,6 @@
         u32 field00;
     } UnkGlobal_01ff9488;
 
-
     typedef struct {
         u32 field00;
         s32 field04;
@@ -52,15 +51,20 @@
     } UnkStruct_020308b0_01;
 
     typedef struct {
+        u8 pad_00[0x24];
+        s32 field24;
+        s32 field28;
+        s32 field2c;
+    } UnkStruct_0203dd70_00;
+
+    typedef struct {
         u8 pad_00[0x34];
-        u32 field34;
-        u8 pad_38[0x4c];
+        UnkStruct_0203dd70_00 field34;
+        u8 pad_38[0x20];
         UnkStruct_020308b0_01 * field84;
         u8 pad_88[0x8];
         s32 field90;
     } UnkStruct_020308b0_00;
-
-    
 
     typedef struct {
         UnkStruct_020308b0_00 * field00;
