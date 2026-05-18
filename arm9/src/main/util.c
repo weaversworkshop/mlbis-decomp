@@ -3,7 +3,6 @@
 #include "globals.h"
 #include "types.h"
 
-extern void func_02009ab8(void);
 extern u8 func_02009cc4(void);
 extern void func_02039488(u32 a, u32 b);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
@@ -23,6 +22,13 @@ u8 func_02006368(void) {
 // MATCHED 100%
 u8 func_02006388(void) {
     return data_01ff9504.field20;
+}
+
+// NOT MATCHED: stmia not forming, 3 strs instead  (77.25%)
+void func_02009ab8() {
+    data_01ff9478.field00 = &data_01ff948c;
+    data_01ff948c.next = (UnkNode *)-1;
+    data_01ff948c.field04 = &data_01ff9478;
 }
 
 // MATCHED 96.77%

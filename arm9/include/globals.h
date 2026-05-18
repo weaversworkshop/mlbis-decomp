@@ -4,11 +4,12 @@
     #include "types.h"
 
     typedef struct UnkGlobal_01ff9504 UnkGlobal_01ff9504;
+    typedef struct UnkGlobal_01ff9478 UnkGlobal_01ff9478;
     typedef struct UnkNode  UnkNode;
 
     struct UnkNode {
         UnkNode * next;
-        u32 field04;
+        UnkGlobal_01ff9478 * field04;
         u32 field08;
         u32 field0c;
         u32 field10;
@@ -30,9 +31,9 @@
         u32 field24;
     };
 
-    typedef struct {
+    struct UnkGlobal_01ff9478 {
         UnkNode * field00;
-    } UnkGlobal_01ff9478;
+    };
 
     typedef struct {
         u32 field00;
@@ -78,5 +79,6 @@
     extern UnkGlobal_01ff9504 data_01ff9504;
     extern UnkGlobal_01ff9478 data_01ff9478;
     extern UnkGlobal_01ff9488 data_01ff9488;
+    extern UnkNode data_01ff948c;
     extern UnkGlobal_0205f670 data_0205f670;
 #endif
