@@ -38,7 +38,36 @@
         u32 field00;
     } UnkGlobal_01ff9488;
 
+
+    typedef struct {
+        u32 field00;
+        s32 field04;
+        u8 pad_00[0x8];
+    } UnkStruct_020308b0_02;
+
+    typedef struct {
+        u8 pad_00[0x8];
+        u32 field08;
+        UnkStruct_020308b0_02 entries[/*??*/];
+    } UnkStruct_020308b0_01;
+
+    typedef struct {
+        u8 pad_00[0x34];
+        u32 field34;
+        u8 pad_38[0x4c];
+        UnkStruct_020308b0_01 * field84;
+        u8 pad_88[0x8];
+        s32 field90;
+    } UnkStruct_020308b0_00;
+
+    
+
+    typedef struct {
+        UnkStruct_020308b0_00 * field00;
+    } UnkGlobal_0205f670;
+
     extern UnkGlobal_01ff9504 data_01ff9504;
     extern UnkGlobal_01ff9478 data_01ff9478;
     extern UnkGlobal_01ff9488 data_01ff9488;
+    extern UnkGlobal_0205f670 data_0205f670;
 #endif
