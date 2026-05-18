@@ -15,9 +15,7 @@ export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
 # Build flags
-MWC_FLAGS := -proc arm946e -thumb -O4,p -ipa function -enum int -lang c99 -gccext on -msgstyle gcc -nowraplines -i $(INCLUDE_DIR)
-# MWC_FLAGS := -proc arm946e -thumb -O4,p -inline=on,deferred -enum int -lang c99 -gccext on -msgstyle gcc -nowraplines -i $(INCLUDE_DIR)
-MWC_FLAGS := $(MWC_FLAGS) -opt nolifetimes,noprop,nocse,nodeadstore
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on,noauto -sym on -enum int -lang c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -i $(INCLUDE_DIR)
 
 # C and .o files
 # arm9/src is game code; lib/ holds SDK shims (syscall thunks, future MSL_C).

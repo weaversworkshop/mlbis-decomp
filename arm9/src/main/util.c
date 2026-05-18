@@ -6,8 +6,8 @@
 extern void func_02009ab8(void);
 extern u8 func_02009cc4(void);
 extern void func_02039488(u32 a, u32 b);
-extern s32 func_0203dd60(UnkStruct_0203dd70_00 * a, u32 b, u32 c);
-// extern u32 func_0203dd70(u32* a, u32 b, u32 c);
+extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
+extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
 
 #pragma thumb off
@@ -23,6 +23,81 @@ u8 func_02006368(void) {
 // MATCHED 100%
 u8 func_02006388(void) {
     return data_01ff9504.field20;
+}
+
+// MATCHED 96.77%
+s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3, s32 param4) {
+    s32 r4 = param1->field2c;
+    s32 r6 = param3;
+
+    if (r6 > param1->field28 - r4) {
+        r6 = param1->field28 - r4;
+    }
+
+    param1->field30 = param2;
+
+    if (r6 < 0) {
+        r6 = 0;
+    }
+
+    param1->field34 = param3;
+    param1->field38 = r6;
+
+    if (param4 == 0) {
+        param1->field0c = (param1->field0c | 0x4);
+    }
+
+    func_0203d2b4(param1, 0);
+
+    if (param4 == 0) {
+        u32 result = func_0203dc48(param1);
+        if (result != 0) {
+            r6 = param1->field2c - r4;
+        } else {
+            r6 = -1;
+        }
+    }
+
+    return r6;
+}
+
+// MATCHED 100%
+s32 func_0203dd50(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3) {
+    return func_0203da50(param1, param2, param3, 1);
+}
+
+// MATCHED 100%
+s32 func_0203dd60(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3) {
+    return func_0203da50(param1, param2, param3, 0);
+}
+
+// MATCHED 100%
+bool func_0203dd70(UnkStruct_0203dd70_00* param1, s32 param2, u32 param3) {
+    switch (param3) {
+        case 0:
+            param2 += param1->field24;
+            break;
+        case 1:
+            param2 += param1->field2c;
+            break;
+        case 2:
+            param2 += param1->field28;
+            break;
+        default:
+            return false;
+    }
+    
+    if (param2 < param1->field24) {
+        param2 = param1->field24;
+    }
+
+    if (param2 > param1->field28) {
+        param2 = param1->field28;
+    }
+
+    param1->field2c = param2;
+
+    return true;
 }
 
 // MATCHED 100%
@@ -162,33 +237,5 @@ bool func_02009e7c(void) {
         return false;
 }
 
-// MATCHED 100%
-bool func_0203dd70(UnkStruct_0203dd70_00* param1, s32 param2, u32 param3) {
-    switch (param3) {
-        case 0:
-            param2 += param1->field24;
-            break;
-        case 1:
-            param2 += param1->field2c;
-            break;
-        case 2:
-            param2 += param1->field28;
-            break;
-        default:
-            return false;
-    }
-    
-    if (param2 < param1->field24) {
-        param2 = param1->field24;
-    }
-
-    if (param2 > param1->field28) {
-        param2 = param1->field28;
-    }
-
-    param1->field2c = param2;
-
-    return true;
-}
 
 #pragma thumb reset
