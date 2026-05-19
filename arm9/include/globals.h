@@ -76,9 +76,18 @@
         UnkStruct_020308b0_00 * field00;
     } UnkGlobal_0205f670;
 
+    typedef struct {
+        u8 pad_00[0x10];
+        u8 field10;
+        u8 pad_11[0x17];
+        u16 field28;
+        u16 field2a;
+    } UnkStruct_020057ac_00;
+
     extern UnkGlobal_01ff9504 data_01ff9504;
     extern UnkGlobal_01ff9478 data_01ff9478;
     extern UnkGlobal_01ff9488 data_01ff9488;
     extern UnkNode data_01ff948c;
+    extern u32 * data_020564bc[];
     extern UnkGlobal_0205f670 data_0205f670;
 #endif

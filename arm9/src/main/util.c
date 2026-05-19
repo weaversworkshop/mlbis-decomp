@@ -5,11 +5,31 @@
 #include "nitro/cache.h"
 
 extern u8 func_02009cc4(void);
+extern void func_0201a610(UnkStruct_020057ac_00 * param1);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
 
 #pragma thumb off
+
+// MATCHED 100% -- Noop
+void func_02004b98() {
+    return;
+}
+
+// MATCHED 100%
+void func_020057ac(UnkStruct_020057ac_00 * param1, u16 param2) {
+    param1->field2a = param1->field28;
+    param1->field28 = param2;
+    param1->field10 = (u8)0x1;
+
+    func_0201a610(param1);
+}
+
+// MATCHED 100% -- Gets pointer from table, add offset
+u32 * func_02005ca4(u32 param1, u32 param2) {
+    return (u32*)((u8*)data_020564bc[param1] + data_020564bc[param1][param2]);
+}
 
 // MATCHED 100%
 u8 func_02006368(void) {
