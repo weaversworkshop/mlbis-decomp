@@ -9,7 +9,6 @@
 extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
 extern void func_02019a74(u16 * a, u16 b);
-extern void func_0201a610(UnkStruct_020057ac_00 * a);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
@@ -19,6 +18,12 @@ extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 // MATCHED 100% -- Noop
 void func_02004b98() {
     return;
+}
+
+// MATCHED 100%
+void func_0201a610(UnkStruct_020057ac_00 * param1) {
+    param1->field12 = (param1->field12 & ~0x1) | 0x1;
+    param1->field12 |= 0x2;
 }
 
 // MATCHED 100%

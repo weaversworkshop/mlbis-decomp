@@ -6,6 +6,7 @@
     typedef struct {
         u8 pad_00[0x10];
         u8 field10;
+        u16 field12;
         u8 pad_11[0x17];
         u16 field28;
         u16 field2a;
