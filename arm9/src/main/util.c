@@ -52,7 +52,7 @@ void func_02009ab8() {
 }
 
 // MATCHED 96.77%
-s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3, s32 param4) {
+s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 * param2, s32 param3, s32 param4) {
     s32 r4 = param1->field2c;
     s32 r6 = param3;
 
@@ -88,12 +88,12 @@ s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3, s32 pa
 }
 
 // MATCHED 100%
-s32 func_0203dd50(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3) {
+s32 func_0203dd50(UnkStruct_0203dd70_00 * param1, u32 * param2, s32 param3) {
     return func_0203da50(param1, param2, param3, 1);
 }
 
 // MATCHED 100%
-s32 func_0203dd60(UnkStruct_0203dd70_00 * param1, u32 param2, s32 param3) {
+s32 func_0203dd60(UnkStruct_0203dd70_00 * param1, u32 * param2, s32 param3) {
     return func_0203da50(param1, param2, param3, 0);
 }
 
@@ -127,7 +127,7 @@ bool func_0203dd70(UnkStruct_0203dd70_00* param1, s32 param2, u32 param3) {
 }
 
 // MATCHED 100%
-s32 func_020308b0(u32 param1, u32 param2, s32 param3, u32 param4) {
+s32 func_020308b0(u32 param1, u32 * param2, s32 param3, u32 param4) {
     UnkStruct_020308b0_00 * r7 = data_0205f670.field00;
     UnkStruct_020308b0_01 * r2 = r7->field84;
 
@@ -185,7 +185,7 @@ s32 func_020308b0(u32 param1, u32 param2, s32 param3, u32 param4) {
 
         r4 += result2;
         param4 += result2;
-        param2 += result2;
+        param2 = (u32*)((u8*)param2 + result2);
     }
 
     return r4;
@@ -204,16 +204,17 @@ bool func_02009e7c(void) {
             chunk = data_01ff9504.field0c - data_01ff9504.field24;
         }
 
-        u32 field04 = data_01ff9504.field04;
+        // UnkGlobal_01ff9478 * field04 = data_01ff9504.field04;
         u32 field24 = data_01ff9504.field24;
+        u32 * ptr = (u32*)((u8*)data_01ff9504.field04 + field24);
         func_020308b0(
             data_01ff9504.field08,
-            field04 + field24,
+            ptr,
             chunk,
             field24 + data_01ff9504.field10
         );
 
-        DC_StoreRange((const void *)(field04 + field24), chunk);
+        DC_StoreRange(ptr, chunk);
 
         data_01ff9504.field24 += chunk;
         if (data_01ff9504.field24 < data_01ff9504.field0c) {

@@ -31,7 +31,13 @@ OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o)
 DSD_CONFIG_DEPS := $(call rwildcard,config,*)
 
 
-.PHONY: all clean distclean diff objdiff delinks
+# objdiff-cli is shipped alongside objdiff for headless report generation.
+OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
+
+# `make progress` defaults to main_7; override with `make progress TARGET=ov001_1`.
+TARGET ?= main_7
+
+.PHONY: all clean distclean diff objdiff delinks progress
 
 all: $(OBJ_FILES) objdiff.json
 
@@ -57,6 +63,11 @@ objdiff.json: $(C_FILES) $(SCRIPTS)/gen_objdiff.sh
 
 diff: all delinks
 	$(OBJDIFF) -p .
+
+# Progress checklist for a delinked target (default: main_7).
+# Pipes the objdiff progress report straight into the merger — no temp file.
+progress: all delinks
+	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)

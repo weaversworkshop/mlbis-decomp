@@ -1,93 +1,15 @@
 #ifndef GLOBALS_H
     #define GLOBALS_H
 
-    #include "types.h"
-
-    typedef struct UnkGlobal_01ff9504 UnkGlobal_01ff9504;
-    typedef struct UnkGlobal_01ff9478 UnkGlobal_01ff9478;
-    typedef struct UnkNode  UnkNode;
-
-    struct UnkNode {
-        UnkNode * next;
-        UnkGlobal_01ff9478 * field04;
-        u32 field08;
-        u32 field0c;
-        u32 field10;
-        void (*field14)(UnkGlobal_01ff9504 *self);
-        u32 field18;
-    };
-
-    struct UnkGlobal_01ff9504 {
-        UnkNode * field00;
-        u32 field04;
-        u32 field08;
-        u32 field0c;
-        u32 field10;
-        void (*field14)(UnkGlobal_01ff9504 *self);
-        u32 field18;
-        UnkNode * field1c;
-        u8 field20;
-        u8 pad_21[0x3];
-        u32 field24;
-    };
-
-    struct UnkGlobal_01ff9478 {
-        UnkNode * field00;
-    };
-
-    typedef struct {
-        u32 field00;
-    } UnkGlobal_01ff9488;
-
-    typedef struct {
-        u32 field00;
-        s32 field04;
-        u8 pad_00[0x8];
-    } UnkStruct_020308b0_02;
-
-    typedef struct {
-        u8 pad_00[0x8];
-        u32 field08;
-        UnkStruct_020308b0_02 entries[/*??*/];
-    } UnkStruct_020308b0_01;
-
-    typedef struct {
-        u8 pad_00[0xc];
-        s32 field0c;
-        u8 pad_10[0x14];
-        s32 field24;
-        s32 field28;
-        s32 field2c;
-        u32 field30;
-        s32 field34;
-        s32 field38;
-    } UnkStruct_0203dd70_00;
-
-    typedef struct {
-        u8 pad_00[0x34];
-        UnkStruct_0203dd70_00 field34;
-        u8 pad_70[0x14];
-        UnkStruct_020308b0_01 * field84;
-        u8 pad_88[0x8];
-        s32 field90;
-    } UnkStruct_020308b0_00;
-
-    typedef struct {
-        UnkStruct_020308b0_00 * field00;
-    } UnkGlobal_0205f670;
-
-    typedef struct {
-        u8 pad_00[0x10];
-        u8 field10;
-        u8 pad_11[0x17];
-        u16 field28;
-        u16 field2a;
-    } UnkStruct_020057ac_00;
+    #include "structs/unk_01ff9504.h"
+    #include "structs/unk_01ff9488.h"
+    #include "structs/unk_020057ac.h"
+    #include "structs/unk_020308b0.h"
 
     extern UnkGlobal_01ff9504 data_01ff9504;
     extern UnkGlobal_01ff9478 data_01ff9478;
+    extern UnkNode            data_01ff948c;
     extern UnkGlobal_01ff9488 data_01ff9488;
-    extern UnkNode data_01ff948c;
-    extern u32 * data_020564bc[];
+    extern u32 *              data_020564bc[];
     extern UnkGlobal_0205f670 data_0205f670;
 #endif
