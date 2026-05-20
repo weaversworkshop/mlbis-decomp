@@ -9,8 +9,9 @@
 extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
 extern void func_02019a74(u16 * a, u16 b);
+extern u32 func_02038dc4(u32 * a);
+extern u32 func_0203d270(UnkStruct_0203dd70_00 * a);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
-extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
 
 #pragma thumb off
@@ -96,6 +97,39 @@ void func_02009ab8() {
     data_01ff9478.field00 = &data_01ff948c;
     data_01ff948c.next = (UnkNode *)-1;
     data_01ff948c.field04 = &data_01ff9478;
+}
+
+// MATCHED 100%
+u32 func_0203dc48(UnkStruct_0203dd70_00 * param1) {
+    UnkStruct_0203dd70_00 * r6 = param1;
+    u32 check = false;
+
+    OSIntrMode mode = OS_DisableInterrupts();
+
+    bool run = (param1->field0c & 1) ? true : false;
+    if (run) {
+        check = ((r6->field0c & 0x44) == 0);
+
+        if (check != false) {
+            r6->field0c |= 0x4;
+            do {
+                func_02038dc4(&r6->field18);
+            } while ((r6->field0c & 0x40) == 0);
+        } else {
+            do {
+                func_02038dc4(&r6->field18);
+                run = ((r6->field0c & 0x1) != 0);
+            } while (run != false);
+        }
+    }
+
+    OS_RestoreInterrupts(mode);
+
+    if (check != false) {
+        return func_0203d270(r6);
+    }
+
+    return (r6->field14 == 0);
 }
 
 // MATCHED 96.77%

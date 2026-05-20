@@ -17,8 +17,11 @@
 
     typedef struct {
         u8 pad_00[0xc];
-        s32 field0c;
-        u8 pad_10[0x14];
+        volatile s32 field0c;
+        u32 field10;
+        u32 field14;
+        u32 field18;
+        u8 pad_1c[0x8];
         s32 field24;
         s32 field28;
         s32 field2c;
