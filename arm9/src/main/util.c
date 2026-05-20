@@ -2,19 +2,17 @@
 
 #include "globals.h"
 #include "types.h"
-#include "nitro/cache.h"
 
-extern u32 func_02005f24(void);
+#include <nitro/os.h>
+#include <nitro/pad.h>
+
 extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
+extern void func_02019a74(u16 * a, u16 b);
 extern void func_0201a610(UnkStruct_020057ac_00 * a);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
-/*
-  - func_020057fc (L1436, ~53 lines)
-  - func_02005ddc (L1890, ~32 lines)
-*/
 
 #pragma thumb off
 
@@ -38,6 +36,17 @@ u32 * func_02005ca4(u32 param1, u32 param2) {
 }
 
 // MATCHED 100%
+bool func_02005f24(UnkStruct_02005ddc_00 * param1) {
+    func_02019a74(&param1->field08, PAD_Read());
+
+    if (param1->field08 == 0x30c && (param1->field0a & 0x30c)) {
+        return true;
+    }
+
+    return false;
+}
+
+// MATCHED 100%
 void func_02005ddc(UnkStruct_02005ddc_00 * param1) {
     if (param1->bit2) {
         return;
@@ -52,7 +61,7 @@ void func_02005ddc(UnkStruct_02005ddc_00 * param1) {
         return;
     }
 
-    if (func_02005f24() == 0) {
+    if (func_02005f24(param1) == false) {
         return;
     }
 

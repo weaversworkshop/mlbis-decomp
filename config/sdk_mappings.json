@@ -1,0 +1,30 @@
+{
+  "mappings": [
+    { "addr": "0x02004074", "sdk_name": "CpuFastSet",                          "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020040da", "sdk_name": "HuffUnCompReadByCallback",            "library": "syscall", "confidence": "certain" },
+    { "addr": "0x0200413e", "sdk_name": "RLUnCompReadByCallbackWrite16bit",    "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020041a8", "sdk_name": "WaitByLoop",                          "library": "syscall", "confidence": "certain" },
+    { "addr": "0x0200421c", "sdk_name": "IntrWait",                            "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004274", "sdk_name": "SoftReset",                           "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020042de", "sdk_name": "Sqrt",                                "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004348", "sdk_name": "Div",                                 "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020043ae", "sdk_name": "GetCRC16",                            "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004430", "sdk_name": "IsDebugger",                          "library": "syscall", "confidence": "certain" },
+    { "addr": "0x0200449a", "sdk_name": "Halt",                                "library": "syscall", "confidence": "certain" },
+    { "addr": "0x0200450a", "sdk_name": "LZ77UnCompReadByCallbackWrite16bit",  "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004578", "sdk_name": "BitUnPack",                           "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020045ec", "sdk_name": "Mod",                                 "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004654", "sdk_name": "LZ77UnCompReadNormalWrite8bit",       "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020046ae", "sdk_name": "RLUnCompReadNormalWrite8bit",         "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004734", "sdk_name": "CpuSet",                              "library": "syscall", "confidence": "certain" },
+    { "addr": "0x020047ac", "sdk_name": "VBlankIntrWait",                      "library": "syscall", "confidence": "certain" },
+    { "addr": "0x02004954", "sdk_name": "MIi_CpuClear32",                      "library": "mi",      "header": "nitro/mi.h",    "confidence": "certain" },
+    { "addr": "0x0203946c", "sdk_name": "DC_InvalidateRange",                  "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
+    { "addr": "0x02039488", "sdk_name": "DC_StoreRange",                       "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
+    { "addr": "0x020394a4", "sdk_name": "DC_FlushRange",                       "library": "os",      "header": "nitro/cache.h", "confidence": "certain" }
+  ],
+  "objdiff_units": [
+    { "source": "lib/NitroSDK/libraries/os/src/os_cache.c",  "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_cache" },
+    { "source": "lib/NitroSDK/libraries/mi/src/mi_memory.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/mi/mi_memory" }
+  ]
+}

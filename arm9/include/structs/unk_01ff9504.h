@@ -8,7 +8,7 @@
     typedef struct UnkGlobal_01ff9478 UnkGlobal_01ff9478;
 
     struct UnkNode {
-        UnkNode * next;
+        volatile UnkNode * next;
         UnkGlobal_01ff9478 * field04;
         u32 field08;
         u32 field0c;
@@ -18,7 +18,7 @@
     };
 
     struct UnkGlobal_01ff9504 {
-        UnkNode * field00;
+        volatile UnkNode * field00;
         UnkGlobal_01ff9478 * field04;
         u32 field08;
         u32 field0c;

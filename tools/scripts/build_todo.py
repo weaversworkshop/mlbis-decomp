@@ -27,10 +27,19 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+SDK_MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
 START_RE = re.compile(r"^\s*(?:arm|thumb)_func_start\s+(\S+)")
 END_RE = re.compile(r"^\s*(?:arm|thumb)_func_end\s+(\S+)")
 ADDR_RE = re.compile(r"^\s*\S+:\s*;\s*(0x[0-9a-fA-F]+)")
 DATA_RE = re.compile(r"\bdata_[0-9a-fA-F]+\b")
+
+
+def load_sdk_mappings():
+    if not SDK_MAPPING_FILE.exists():
+        return {}
+    with open(SDK_MAPPING_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return {e["addr"].lower(): e.get("library", "?") for e in data.get("mappings", [])}
 
 
 def parse_asm(path):
@@ -110,19 +119,29 @@ def render_md(rows, target, sort_desc):
     total = len(rows)
     done = sum(1 for r in rows if r["match"] == 100.0)
     started = sum(1 for r in rows if r["match"] is not None and r["match"] < 100.0)
+
+    sdk_total = sum(1 for r in rows if r["sdk"])
+    sdk_done = sum(1 for r in rows if r["sdk"] and r["match"] == 100.0)
+    game_total = total - sdk_total
+    game_done = done - sdk_done
+
     lines = []
-    lines.append(f"# {target} — {done}/{total} matched ({started} in progress)")
+    lines.append(f"# {target} -- {done}/{total} matched ({started} in progress)")
+    lines.append("")
+    lines.append(f"- Game:  {game_done}/{game_total} matched")
+    lines.append(f"- SDK:   {sdk_done}/{sdk_total} matched  (functions identified in config/sdk_mappings.json)")
     lines.append("")
     lines.append(f"_Sorted by: {sort_desc}_")
     lines.append("")
-    lines.append("| | Address | Symbol | Unit | Match | Lines | Globals |")
-    lines.append("| - | --- | --- | --- | ---: | ---: | ---: |")
+    lines.append("| | Address | Symbol | Kind | Unit | Match | Lines | Globals |")
+    lines.append("| - | --- | --- | --- | --- | ---: | ---: | ---: |")
     for r in rows:
         check = "x" if r["match"] == 100.0 else " "
         pct = "" if r["match"] is None else f"{r['match']:.2f}%"
         unit = r["unit"] or "_unassigned_"
+        kind = f"SDK ({r['sdk']})" if r["sdk"] else "game"
         lines.append(
-            f"| [{check}] | {r['address']} | `{r['symbol']}` | {unit} | {pct} | {r['lines']} | {r['globals']} |"
+            f"| [{check}] | {r['address']} | `{r['symbol']}` | {kind} | {unit} | {pct} | {r['lines']} | {r['globals']} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -142,6 +161,7 @@ def main():
 
     asm = parse_asm(asm_path)
     owned = parse_report(args.report)
+    sdk = load_sdk_mappings()
 
     rows = []
     for symbol, info in asm.items():
@@ -153,6 +173,7 @@ def main():
             "globals": info["globals"],
             "unit": unit,
             "match": pct,
+            "sdk": sdk.get(info["address"].lower(), None),
         })
 
     # Default behavior: match desc, address asc. Other keys: asc by default, --desc flips.
