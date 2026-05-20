@@ -4,6 +4,7 @@
     #include "structs/unk_01ff9504.h"
     #include "structs/unk_01ff9488.h"
     #include "structs/unk_020057ac.h"
+    #include "structs/unk_02005ddc.h"
     #include "structs/unk_020308b0.h"
 
     extern UnkGlobal_01ff9504 data_01ff9504;

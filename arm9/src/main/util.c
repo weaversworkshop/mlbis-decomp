@@ -4,11 +4,17 @@
 #include "types.h"
 #include "nitro/cache.h"
 
+extern u32 func_02005f24(void);
+extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
-extern void func_0201a610(UnkStruct_020057ac_00 * param1);
+extern void func_0201a610(UnkStruct_020057ac_00 * a);
 extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 extern u32 func_0203dc48(UnkStruct_0203dd70_00 * a);
 
+/*
+  - func_020057fc (L1436, ~53 lines)
+  - func_02005ddc (L1890, ~32 lines)
+*/
 
 #pragma thumb off
 
@@ -29,6 +35,33 @@ void func_020057ac(UnkStruct_020057ac_00 * param1, u16 param2) {
 // MATCHED 100% -- Gets pointer from table, add offset
 u32 * func_02005ca4(u32 param1, u32 param2) {
     return (u32*)((u8*)data_020564bc[param1] + data_020564bc[param1][param2]);
+}
+
+// MATCHED 100%
+void func_02005ddc(UnkStruct_02005ddc_00 * param1) {
+    if (param1->bit2) {
+        return;
+    }
+
+    if (param1->bit1) {
+        if (param1->bit0) {
+            return;
+        }
+
+        func_02005f8c(param1);
+        return;
+    }
+
+    if (func_02005f24() == 0) {
+        return;
+    }
+
+    if (param1->bit0) {
+        param1->bit1 = 1;
+        return;
+    }
+
+    func_02005f8c(param1);
 }
 
 // MATCHED 100%
