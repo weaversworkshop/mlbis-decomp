@@ -10,8 +10,10 @@ extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
 extern void func_02019a74(u16 * a, u16 b);
 extern u32 func_02038dc4(u32 * a);
-extern u32 func_0203d270(UnkStruct_0203dd70_00 * a);
-extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
+extern OSIntrMode func_0203c390(UnkStruct_0203dd70_00 * a, u32 b);
+extern void func_0203d1dc(UnkStruct_0203dd70_00 * a);
+extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
+// extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 
 
 #pragma thumb off
@@ -100,7 +102,7 @@ void func_02009ab8() {
 }
 
 // MATCHED 100%
-u32 func_0203dc48(UnkStruct_0203dd70_00 * param1) {
+bool func_0203dc48(UnkStruct_0203dd70_00 * param1) {
     UnkStruct_0203dd70_00 * r6 = param1;
     u32 check = false;
 
@@ -130,6 +132,97 @@ u32 func_0203dc48(UnkStruct_0203dd70_00 * param1) {
     }
 
     return (r6->field14 == 0);
+}
+
+// MATCHED 100%
+bool func_0203d2b4(UnkStruct_0203dd70_00 * param1, u32 param2) {
+    UnkStruct_0203d2b4_00 * r4 = param1->field08;
+
+    param1->field10 = param2;
+    param1->field14 = 0x2;
+
+    u32 r7 = 1 << param2;
+    param1->field0c |= 1;
+
+    OSIntrMode mode = OS_DisableInterrupts();
+
+    if ((r4->field1c & 0x80) != 0) {
+        func_0203c390(param1, 0x3);
+        OS_RestoreInterrupts(mode);
+        return false;
+    }
+
+    if ((r7 & 0x1fc) != 0) {
+        param1->field0c |= 0x4;
+    }
+
+    UnkStruct_0203dd70_00 * r0 = (UnkStruct_0203dd70_00 *)&r4->field20;
+    UnkStruct_0203dd70_00 * r1 = param1->field00;
+    UnkStruct_0203dd70_00 * r2 = param1->field04;
+
+    if (r1 != 0) {
+        r1->field04 = r2;
+    }
+
+    if (r2 != 0) {
+        r2->field00 = r1;
+    }
+
+    while (r0->field04 != 0) {
+        r0 = r0->field04;
+    }
+
+    r0->field04 = param1;
+    param1->field00 = r0;
+    param1->field04 = NULL;
+
+    bool flag = false;
+    if ((r4->field1c & 0x8) != 0) {
+        flag = true;
+    }
+
+    if (flag == false) {
+        bool truthy = (r4->field1c & 0x10) ? true : false;
+        if (truthy == false) {
+            r4->field1c |= 0x10; 
+
+            OS_RestoreInterrupts(mode);
+
+            u32 flags = r4->field20.field38;
+            if ((flags & 0x200) != 0) {
+                r4->field20.field34(param1, 0x9);
+            }
+
+            OSIntrMode mode2 = OS_DisableInterrupts();
+
+            param1->field0c |= 0x40;
+
+            bool truthy = (param1->field0c & 0x4) ? true : false;
+            if (truthy == false) {
+                OS_RestoreInterrupts(mode2);
+                func_0203d1dc(param1);
+                return true;
+            }
+
+            OS_RestoreInterrupts(mode2);
+            goto L_0203d44c;
+        }
+    }
+
+    bool truthy = (param1->field0c & 0x4) ? true : false;
+    if (truthy == false) {
+        OS_RestoreInterrupts(mode);
+        return true;
+    }
+
+    do {
+        func_02038dc4(&param1->field18);
+    } while ((param1->field0c & 0x40) == 0);
+
+    OS_RestoreInterrupts(mode);
+
+L_0203d44c:
+    return func_0203d270(param1);
 }
 
 // MATCHED 96.77%
