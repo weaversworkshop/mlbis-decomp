@@ -9,11 +9,12 @@
 extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
 extern void func_02019a74(u16 * a, u16 b);
-extern u32 func_02038dc4(u32 * a);
-extern OSIntrMode func_0203c390(UnkStruct_0203dd70_00 * a, u32 b);
+extern u32 func_02038848(UnkStruct_0203dd70_01 * a);
+extern void func_020389a8(void);
+extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
+extern OSIntrMode func_02038e14(UnkStruct_0203dd70_01 * a);
 extern void func_0203d1dc(UnkStruct_0203dd70_00 * a);
 extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
-// extern void func_0203d2b4(UnkStruct_0203dd70_00 * a, u32 b);
 
 
 #pragma thumb off
@@ -99,6 +100,50 @@ void func_02009ab8() {
     data_01ff9478.field00 = &data_01ff948c;
     data_01ff948c.next = (UnkNode *)-1;
     data_01ff948c.field04 = &data_01ff9478;
+}
+
+// MATCHED 100%
+OSIntrMode func_02038e14(UnkStruct_0203dd70_01 * param1) {
+    OSIntrMode mode = OS_DisableInterrupts();
+
+    if (param1->field00 != NULL) {
+        while (param1->field00 != NULL) {
+            UnkStruct_0203dd70_02 * node = func_02038848(param1);
+            node->field64 = true;
+            node->field78 = false;
+            node->field80 = false;
+            node->field7c = false;
+        }
+
+        param1->field04 = NULL;
+        param1->field00 = NULL;
+        func_020389a8();
+    }
+
+    return OS_RestoreInterrupts(mode);
+}
+
+// MATCHED 100%
+OSIntrMode func_0203c390(UnkStruct_0203dd70_00 * param1, u32 param2) {
+    OSIntrMode mode = OS_DisableInterrupts();
+
+    UnkStruct_0203dd70_00 * r0 = param1->field04;
+    UnkStruct_0203dd70_00 * r1 = param1->field00;
+
+    if (r1 != NULL) {
+        r1->field04 = r0;
+    }
+    if (r0 != NULL) {
+        r0->field00 = r1;
+    }
+
+    param1->field00 = NULL;
+    param1->field04 = NULL;
+    param1->field0c &= ~0x4f;
+    param1->field14 = param2;
+    func_02038e14(&param1->field18);
+
+    return OS_RestoreInterrupts(mode);
 }
 
 // MATCHED 100%
