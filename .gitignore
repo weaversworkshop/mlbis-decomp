@@ -34,3 +34,10 @@ NOTES.md
 MAPPINGS.md
 
 *_todo.md
+
+# permuter funcs
+tools/permuter/func_*
+
+# diff target/base
+**/target.s
+**/base.s

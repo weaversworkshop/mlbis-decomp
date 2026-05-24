@@ -7,9 +7,9 @@
 #include <nitro/pad.h>
 
 extern u8 func_02009cc4(void);
-extern void func_0201a91c(void);
+// extern void func_0201a91c(void);
 extern void func_0201e8b4(void);
-extern u32 func_02038848(UnkStruct_0203dd70_01 * a);
+extern UnkStruct_0203dd70_02 * func_02038848(UnkStruct_0203dd70_01 * a);
 extern void func_020389a8(void);
 extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
 extern OSIntrMode func_02038e14(UnkStruct_0203dd70_01 * a);
@@ -22,6 +22,25 @@ extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
 // MATCHED 100% -- Noop
 void func_02004b98() {
     return;
+}
+
+// MATCHED 100%
+void func_0201a91c() {
+    OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
+    UnkStruct_0205ba70_00 * node = data_0205ba70.field18;
+
+    if (node != NULL) {
+        do {
+            u8 flag = node->field11;
+            if (flag != 0 && flag != 0xff) {
+                node->field12 = node->field12 & ~0x1;
+                node->field12 = node->field12 | 0x2;
+            }
+            node = node->field0c;
+        } while (node != NULL);
+    }
+
+    OS_EnableIrqMask(mask);
 }
 
 // MATCHED 100%

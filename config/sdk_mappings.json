@@ -19,6 +19,8 @@
     { "addr": "0x02004734", "sdk_name": "CpuSet",                              "library": "syscall", "confidence": "certain" },
     { "addr": "0x020047ac", "sdk_name": "VBlankIntrWait",                      "library": "syscall", "confidence": "certain" },
     { "addr": "0x02004954", "sdk_name": "MIi_CpuClear32",                      "library": "mi",      "header": "nitro/mi.h",    "confidence": "certain" },
+    { "addr": "0x02038344", "sdk_name": "OS_EnableIrqMask",                    "library": "os",      "header": "nitro/os/common/interrupt.h", "confidence": "certain" },
+    { "addr": "0x02038374", "sdk_name": "OS_DisableIrqMask",                   "library": "os",      "header": "nitro/os/common/interrupt.h", "confidence": "certain" },
     { "addr": "0x0203946c", "sdk_name": "DC_InvalidateRange",                  "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
     { "addr": "0x02039488", "sdk_name": "DC_StoreRange",                       "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
     { "addr": "0x020394a4", "sdk_name": "DC_FlushRange",                       "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
@@ -31,8 +33,9 @@
     { "addr": "0x02039d54", "sdk_name": "OS_GetProcMode",                      "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" }
   ],
   "objdiff_units": [
-    { "source": "lib/NitroSDK/libraries/os/src/os_cache.c",   "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_cache" },
-    { "source": "lib/NitroSDK/libraries/os/src/os_system.c",  "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_system" },
+    { "source": "lib/NitroSDK/libraries/os/src/os_cache.c",     "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_cache" },
+    { "source": "lib/NitroSDK/libraries/os/src/os_interrupt.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_interrupt" },
+    { "source": "lib/NitroSDK/libraries/os/src/os_system.c",    "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_system" },
     { "source": "lib/NitroSDK/libraries/mi/src/mi_memory.c",  "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/mi/mi_memory" }
   ]
 }
