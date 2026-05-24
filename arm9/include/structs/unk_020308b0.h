@@ -25,8 +25,4 @@
         u8 pad_88[0x8];
         s32 field90;
     } UnkStruct_020308b0_00;
-
-    typedef struct {
-        UnkStruct_020308b0_00 * field00;
-    } UnkGlobal_0205f670;
 #endif

@@ -9,7 +9,7 @@
 
     struct UnkNode {
         UnkNode * next;
-        UnkGlobal_01ff9478 * field04;
+        UnkNode * field04;
         u32 field08;
         u32 field0c;
         u32 field10;
@@ -19,7 +19,7 @@
 
     struct UnkGlobal_01ff9504 {
         UnkNode * field00;
-        UnkGlobal_01ff9478 * field04;
+        UnkNode * field04;
         u32 field08;
         u32 field0c;
         u32 field10;
@@ -29,9 +29,5 @@
         u8 field20;
         u8 pad_21[0x3];
         u32 field24;
-    };
-
-    struct UnkGlobal_01ff9478 {
-        UnkNode * field00;
     };
 #endif

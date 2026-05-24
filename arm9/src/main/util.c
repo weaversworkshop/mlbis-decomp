@@ -6,9 +6,9 @@
 #include <nitro/os.h>
 #include <nitro/pad.h>
 
-extern void func_02005f8c(UnkStruct_02005ddc_00 * a);
 extern u8 func_02009cc4(void);
-extern void func_02019a74(u16 * a, u16 b);
+extern void func_0201a91c(void);
+extern void func_0201e8b4(void);
 extern u32 func_02038848(UnkStruct_0203dd70_01 * a);
 extern void func_020389a8(void);
 extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
@@ -22,6 +22,55 @@ extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
 // MATCHED 100% -- Noop
 void func_02004b98() {
     return;
+}
+
+// MATCHED 100%
+void func_02005f8c(UnkStruct_02005ddc_00 * param1) {
+    param1->bit2 = 1;
+    param1->dst = param1->src;
+
+    if (reg_OS_IE & REG_OS_IE_VB_MASK) {
+        func_0201a91c();
+    } else {
+        func_0201e8b4();
+    }
+
+    func_0201a630();
+}
+
+// MATCHED 100%
+void func_02019a74(UnkStruct_02019a74 * param1, u16 param2) {
+    u16 r4 = param1->field00;
+    u32 r3 = 0;
+    u32 r5 = r3;
+
+    param1->field02 = (~r4) & param2;
+    param1->field04 = param1->field00 & (~param2);
+
+    u16 lr = param1->field00;
+    
+    for (u32 r12 = r3; r12 < 10; r12++) {
+        u16 *r2 = data_0204ac4c;
+        u16 r7 = param2 & r2[r12];
+
+        if (r7 != 0) {
+            if ((lr & r7) == 0) {
+                param1->field0a[r12] = param1->field08;
+                r3 |= r7;
+            } else {
+                param1->field0a[r12] -= 1;
+                if ((param1->field0a[r12] & 0xff) == 0) {
+                    r3 |= r7;
+                    param1->field0a[r12] = param1->field09;
+                }
+            }
+        } else {
+            param1->field0a[r12] = r5;
+        }
+    }
+
+    param1->field06 = r3;
+    param1->field00 = param2;
 }
 
 // MATCHED 100%
@@ -48,7 +97,7 @@ u32 * func_02005ca4(u32 param1, u32 param2) {
 bool func_02005f24(UnkStruct_02005ddc_00 * param1) {
     func_02019a74(&param1->field08, PAD_Read());
 
-    if (param1->field08 == 0x30c && (param1->field0a & 0x30c)) {
+    if (param1->field08.field00 == 0x30c && (param1->field08.field02 & 0x30c)) {
         return true;
     }
 
@@ -97,7 +146,7 @@ u8 func_02006388(void) {
 
 // NOT MATCHED: stmia not forming, 3 strs instead  (77.25%)
 void func_02009ab8() {
-    data_01ff9478.field00 = &data_01ff948c;
+    data_01ff9478.next = &data_01ff948c;
     data_01ff948c.next = (UnkNode *)-1;
     data_01ff948c.field04 = &data_01ff9478;
 }
@@ -454,8 +503,8 @@ bool func_02009e7c(void) {
             data_01ff9504.field14(&data_01ff9504);
         }
 
-        if (truthy && data_01ff9478.field00 != invalid) {
-            data_01ff9504.field1c = data_01ff9478.field00;
+        if (truthy && data_01ff9478.next != invalid) {
+            data_01ff9504.field1c = data_01ff9478.next;
         }
 
         UnkNode *next = data_01ff9504.field1c->next;
