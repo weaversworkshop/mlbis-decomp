@@ -30,8 +30,9 @@ void func_02009ab8() {
     data_01ff948c.field04 = &data_01ff9478;
 }
 
-// MATCHED 94.67%
+// MATCHED 100%
 bool func_02009e7c(void) {
+    UnkNode ** new_node;
     u32 chunk;
     u32 accumulator = 0;
     UnkNode *invalid = (UnkNode *)-1;
@@ -43,9 +44,9 @@ bool func_02009e7c(void) {
             chunk = data_01ff9504.field0c - data_01ff9504.field24;
         }
 
-        // UnkGlobal_01ff9478 * field04 = data_01ff9504.field04;
+        u8 * field04 = (u8*)data_01ff9504.field04;
         u32 field24 = data_01ff9504.field24;
-        u32 * ptr = (u32*)((u8*)data_01ff9504.field04 + field24);
+        u32 * ptr = (u32*)(field04 + field24);
         func_020308b0(
             data_01ff9504.field08,
             ptr,
@@ -70,6 +71,7 @@ bool func_02009e7c(void) {
             func_02009ab8();
         }
 
+        new_node = &data_01ff9504.next;
         if (data_01ff9504.field14 != NULL) {
             data_01ff9504.field14(&data_01ff9504);
         }
@@ -78,18 +80,16 @@ bool func_02009e7c(void) {
             data_01ff9504.field1c = data_01ff9478.next;
         }
 
-        UnkNode *next = data_01ff9504.field1c->next;
-        data_01ff9504.field00 = next;
+        data_01ff9504.next = data_01ff9504.field1c->next;
         data_01ff9504.field04 = data_01ff9504.field1c->field04;
         data_01ff9504.field08 = data_01ff9504.field1c->field08;
         data_01ff9504.field0c = data_01ff9504.field1c->field0c;
         data_01ff9504.field10 = data_01ff9504.field1c->field10;
         data_01ff9504.field14 = data_01ff9504.field1c->field14;
         data_01ff9504.field18 = data_01ff9504.field1c->field18;
-        data_01ff9504.field1c = data_01ff9504.field00;
+        data_01ff9504.field1c = data_01ff9504.next;
 
-        // UnkNode *first = data_01ff9504.field00;
-        if (data_01ff9504.field00 == invalid) {
+        if (*new_node == invalid) {
             data_01ff9504.field20 = 0;
             goto true_exit;
         }

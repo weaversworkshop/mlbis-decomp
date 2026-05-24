@@ -181,10 +181,13 @@ L_0203d44c:
     return func_0203d270(param1);
 }
 
-// MATCHED 96.77%
+// MATCHED 100%
 s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 * param2, s32 param3, s32 param4) {
+    u32 new_var;
     s32 r4 = param1->field2c;
     s32 r6 = param3;
+    
+    new_var = param3;
 
     if (r6 > param1->field28 - r4) {
         r6 = param1->field28 - r4;
@@ -196,7 +199,7 @@ s32 func_0203da50(UnkStruct_0203dd70_00 * param1, u32 * param2, s32 param3, s32 
         r6 = 0;
     }
 
-    param1->field34 = param3;
+    param1->field34 = new_var;
     param1->field38 = r6;
 
     if (param4 == 0) {
