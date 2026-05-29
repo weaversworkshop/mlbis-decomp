@@ -2,11 +2,11 @@
 
 #include "globals.h"
 #include "main/unk_02005ddc.h"
+#include "main/unk_0201a630.h"
 
 #include <nitro/os.h>
 #include <nitro/pad.h>
 
-extern void func_0201a630(void);
 extern void func_0201e8b4(void);
 
 #pragma thumb off
@@ -20,8 +20,8 @@ void func_0201a91c() {
         do {
             u8 flag = node->field11;
             if (flag != 0 && flag != 0xff) {
-                node->field12 = node->field12 & ~0x1;
-                node->field12 = node->field12 | 0x2;
+                node->field12_b = node->field12_b & ~0x1;
+                node->field12_b = node->field12_b | 0x2;
             }
             node = node->field0c;
         } while (node != NULL);

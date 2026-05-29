@@ -8,12 +8,15 @@
         struct UnkStruct_0205ba70_00 * field0c;
         u8 field10;
         u8 field11;
-        u8 field12;
-        u8 field13;
+        union {
+            u16 field12;
+            u8 field12_b;
+        };
     } UnkStruct_0205ba70_00;
 
     typedef struct {
-        u8 pad_00[0x18];
+        u8 pad_00[0x14];
+        UnkStruct_0205ba70_00 * field14;
         UnkStruct_0205ba70_00 * field18;
     } UnkGlobal_0205ba70;
 #endif

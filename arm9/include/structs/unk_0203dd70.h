@@ -9,9 +9,9 @@
         u8 pad_00[0x64];
         u32 field64;
         u8 pad_68[0x10];
-        u32 field78;
-        u32 field7c;
-        u32 field80;
+        u32 * field78;
+        struct UnkStruct_0203dd70_02 * field7c;    // Tentative assignment
+        struct UnkStruct_0203dd70_02 * field80;
     } UnkStruct_0203dd70_02;
 
     typedef struct UnkStruct_0203dd70_01 {

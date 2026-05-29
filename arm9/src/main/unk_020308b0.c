@@ -2,10 +2,10 @@
 
 #include "globals.h"
 #include "main/unk_020308b0.h"
+#include "main/unk_02038848.h"
 
 #include <nitro/os.h>
 
-extern UnkStruct_0203dd70_02 * func_02038848(UnkStruct_0203dd70_01 * a);
 extern void func_020389a8(void);
 extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
 extern void func_0203d1dc(UnkStruct_0203dd70_00 * a);
