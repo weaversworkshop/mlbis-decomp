@@ -5,7 +5,6 @@
 
 u8 func_02006368(void);
 u8 func_02006388(void);
-void func_02009ab8(void);
 bool func_02009e7c(void);
 
 #endif

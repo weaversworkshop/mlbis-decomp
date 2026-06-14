@@ -1,0 +1,6 @@
+#ifndef MAIN_UNK_02009E2C_H
+#define MAIN_UNK_02009E2C_H
+
+void func_02009e2c(void);
+
+#endif

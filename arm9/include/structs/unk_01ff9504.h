@@ -15,8 +15,13 @@
         u32 field18;
         UnkNode * field1c;
         u8 field20;
-        u8 pad_21[0x3];
+        u8 field21;
+        u8 field22;
+        u8 field23;
         u32 field24;
+        u32 field28;
+        u32 field2c;
+        u32 field30;
     };
 
 #endif

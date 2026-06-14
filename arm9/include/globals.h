@@ -16,8 +16,10 @@
 
     extern UnkNode data_01ff9478;
     extern UnkGlobal_01ff9488 data_01ff9488;
-    extern UnkNode data_01ff9504;
     extern UnkNode data_01ff948c;
+    extern UnkNode data_01ff9504;
+    extern UnkNode data_01ff9538;
+    extern UnkNode data_01ff9598;
     extern u16 data_0204ac4c[10];
     extern u32 *              data_020564bc[];
     extern UnkGlobal_0205ba70 data_0205ba70;

@@ -2,11 +2,11 @@
 
 #include "globals.h"
 #include "main/unk_02006368.h"
+#include "main/unk_02009ab8.h"
+#include "main/unk_02009cc4.h"
 #include "main/unk_020308b0.h"
 
 #include <nitro/os.h>
-
-extern u8 func_02009cc4(void);
 
 #pragma thumb off
 
@@ -15,19 +15,12 @@ u8 func_02006368(void) {
     if (data_01ff9504.field20 == 0) {
         return data_01ff9504.field20;
     }
-    return func_02009cc4();
+    func_02009cc4();
 }
 
 // MATCHED 100%
 u8 func_02006388(void) {
     return data_01ff9504.field20;
-}
-
-// NOT MATCHED: stmia not forming, 3 strs instead  (77.25%)
-void func_02009ab8() {
-    data_01ff9478.next = &data_01ff948c;
-    data_01ff948c.next = (UnkNode *)-1;
-    data_01ff948c.field04 = &data_01ff9478;
 }
 
 // MATCHED 100%
