@@ -9,7 +9,11 @@
         UnkNode * next;
         UnkNode * field04;
         u32 field08;
-        u32 field0c;
+        union {
+            u32 field0c;
+            struct { u16 field0c_lo; u16 field0e; };
+        };
+        // u32 field0c;
         u32 field10;
         void (*field14)(UnkNode *self);
         u32 field18;

@@ -3,12 +3,11 @@
 #include "globals.h"
 
 #include "main/unk_02009e2c.h"
+#include "main/unk_02030bac.h"
 
 #pragma thumb off
 
 // MATCH 100%
-extern void func_02030bac(u32 a);
-
 void func_02009e2c(UnkNode* param1) {
     UnkNode* r0 = param1;
 
