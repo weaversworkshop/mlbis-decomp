@@ -3,10 +3,10 @@
 #include "globals.h"
 
 #include "main/unk_02030bac.h"
+#include "main/unk_02030d10.h"
 
 extern bool func_0202ee08(UnkNode * a, u16 b);
 extern void func_0202ee58(UnkNode * a, u32 b);
-extern bool func_02030d10(UnkNode * a);
 
 // MATCH 100%
 u32 func_02030bac(UnkNode* param1) {
