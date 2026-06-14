@@ -33,7 +33,7 @@ void func_02009cc4() {
                 return;
             }
         } else {
-            func_02009e2c();
+            func_02009e2c(r0);
 
             UnkNode * r0 = &data_01ff9504;
             func_020092e0(
@@ -109,7 +109,7 @@ void func_02009cc4() {
         return;
     }
 
-    func_02009e2c();
+    func_02009e2c(r0);
 
     func_0203a9ac(
         &data_01ff9504,
