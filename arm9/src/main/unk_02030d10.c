@@ -2,11 +2,11 @@
 
 #include "globals.h"
 
+#include "main/unk_0202eda8.h"
+#include "main/unk_02030ccc.h"
 #include "main/unk_02030d10.h"
 
 extern void func_0202e970(UnkNode ** a, u32 b);
-extern u32 func_0202eda8(UnkNode * a, u32 b, u32 c);
-extern void func_02030ccc(u32 a);
 
 // MATCH 100%
 bool func_02030d10(UnkNode* param1) {

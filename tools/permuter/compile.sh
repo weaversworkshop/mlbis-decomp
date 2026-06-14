@@ -11,6 +11,8 @@ shift
 
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
+export LM_LICENSE_FILE="$(cygpath -w "$REPO_ROOT/tools/mwccarm/license.dat")"
+
 MWCCARM="$REPO_ROOT/tools/mwccarm/2.0/sp1p2/mwccarm.exe"
 INCLUDE_DIR="$REPO_ROOT/arm9/include"
 SHIM_INCLUDE="$REPO_ROOT/lib/nitro/include"

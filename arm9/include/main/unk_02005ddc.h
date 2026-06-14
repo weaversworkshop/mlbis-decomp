@@ -1,6 +1,8 @@
 #ifndef MAIN_UNK_02005DDC_H
 #define MAIN_UNK_02005DDC_H
 
+#include "types.h"
+
 #include "structs/unk_02005ddc.h"
 #include "structs/unk_02019a74.h"
 

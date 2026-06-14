@@ -1,6 +1,8 @@
 #ifndef MAIN_UNK_020308B0_H
 #define MAIN_UNK_020308B0_H
 
+#include "types.h"
+
 #include "structs/unk_0203dd70.h"
 
 #include <nitro/os.h>
