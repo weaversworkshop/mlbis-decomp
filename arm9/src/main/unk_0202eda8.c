@@ -2,10 +2,10 @@
 
 #include "globals.h"
 
+#include "main/unk_0202ec70.h"
 #include "main/unk_0202eda8.h"
 
 extern u32 func_0202eccc(u32 * a, u32 b, u32 c);
-extern u32 func_0202ec70(u32 * a, u32 b, u32 c);
 
 // MATCH 100%
 u32 func_0202eda8(UnkNode * param1, u32 param2, s32 param3) {
