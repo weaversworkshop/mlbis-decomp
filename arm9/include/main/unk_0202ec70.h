@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-u32 func_0202ec70(u32 * a, u32 b, u32 c);
+u32 func_0202ec70(u32 * param1, u32 param2, u32 param3);
 
 #endif
