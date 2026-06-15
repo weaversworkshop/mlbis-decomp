@@ -4,12 +4,20 @@
     #include "types.h"
 
     typedef struct UnkNode            UnkNode;
+    typedef struct UnkNode_HeapRegion   UnkNode_HeapRegion;
 
     typedef struct UnkNodeSub {
         void * field00;
         void * field04;
         u16 field08_lo;
         u16 field0a;
+    };
+
+    struct UnkNode_HeapRegion {
+        u32 field00;
+        u32 field04;
+        u32 field08;
+        struct UnkNode_HeapRegion * field0c;
     };
 
     struct UnkNode {
@@ -31,7 +39,7 @@
         u8 field23;
         u32 field24;
         u32 field28;
-        u32 field2c;
+        union { u32 field2c; struct UnkNode_HeapRegion * field2c_ptr; };
         u32 field30;
     };
 
