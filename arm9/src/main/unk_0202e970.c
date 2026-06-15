@@ -2,9 +2,8 @@
 
 #include "globals.h"
 
+#include "main/unk_0202e944.h"
 #include "main/unk_0202e970.h"
-
-extern void func_0202e944(UnkNodeSub * param1, void * param2);
 
 // MATCH 100%
 void func_0202e970(UnkNodeSub * param1, u8 * param2) {

@@ -6,8 +6,8 @@
     typedef struct UnkNode            UnkNode;
 
     typedef struct UnkNodeSub {
-        UnkNode * field00;
-        u32 * field04;
+        void * field00;
+        void * field04;
         u16 field08_lo;
         u16 field0a;
     };
