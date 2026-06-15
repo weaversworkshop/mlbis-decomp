@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-u32 func_0202ec70(u32 * param1, u32 param2, u32 param3);
+void * func_0202ec70(u32 * param1, u32 param2, u32 param3);
 
 #endif

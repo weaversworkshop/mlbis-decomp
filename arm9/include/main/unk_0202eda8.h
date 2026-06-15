@@ -5,6 +5,6 @@
 
 typedef struct UnkNode UnkNode;
 
-u32 func_0202eda8(UnkNode * param1, u32 param2, s32 param3);
+void * func_0202eda8(UnkNode * param1, u32 param2, s32 param3);
 
 #endif

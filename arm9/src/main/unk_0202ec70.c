@@ -6,7 +6,7 @@
 #include "main/cpu_clear32.h"
 
 // MATCH 100%
-u32 func_0202ec70(u32 * param1, u32 param2, u32 param3) {
+void * func_0202ec70(u32 * param1, u32 param2, u32 param3) {
     u32 r3 = param1[0];
     u32 r0 = param3 - 1;
     u32 r2 = ~r0;

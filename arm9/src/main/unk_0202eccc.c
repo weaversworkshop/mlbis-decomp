@@ -5,7 +5,7 @@
 #include "main/unk_0202eccc.h"
 
 // MATCH 100%
-u32 func_0202eccc(u32 * param1, u32 param2, s32 param3) {
+void * func_0202eccc(u32 * param1, u32 param2, s32 param3) {
     u32 r5 = ~(param3 - 1) & (param1[1] - param2);
 
     if (r5 < param1[0]) {

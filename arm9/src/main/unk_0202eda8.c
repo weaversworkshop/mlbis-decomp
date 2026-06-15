@@ -7,7 +7,7 @@
 #include "main/unk_0202eda8.h"
 
 // MATCH 100%
-u32 func_0202eda8(UnkNode * param1, u32 param2, s32 param3) {
+void * func_0202eda8(UnkNode * param1, u32 param2, s32 param3) {
     if (param2 == 0) {
         param2 = 1;
     }
