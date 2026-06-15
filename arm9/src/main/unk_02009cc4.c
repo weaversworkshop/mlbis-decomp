@@ -7,8 +7,6 @@
 #include "main/unk_02009cc4.h"
 #include "main/unk_02009e2c.h"
 
-#pragma thumb off
-
 extern void func_020092e0(u32 a, u8 b, u32 c);
 extern void func_02009668(u32 a, u8 b);
 extern void func_02009b10(u32 a, u32 b, u8 c, u32 d, u8 e);
@@ -135,5 +133,3 @@ void func_02009cc4() {
 
     return;
 }
-
-#pragma thumb reset

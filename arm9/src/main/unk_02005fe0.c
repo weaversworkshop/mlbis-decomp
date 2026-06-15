@@ -2,11 +2,7 @@
 
 #include "main/unk_02005fe0.h"
 
-#pragma thumb off
-
 // MATCHED 100% -- Noop
 void func_02005fe0(void) {
     return;
 }
-
-#pragma thumb reset

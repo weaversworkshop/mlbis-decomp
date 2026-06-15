@@ -8,8 +8,6 @@
 
 #include <nitro/os.h>
 
-#pragma thumb off
-
 // MATCHED 100%
 u8 func_02006368(void) {
     if (data_01ff9504.field20 == 0) {
@@ -95,5 +93,3 @@ bool func_02009e7c(void) {
     false_exit:
         return false;
 }
-
-#pragma thumb reset

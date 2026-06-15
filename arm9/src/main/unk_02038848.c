@@ -2,8 +2,6 @@
 
 #include "main/unk_02038848.h"
 
-#pragma thumb off
-
 // MATCHED 100%
 UnkStruct_0203dd70_02 * func_02038848(UnkStruct_0203dd70_01 * param1) {
     UnkStruct_0203dd70_02 * r2 = param1->field00;
@@ -22,5 +20,3 @@ UnkStruct_0203dd70_02 * func_02038848(UnkStruct_0203dd70_01 * param1) {
 
     return r2;
 }
-
-#pragma thumb reset

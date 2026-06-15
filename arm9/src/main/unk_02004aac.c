@@ -2,11 +2,7 @@
 
 #include "main/unk_02004aac.h"
 
-#pragma thumb off
-
 // MATCHED 100% -- Noop
 void AutoloadCallback(void) {
     return;
 }
-
-#pragma thumb reset

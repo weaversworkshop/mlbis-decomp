@@ -5,8 +5,6 @@
 #include "main/unk_02009e2c.h"
 #include "main/unk_02030bac.h"
 
-#pragma thumb off
-
 // MATCH 100%
 void func_02009e2c(UnkNode* param1) {
     UnkNode* r0 = param1;
@@ -27,5 +25,3 @@ void func_02009e2c(UnkNode* param1) {
 
     func_02030bac(r0);
 }
-
-#pragma thumb reset

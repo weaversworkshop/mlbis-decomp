@@ -9,8 +9,6 @@
 
 extern void func_0201e8b4(void);
 
-#pragma thumb off
-
 // MATCHED 100%
 void func_0201a91c() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
@@ -116,5 +114,3 @@ void func_02005ddc(UnkStruct_02005ddc_00 * param1) {
 
     func_02005f8c(param1);
 }
-
-#pragma thumb reset

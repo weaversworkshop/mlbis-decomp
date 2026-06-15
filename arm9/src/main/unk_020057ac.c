@@ -2,8 +2,6 @@
 
 #include "main/unk_020057ac.h"
 
-#pragma thumb off
-
 // MATCHED 100%
 void func_0201a610(UnkStruct_020057ac_00 * param1) {
     param1->field12 = (param1->field12 & ~0x1) | 0x1;
@@ -18,5 +16,3 @@ void func_020057ac(UnkStruct_020057ac_00 * param1, u16 param2) {
 
     func_0201a610(param1);
 }
-
-#pragma thumb reset

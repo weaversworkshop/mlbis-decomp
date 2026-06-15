@@ -11,8 +11,6 @@ extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
 extern void func_0203d1dc(UnkStruct_0203dd70_00 * a);
 extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
 
-#pragma thumb off
-
 // MATCHED 100%
 OSIntrMode func_02038e14(UnkStruct_0203dd70_01 * param1) {
     OSIntrMode mode = OS_DisableInterrupts();
@@ -323,5 +321,3 @@ s32 func_020308b0(u32 param1, u32 * param2, s32 param3, u32 param4) {
 
     return r4;
 }
-
-#pragma thumb reset

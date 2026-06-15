@@ -3,8 +3,6 @@
 #include "globals.h"
 #include "main/unk_0201a630.h"
 
-#pragma thumb off
-
 // MATCHED 100%
 void func_0201a630(void) {
     UnkStruct_0205ba70_00 * r1 = data_0205ba70.field14;
@@ -21,5 +19,3 @@ void func_0201a630(void) {
         r1 = r1->field0c;
     } while (r1 != NULL);
 }
-
-#pragma thumb reset
