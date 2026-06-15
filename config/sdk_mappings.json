@@ -19,6 +19,7 @@
     { "addr": "0x02004734", "sdk_name": "CpuSet",                              "library": "syscall", "confidence": "certain" },
     { "addr": "0x020047ac", "sdk_name": "VBlankIntrWait",                      "library": "syscall", "confidence": "certain" },
     { "addr": "0x02004954", "sdk_name": "MIi_CpuClear32",                      "library": "mi",      "header": "nitro/mi.h",    "confidence": "certain" },
+    { "addr": "0x0203a9ac", "sdk_name": "MI_CpuFill8",                         "library": "mi",      "header": "nitro/mi.h",    "confidence": "certain" },
     { "addr": "0x02038344", "sdk_name": "OS_EnableIrqMask",                    "library": "os",      "header": "nitro/os/common/interrupt.h", "confidence": "certain" },
     { "addr": "0x02038374", "sdk_name": "OS_DisableIrqMask",                   "library": "os",      "header": "nitro/os/common/interrupt.h", "confidence": "certain" },
     { "addr": "0x0203946c", "sdk_name": "DC_InvalidateRange",                  "library": "os",      "header": "nitro/cache.h", "confidence": "certain" },
