@@ -1,7 +1,9 @@
 #ifndef GLOBALS_H
     #define GLOBALS_H
 
+    #include "structs/unk_01ff9464.h"
     #include "structs/unk_01ff9468.h"
+    #include "structs/unk_01ff9494.h"
     #include "structs/unk_01ff9488.h"
     #include "structs/unk_01ff9504.h"
     #include "structs/unk_020057ac.h"
@@ -14,7 +16,9 @@
     #include "structs/unk_0205ba70.h"
     #include "structs/unk_0205f670.h"
 
+    extern UnkGlobal_01ff9464 data_01ff9464;
     extern UnkGlobal_01ff9468 data_01ff9468;
+    extern UnkGlobal_01ff9494 data_01ff9494;
     extern UnkGlobal_01ff9468 data_01ff9474;
     extern UnkNode data_01ff9478;
     extern UnkGlobal_01ff9468 data_01ff9480;
