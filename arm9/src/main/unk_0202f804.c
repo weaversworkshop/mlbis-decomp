@@ -2,10 +2,9 @@
 
 #include "globals.h"
 
+#include "main/unk_0202ea14.h"
+#include "main/unk_0202ead8.h"
 #include "main/unk_0202f804.h"
-
-extern s32 func_0202ead8(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
-extern void func_0202ea14(UnkNodeSub * param1, UnkStruct_0202f9cc  * param2, UnkStruct_0202f9cc * param3);
 
 // MATCH 100%
 void func_0202f804(UnkStruct_0202f9cc * param1) {

@@ -4,8 +4,7 @@
 
 #include "main/unk_0202ea14.h"
 #include "main/unk_0202e970.h"
-
-extern void func_0202e9c4(UnkNodeSub * param1, void * param2);
+#include "main/unk_0202e9c4.h"
 
 // MATCH 100%
 void func_0202ea14(UnkNodeSub * param1, void * param2, void * param3) {
