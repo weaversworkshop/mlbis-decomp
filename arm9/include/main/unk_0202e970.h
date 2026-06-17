@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-typedef struct UnkNodeSub UnkNodeSub;
+#include "structs/unk_01ff9504.h"
 
-void func_0202e970(UnkNodeSub * param1, u8 * param2);
+void func_0202e970(UnkNodeSub * param1, void * param2);
 
 #endif

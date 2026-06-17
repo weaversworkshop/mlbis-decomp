@@ -5,6 +5,6 @@
 
 typedef struct UnkNodeSub UnkNodeSub;
 
-void func_0202e944(UnkNodeSub * param1, u8 * param2);
+void func_0202e944(UnkNodeSub * param1, void * param2);
 
 #endif

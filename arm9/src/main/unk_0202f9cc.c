@@ -4,12 +4,14 @@
 
 #include "main/unk_0202f9cc.h"
 
-extern void func_0202ea78(UnkGlobal_0205e6d8 * param1, UnkStruct_0202f9cc * param2);
-extern void func_0202f7b4(UnkGlobal_0205e6d8 * param1, UnkStruct_0202f9cc * param2);
+#include "structs/unk_01ff9504.h"
+
+extern void func_0202ea78(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
+extern void func_0202f7b4(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
 extern void func_0202f804(UnkStruct_0202f9cc * param1);
 
 void func_0202f9cc(UnkStruct_0202f9cc * param1, u32 param2) {
-    UnkGlobal_0205e6d8 * r4 = param1->field04;
+    UnkNodeSub * r4 = param1->field04;
 
     if (param1->field04 != NULL) {
         func_0202ea78(param1->field04, param1);

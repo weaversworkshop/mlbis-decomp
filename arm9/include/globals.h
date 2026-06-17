@@ -20,7 +20,6 @@
     #include "structs/unk_020308b0.h"
     #include "structs/unk_0204ac4c.h"
     #include "structs/unk_0205ba70.h"
-    #include "structs/unk_0205e6d8.h"
     #include "structs/unk_0205f670.h"
 
     extern UnkGlobal_01ff9464 data_01ff9464;
@@ -47,6 +46,6 @@
     extern u16 data_0204ac4c[10];
     extern u32 * data_020564bc[];
     extern UnkGlobal_0205ba70 data_0205ba70;
-    extern UnkGlobal_0205e6d8 data_0205e6d8;
+    extern UnkNodeSub data_0205e6d8;
     extern UnkGlobal_0205f670 data_0205f670;
 #endif
