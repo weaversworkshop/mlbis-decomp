@@ -2,6 +2,8 @@
 
 #include "globals.h"
 
+#include "main/unk_0200907c.h"
+
 // TODO: Possibly combine these, they seem to have similar fields
 #include "structs/unk_02030540.h"
 #include "structs/unk_02030608.h"
@@ -10,16 +12,16 @@
 
 #include "main/unk_020092e0.h"
 
-extern void func_0200907c(void);
-extern void func_0202f194(u32 * a, u32 b);
-extern void func_0202f270(u32 * a, u32 b, u32 c);
-extern void func_0202f290(u32 * a, u32 b, u32 c);
-extern void func_0202f300(u32 * a, u32 b);
+extern void func_0202f194(UnkStruct_01ff94a4 ** a, u32 b);
+extern void func_0202f270(UnkStruct_01ff94a4 ** a, u32 b, u32 c);
+extern void func_0202f290(UnkStruct_01ff94a4 ** a, u32 b, u32 c);
+extern void func_0202f300(UnkStruct_01ff94a4 ** a, u32 b);
 extern UnkStruct_02030540 * func_02030540(u32 a);
 extern UnkStruct_02030608 * func_02030608(u32 a);
 extern UnkStruct_0203066c * func_0203066c(u32 a);
 extern void func_020309c0(u32 a, u32 b);
-extern void func_02031614(u32 * a, bool b, u32 c, u32 d, u32 e);
+extern void func_02031614(UnkStruct_01ff94a4 ** a, bool b, u32 c, u32 d, u32 e);
+extern s32 func_020348fc(s32 a, u32 b);
 
 // MATCH 100%
 void func_020092e0(u32 param1, u8 param2, u32 param3) {

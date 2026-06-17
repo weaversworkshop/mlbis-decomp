@@ -5,7 +5,7 @@
 
     typedef struct {
         volatile s32 field00;
-        u32 field04;
+        s32 field04;
         u32 field08;
         u32 field0c;
     } UnkStruct_01ff94b4;

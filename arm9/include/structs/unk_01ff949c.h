@@ -6,5 +6,5 @@
     typedef struct {
         u32 field00;
         u8 field04;
-    } UnkStruct_01ff949c;
+    } UnkGlobal_01ff949c;
 #endif
