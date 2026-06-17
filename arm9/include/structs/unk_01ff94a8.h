@@ -3,7 +3,9 @@
 
     #include "types.h"
 
+    #include "structs/unk_0202f9cc.h"
+
     typedef struct {
-        u8 pad_00[0x4];
+        UnkStruct_0202f9cc * volatile field00;
     } UnkGlobal_01ff94a8;
 #endif
