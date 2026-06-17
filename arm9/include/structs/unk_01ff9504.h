@@ -6,6 +6,11 @@
     typedef struct UnkNode            UnkNode;
     typedef struct UnkNode_HeapRegion   UnkNode_HeapRegion;
 
+    typedef struct UnkNodeHeader {
+        UnkNode * next;
+        UnkNode * field04;
+    } UnkNodeHeader;
+
     typedef struct UnkNodeSub {
         void * field00;
         void * field04;

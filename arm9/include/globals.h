@@ -25,10 +25,10 @@
     extern UnkGlobal_01ff9464 data_01ff9464;
     extern UnkGlobal_01ff9468 data_01ff9468;
     extern UnkGlobal_01ff9468 data_01ff9474;
-    extern UnkNode data_01ff9478;
+    extern UnkNodeHeader data_01ff9478;
     extern UnkGlobal_01ff9468 data_01ff9480;
     extern UnkGlobal_01ff9488 data_01ff9488;
-    extern UnkNode data_01ff948c;
+    extern UnkNodeHeader data_01ff948c;
     extern UnkGlobal_01ff9494 data_01ff9494;
     extern UnkGlobal_01ff949c data_01ff949c;
     extern UnkStruct_01ff94a4 * data_01ff94a4[];
