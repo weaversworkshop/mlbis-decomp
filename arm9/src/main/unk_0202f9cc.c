@@ -2,14 +2,12 @@
 
 #include "globals.h"
 
+#include "main/unk_0202ea78.h"
+#include "main/unk_0202f7b4.h"
+#include "main/unk_0202f804.h"
 #include "main/unk_0202f9cc.h"
 
-#include "structs/unk_01ff9504.h"
-
-extern void func_0202ea78(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
-extern void func_0202f7b4(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
-extern void func_0202f804(UnkStruct_0202f9cc * param1);
-
+// MATCH 100%
 void func_0202f9cc(UnkStruct_0202f9cc * param1, u32 param2) {
     UnkNodeSub * r4 = param1->field04;
 
