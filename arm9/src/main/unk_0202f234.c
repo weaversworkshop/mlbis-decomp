@@ -2,8 +2,6 @@
 
 #include "globals.h"
 
-#include "structs/unk_02030540.h"
-
 #include "main/unk_0202f234.h"
 #include "main/unk_0202f9cc.h"
 

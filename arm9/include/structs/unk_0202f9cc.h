@@ -8,7 +8,8 @@
     typedef struct {
         u8 pad_00[0x4];
         UnkNodeSub * field04;
-        u8 pad_08[0x35];
+        u8 pad_08[0x34];
+        u8 field3c;
         u8 field3d;
     } UnkStruct_0202f9cc;
 

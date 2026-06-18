@@ -124,11 +124,12 @@ def render_md(rows, target, sort_desc):
     sdk_done = sum(1 for r in rows if r["sdk"] and r["match"] == 100.0)
     game_total = total - sdk_total
     game_done = done - sdk_done
+    game_pct = 100.0 * game_done / game_total if game_total else 0.0
 
     lines = []
     lines.append(f"# {target} -- {done}/{total} matched ({started} in progress)")
     lines.append("")
-    lines.append(f"- Game:  {game_done}/{game_total} matched")
+    lines.append(f"- Game:  {game_done}/{game_total} matched ({game_pct:.2f}%)")
     lines.append(f"- SDK:   {sdk_done}/{sdk_total} matched  (functions identified in config/sdk_mappings.json)")
     lines.append("")
     lines.append(f"_Sorted by: {sort_desc}_")

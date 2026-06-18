@@ -6,8 +6,8 @@
 
 #include "main/unk_0200907c.h"
 #include "main/unk_0202f234.h"
+#include "main/unk_0202f250.h"
 
-extern void func_0202f250(UnkGlobal_01ff94a8 * a, u32 b);
 extern void func_0202f270(UnkGlobal_01ff94a8 * a, u32 b, u32 c);
 extern void func_0202f290(UnkGlobal_01ff94a8 * a, u32 b, u32 c);
 extern UnkStruct_02030540 * func_02030540(u32 a);
