@@ -93,12 +93,15 @@ diff: all delinks
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 
-# Mermaid call graph (vertical). Scope a huge graph with CALLGRAPH_ARGS, e.g.:
+# Mermaid call graph (vertical). Drops lone nodes by default (CALLGRAPH_FLAGS);
+# scope a huge graph with CALLGRAPH_ARGS, e.g.:
 #   make callgraph CALLGRAPH_ARGS="--root func_0200907c --undone"
 #   make callgraph CALLGRAPH_ARGS="--leaves"
+# To keep lone nodes, clear the default: make callgraph CALLGRAPH_FLAGS=
+CALLGRAPH_FLAGS ?= --connected-only
 CALLGRAPH_ARGS ?=
 callgraph: all delinks
-	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_ARGS)
+	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
 
 # Per-file build overrides. Set MWCC_OVERRIDE for a different mwccarm binary,
 # EXTRA_CFLAGS for additional flags. Used to match ROM bytes that depend on

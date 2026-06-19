@@ -153,6 +153,8 @@ def main():
                     help="include EVERY function (touched + all untouched), fully expanded")
     ap.add_argument("--touched-only", action="store_true",
                     help="touched functions only, no frontier layer")
+    ap.add_argument("--connected-only", action="store_true",
+                    help="drop nodes with no edge in the final graph (lone nodes)")
     ap.add_argument("--max-nodes", type=int, default=600, help="warn above this node count")
     args = ap.parse_args()
 
@@ -208,6 +210,11 @@ def main():
         keep = {n for n in keep if pcts.get(n, 0) < 100}
 
     keep_edges = [(a, b) for (a, b) in edges if a in keep and b in keep]
+
+    if args.connected_only:
+        linked = {n for e in keep_edges for n in e}
+        keep &= linked
+        keep_edges = [(a, b) for (a, b) in keep_edges if a in keep and b in keep]
 
     if len(keep) > args.max_nodes:
         print(f"WARNING: {len(keep)} nodes (> --max-nodes {args.max_nodes}); "

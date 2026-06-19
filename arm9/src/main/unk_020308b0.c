@@ -6,7 +6,7 @@
 
 #include <nitro/os.h>
 
-extern void func_020389a8(void);
+extern void OSi_RescheduleThread(void);
 extern u32 func_02038dc4(UnkStruct_0203dd70_01 * a);
 extern void func_0203d1dc(UnkStruct_0203dd70_00 * a);
 extern bool func_0203d270(UnkStruct_0203dd70_00 * a);
@@ -26,7 +26,7 @@ OSIntrMode func_02038e14(UnkStruct_0203dd70_01 * param1) {
 
         param1->field04 = NULL;
         param1->field00 = NULL;
-        func_020389a8();
+        OSi_RescheduleThread();
     }
 
     return OS_RestoreInterrupts(mode);
@@ -294,21 +294,13 @@ s32 func_020308b0(u32 param1, u32 * param2, s32 param3, u32 param4) {
 
         UnkStruct_0203dd70_00 * input0 = &(r7->field34);
 
-        bool result = func_0203dd70(
-            input0,
-            r11->field00 + param4,
-            0
-        );
+        bool result = func_0203dd70(input0, r11->field00 + param4, 0);
 
         if (result == false) {
             return -1;
         }
 
-        s32 result2 = func_0203dd60( // TODO: Check return type
-            input0,
-            param2,
-            r6
-        );
+        s32 result2 = func_0203dd60(input0, param2, r6);
 
         if (result2 < 0) {
             return result2;

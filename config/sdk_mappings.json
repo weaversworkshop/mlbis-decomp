@@ -788,6 +788,43 @@
       "sdk_name": "OS_ReadOwnerOfLockWord",
       "library": "os",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x020390bc",
+      "sdk_name": "OS_SaveContext",
+      "library": "os",
+      "header": "nitro/os.h",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203ef60",
+      "sdk_name": "CP_SaveContext",
+      "library": "cp",
+      "header": "nitro/cp.h",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038ea4",
+      "sdk_name": "OS_SelectThread",
+      "library": "os",
+      "header": "nitro/os.h",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020389a8",
+      "sdk_name": "OSi_RescheduleThread",
+      "library": "os",
+      "header": "nitro/os.h",
+      "confidence": "certain",
+      "note": "Identity certain (OSi_RescheduleThread: calls OS_SaveContext/OS_SelectThread/OS_LoadContext). 99.94% is the FLOOR -- whole-program (.bss layout) drift, NOT recoverable. Verified NOT fixable by: SDK version (base 4.2 source+OSThreadInfo struct identical to ntrtwl), SDK_THREAD_INFINITY (no effect), global decl order (identical across base4.2/plus9), or dsd data-symbol split (the 3 differing thread-global accesses are instruction-encoded offsets off ONE shared anchor literal, not relocations -- naming data symbols cannot change a baked-in [r0,#8] vs ROM [r0,#4]). Root cause: game's -ipa program packs OSi_RescheduleCount/OSi_SystemCallbackInSwitchThread/current-ptr at .bss offsets 0/4/8; our -ipa file packs them at 8/0x18/0x1c. Same class as SND_FlushCommand. Do NOT chase.",
+      "match": "drift-whole-program"
+    },
+    {
+      "addr": "0x02039108",
+      "sdk_name": "OS_LoadContext",
+      "library": "os",
+      "header": "nitro/os.h",
+      "confidence": "certain"
     }
   ],
   "objdiff_units": [
@@ -935,6 +972,21 @@
       "source": "lib/NitroSDK/libraries/os/src/os_spinLock.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/os/os_spinLock"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_context.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/os_context"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/cp/src/cp_context.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/cp/cp_context"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_thread.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/os_thread"
     }
   ]
 }
