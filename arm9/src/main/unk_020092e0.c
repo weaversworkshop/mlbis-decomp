@@ -5,9 +5,8 @@
 #include "main/unk_0200907c.h"
 #include "main/unk_020092e0.h"
 
+#include <nitro/fx/fx_cp.h>
 #include <nnsys/snd.h>
-
-extern s32 func_020348fc(s32 param1, u32 param2);
 
 // MATCHED 100%
 void func_020092e0(u32 param1, u8 param2, u32 param3) {
@@ -56,7 +55,7 @@ void func_020092e0(u32 param1, u8 param2, u32 param3) {
     if (param3 != 0) {
         data_01ff94c0[param2].field00 = 2;
         data_01ff94b8[param2].field00 = data_01ff94b4[param2].field00;
-        data_01ff94bc[param2].field00 = func_020348fc(data_01ff94b4[param2].field00, 0x1000);
+        data_01ff94bc[param2].field00 = FX_Div(data_01ff94b4[param2].field00, 0x1000);
         func_0200907c();
     }
 

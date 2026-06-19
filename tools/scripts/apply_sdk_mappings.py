@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
 CONFIG_ROOT = ROOT / "config"
-SOURCE_ROOTS = [ROOT / "arm9" / "src", ROOT / "lib"]
+SOURCE_ROOTS = [ROOT / "arm9" / "src", ROOT / "arm9" / "include", ROOT / "lib"]
 SOURCE_EXCLUDES = [ROOT / "lib" / "NitroSDK", ROOT / "lib" / "mw-libraries"]
 
 SYMBOL_LINE_RE = re.compile(

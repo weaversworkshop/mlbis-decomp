@@ -3842,6 +3842,7 @@ from:0x020399ec kind:arm_call to:0x020399fc module:main
 from:0x020399f0 kind:arm_call to:0x02039a8c module:main
 from:0x02039a88 kind:load to:0x02060890 module:main
 from:0x02039abc kind:arm_call to:0x020398b0 module:main
+from:0x02039adc kind:arm_call to:0x020398c0 module:main
 from:0x02039af0 kind:load to:0x02060864 module:main
 from:0x02039af8 kind:load to:0x02060890 module:main
 from:0x02039afc kind:load to:0x02060868 module:main

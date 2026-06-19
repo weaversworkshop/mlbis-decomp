@@ -3084,6 +3084,773 @@
       "sdk_name": "NNS_FndDestroyFrmHeap",
       "library": "fnd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x020348fc",
+      "sdk_name": "FX_Div",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "FX_Div = FX_DivAsync + FX_GetDivResult"
+    },
+    {
+      "addr": "0x0203490c",
+      "sdk_name": "FX_Inv",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "FX_Inv = FX_InvAsync + FX_GetDivResult"
+    },
+    {
+      "addr": "0x0203491c",
+      "sdk_name": "FX_Sqrt",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "x>0 guard, CP_SetSqrt64(x<<32), FX_GetSqrtResult"
+    },
+    {
+      "addr": "0x02034950",
+      "sdk_name": "FX_InvSqrt",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "inv+sqrt async, umull, >>FX_INVSQRT_SHIFT"
+    },
+    {
+      "addr": "0x020349b8",
+      "sdk_name": "FX_GetDivResultFx64c",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "wait div, raw 64-bit DIV_RESULT"
+    },
+    {
+      "addr": "0x020349dc",
+      "sdk_name": "FX_GetDivResult",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "(CP_GetDivResult64()+FX_DIV_1_2)>>20"
+    },
+    {
+      "addr": "0x02034a14",
+      "sdk_name": "FX_InvAsync",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "CP_SetDiv64_32(FX32_ONE<<32, denom)"
+    },
+    {
+      "addr": "0x02034a44",
+      "sdk_name": "FX_SqrtAsync",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "x>0 -> x<<32 else 0"
+    },
+    {
+      "addr": "0x02034a88",
+      "sdk_name": "FX_GetSqrtResult",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "(CP_GetSqrtResult32()+0x200)>>10"
+    },
+    {
+      "addr": "0x02034ab4",
+      "sdk_name": "FX_DivAsync",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "CP_SetDiv64_32(numer<<32, denom)"
+    },
+    {
+      "addr": "0x02034adc",
+      "sdk_name": "FX_ModS32",
+      "library": "fx",
+      "confidence": "certain",
+      "header": "nitro/fx/fx_cp.h",
+      "note": "CP_SetDiv32_32(a,b)+CP_GetDivRemainder32 (reads DIVREM_RESULT 0x040002a8; orig manual decode mislabeled it FX_DivS32)"
+    },
+    {
+      "addr": "0x02042b5c",
+      "sdk_name": "CARD_TerminateForPulledOut",
+      "library": "card",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020428f4",
+      "sdk_name": "CARDi_OnFifoRecv",
+      "library": "card",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042928",
+      "sdk_name": "CARDi_TaskThread",
+      "library": "card",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042978",
+      "sdk_name": "CARDi_Request",
+      "library": "card",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042c98",
+      "sdk_name": "CTRDGi_InitCommon",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042d10",
+      "sdk_name": "CTRDG_IsExisting",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042e1c",
+      "sdk_name": "CTRDGi_ChangeLatestAccessCycle",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042e64",
+      "sdk_name": "CTRDGi_RestoreAccessCycle",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042e98",
+      "sdk_name": "CTRDGi_LockByProcessor",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042ef4",
+      "sdk_name": "CTRDGi_UnlockByProcessor",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042f18",
+      "sdk_name": "CTRDGi_SendtoPxi",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02042f68",
+      "sdk_name": "CTRDG_Enable",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02043064",
+      "sdk_name": "CTRDGi_InitModuleInfo",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020433a8",
+      "sdk_name": "CTRDGi_TaskThread",
+      "library": "ctrdg",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02034e34",
+      "sdk_name": "FX_Atan2",
+      "library": "fx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02034fec",
+      "sdk_name": "FX_AtanIdx",
+      "library": "fx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020350a8",
+      "sdk_name": "FX_Atan2Idx",
+      "library": "fx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020370e8",
+      "sdk_name": "G3i_LookAt_",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037134",
+      "sdk_name": "G3_RotX",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037170",
+      "sdk_name": "G3_RotZ",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036b60",
+      "sdk_name": "G3X_Init",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036c6c",
+      "sdk_name": "G3X_Reset",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036d00",
+      "sdk_name": "G3X_InitMtxStack",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036d98",
+      "sdk_name": "G3X_ResetMtxStack",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036e28",
+      "sdk_name": "G3X_SetFog",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036e80",
+      "sdk_name": "G3X_SetClearColor",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036ea8",
+      "sdk_name": "G3X_InitTable",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035254",
+      "sdk_name": "GX_Init",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036640",
+      "sdk_name": "G2_GetBG2ScrPtr",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036738",
+      "sdk_name": "G2_GetBG3ScrPtr",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020371ac",
+      "sdk_name": "GX_LoadBGPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037200",
+      "sdk_name": "GXS_LoadBGPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037258",
+      "sdk_name": "GX_LoadOBJPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020372b0",
+      "sdk_name": "GXS_LoadOBJPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037908",
+      "sdk_name": "GX_BeginLoadBGExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037a60",
+      "sdk_name": "GX_BeginLoadOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037b70",
+      "sdk_name": "GXS_LoadBGExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037c2c",
+      "sdk_name": "GXS_LoadOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020355d0",
+      "sdk_name": "GX_VRAMCNT_SetLCDC_",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035688",
+      "sdk_name": "GX_SetBankForBG",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035918",
+      "sdk_name": "GX_SetBankForOBJ",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035a68",
+      "sdk_name": "GX_SetBankForBGExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035b68",
+      "sdk_name": "GX_SetBankForOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035c14",
+      "sdk_name": "GX_SetBankForTex",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035dec",
+      "sdk_name": "GX_SetBankForTexPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035ef4",
+      "sdk_name": "GX_SetBankForSubBG",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035f9c",
+      "sdk_name": "GX_SetBankForSubOBJ",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203600c",
+      "sdk_name": "GX_SetBankForSubBGExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203608c",
+      "sdk_name": "GX_SetBankForSubOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02036250",
+      "sdk_name": "disableBankForX_",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02035570",
+      "sdk_name": "GX_InitGXState",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02004970",
+      "sdk_name": "MIi_UncompressBackward",
+      "library": "init",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02004ab0",
+      "sdk_name": "init_cp15",
+      "library": "init",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02043498",
+      "sdk_name": "MATH_CalcChecksum16",
+      "library": "math",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a11c",
+      "sdk_name": "MI_DmaCopy32",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a18c",
+      "sdk_name": "MI_DmaCopy16",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a2bc",
+      "sdk_name": "MI_DmaCopy32Async",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a354",
+      "sdk_name": "MI_WaitDma",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a3bc",
+      "sdk_name": "MI_StopDma",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a460",
+      "sdk_name": "MIi_CheckAnotherAutoDMA",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a4e4",
+      "sdk_name": "MIi_CheckDma0SourceAddress",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203abf0",
+      "sdk_name": "MIi_CardDmaCopy32",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a598",
+      "sdk_name": "MI_SendGXCommandAsync",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a73c",
+      "sdk_name": "MIi_DMACallback",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a854",
+      "sdk_name": "MIi_DMAFastCallback",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039a8c",
+      "sdk_name": "OSi_DisplayExContext",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020394fc",
+      "sdk_name": "OSi_WaitVCount0",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203951c",
+      "sdk_name": "OS_Init",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff match; needed -DSDK_CODE_ARM (codereset.h defaults to Thumb without it)"
+    },
+    {
+      "addr": "0x020383d0",
+      "sdk_name": "OS_SetIrqStackChecker",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203916c",
+      "sdk_name": "OS_ReceiveMessage",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039ddc",
+      "sdk_name": "OSi_CommonCallback",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039e10",
+      "sdk_name": "OSi_SendToPxi",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02038bb8",
+      "sdk_name": "OS_CreateThread",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039b24",
+      "sdk_name": "OS_InitTick",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039bac",
+      "sdk_name": "OSi_CountUpTick",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039c24",
+      "sdk_name": "OS_SetTick",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02039c94",
+      "sdk_name": "OS_InitVAlarm",
+      "library": "os",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203c080",
+      "sdk_name": "PXI_InitFifo",
+      "library": "pxi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203c180",
+      "sdk_name": "PXI_SetFifoRecvCallback",
+      "library": "pxi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203c1cc",
+      "sdk_name": "PXI_IsCallbackReady",
+      "library": "pxi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203c278",
+      "sdk_name": "PXIi_HandlerRecvFifoNotEmpty",
+      "library": "pxi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020415d4",
+      "sdk_name": "RTC_GetDayOfWeek",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02040ef8",
+      "sdk_name": "RTC_GetTimeAsync",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02040fa4",
+      "sdk_name": "RtcCommonCallback",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x020414f4",
+      "sdk_name": "RtcBCD2HEX",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203b87c",
+      "sdk_name": "SND_AlarmInit",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203b8cc",
+      "sdk_name": "SNDi_SetAlarmHandler",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203ba4c",
+      "sdk_name": "SND_CalcChannelVolume",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203b940",
+      "sdk_name": "SND_GetPlayerStatus",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203b96c",
+      "sdk_name": "SND_GetPlayerGlobalVariable",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203b9d0",
+      "sdk_name": "SNDi_InitSharedWork",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fac4",
+      "sdk_name": "MIC_Init",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fb34",
+      "sdk_name": "MIC_StartAutoSamplingAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fc98",
+      "sdk_name": "MIC_StopAutoSamplingAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fd3c",
+      "sdk_name": "MicCommonCallback",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fe64",
+      "sdk_name": "MicStartAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203ff68",
+      "sdk_name": "MicStopAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "tu_diff content+pool match"
     }
   ],
   "objdiff_units": [
@@ -3391,6 +4158,141 @@
       "source": "lib/NitroSystem/libraries/snd/src/fader.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "nns/snd/fader"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/fx/src/fx_cp.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/fx/fx_cp"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/card/src/card_request.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/card/src/card_request"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/ctrdg/src/ctrdg.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/ctrdg/src/ctrdg"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/ctrdg/src/ctrdg_task.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/ctrdg/src/ctrdg_task"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/fx/src/fx_atan.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/fx/src/fx_atan"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/fx/src/fx_atanidx.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/fx/src/fx_atanidx"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/gx/src/g3_util.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/gx/src/g3_util"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/gx/src/gx_bgcnt.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/gx/src/gx_bgcnt"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/gx/src/gx_load2d.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/gx/src/gx_load2d"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/gx/src/gxstate.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/gx/src/gxstate"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/init/src/crt0.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/init/src/crt0"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/math/src/checksum.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/math/src/checksum"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/mi/src/mi_dma.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/mi/src/mi_dma"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/mi/src/mi_dma_card.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/mi/src/mi_dma_card"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/mi/src/mi_dma_gxcommand.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/mi/src/mi_dma_gxcommand"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_init.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/src/os_init"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_message.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/src/os_message"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_reset.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/src/os_reset"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_tick.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/src/os_tick"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_valarm.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/src/os_valarm"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/pxi/src/pxi_fifo.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/pxi/src/pxi_fifo"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/rtc/src/convert.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/rtc/src/convert"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/rtc/src/external.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/rtc/src/external"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/snd/src/snd_alarm.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/snd/src/snd_alarm"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/snd/src/snd_util.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/snd/src/snd_util"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/snd/src/snd_work.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/snd/src/snd_work"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/spi/src/mic.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/spi/src/mic"
     }
   ]
 }
