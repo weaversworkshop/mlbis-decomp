@@ -15,6 +15,7 @@ build/
 objdiff.json
 
 # Toolchain (lives outside the repo)
+tools/**/__pycache__/
 tools/mwccarm/
 tools/dsd*
 tools/objdiff*

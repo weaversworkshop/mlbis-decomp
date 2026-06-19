@@ -5,20 +5,12 @@
 
     #include <nnsys/fnd/list.h>
 
-    typedef struct UnkNode            UnkNode;
-    typedef struct UnkNode_HeapRegion   UnkNode_HeapRegion;
+    typedef struct UnkNode UnkNode;
 
     typedef struct UnkNodeHeader {
         UnkNode * next;
         UnkNode * field04;
     } UnkNodeHeader;
-
-    struct UnkNode_HeapRegion {
-        u32 field00;
-        u32 field04;
-        u32 field08;
-        struct UnkNode_HeapRegion * field0c;
-    };
 
     struct UnkNode {
         UnkNode * next;
@@ -39,7 +31,7 @@
         u8 field23;
         u32 field24;
         u32 field28;
-        union { u32 field2c; struct UnkNode_HeapRegion * field2c_ptr; };
+        u32 field2c;
         u32 field30;
     };
 

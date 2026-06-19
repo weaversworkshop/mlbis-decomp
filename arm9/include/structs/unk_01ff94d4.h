@@ -4,8 +4,8 @@
     #include "types.h"
 
     typedef struct {
-        u32 field00;
-        u32 field04;
-        u32 field08[4];
+        void * field00;
+        void * field04;
+        void * field08[4];
   } UnkStruct_01ff94d4;
 #endif

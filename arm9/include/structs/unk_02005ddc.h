@@ -20,5 +20,5 @@
         };
         u32 field04;
         UnkStruct_02019a74 field08;
-    } UnkStruct_02005ddc_00;
+    } UnkStruct_02005ddc;
 #endif

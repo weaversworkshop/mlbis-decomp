@@ -21,7 +21,7 @@ FX_CONST_CSV    := lib/NitroSDK/gen/nitro/fx/fx_const.csv
 export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(call rwildcard,lib,*.c))
@@ -93,12 +93,13 @@ diff: all delinks
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 
-# Mermaid call graph (vertical). Drops lone nodes by default (CALLGRAPH_FLAGS);
-# scope a huge graph with CALLGRAPH_ARGS, e.g.:
+# Mermaid call graph (vertical). By default drops lone nodes AND mapped SDK
+# functions (game functions only) via CALLGRAPH_FLAGS; scope a huge graph with
+# CALLGRAPH_ARGS, e.g.:
 #   make callgraph CALLGRAPH_ARGS="--root func_0200907c --undone"
 #   make callgraph CALLGRAPH_ARGS="--leaves"
-# To keep lone nodes, clear the default: make callgraph CALLGRAPH_FLAGS=
-CALLGRAPH_FLAGS ?= --connected-only
+# To include SDK and/or lone nodes, override: make callgraph CALLGRAPH_FLAGS=
+CALLGRAPH_FLAGS ?= --connected-only --game-only
 CALLGRAPH_ARGS ?=
 callgraph: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
@@ -118,3 +119,7 @@ $(BUILD_DIR)/%.o: %.c
 $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c
 	@mkdir -p $(@D)
 	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -i $(dir $<) -i $(dir $<)../include $(EXTRA_CFLAGS) -c -o $@ $<
+
+$(BUILD_DIR)/lib/NitroSystem/%.o: lib/NitroSystem/%.c
+	@mkdir -p $(@D)
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -DNNS_FINALROM -i $(dir $<) -i $(dir $<)../include -i $(dir $<)../../include $(EXTRA_CFLAGS) -c -o $@ $<

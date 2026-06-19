@@ -3,9 +3,9 @@
 
     #include "types.h"
 
-    #include "structs/unk_01ff9504.h"
+    #include <nnsys/snd.h>
 
     typedef struct {
-        UnkNode * field00;
+        NNSSndHeapHandle field00;
     } UnkGlobal_01ff9468;
 #endif

@@ -4,9 +4,9 @@
 #include "main/unk_02006368.h"
 #include "main/unk_02009ab8.h"
 #include "main/unk_02009cc4.h"
-#include "main/unk_020308b0.h"
 
 #include <nitro/os.h>
+#include <nnsys/snd/sndarc.h>
 
 // MATCHED 100%
 u8 func_02006368(void) {
@@ -38,7 +38,7 @@ bool func_02009e7c(void) {
         u8 * field04 = (u8*)data_01ff9504.field04;
         u32 field24 = data_01ff9504.field24;
         u32 * ptr = (u32*)(field04 + field24);
-        func_020308b0(
+        NNS_SndArcReadFile(
             data_01ff9504.field08,
             ptr,
             chunk,

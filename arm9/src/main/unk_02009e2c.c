@@ -3,11 +3,12 @@
 #include "globals.h"
 
 #include "main/unk_02009e2c.h"
-#include "main/unk_02030bac.h"
+
+#include <nnsys/snd.h>
 
 // MATCH 100%
 void func_02009e2c(UnkNode* param1) {
-    UnkNode* r0 = param1;
+    NNSSndHeapHandle r0 = (NNSSndHeapHandle)param1;
 
     if (data_01ff9504.field22 != 0) {
         if (data_01ff9504.field22 == 1) {
@@ -23,5 +24,5 @@ void func_02009e2c(UnkNode* param1) {
         r0 = src->field00;
     }
 
-    func_02030bac(r0);
+    NNS_SndHeapSaveState(r0);
 }

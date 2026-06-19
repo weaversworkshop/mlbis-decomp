@@ -118,7 +118,10 @@ def sort_key(row, key, desc):
 def render_md(rows, target, sort_desc):
     total = len(rows)
     done = sum(1 for r in rows if r["match"] == 100.0)
-    started = sum(1 for r in rows if r["match"] is not None and r["match"] < 100.0)
+    # "in progress" = started-but-unmatched GAME functions only (SDK near-misses
+    # like SND_FlushCommand / NNS_SndPlayerSetTrackMuteEx are tracked under the
+    # SDK line, not as outstanding work).
+    started = sum(1 for r in rows if r["match"] is not None and r["match"] < 100.0 and not r["sdk"])
 
     sdk_total = sum(1 for r in rows if r["sdk"])
     sdk_done = sum(1 for r in rows if r["sdk"] and r["match"] == 100.0)

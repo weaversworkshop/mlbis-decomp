@@ -21,6 +21,7 @@ Usage:
   python tools/scripts/sdk_match.py --json   # emit mapping JSON lines
 """
 import argparse
+import bisect
 import json
 import re
 import subprocess
@@ -35,6 +36,9 @@ SYMBOLS = ROOT / "config" / "arm9" / "symbols.txt"
 
 HDR = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
 INSN = re.compile(r"^\s+([0-9a-f]+):\s+[0-9a-f ]+?\t(.*)$")
+# robust line for the delinked ROM: addr, hex encoding, then text -- catches data
+# lines like `....`/`.word` that objdump renders space-separated (no tab).
+ROM_LINE = re.compile(r"^\s+([0-9a-f]+):\s+[0-9a-f]{2,8}(?: [0-9a-f]{2,8})*\s+(.+?)\s*$")
 
 
 def normalize(body):
@@ -43,10 +47,12 @@ def normalize(body):
     for t in body:
         t = re.sub(r"\s+;.*$", "", t)
         t = re.sub(r"\s+@.*$", "", t)
-        t = re.sub(r"<[^>]*>", "<t>", t)        # call/branch targets
+        t = re.sub(r"<[^>]*>", "<t>", t)        # call/branch targets (symbol)
+        t = re.sub(r"\b[0-9a-f]+ <t>", "<t>", t)  # strip the b/bl target ADDRESS too
         t = re.sub(r"\[pc, #-?\w+\]", "[pc]", t)
         t = re.sub(r"\[pc, #-?\w+\]!", "[pc]", t)
-        if t.startswith(".word") or t.startswith(".short") or t.startswith(".byte"):
+        if (t.startswith(".word") or t.startswith(".short") or t.startswith(".byte")
+                or t.startswith("....")):
             t = ".word"                          # literal-pool entry (reloc or const)
         out.append(t.strip())
     return tuple(out)
@@ -72,6 +78,50 @@ def disasm_funcs(obj):
     if cur:
         funcs[cur] = (normalize(body), len(body))
     return funcs
+
+
+def disasm_rom(rom_o):
+    """Disassemble the delinked ROM, bucketing instructions into functions by each
+    function's [addr, addr+size) range from the object's OWN symbol table -- so internal
+    data-symbol labels (literal pools) do NOT truncate a function the way splitting on
+    `<label>:` does. Uses the .o's address space (consistent between -t and -d)."""
+    try:
+        tt = subprocess.run([OBJDUMP, "-t", str(rom_o)], capture_output=True, text=True).stdout
+        dd = subprocess.run([OBJDUMP, "-d", str(rom_o)], capture_output=True, text=True).stdout
+    except Exception:
+        return {}
+    ranges = []
+    for ln in tt.splitlines():
+        m = re.match(r"([0-9a-f]+)\s+\S+\s+F\s+\.text\s+([0-9a-f]+)\s+(\S+)\s*$", ln)
+        if m:
+            a, sz = int(m.group(1), 16), int(m.group(2), 16)
+            ranges.append((a, a + sz, m.group(3)))
+    ranges.sort()
+    starts = [r[0] for r in ranges]
+    bodies = {}
+    for ln in dd.splitlines():
+        m = ROM_LINE.match(ln)
+        if not m:
+            continue
+        a = int(m.group(1), 16)
+        i = bisect.bisect_right(starts, a) - 1
+        if i >= 0 and a < ranges[i][1]:
+            bodies.setdefault(ranges[i][2], []).append(m.group(2).strip())
+    return {n: (normalize(b), len(b)) for n, b in bodies.items()}
+
+
+def func_sizes(obj):
+    """obj path -> {func_name: byte_size} from the symbol table (exact)."""
+    try:
+        txt = subprocess.run([OBJDUMP, "-t", str(obj)], capture_output=True, text=True).stdout
+    except Exception:
+        return {}
+    out = {}
+    for ln in txt.splitlines():
+        m = re.match(r"[0-9a-f]+\s+\S+\s+F\s+\.text\s+([0-9a-f]+)\s+(\S+)\s*$", ln)
+        if m:
+            out[m.group(2)] = int(m.group(1), 16)
+    return out
 
 
 def load_symbols():
@@ -102,7 +152,7 @@ def main():
         sys.exit(f"missing {ROM_O} (run `make delinks`)")
 
     addr_of, size_of, mapped = load_symbols()
-    rom = disasm_funcs(ROM_O)
+    rom = disasm_rom(ROM_O)
     # index ROM unmapped func_<addr> by normalized body -> [names]
     rom_index = {}
     for name, (body, n) in rom.items():
@@ -120,10 +170,13 @@ def main():
     by_src = {}
     for o in sdk_objs:
         src = o.relative_to(ROOT / "build").as_posix().replace(".o", ".c")  # forward slashes for make
+        sizes = func_sizes(o)
         for sname, (body, n) in disasm_funcs(o).items():
             if n == 0:
                 continue
             cands = rom_index.get(body, [])
+            # require EXACT byte-size equality too (rejects shape-only matches, e.g. OS_Init)
+            cands = [rf for rf in cands if sizes.get(sname) == size_of.get(rf)]
             if len(cands) == 1:
                 rf = cands[0]
                 by_src.setdefault(src, []).append((sname, rf, addr_of[rf], n, False))

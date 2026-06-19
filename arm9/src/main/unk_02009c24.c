@@ -38,7 +38,7 @@ void func_02009c24() {
             break;
     }
 
-    r4->field00[1] = r4->field04;
-    r4->field04[0] = r4->field00;
+    r4->field00->field04 = r4->field04;
+    r4->field04->field00 = r4->field00;
     r4->field08 = -1;
 }

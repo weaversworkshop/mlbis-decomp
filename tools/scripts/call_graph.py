@@ -33,6 +33,7 @@ Scope it further:
   ... call_graph.py main_7 --report - --undone           # hide finished (100%) funcs
   ... call_graph.py main_7 --report - --leaves            # only leaf nodes + direct callers
   ... call_graph.py main_7 --report - --all              # every function, not just touched
+  ... call_graph.py main_7 --report - --game-only        # drop mapped SDK funcs (default in `make callgraph`)
 """
 import argparse
 import json
@@ -155,6 +156,8 @@ def main():
                     help="touched functions only, no frontier layer")
     ap.add_argument("--connected-only", action="store_true",
                     help="drop nodes with no edge in the final graph (lone nodes)")
+    ap.add_argument("--game-only", action="store_true",
+                    help="exclude mapped SDK functions (config/sdk_mappings.json); show game functions only")
     ap.add_argument("--max-nodes", type=int, default=600, help="warn above this node count")
     args = ap.parse_args()
 
@@ -167,6 +170,7 @@ def main():
 
     # "touched" = has a match % (a game .c file or a mapped SDK function).
     touched = {n for n in funcs if n in pcts}
+    sdk_nodes = {n for n in funcs if funcs[n]["address"].lower() in sdk_addrs}
     if args.all:
         nodes, frontier_nodes = set(funcs), set()
     elif args.touched_only:
@@ -208,6 +212,8 @@ def main():
         keep &= (leaves | {c for lf in leaves for c in in_adj[lf]})
     if args.undone:
         keep = {n for n in keep if pcts.get(n, 0) < 100}
+    if args.game_only:
+        keep -= sdk_nodes
 
     keep_edges = [(a, b) for (a, b) in edges if a in keep and b in keep]
 

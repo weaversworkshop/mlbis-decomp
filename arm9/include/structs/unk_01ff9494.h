@@ -3,7 +3,7 @@
 
     #include "types.h"
 
-    typedef struct UnkGlobal_01ff9464 UnkGlobal_01ff9464;
+    #include "structs/unk_01ff9464.h"
 
     typedef struct {
         u8 pad_00[0x4];

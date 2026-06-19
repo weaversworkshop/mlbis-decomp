@@ -4,8 +4,8 @@
     #include "types.h"
 
     typedef struct UnkGlobal_01ff9464 {
-        u32 * field00;
-        u32 * field04;
+        struct UnkGlobal_01ff9464 * field00;
+        struct UnkGlobal_01ff9464 * field04;
         u8 field08;
         u8 pad_09[0x3];
         void (*field0c)(void);

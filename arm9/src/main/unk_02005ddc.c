@@ -29,7 +29,7 @@ void func_0201a91c() {
 }
 
 // MATCHED 100%
-void func_02005f8c(UnkStruct_02005ddc_00 * param1) {
+void func_02005f8c(UnkStruct_02005ddc * param1) {
     param1->bit2 = 1;
     param1->dst = param1->src;
 
@@ -78,7 +78,7 @@ void func_02019a74(UnkStruct_02019a74 * param1, u16 param2) {
 }
 
 // MATCHED 100%
-bool func_02005f24(UnkStruct_02005ddc_00 * param1) {
+bool func_02005f24(UnkStruct_02005ddc * param1) {
     func_02019a74(&param1->field08, PAD_Read());
 
     if (param1->field08.field00 == 0x30c && (param1->field08.field02 & 0x30c)) {
@@ -89,7 +89,7 @@ bool func_02005f24(UnkStruct_02005ddc_00 * param1) {
 }
 
 // MATCHED 100%
-void func_02005ddc(UnkStruct_02005ddc_00 * param1) {
+void func_02005ddc(UnkStruct_02005ddc * param1) {
     if (param1->bit2) {
         return;
     }
