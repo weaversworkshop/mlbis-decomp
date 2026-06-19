@@ -1,7 +1,7 @@
 #ifndef MAIN_UNK_02030D10_H
 #define MAIN_UNK_02030D10_H
 
-typedef struct UnkNode UnkNode;
+#include "structs/unk_01ff9504.h"
 
 bool func_02030d10(UnkNode* param1);
 

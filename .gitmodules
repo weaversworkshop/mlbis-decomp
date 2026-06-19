@@ -4,3 +4,6 @@
 [submodule "lib/mw-libraries"]
 	path = lib/mw-libraries
 	url = https://github.com/mid-kid/mw-libraries.git
+[submodule "lib/NitroSystem"]
+	path = lib/NitroSystem
+	url = https://github.com/ntrtwl/NitroSystem

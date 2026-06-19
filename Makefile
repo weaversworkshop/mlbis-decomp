@@ -10,6 +10,7 @@ DELINKS_DIR := $(BUILD_DIR)/delinks
 INCLUDE_DIR := arm9/include
 
 SDK_INCLUDE     := lib/NitroSDK/include
+NNS_INCLUDE     := lib/NitroSystem/include
 MSL_INCLUDE     := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_Common/Include
 MSL_ARM_INCLUDE := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_ARM/Include
 SHIM_INCLUDE    := lib/nitro/include
@@ -20,10 +21,10 @@ FX_CONST_CSV    := lib/NitroSDK/gen/nitro/fx/fx_const.csv
 export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/%,$(call rwildcard,lib,*.c))
+LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(call rwildcard,lib,*.c))
 SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c)
 
 # fs_overlay.c needs linker-script symbols; os_china.c needs China-region NVRAM.
@@ -96,6 +97,9 @@ progress: all delinks
 # EXTRA_CFLAGS for additional flags. Used to match ROM bytes that depend on
 # specific compiler versions or build-time defines.
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
+# snd_command.c was built with whole-program IPA; -ipa program makes SND_FlushCommand's
+# register allocation match (-ipa file leaves it at 97.86%). Last -ipa flag wins.
+$(BUILD_DIR)/lib/NitroSDK/libraries/snd/src/snd_command.o: EXTRA_CFLAGS := -ipa program
 
 MWCC_OVERRIDE ?=
 EXTRA_CFLAGS  ?=

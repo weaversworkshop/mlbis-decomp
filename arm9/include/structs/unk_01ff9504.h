@@ -3,6 +3,8 @@
 
     #include "types.h"
 
+    #include <nnsys/fnd/list.h>
+
     typedef struct UnkNode            UnkNode;
     typedef struct UnkNode_HeapRegion   UnkNode_HeapRegion;
 
@@ -10,13 +12,6 @@
         UnkNode * next;
         UnkNode * field04;
     } UnkNodeHeader;
-
-    typedef struct UnkNodeSub {
-        void * field00;
-        void * field04;
-        u16 field08_lo;
-        u16 field0a;
-    } UnkNodeSub;
 
     struct UnkNode_HeapRegion {
         u32 field00;

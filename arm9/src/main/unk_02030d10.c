@@ -2,7 +2,6 @@
 
 #include "globals.h"
 
-#include "main/unk_0202e970.h"
 #include "main/unk_0202eda8.h"
 #include "main/unk_02030ccc.h"
 #include "main/unk_02030d10.h"
@@ -21,8 +20,8 @@ bool func_02030d10(UnkNode* param1) {
 
     func_02030ccc(ret);
 
-    func_0202e970(
-        (UnkNodeSub*)(&param1->field04),
+    NNS_FndAppendListObject(
+        (NNSFndList*)(&param1->field04),
         ret
     );
 

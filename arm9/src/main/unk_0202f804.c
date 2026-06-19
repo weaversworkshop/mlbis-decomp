@@ -2,19 +2,17 @@
 
 #include "globals.h"
 
-#include "main/unk_0202ea14.h"
-#include "main/unk_0202ead8.h"
 #include "main/unk_0202f804.h"
 
 // MATCH 100%
 void func_0202f804(UnkStruct_0202f9cc * param1) {
-    UnkStruct_0202f9cc * r1 = func_0202ead8(&data_0205e6d8, NULL);
+    UnkStruct_0202f9cc * r1 = NNS_FndGetNextListObject(&data_0205e6d8, NULL);
     while (r1 != NULL) {
         if (param1->field3d < r1->field3d)
             break;
 
-        r1 = func_0202ead8(&data_0205e6d8, r1);
+        r1 = NNS_FndGetNextListObject(&data_0205e6d8, r1);
     }
 
-    func_0202ea14(&data_0205e6d8, r1, param1);
+    NNS_FndInsertListObject(&data_0205e6d8, r1, param1);
 }

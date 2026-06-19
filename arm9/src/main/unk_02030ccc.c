@@ -4,9 +4,7 @@
 
 #include "main/unk_02030ccc.h"
 
-extern u32 func_0202e92c(void * a, u32 b);
-
 // MATCH 100%
-u32 func_02030ccc(void * param1) {
-    return func_0202e92c(param1, 0);
+void func_02030ccc(void * param1) {
+    NNS_FndInitList(param1, 0);
 }

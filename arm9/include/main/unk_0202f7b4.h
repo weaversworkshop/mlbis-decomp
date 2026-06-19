@@ -3,7 +3,8 @@
 
 #include "types.h"
 #include "structs/unk_0202f9cc.h"
+#include <nnsys/fnd/list.h>
 
-void func_0202f7b4(UnkNodeSub * param1, UnkStruct_0202f9cc * param2);
+void func_0202f7b4(NNSFndList * param1, UnkStruct_0202f9cc * param2);
 
 #endif

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-u32 func_02030ccc(void * param1);
+void func_02030ccc(void * param1);
 
 #endif

@@ -31,12 +31,41 @@
     { "addr": "0x02039d1c", "sdk_name": "OS_DisableInterrupts_IrqAndFiq",      "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" },
     { "addr": "0x02039d30", "sdk_name": "OS_RestoreInterrupts_IrqAndFiq",      "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" },
     { "addr": "0x02039d48", "sdk_name": "OS_GetCpsrIrq",                       "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" },
-    { "addr": "0x02039d54", "sdk_name": "OS_GetProcMode",                      "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" }
+    { "addr": "0x02039d54", "sdk_name": "OS_GetProcMode",                      "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" },
+    { "addr": "0x0203b240", "sdk_name": "SND_RecvCommandReply",                "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203b9a8", "sdk_name": "SNDi_GetFinishedCommandTag",          "library": "snd",     "header": "nitro/snd/common/work.h", "confidence": "certain" },
+    { "addr": "0x02039d60", "sdk_name": "OS_SpinWait",                         "library": "os",      "header": "nitro/os/common/system.h", "confidence": "certain" },
+    { "addr": "0x020609a0", "sdk_name": "sFreeList",                           "library": "snd",     "confidence": "certain" },
+    { "addr": "0x020609c4", "sdk_name": "sWaitingCommandListQueue",            "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0203b350", "sdk_name": "SND_AllocCommand",                    "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203b3d8", "sdk_name": "SND_PushCommand",                     "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203b0c8", "sdk_name": "PushCommand_impl",                    "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0203b078", "sdk_name": "SNDi_SetPlayerParam",                 "library": "snd",     "header": "nitro/snd/ARM9/interface.h", "confidence": "certain" },
+    { "addr": "0x0203ad34", "sdk_name": "SND_SetPlayerChannelPriority",        "library": "snd",     "header": "nitro/snd/common/seq.h", "confidence": "certain" },
+    { "addr": "0x0203b83c", "sdk_name": "IsCommandAvailable",                  "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0203b7f4", "sdk_name": "AllocCommand",                        "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0203b7cc", "sdk_name": "RequestCommandProc",                  "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0203b72c", "sdk_name": "SND_CountWaitingCommand",             "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203b410", "sdk_name": "SND_FlushCommand",                    "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203c1f0", "sdk_name": "PXI_SendWordByFifo",                  "library": "pxi",     "header": "nitro/pxi/fifo.h", "confidence": "certain" },
+    { "addr": "0x0203914c", "sdk_name": "OS_IsRunOnEmulator",                  "library": "os",      "header": "nitro/os/common/emulator.h", "confidence": "certain", "note": "retail SDK_FINALROM stub: mov r0,#0; bx lr (return FALSE)" },
+    { "addr": "0x02060c80", "sdk_name": "sCommandArray",                       "library": "snd",     "confidence": "certain" },
+    { "addr": "0x0202e92c", "sdk_name": "NNS_FndInitList",                     "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202e944", "sdk_name": "SetFirstObject",                      "library": "fnd",     "confidence": "certain" },
+    { "addr": "0x0202e970", "sdk_name": "NNS_FndAppendListObject",             "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202e9c4", "sdk_name": "NNS_FndPrependListObject",            "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202ea14", "sdk_name": "NNS_FndInsertListObject",             "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202ea78", "sdk_name": "NNS_FndRemoveListObject",             "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202ead8", "sdk_name": "NNS_FndGetNextListObject",            "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" },
+    { "addr": "0x0202eaf0", "sdk_name": "NNS_FndGetPrevListObject",            "library": "fnd",     "header": "nnsys/fnd/list.h", "confidence": "certain" }
   ],
   "objdiff_units": [
     { "source": "lib/NitroSDK/libraries/os/src/os_cache.c",     "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_cache" },
     { "source": "lib/NitroSDK/libraries/os/src/os_interrupt.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_interrupt" },
     { "source": "lib/NitroSDK/libraries/os/src/os_system.c",    "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/os/os_system" },
-    { "source": "lib/NitroSDK/libraries/mi/src/mi_memory.c",  "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/mi/mi_memory" }
+    { "source": "lib/NitroSDK/libraries/mi/src/mi_memory.c",  "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/mi/mi_memory" },
+    { "source": "lib/NitroSDK/libraries/snd/src/snd_command.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/snd/snd_command" },
+    { "source": "lib/NitroSDK/libraries/snd/src/snd_interface.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "sdk/snd/snd_interface" },
+    { "source": "lib/NitroSystem/libraries/fnd/src/list.c", "target": "build/delinks/_dsd_gap@main_7.o", "name": "nns/fnd/list" }
   ]
 }

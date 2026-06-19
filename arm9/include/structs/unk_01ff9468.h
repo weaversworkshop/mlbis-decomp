@@ -3,7 +3,7 @@
 
     #include "types.h"
 
-    typedef struct UnkNode UnkNode;
+    #include "structs/unk_01ff9504.h"
 
     typedef struct {
         UnkNode * field00;
