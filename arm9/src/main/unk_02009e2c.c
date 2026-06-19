@@ -6,7 +6,7 @@
 
 #include <nnsys/snd.h>
 
-// MATCH 100%
+// MATCHED 100%
 void func_02009e2c(UnkNode* param1) {
     NNSSndHeapHandle r0 = (NNSSndHeapHandle)param1;
 

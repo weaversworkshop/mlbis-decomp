@@ -4,7 +4,7 @@
 
 #include "main/unk_02009c24.h"
 
-// MATCH 100%
+// MATCHED 100%
 void func_02009c24() {
     UnkGlobal_01ff9464 * r1 = &data_01ff9464;
     UnkGlobal_01ff9464 * r4 = data_01ff9494.field04;

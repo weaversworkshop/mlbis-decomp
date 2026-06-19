@@ -9,7 +9,7 @@
 
 extern s32 func_020348fc(s32 param1, u32 param2);
 
-// MATCH 100%
+// MATCHED 100%
 void func_020092e0(u32 param1, u8 param2, u32 param3) {
     UnkStruct_01ff94d4 * r6 = &data_01ff94d4[param2];
     const NNSSndArcSeqInfo * r4 = NNS_SndArcGetSeqInfo(param1);

@@ -14,7 +14,7 @@
 extern void func_02009668(u32 a, u8 b);
 extern void func_02009b10(u32 a, u32 b, u8 c, u32 d, u8 e);
 
-// MATCH 99.89% -- weird function linking issue (func_02009e2c)
+// MATCHED 99.89% -- weird function linking issue (func_02009e2c)
 void func_02009cc4() {
     if (func_02009e7c() == false) {
         return;

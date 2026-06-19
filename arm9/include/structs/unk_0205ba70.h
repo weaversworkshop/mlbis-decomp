@@ -10,7 +10,7 @@
         u8 field11;
         union {
             u16 field12;
-            u8 field12_b;
+            u8 field12_lo;
         };
     } UnkStruct_0205ba70_00;
 

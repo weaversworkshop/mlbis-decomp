@@ -16,6 +16,7 @@
     #include "structs/unk_02005ddc.h"
     #include "structs/unk_02019a74.h"
     #include "structs/unk_0205ba70.h"
+    #include "structs/unk_0205bad4.h"
 
     extern UnkGlobal_01ff9464 data_01ff9464;
     extern UnkGlobal_01ff9468 data_01ff9468;
@@ -41,4 +42,5 @@
     extern u16 data_0204ac4c[10];
     extern u32 * data_020564bc[];
     extern UnkGlobal_0205ba70 data_0205ba70;
+    extern UnkGlobal_0205bad4 data_0205bad4;
 #endif

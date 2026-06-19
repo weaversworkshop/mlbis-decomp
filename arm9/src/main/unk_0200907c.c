@@ -6,7 +6,7 @@
 
 #include <nnsys/snd.h>
 
-// MATCH 100%
+// MATCHED 100%
 void func_0200907c() {
     UnkStruct_01ff94c4 * r7 = data_01ff94c4;
     s8 r8;

@@ -7,22 +7,33 @@
 #include <nitro/os.h>
 #include <nitro/pad.h>
 
-extern void func_0201e8b4(void);
-
 // MATCHED 100%
 void func_0201a91c() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
     UnkStruct_0205ba70_00 * node = data_0205ba70.field18;
 
-    if (node != NULL) {
-        do {
-            u8 flag = node->field11;
-            if (flag != 0 && flag != 0xff) {
-                node->field12_b = node->field12_b & ~0x1;
-                node->field12_b = node->field12_b | 0x2;
-            }
-            node = node->field0c;
-        } while (node != NULL);
+    while (node != NULL) {
+        if ( node->field11 != 0 &&  node->field11 != 0xff) {
+            node->field12_lo = node->field12_lo & ~0x1;
+            node->field12_lo = node->field12_lo | 0x2;
+        }
+        node = node->field0c;
+    }
+
+    OS_EnableIrqMask(mask);
+}
+
+// MATCHED 100%
+void func_0201e8b4() {
+    OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
+    UnkStruct_0205bad4_00 * r3 = data_0205bad4.field08;
+
+    while (r3 != NULL) {
+        if (r3->field15 != 0 && r3->field15 != 0xff) {
+            r3->field16 = r3->field16 & ~1;
+            r3->field16 = r3->field16 | 2;
+        }
+        r3 = r3->field0c;
     }
 
     OS_EnableIrqMask(mask);
