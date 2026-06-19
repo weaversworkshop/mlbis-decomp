@@ -34,6 +34,7 @@ NOTES.md
 MAPPINGS.md
 
 *_todo.md
+*_callgraph.mmd
 
 # permuter funcs
 tools/permuter/func_*
