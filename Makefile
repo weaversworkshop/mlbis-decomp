@@ -49,7 +49,7 @@ TARGET ?= main_7
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 
-.PHONY: all clean distclean diff objdiff delinks progress sdk-rename sdk
+.PHONY: all clean distclean diff objdiff delinks progress callgraph sdk-rename sdk
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -93,13 +93,17 @@ diff: all delinks
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 
+# Mermaid call graph (vertical). Scope a huge graph with CALLGRAPH_ARGS, e.g.:
+#   make callgraph CALLGRAPH_ARGS="--root func_0200907c --undone"
+#   make callgraph CALLGRAPH_ARGS="--leaves"
+CALLGRAPH_ARGS ?=
+callgraph: all delinks
+	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_ARGS)
+
 # Per-file build overrides. Set MWCC_OVERRIDE for a different mwccarm binary,
 # EXTRA_CFLAGS for additional flags. Used to match ROM bytes that depend on
 # specific compiler versions or build-time defines.
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
-# snd_command.c was built with whole-program IPA; -ipa program makes SND_FlushCommand's
-# register allocation match (-ipa file leaves it at 97.86%). Last -ipa flag wins.
-$(BUILD_DIR)/lib/NitroSDK/libraries/snd/src/snd_command.o: EXTRA_CFLAGS := -ipa program
 
 MWCC_OVERRIDE ?=
 EXTRA_CFLAGS  ?=

@@ -1,0 +1,240 @@
+flowchart TB
+  classDef done fill:#64dd17,stroke:#222,color:#000
+  classDef near fill:#9ccc65,stroke:#222,color:#000
+  classDef mid fill:#fdd835,stroke:#222,color:#000
+  classDef low fill:#e53935,stroke:#222,color:#000
+  classDef none fill:#bdbdbd,stroke:#222,color:#000
+  classDef frontier fill:#fafafa,stroke:#888,stroke-width:1px,stroke-dasharray:5 3,color:#555
+  n0{{"AllocCommand"}}
+  n1(["AutoloadCallback"])
+  n2(("BitUnPack"))
+  n3(("CpuFastSet"))
+  n4(("CpuSet"))
+  n5(("DC_FlushRange"))
+  n6(("DC_InvalidateRange"))
+  n7(("DC_StoreRange"))
+  n8(("Div"))
+  n9(("GetCRC16"))
+  n10(("Halt"))
+  n11(("HuffUnCompReadByCallback"))
+  n12(("IntrWait"))
+  n13{{"IsCommandAvailable"}}
+  n14(("IsDebugger"))
+  n15(("LZ77UnCompReadByCallbackWrite16bit"))
+  n16(("LZ77UnCompReadNormalWrite8bit"))
+  n17(("MI_CpuFill8"))
+  n18(("MIi_CpuClear32"))
+  n19(("Mod"))
+  n20{{"NNS_FndAppendListObject"}}
+  n21(("NNS_FndGetNextListObject"))
+  n22(("NNS_FndGetPrevListObject"))
+  n23(("NNS_FndInitList"))
+  n24{{"NNS_FndInsertListObject"}}
+  n25{{"NNS_FndPrependListObject"}}
+  n26(("NNS_FndRemoveListObject"))
+  n27(("OS_DisableInterrupts"))
+  n28(("OS_DisableInterrupts_IrqAndFiq"))
+  n29(("OS_DisableIrqMask"))
+  n30(("OS_EnableInterrupts"))
+  n31(("OS_EnableIrqMask"))
+  n32(("OS_GetCpsrIrq"))
+  n33(("OS_GetProcMode"))
+  n34[/"OS_IsRunOnEmulator"/]
+  n35(("OS_RestoreInterrupts"))
+  n36(("OS_RestoreInterrupts_IrqAndFiq"))
+  n37(("OS_SpinWait"))
+  n38[/"PXI_SendWordByFifo"/]
+  n39{{"PushCommand_impl"}}
+  n40(("RLUnCompReadByCallbackWrite16bit"))
+  n41(("RLUnCompReadNormalWrite8bit"))
+  n42{{"RequestCommandProc"}}
+  n43{{"SND_AllocCommand"}}
+  n44{{"SND_CountWaitingCommand"}}
+  n45{{"SND_FlushCommand"}}
+  n46{{"SND_PushCommand"}}
+  n47{{"SND_RecvCommandReply"}}
+  n48(("SND_SetPlayerChannelPriority"))
+  n49[/"SNDi_GetFinishedCommandTag"/]
+  n50{{"SNDi_SetPlayerParam"}}
+  n51(("SetFirstObject"))
+  n52(("SoftReset"))
+  n53(("Sqrt"))
+  n54(("VBlankIntrWait"))
+  n55(("WaitByLoop"))
+  n56(["cpu_clear32"])
+  n57(["cpu_copy32"])
+  n58(["func_02004b98"])
+  n59(["func_020057ac"])
+  n60(["func_02005ca4"])
+  n61["func_02005ddc"]
+  n62["func_02005f24"]
+  n63["func_02005f8c"]
+  n64(["func_02005fe0"])
+  n65["func_02006368"]
+  n66(["func_02006388"])
+  n67["func_0200907c"]
+  n68["func_020092e0"]
+  n69[/"func_02009668"/]
+  n70(["func_02009ab8"])
+  n71[/"func_02009b10"/]
+  n72(["func_02009c24"])
+  n73["func_02009cc4"]
+  n74(["func_02009e2c"])
+  n75["func_02009e7c"]
+  n76(["func_02019a74"])
+  n77(["func_0201a610"])
+  n78(["func_0201a630"])
+  n79["func_0201a91c"]
+  n80[/"func_0201e8b4"/]
+  n81["func_0202ec70"]
+  n82["func_0202eccc"]
+  n83["func_0202eda8"]
+  n84["func_0202ee08"]
+  n85(["func_0202ee58"])
+  n86[/"func_0202f194"/]
+  n87["func_0202f234"]
+  n88["func_0202f250"]
+  n89[/"func_0202f270"/]
+  n90[/"func_0202f290"/]
+  n91[/"func_0202f300"/]
+  n92["func_0202f7b4"]
+  n93["func_0202f804"]
+  n94["func_0202f9cc"]
+  n95[/"func_02030540"/]
+  n96[/"func_02030608"/]
+  n97[/"func_0203066c"/]
+  n98["func_020308b0"]
+  n99[/"func_020309c0"/]
+  n100["func_02030bac"]
+  n101(["func_02030ccc"])
+  n102["func_02030d10"]
+  n103[/"func_02031614"/]
+  n104[/"func_020348fc"/]
+  n105(["func_02038848"])
+  n106[/"func_020389a8"/]
+  n107[/"func_02038dc4"/]
+  n108["func_02038e14"]
+  n109[/"func_0203b6b4"/]
+  n110[/"func_0203b6f0"/]
+  n111["func_0203c390"]
+  n112[/"func_0203d1dc"/]
+  n113[/"func_0203d270"/]
+  n114["func_0203d2b4"]
+  n115["func_0203da50"]
+  n116["func_0203dc48"]
+  n117(["func_0203dd50"])
+  n118(["func_0203dd60"])
+  n119(["func_0203dd70"])
+  n0 --> n27
+  n0 --> n35
+  n13 --> n27
+  n13 --> n34
+  n13 --> n35
+  n20 --> n51
+  n24 --> n20
+  n24 --> n25
+  n25 --> n51
+  n39 --> n43
+  n39 --> n46
+  n42 --> n38
+  n43 --> n0
+  n43 --> n13
+  n43 --> n42
+  n43 --> n44
+  n43 --> n45
+  n43 --> n47
+  n44 --> n109
+  n44 --> n110
+  n45 --> n5
+  n45 --> n27
+  n45 --> n35
+  n45 --> n38
+  n45 --> n42
+  n45 --> n47
+  n46 --> n27
+  n46 --> n35
+  n47 --> n27
+  n47 --> n35
+  n47 --> n37
+  n47 --> n49
+  n50 --> n39
+  n61 --> n62
+  n61 --> n63
+  n62 --> n76
+  n63 --> n78
+  n63 --> n79
+  n63 --> n80
+  n65 --> n73
+  n67 --> n87
+  n67 --> n88
+  n67 --> n89
+  n67 --> n90
+  n67 --> n95
+  n68 --> n67
+  n68 --> n86
+  n68 --> n89
+  n68 --> n90
+  n68 --> n91
+  n68 --> n95
+  n68 --> n96
+  n68 --> n97
+  n68 --> n99
+  n68 --> n103
+  n68 --> n104
+  n73 --> n17
+  n73 --> n68
+  n73 --> n69
+  n73 --> n70
+  n73 --> n71
+  n73 --> n72
+  n73 --> n74
+  n73 --> n75
+  n75 --> n7
+  n75 --> n70
+  n75 --> n98
+  n79 --> n29
+  n79 --> n31
+  n81 --> n56
+  n82 --> n56
+  n83 --> n81
+  n83 --> n82
+  n84 --> n81
+  n87 --> n94
+  n88 --> n48
+  n92 --> n21
+  n92 --> n24
+  n93 --> n21
+  n93 --> n24
+  n94 --> n26
+  n94 --> n92
+  n94 --> n93
+  n98 --> n118
+  n98 --> n119
+  n100 --> n84
+  n100 --> n85
+  n100 --> n102
+  n102 --> n20
+  n102 --> n83
+  n102 --> n101
+  n108 --> n27
+  n108 --> n35
+  n108 --> n105
+  n108 --> n106
+  n111 --> n27
+  n111 --> n35
+  n111 --> n108
+  n114 --> n27
+  n114 --> n35
+  n114 --> n107
+  n114 --> n111
+  n114 --> n112
+  n114 --> n113
+  n115 --> n114
+  n115 --> n116
+  n116 --> n27
+  n116 --> n35
+  n116 --> n107
+  n116 --> n113
+  class n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n23,n24,n25,n26,n27,n28,n29,n30,n31,n32,n33,n35,n36,n37,n39,n40,n41,n42,n43,n44,n46,n47,n48,n50,n51,n52,n53,n54,n55,n56,n57,n58,n59,n60,n61,n62,n63,n64,n65,n66,n67,n68,n70,n72,n73,n74,n75,n76,n77,n78,n79,n81,n82,n83,n84,n85,n87,n88,n92,n93,n94,n98,n100,n101,n102,n105,n108,n111,n114,n115,n116,n117,n118,n119 done
+  class n45 near
+  class n34,n38,n49,n69,n71,n80,n86,n89,n90,n91,n95,n96,n97,n99,n103,n104,n106,n107,n109,n110,n112,n113 frontier

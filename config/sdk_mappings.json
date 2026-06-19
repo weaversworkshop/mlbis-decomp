@@ -46,7 +46,7 @@
     { "addr": "0x0203b7f4", "sdk_name": "AllocCommand",                        "library": "snd",     "confidence": "certain" },
     { "addr": "0x0203b7cc", "sdk_name": "RequestCommandProc",                  "library": "snd",     "confidence": "certain" },
     { "addr": "0x0203b72c", "sdk_name": "SND_CountWaitingCommand",             "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
-    { "addr": "0x0203b410", "sdk_name": "SND_FlushCommand",                    "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain" },
+    { "addr": "0x0203b410", "sdk_name": "SND_FlushCommand",                    "library": "snd",     "header": "nitro/snd/common/command.h", "confidence": "certain", "note": "matches 97.86%: register-allocation diff in the FIFO-retry loop. NOT fixable via -ipa program (yields an empty object)." },
     { "addr": "0x0203c1f0", "sdk_name": "PXI_SendWordByFifo",                  "library": "pxi",     "header": "nitro/pxi/fifo.h", "confidence": "certain" },
     { "addr": "0x0203914c", "sdk_name": "OS_IsRunOnEmulator",                  "library": "os",      "header": "nitro/os/common/emulator.h", "confidence": "certain", "note": "retail SDK_FINALROM stub: mov r0,#0; bx lr (return FALSE)" },
     { "addr": "0x02060c80", "sdk_name": "sCommandArray",                       "library": "snd",     "confidence": "certain" },
