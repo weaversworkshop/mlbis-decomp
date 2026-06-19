@@ -6,7 +6,7 @@
 #include "main/unk_02009cc4.h"
 
 #include <nitro/os.h>
-#include <nnsys/snd/sndarc.h>
+#include <nnsys/snd.h>
 
 // MATCHED 100%
 u8 func_02006368(void) {
@@ -14,11 +14,6 @@ u8 func_02006368(void) {
         return data_01ff9504.field20;
     }
     func_02009cc4();
-}
-
-// MATCHED 100%
-u8 func_02006388(void) {
-    return data_01ff9504.field20;
 }
 
 // MATCHED 100%
