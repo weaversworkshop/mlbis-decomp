@@ -345,7 +345,8 @@
       "library": "snd",
       "header": "nitro/snd/common/command.h",
       "confidence": "certain",
-      "note": "matches 97.86%: register-allocation diff in the FIFO-retry loop. NOT fixable via -ipa program (yields an empty object)."
+      "match": "floor-regalloc",
+      "note": "FLOOR 97.86%: register-allocation diff in the FIFO-retry loop; survived SDK_FINALROM/THREAD_INFINITY/CODE_ARM. Identity correct. NOT fixable via -ipa program (yields an empty object)."
     },
     {
       "addr": "0x0203c1f0",
@@ -3017,7 +3018,8 @@
       "addr": "0x0202f270",
       "sdk_name": "NNS_SndPlayerSetTrackMuteEx",
       "library": "snd",
-      "confidence": "certain"
+      "confidence": "certain",
+      "note": "byte-identical (per-symbol match_percent 100%); closed by data-symbol pass. objdiff report fuzzy_match_percent understates (~99.4%) -- see make-progress metric note."
     },
     {
       "addr": "0x0202f2c0",
@@ -3542,7 +3544,8 @@
       "sdk_name": "init_cp15",
       "library": "init",
       "confidence": "certain",
-      "note": "tu_diff content+pool match"
+      "match": "floor-linker-symbol",
+      "note": "FLOOR 99.91%: references DTCM autoload/linker symbols (SDK_AUTOLOAD_DTCM_START, data_027e00xx) absent as ROM data symbols. crt0-special. Identity correct."
     },
     {
       "addr": "0x02043498",
@@ -3633,7 +3636,8 @@
       "sdk_name": "OSi_DisplayExContext",
       "library": "os",
       "confidence": "certain",
-      "note": "tu_diff content+pool match"
+      "match": "floor-split-symbol",
+      "note": "FLOOR 99.97%: trampoline return-address literal (SDK '.word OSi_DisplayExContext+0x50'; ROM has raw 0x02039adc). dsd needs an exact symbol at that addr and can't synthesize func+addend -> irreducible. Identity correct."
     },
     {
       "addr": "0x020394fc",
@@ -3851,6 +3855,202 @@
       "library": "spi",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0204f1dc",
+      "sdk_name": "FX_AtanTable_",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0204f2e0",
+      "sdk_name": "FX_AtanIdxTable_",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0204f554",
+      "sdk_name": "SNDi_DecibelTable",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0204fc54",
+      "sdk_name": "VolumeTable",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0204ff28",
+      "sdk_name": "fsi_default_command",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02055cc0",
+      "sdk_name": "GXi_DmaId",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205c29c",
+      "sdk_name": "sRootList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205e6d8",
+      "sdk_name": "sPrioList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205eb24",
+      "sdk_name": "sPlayer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205efa8",
+      "sdk_name": "sStrmList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205eff4",
+      "sdk_name": "sStrmChannel",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205f6bc",
+      "sdk_name": "sFreeCommandList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205fd4c",
+      "sdk_name": "sStrmPlayer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02060522",
+      "sdk_name": "GXi_VRamLockId",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02060524",
+      "sdk_name": "gGXState",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02060890",
+      "sdk_name": "OSi_ExContext",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02062480",
+      "sdk_name": "sCallbackTable",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x020624e8",
+      "sdk_name": "FifoRecvCallbackTable",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0206256c",
+      "sdk_name": "current_dir_pos",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02062594",
+      "sdk_name": "fsi_arc_rom",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02062740",
+      "sdk_name": "cardi_common",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02062fac",
+      "sdk_name": "CTRDGi_Work",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02062fe0",
+      "sdk_name": "headerBuf",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x027e0000",
+      "sdk_name": "SDK_AUTOLOAD_DTCM_START",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x027e11f0",
+      "sdk_name": "OSi_IrqThreadQueue",
+      "library": "data",
+      "confidence": "certain",
+      "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02060864",
+      "sdk_name": "OSi_DebuggerHandler",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_exception .bss global (anchored via OSi_ExContext)"
+    },
+    {
+      "addr": "0x02060868",
+      "sdk_name": "OSi_UserExceptionHandlerArg",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_exception .bss global (anchored via OSi_ExContext)"
+    },
+    {
+      "addr": "0x0206086c",
+      "sdk_name": "OSi_UserExceptionHandler",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_exception .bss global (anchored via OSi_ExContext)"
     }
   ],
   "objdiff_units": [

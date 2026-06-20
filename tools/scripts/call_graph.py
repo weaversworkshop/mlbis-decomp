@@ -222,6 +222,13 @@ def main():
         keep &= linked
         keep_edges = [(a, b) for (a, b) in keep_edges if a in keep and b in keep]
 
+    # recompute leaves against the FINAL graph: a node whose edges were all
+    # filtered out (e.g. game func that only called now-dropped SDK nodes) is a leaf
+    kept_out = {n: set() for n in keep}
+    for a, b in keep_edges:
+        kept_out[a].add(b)
+    leaves = {n for n in keep if n not in frontier_nodes and not kept_out[n]}
+
     if len(keep) > args.max_nodes:
         print(f"WARNING: {len(keep)} nodes (> --max-nodes {args.max_nodes}); "
               f"consider --root/--undone/--leaves to scope it down.", file=sys.stderr)

@@ -49,7 +49,7 @@ TARGET ?= main_7
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 
-.PHONY: all clean distclean diff objdiff delinks progress callgraph sdk-rename sdk
+.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -92,6 +92,11 @@ diff: all delinks
 
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+
+# Faithfulness audit: branches across a symbol boundary with no relocation
+# (the `bl <invalid>` / trampoline class). Independent of the match-% report.
+check-relocs: delinks
+	python $(SCRIPTS)/check_relocs.py
 
 # Mermaid call graph (vertical). By default drops lone nodes AND mapped SDK
 # functions (game functions only) via CALLGRAPH_FLAGS; scope a huge graph with
