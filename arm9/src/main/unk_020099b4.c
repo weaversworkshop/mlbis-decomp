@@ -3,15 +3,14 @@
 #include "globals.h"
 
 #include "main/unk_020099b4.h"
+#include "main/unk_02009a9c.h"
 
 #include <nnsys/snd.h>
 
-// NNS_SndHeapAlloc
-void * func_02009a9c(NNSSndHeapHandle param1, u32 param2, void (callback)(void), const SNDWaveArc * param4, s32 param5);
 // ???
 void func_02009ad8(void * param1, u32 param2, u32 param3, u32 param4, u32 param5, u32 param6);
 // SingleWaveDisposeCallback
-void func_0200a074(void);
+void func_0200a074(void * mem, u32 size, u32 data1, u32 data2);
 
 // MATCHED 100%  ?? LoadSingleWave modified
 bool func_020099b4(const SNDWaveArc * waveArc, s32 waveNo, u32 fileId, NNSSndHeapHandle heap, u32 param5) {
