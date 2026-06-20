@@ -12,5 +12,5 @@ void * func_02009a9c(NNSSndHeapHandle param1, u32 param2, NNSSndHeapDisposeCallb
         param2 = 0x1c;
     }
 
-    NNS_SndHeapAlloc(param1, param2, callback, param4, param5);
+    return NNS_SndHeapAlloc(param1, param2, callback, param4, param5);
 }

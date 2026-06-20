@@ -3,8 +3,6 @@
 
     #include "types.h"
 
-    #include <nnsys/fnd/list.h>
-
     typedef struct UnkNode UnkNode;
 
     typedef struct UnkNodeHeader {
