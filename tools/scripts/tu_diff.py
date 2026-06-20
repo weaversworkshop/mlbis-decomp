@@ -251,7 +251,7 @@ def main():
     mapped = load_mapped_addrs()
 
     if args.all:
-        sdk_os = sorted((ROOT / "build" / "lib" / "NitroSDK").rglob("*.o"))
+        sdk_os = sorted((ROOT / "build" / "lib").rglob("*.o"))
     else:
         if not args.sdk_o:
             ap.error("provide an SDK .o or use --all")

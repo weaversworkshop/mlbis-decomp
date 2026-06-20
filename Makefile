@@ -25,12 +25,33 @@ MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enu
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(call rwildcard,lib,*.c))
-SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c)
+# `make sdk` compiles every library .o we can, so tu_diff.py can content-match
+# the whole SDK surface against the ROM (catches inlined/linked SDK in game TUs).
+# Covers NitroSDK + NitroSystem + the DS2.0 MSL C runtime (the version this game
+# built with -- NOT the OLD / DS1.2 MSL trees in the submodule).
+MSL := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C
+SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c) \
+                $(call rwildcard,lib/NitroSystem,*.c) \
+                $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0,*.c) \
+                $(call rwildcard,lib/syscall,*.c)
 
-# fs_overlay.c needs linker-script symbols; os_china.c needs China-region NVRAM.
+# Files that can't compile standalone in this tree:
+# - fs_overlay.c needs linker-script symbols; os_china.c needs China NVRAM.
+# - MSL formatted-I/O, alloc, wide-char, and EABI runtime-init reference a C++
+#   <ctime> header (and heap-config defines) not shipped in this MSL.
 SDK_SKIP := lib/NitroSDK/libraries/fs/src/fs_overlay.c \
-            lib/NitroSDK/libraries/os/src/os_china.c
-SDK_C_FILES := $(filter-out $(SDK_SKIP),$(SDK_C_FILES))
+            lib/NitroSDK/libraries/os/src/os_china.c \
+            $(MSL)/MSL_Common/Src/alloc.c $(MSL)/MSL_Common/Src/printf.c \
+            $(MSL)/MSL_Common/Src/scanf.c $(MSL)/MSL_Common/Src/time.c \
+            $(MSL)/MSL_Common/Src/char_io.c $(MSL)/MSL_Common/Src/direct_io.c \
+            $(MSL)/MSL_Common/Src/mbstring.c \
+            $(wildcard $(MSL)/MSL_Common/Src/w*.c) \
+            lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_Extras/MSL_Common/Src/extras.c
+# MSL Runtime helpers (setjmp, rt_div0, Thumb_interworking, fp env, ...) live in
+# dirs with '(' in the path, which break make's recipe shell when passed in a
+# file list. Excluded here and compiled separately in the `sdk` recipe via find.
+SDK_RUNTIME  := $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime,*.c)
+SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 
 # SDK files we treat as objdiff units (kept in sync with the `objdiff_units`
 # array in config/sdk_mappings.json). Compiled in the normal `make` so their
@@ -59,11 +80,15 @@ $(FX_CONST_H): $(FX_CONST_GEN) $(FX_CONST_CSV)
 
 sdk: $(FX_CONST_H)
 	@mkdir -p $(BUILD_DIR)
-	@echo "Compiling $(words $(SDK_C_FILES)) NitroSDK .c files..."
+	@echo "Compiling $(words $(SDK_C_FILES)) library .c files (+ MSL Runtime)..."
 	@$(MAKE) -k $(SDK_OBJ_FILES) 2> $(BUILD_DIR)/sdk_build.log; \
-	  ok=$$(find $(BUILD_DIR)/lib/NitroSDK -name '*.o' 2>/dev/null | wc -l); \
+	  find lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime -name '*.c' ! -name '__NITRO_eabi_init.c' | while IFS= read -r c; do \
+	    o="$(BUILD_DIR)/$${c%.c}.o"; mkdir -p "$$(dirname "$$o")"; \
+	    $(MWCCARM) $(MWC_FLAGS) -i $(MSL)/MSL_Common_Embedded/Math/Include -c -o "$$o" "$$c" 2>> $(BUILD_DIR)/sdk_build.log || true; \
+	  done; \
+	  ok=$$(find $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | wc -l); \
 	  fail=$$(grep -c "Error 1" $(BUILD_DIR)/sdk_build.log 2>/dev/null || echo 0); \
-	  echo "SDK build: $$ok compiled, $$fail failed. Log: $(BUILD_DIR)/sdk_build.log"
+	  echo "SDK build: $$ok objects compiled, $$fail failed. Log: $(BUILD_DIR)/sdk_build.log"
 
 clean:
 	rm -rf $(BUILD_DIR)/arm9 $(BUILD_DIR)/lib
@@ -128,3 +153,8 @@ $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c
 $(BUILD_DIR)/lib/NitroSystem/%.o: lib/NitroSystem/%.c
 	@mkdir -p $(@D)
 	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -DNNS_FINALROM -i $(dir $<) -i $(dir $<)../include -i $(dir $<)../../include $(EXTRA_CFLAGS) -c -o $@ $<
+
+# MSL C runtime: the double-precision math sources need the fdlibm include dir.
+$(BUILD_DIR)/lib/mw-libraries/%.o: lib/mw-libraries/%.c
+	@mkdir -p $(@D)
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -i $(MSL)/MSL_Common_Embedded/Math/Include $(EXTRA_CFLAGS) -c -o $@ $<
