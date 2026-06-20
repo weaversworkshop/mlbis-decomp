@@ -51,7 +51,7 @@ ADDR_RE = re.compile(r"^\s*\S+:\s*;\s*(0x[0-9a-fA-F]+)")
 BL_RE = re.compile(r"^\s*bl(?:eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)?\s+(\S+)")
 BLX_RE = re.compile(r"^\s*blx\s+(\S+)")
 B_RE = re.compile(r"^\s*b\s+(\S+)")           # unconditional tail-call branch
-WORD_RE = re.compile(r"^\s*\.word\s+(\S+)\s*$")
+WORD_RE = re.compile(r"^\s*(?:[.\w]+:\s*)?\.word\s+(\S+)\s*$")  # optional local-label prefix (literal pools)
 
 # match% -> (mermaid classDef name, fill color)
 CLASSES = [

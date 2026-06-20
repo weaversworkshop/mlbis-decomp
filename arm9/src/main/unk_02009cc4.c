@@ -6,15 +6,14 @@
 
 #include "main/unk_02006368.h"
 #include "main/unk_020092e0.h"
+#include "main/unk_02009668.h"
 #include "main/unk_02009ab8.h"
+#include "main/unk_02009b10.h"
 #include "main/unk_02009c24.h"
 #include "main/unk_02009cc4.h"
 #include "main/unk_02009e2c.h"
 
-extern void func_02009668(u32 a, u8 b);
-extern void func_02009b10(u32 a, u32 b, u8 c, u32 d, u8 e);
-
-// MATCHED 99.89% -- weird function linking issue (func_02009e2c)
+// MATCHED 100%
 void func_02009cc4() {
     if (func_02009e7c() == false) {
         return;
