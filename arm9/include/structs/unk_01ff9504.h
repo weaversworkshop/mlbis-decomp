@@ -18,10 +18,9 @@
             u32 field0c;
             struct { u16 field0c_lo; u16 field0e; };
         };
-        // u32 field0c;
         u32 field10;
         void (*field14)(UnkNode *self);
-        u32 field18;
+        void * field18;
         UnkNode * field1c;
         u8 field20;
         u8 field21;

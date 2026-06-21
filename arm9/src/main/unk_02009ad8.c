@@ -5,7 +5,7 @@
 #include "main/unk_02009ad8.h"
 
 // MATCHED 100%
-void func_02009ad8(void * param1, u32 param2, u32 param3, u32 param4, void (*fn)(UnkNode *), u32 param6) {
+void func_02009ad8(void * param1, u32 param2, u32 param3, u32 param4, void (*fn)(UnkNode *), void * param6) {
     UnkNode * node = (UnkNode *)param1;
     node->field04 = node;
     node->field08 = param3; 

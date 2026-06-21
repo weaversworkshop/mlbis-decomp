@@ -3,27 +3,26 @@
 #include "globals.h"
 
 #include "main/unk_02006d84.h"
+#include "main/unk_02008c6c.h"
 #include "main/unk_02009a9c.h"
 #include "main/unk_02009ad8.h"
 #include "main/unk_02009b10.h"
+#include "main/unk_02009bcc.h"
 #include "main/unk_02009fcc.h"
 
 #include "structs/unk_01ff9504.h"
-#include "structs/unk_02006d84.h"
+#include "structs/unk_01ff9464.h"
 
 #include <nnsys/snd.h>
-
-void func_02008c6c(UnkNode * param1);
-void * func_02009bcc(UnkStruct_02006d84 * param1);
 
 // MATCHED 100%
 void func_02006d84(u32 param1, u32 param2) {
     if (data_01ff9504.field20 != 0) {
-        UnkStruct_02006d84 data;
-        data.tag = 2;
-        data.fn = &func_02006d84;
-        data.arg1 = param1;
-        data.arg2 = param2;
+        UnkGlobal_01ff9464 data;
+        data.field08 = 2;
+        data.field0c = (void (*)(void))&func_02006d84;
+        data.field10 = param1;
+        data.field14 = param2;
 
         func_02009bcc(&data);
         return;
