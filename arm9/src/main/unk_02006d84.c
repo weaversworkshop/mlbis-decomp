@@ -6,6 +6,7 @@
 #include "main/unk_02009a9c.h"
 #include "main/unk_02009ad8.h"
 #include "main/unk_02009b10.h"
+#include "main/unk_02009fcc.h"
 
 #include "structs/unk_01ff9504.h"
 #include "structs/unk_02006d84.h"
@@ -14,7 +15,6 @@
 
 void func_02008c6c(UnkNode * param1);
 void * func_02009bcc(UnkStruct_02006d84 * param1);
-void func_02009fcc(void *mem, u32 size, u32 data1, u32 data2);
 
 // MATCHED 100%
 void func_02006d84(u32 param1, u32 param2) {
