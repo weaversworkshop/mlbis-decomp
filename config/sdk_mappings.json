@@ -4051,6 +4051,117 @@
       "library": "data",
       "confidence": "certain",
       "note": "os_exception .bss global (anchored via OSi_ExContext)"
+    },
+    {
+      "addr": "0x0202ec28",
+      "sdk_name": "InitFrameHeap",
+      "library": "fnd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0202f858",
+      "sdk_name": "ForceStopSeq",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020326ac",
+      "sdk_name": "MakeWaveData",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "518-insn match, sndarc_stream"
+    },
+    {
+      "addr": "0x020366c4",
+      "sdk_name": "G2S_GetBG2ScrPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020367bc",
+      "sdk_name": "G2S_GetBG3ScrPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020368d8",
+      "sdk_name": "G2_GetBG2CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036928",
+      "sdk_name": "G2S_GetBG2CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036968",
+      "sdk_name": "G2_GetBG3CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020369c0",
+      "sdk_name": "G2S_GetBG3CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036ab8",
+      "sdk_name": "G2x_SetBlendAlpha_",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038f90",
+      "sdk_name": "OS_SetSwitchThreadCallback",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038fc8",
+      "sdk_name": "OS_DisableScheduler",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038ffc",
+      "sdk_name": "OS_EnableScheduler",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020398f4",
+      "sdk_name": "OS_InitException",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039d6c",
+      "sdk_name": "OS_WaitVBlankIntr",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203b8ac",
+      "sdk_name": "SNDi_IncAlarmId",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02031300",
+      "sdk_name": "SeqDisposeCallback",
+      "library": "snd",
+      "confidence": "likely",
+      "note": "SDK twin of fork @0x02009fcc; adjacent to mapped Bank/WaveArc dispose callbacks"
+    },
+    {
+      "addr": "0x02031388",
+      "sdk_name": "WaveArcTableDisposeCallback",
+      "library": "snd",
+      "confidence": "likely",
+      "note": "SDK-side; verify via match%"
     }
   ],
   "objdiff_units": [

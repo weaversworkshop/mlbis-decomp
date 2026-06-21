@@ -18,11 +18,15 @@ Node SHAPE:
     game, LEAF            stadium        ( [ name ] )
     SDK,  has calls       hexagon        {{ name }}
     SDK,  LEAF            circle         (( name ))
-    FRONTIER (untouched   parallelogram  [/ name /]   (gray, dashed -- next targets)
-       callee, any kind)
+    CALLEE FRONTIER       parallelogram  [/ name /]   (gray, dashed -- callees: next
+       (untouched callee)                                targets DOWNSTREAM of what's done)
+    CALLER FRONTIER       rev-parallelo  [\\ name \\]  (blue, dashed -- callers: untouched
+       (untouched caller,                                funcs that CALL into touched ones;
+       only with --callers)                              shown only with --callers)
 
 SDK = address present in config/sdk_mappings.json. A LEAF is a *touched* node that calls
-nothing else in the graph; frontier nodes are never leaves.
+nothing else in the graph; frontier nodes are never leaves. CALLER FRONTIER is the inbound
+mirror of the callee frontier -- "what becomes tractable now that this is understood".
 
 Usage (pipe the report in, like `make progress` does -- or `make callgraph`):
   tools/objdiff-cli.exe report generate -p . -o - | \
@@ -34,6 +38,8 @@ Scope it further:
   ... call_graph.py main_7 --report - --leaves            # only leaf nodes + direct callers
   ... call_graph.py main_7 --report - --all              # every function, not just touched
   ... call_graph.py main_7 --report - --game-only        # drop mapped SDK funcs (default in `make callgraph`)
+  ... call_graph.py main_7 --report - --callers          # also show untouched funcs that CALL touched ones
+  ... call_graph.py main_7 --report - --root func_X --depth 1 --callers   # one-hop neighborhood: pick next target
 """
 import argparse
 import json
@@ -127,8 +133,10 @@ def parse_report(path):
     return out
 
 
-def node_text(nid, name, is_sdk, is_leaf, is_frontier):
+def node_text(nid, name, is_sdk, is_leaf, is_frontier, is_caller=False):
     label = f'"{name}"'
+    if is_caller:                         # untouched caller: inbound next target
+        return f"{nid}[\\{label}\\]"      # reverse parallelogram
     if is_frontier:                       # untouched callee: next target
         return f"{nid}[/{label}/]"        # parallelogram
     if is_sdk and is_leaf:
@@ -154,6 +162,9 @@ def main():
                     help="include EVERY function (touched + all untouched), fully expanded")
     ap.add_argument("--touched-only", action="store_true",
                     help="touched functions only, no frontier layer")
+    ap.add_argument("--callers", action="store_true",
+                    help="also include untouched functions that CALL touched ones "
+                         "(inbound 'caller frontier'); pairs well with --root for picking next targets")
     ap.add_argument("--connected-only", action="store_true",
                     help="drop nodes with no edge in the final graph (lone nodes)")
     ap.add_argument("--game-only", action="store_true",
@@ -171,6 +182,7 @@ def main():
     # "touched" = has a match % (a game .c file or a mapped SDK function).
     touched = {n for n in funcs if n in pcts}
     sdk_nodes = {n for n in funcs if funcs[n]["address"].lower() in sdk_addrs}
+    caller_frontier = set()
     if args.all:
         nodes, frontier_nodes = set(funcs), set()
     elif args.touched_only:
@@ -183,6 +195,17 @@ def main():
                           if t in funcs and t not in touched}
         nodes = touched | frontier_nodes
 
+    # --callers: inbound mirror of the callee frontier. Untouched functions that call into
+    # a touched node -- "what becomes tractable now that this is understood". Terminal like
+    # the callee frontier (not expanded). A node that is ALSO a callee frontier keeps its
+    # callee identity (downstream is the primary meaning); only pure callers get caller style.
+    if args.callers and not args.all:
+        caller_frontier = {c for c in funcs if c not in touched
+                           and any(t in touched for t in funcs[c]["targets"])}
+        caller_frontier -= frontier_nodes
+        frontier_nodes |= caller_frontier
+        nodes |= caller_frontier
+
     # frontier nodes are terminal: only touched nodes (or every node, with --all) emit edges
     expanders = nodes if args.all else (nodes - frontier_nodes)
     edges = set()
@@ -194,6 +217,15 @@ def main():
                 edges.add((name, t))
                 out_adj[name].add(t)
                 in_adj[t].add(name)
+
+    # caller frontier is terminal (not in expanders), so emit only its single inbound edge
+    # into the touched node that pulled it in -- not its other (off-graph) calls.
+    for c in caller_frontier:
+        for t in funcs[c]["targets"]:
+            if t in touched and t != c:
+                edges.add((c, t))
+                out_adj[c].add(t)
+                in_adj[t].add(c)
 
     # a leaf is a non-frontier node that calls nothing else in the graph
     leaves = {n for n in nodes if n not in frontier_nodes and not out_adj[n]}
@@ -208,6 +240,8 @@ def main():
             keep |= frontier
             frontier = {t for n in frontier for t in out_adj[n]} - keep
             d += 1
+        if args.callers:                       # also pull in the root's direct callers
+            keep |= {c for c in in_adj[args.root] if c in nodes}
     if args.leaves:
         keep &= (leaves | {c for lf in leaves for c in in_adj[lf]})
     if args.undone:
@@ -237,28 +271,39 @@ def main():
     nid = {n: "n%d" % i for i, n in enumerate(sorted(keep))}
     by_class = {c: [] for c, _ in CLASSES}
     by_class["frontier"] = []
+    by_class["caller"] = []
     L = ["flowchart TB"]
     for cname, color in CLASSES:
         L.append(f"  classDef {cname} fill:{color},stroke:#222,color:#000")
     L.append("  classDef frontier fill:#fafafa,stroke:#888,stroke-width:1px,"
              "stroke-dasharray:5 3,color:#555")
+    L.append("  classDef caller fill:#b3e5fc,stroke:#0277bd,stroke-width:1px,"
+             "stroke-dasharray:5 3,color:#013")
     for n in sorted(keep):
-        is_front = n in frontier_nodes
+        is_caller = n in caller_frontier
+        is_front = n in frontier_nodes and not is_caller
         is_sdk = funcs[n]["address"].lower() in sdk_addrs
         is_leaf = n in leaves
-        L.append("  " + node_text(nid[n], n, is_sdk, is_leaf, is_front))
-        by_class["frontier" if is_front else pct_class(pcts.get(n))].append(nid[n])
+        L.append("  " + node_text(nid[n], n, is_sdk, is_leaf, is_front, is_caller))
+        if is_caller:
+            by_class["caller"].append(nid[n])
+        elif is_front:
+            by_class["frontier"].append(nid[n])
+        else:
+            by_class[pct_class(pcts.get(n))].append(nid[n])
     for a, b in sorted(keep_edges):
         L.append(f"  {nid[a]} --> {nid[b]}")
-    for cname in [c for c, _ in CLASSES] + ["frontier"]:
+    for cname in [c for c, _ in CLASSES] + ["frontier", "caller"]:
         if by_class[cname]:
             L.append(f"  class {','.join(by_class[cname])} {cname}")
 
     Path(out_path).write_text("\n".join(L) + "\n", encoding="utf-8")
     n_leaf = len(keep & leaves)
-    n_front = len(keep & frontier_nodes)
+    n_caller = len(keep & caller_frontier)
+    n_front = len(keep & frontier_nodes) - n_caller
     print(f"wrote {out_path}: {len(keep)} nodes "
-          f"({n_leaf} leaves, {n_front} frontier/next-targets), {len(keep_edges)} edges",
+          f"({n_leaf} leaves, {n_front} callee-frontier, {n_caller} caller-frontier), "
+          f"{len(keep_edges)} edges",
           file=sys.stderr)
 
 
