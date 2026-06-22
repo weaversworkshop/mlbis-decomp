@@ -8,7 +8,7 @@
 #include <nnsys/snd.h>
 
 // MATCHED 100%
-extern void func_0200a024(void * mem, u32 size, u32 data1, u32 data2) {
+void func_0200a024(void * mem, u32 size, u32 data1, u32 data2) {
     func_0200a0c8(mem, data1, data2);
     SND_InvalidateBankData(mem, mem + size);
     SND_DestroyBank(mem);

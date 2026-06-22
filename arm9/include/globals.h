@@ -12,6 +12,8 @@
     #include "structs/unk_01ff94c4.h"
     #include "structs/unk_01ff94d4.h"
     #include "structs/unk_01ff9504.h"
+    #include "structs/unk_01ff9538.h"
+    #include "structs/unk_01ff9598.h"
     #include "structs/unk_020057ac.h"
     #include "structs/unk_02005ddc.h"
     #include "structs/unk_02019a74.h"
@@ -37,8 +39,8 @@
     extern UnkStruct_01ff94c4 data_01ff94c4[];
     extern UnkStruct_01ff94d4 data_01ff94d4[];
     extern UnkNode data_01ff9504;
-    extern UnkNode data_01ff9538;
-    extern UnkNode data_01ff9598;
+    extern UnkGlobal_01ff9538 data_01ff9538[8];
+    extern UnkStruct_01ff9598 data_01ff9598[8];
     extern void * data_01ff9618;
     extern UnkGlobal_01ff9464 data_01ff96ac;
     extern u16 data_0204ac4c[10];

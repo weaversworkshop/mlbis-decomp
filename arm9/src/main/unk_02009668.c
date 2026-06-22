@@ -13,15 +13,15 @@ void func_02009668(u32 seqNo, u8 param2) {
     const NNSSndArcSeqInfo * ret = NNS_SndArcGetSeqInfo(seqNo);
     const NNSSndArcBankInfo * ret2 = NNS_SndArcGetBankInfo(ret->param.bankNo);
 
-    for (s32 r9 = 0; r9 < 4; r9++) {
-        u16 waveArcNo = ret2->waveArcNo[r9];
-        if (waveArcNo != 0xffff) {
+    for (s32 i = 0; i < NNS_SND_ARC_BANK_TO_WAVEARC_NUM; i++) {
+        u16 waveArcNo = ret2->waveArcNo[i];
+        if (waveArcNo != NNS_SND_ARC_INVALID_WAVEARC_NO) {
             const NNSSndArcWaveArcInfo * ret = NNS_SndArcGetWaveArcInfo(waveArcNo);
             
             u16 r3 = (u16)ret->fileId;
-            if (ret->flags & 1) {
-                void * r0 = r7->field08[r9];
-                func_0200990c(r0, r7->field04, r9, r3, (param2 == 0) ? data_01ff9474.field00 : data_01ff9480.field00);
+            if (ret->flags & NNS_SND_ARC_WAVEARC_SINGLE_LOAD) {
+                void * r0 = r7->field08[i];
+                func_0200990c(r0, r7->field04, i, r3, (param2 == 0) ? data_01ff9474.field00 : data_01ff9480.field00);
             }
         }
     }

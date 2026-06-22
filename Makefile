@@ -70,7 +70,7 @@ TARGET ?= main_7
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 
-.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk
+.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk sdk-sweep sdk-check
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -122,6 +122,27 @@ progress: all delinks
 # (the `bl <invalid>` / trampoline class). Independent of the match-% report.
 check-relocs: delinks
 	python $(SCRIPTS)/check_relocs.py
+
+# SDK provenance -- two layers (both need `make sdk` run once for the SDK .o):
+#   sdk-sweep : DISCOVERY. tu_diff.py content-matches every built SDK .o against
+#               the whole gap -> surfaces *candidate* SDK functions. Fast, but
+#               matches modulo relocations (call targets masked) -> confirm hits.
+#   sdk-check : VERIFICATION of specific function(s). sdk_equiv.py is
+#               relocation-aware and RECURSES through call targets + .word data,
+#               so a stock-looking body over a forked callee is reported DIVERGES
+#               with the exact fork point. This is the authoritative check.
+#   make sdk-check FUNC=func_02009fcc
+#   make sdk-check FUNC="func_0200a024 func_0200a0c8" SDK_EQUIV_ARGS=-v
+#   make sdk-check FUNC=func_0200a0c8 SDK_EQUIV_ARGS="--sdk-func DisposeCallback"
+sdk-sweep: delinks
+	@python $(SCRIPTS)/tu_diff.py --all --new
+
+FUNC ?=
+SDK_EQUIV_ARGS ?=
+sdk-check: delinks
+	@test -n "$(FUNC)" || { echo 'usage: make sdk-check FUNC="func_xxxx [func_yyyy ...]" [SDK_EQUIV_ARGS=-v]'; exit 2; }
+	@test -n "$$(find $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | head -1)" || { echo "No SDK objects in $(BUILD_DIR)/lib -- run 'make sdk' first."; exit 2; }
+	@python $(SCRIPTS)/sdk_equiv.py $(FUNC) $(SDK_EQUIV_ARGS)
 
 # Mermaid call graph (vertical). By default drops lone nodes AND mapped SDK
 # functions (game functions only) via CALLGRAPH_FLAGS; scope a huge graph with
