@@ -24,6 +24,7 @@ import argparse
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,7 +44,9 @@ def load_sdk_mappings():
 
 
 def parse_asm(path):
-    out = {}
+    # A list, not a name-keyed dict: distinct functions can share a symbol name
+    # (e.g. the two SDK `BeginSleep`s) and must both survive. Addresses are unique.
+    out = []
     with open(path, "r", encoding="utf-8", errors="replace") as f:
         lines = f.readlines()
     i = 0
@@ -64,17 +67,24 @@ def parse_asm(path):
             j += 1
         body = lines[body_start:j]
         globals_used = {gm.group(0) for ln in body for gm in DATA_RE.finditer(ln)}
-        out[symbol] = {
+        out.append({
+            "symbol": symbol,
             "address": addr,
             "lines": len(body),
             "globals": len(globals_used),
-        }
+        })
         i = j + 1
     return out
 
 
 def parse_report(path):
-    """Return {symbol: (unit_name, fuzzy_match_percent)} for symbols claimed by a unit.
+    """Return {symbol: {rel_addr: (unit_name, fuzzy_match_percent)}}.
+
+    The objdiff report lists each function once per referencing unit and carries a
+    per-function module-relative `address`. Keying by (name, address) keeps functions
+    that share a symbol name distinct (e.g. the two `BeginSleep`s) instead of letting
+    one clobber the other. As before, the first unit at the running-max pct wins, so a
+    unique name resolves to exactly the value the old name-only map produced.
 
     Pass "-" to read from stdin.
     """
@@ -91,10 +101,58 @@ def parse_report(path):
             if pct is None:
                 continue
             name = fn["name"]
-            prev = owned.get(name)
+            try:
+                rel = int(fn["address"])
+            except (KeyError, ValueError, TypeError):
+                rel = None
+            slot = owned.setdefault(name, {})
+            prev = slot.get(rel)
             if prev is None or pct > prev[1]:
-                owned[name] = (unit_name, pct)
+                slot[rel] = (unit_name, pct)
     return owned
+
+
+def derive_base_offset(asm, owned):
+    """Constant offset between asm absolute addresses and report-relative ones.
+
+    Voted from every symbol whose name is unique in BOTH sources (unambiguous pairing).
+    Returns None if no such pair exists. If pairs disagree (should never happen for a
+    clean gap) we warn and take the dominant vote rather than silently mis-keying.
+    """
+    asm_by_name = {}
+    for rec in asm:
+        asm_by_name.setdefault(rec["symbol"], []).append(rec)
+    votes = Counter()
+    for name, recs in asm_by_name.items():
+        if len(recs) != 1 or not recs[0]["address"]:
+            continue
+        slot = owned.get(name)
+        if not slot or len(slot) != 1:
+            continue
+        rel = next(iter(slot))
+        if rel is None:
+            continue
+        votes[int(recs[0]["address"], 16) - rel] += 1
+    if not votes:
+        return None
+    if len(votes) > 1:
+        print(f"WARNING: inconsistent report/asm base offsets {dict(votes)}; "
+              f"duplicate-name match% may be off", file=sys.stderr)
+    return votes.most_common(1)[0][0]
+
+
+def lookup_owned(rec, owned, base):
+    """(unit, pct) for one asm function, disambiguating duplicate names by address."""
+    slot = owned.get(rec["symbol"])
+    if not slot:
+        return (None, None)
+    if len(slot) == 1:                       # unique name: identical to the old map
+        return next(iter(slot.values()))
+    if base is not None and rec["address"]:  # duplicate name: pick by absolute address
+        rel = int(rec["address"], 16) - base
+        if rel in slot:
+            return slot[rel]
+    return max(slot.values(), key=lambda uv: uv[1])  # last-resort: best pct
 
 
 def sort_key(row, key, desc):
@@ -166,18 +224,19 @@ def main():
     asm = parse_asm(asm_path)
     owned = parse_report(args.report)
     sdk = load_sdk_mappings()
+    base = derive_base_offset(asm, owned)
 
     rows = []
-    for symbol, info in asm.items():
-        unit, pct = owned.get(symbol, (None, None))
+    for rec in asm:
+        unit, pct = lookup_owned(rec, owned, base)
         rows.append({
-            "symbol": symbol,
-            "address": info["address"],
-            "lines": info["lines"],
-            "globals": info["globals"],
+            "symbol": rec["symbol"],
+            "address": rec["address"],
+            "lines": rec["lines"],
+            "globals": rec["globals"],
             "unit": unit,
             "match": pct,
-            "sdk": sdk.get(info["address"].lower(), None),
+            "sdk": sdk.get(rec["address"].lower(), None),
         })
 
     # Default behavior: match desc, address asc. Other keys: asc by default, --desc flips.

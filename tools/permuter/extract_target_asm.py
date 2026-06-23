@@ -83,9 +83,22 @@ def extract(lines: list[str], func_name: str) -> list[str]:
                 if rm and int(rm.group(1), 16) == int(addr_str, 16):
                     reloc_target = (rm.group(2), rm.group(3))
 
-            # Detect .word data (no mnemonic, body looks like "....")
+            # Detect .word data: objdump renders pool words with an ASCII
+            # gutter (e.g. 0x0400006c -> "l...") instead of a mnemonic. Detect
+            # by reconstructing that gutter from the raw hex (little-endian
+            # memory order) and comparing -- robust to printable bytes that the
+            # old "all dots" check missed.
             parts = body.split(None, 1)
-            if len(parts) == 1 and re.fullmatch(r"\.+", parts[0].strip("\t ")):
+            try:
+                _mem = bytes.fromhex(_hex.zfill(8))[::-1]
+                _gutter = "".join(chr(c) if 32 <= c <= 126 else "." for c in _mem)
+            except ValueError:
+                _gutter = None
+            is_word = len(parts) == 1 and (
+                parts[0].strip("\t ") == _gutter
+                or re.fullmatch(r"\.+", parts[0].strip("\t "))
+            )
+            if is_word:
                 # This is a literal pool .word. Use reloc symbol if available.
                 if reloc_target:
                     sym = reloc_target[1]
@@ -95,7 +108,7 @@ def extract(lines: list[str], func_name: str) -> list[str]:
                     i += 2
                     continue
                 else:
-                    out.append(f"    .word 0x00000000")
+                    out.append(f"    .word 0x{_hex.zfill(8)}")
                     i += 1
                     continue
 
