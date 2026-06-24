@@ -25,6 +25,7 @@
     #include "structs/unk_0205bad4.h"
 
     extern u8 data_01ff9440;
+    extern s16 data_01ff9460[2];
     extern UnkGlobal_01ff9464 data_01ff9464;
     extern UnkGlobal_01ff9468 data_01ff9468;
     extern UnkGlobal_01ff9468 data_01ff9474;
