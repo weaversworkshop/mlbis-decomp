@@ -7,6 +7,6 @@
         volatile s32 field00;
         s32 field04;
         u32 field08;
-        u32 field0c;
+        NNSSndSeqMute field0c;
     } UnkStruct_01ff94b4;
 #endif

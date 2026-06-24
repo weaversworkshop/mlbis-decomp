@@ -28,9 +28,9 @@ void func_020092e0(u32 param1, u8 param2, u32 param3) {
 
     UnkStruct_01ff94b4 * struct_01ff94b4 = &data_01ff94b4[param2];
     struct_01ff94b4->field04 = struct_01ff94b4->field00;
-    struct_01ff94b4->field0c = 0;
+    struct_01ff94b4->field0c = NNS_SND_SEQ_MUTE_OFF;
 
-    NNS_SndPlayerSetTrackMuteEx(&data_01ff94a4[param2], 0xffff, 0);
+    NNS_SndPlayerSetTrackMuteEx(&data_01ff94a4[param2], 0xffff, NNS_SND_SEQ_MUTE_OFF);
 
     if (param3 != 0) {
         data_01ff94b8[param2].field00 = 0;

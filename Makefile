@@ -91,7 +91,7 @@ sdk: $(FX_CONST_H)
 	  echo "SDK build: $$ok objects compiled, $$fail failed. Log: $(BUILD_DIR)/sdk_build.log"
 
 clean:
-	rm -rf $(BUILD_DIR)/arm9 $(BUILD_DIR)/lib
+	rm -rf $(BUILD_DIR)/arm9
 	rm -f objdiff.json
 
 distclean: clean
