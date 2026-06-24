@@ -17,6 +17,9 @@
     #include "structs/unk_020057ac.h"
     #include "structs/unk_02005ddc.h"
     #include "structs/unk_02019a74.h"
+    #include "structs/unk_020526f8.h"
+    #include "structs/unk_02052a68.h"
+    #include "structs/unk_02053b30.h"
     #include "structs/unk_02055fe4.h"
     #include "structs/unk_020563e4.h"
     #include "structs/unk_020564e4.h"
@@ -50,6 +53,10 @@
     extern void * data_01ff9618;
     extern UnkGlobal_01ff9464 data_01ff96ac;
     extern u16 data_0204ac4c[10];
+    extern UnkGlobal_020526f8 data_020526f8[];
+    extern UnkGlobal_02052a68 data_020527f8[];
+    extern UnkGlobal_02052a68 data_02052a68[];
+    extern UnkGlobal_02053b30 data_02053b30[];
     extern u32 * data_020564bc[];
     extern UnkStruct_020057ac_00 * data_02055fe0;
     extern UnkGlobal_02055fe4 data_02055fe4;
