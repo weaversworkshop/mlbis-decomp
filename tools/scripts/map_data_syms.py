@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
-"""Discover NitroSDK data-global names by aligning matched functions' literal
-pools: the SDK .o references a named global (sPlayer, OSi_ExContext, ...) where
-the delinked ROM references an unnamed data_xxxx at the same pool position.
-
-Only emits ADDEND-0 1:1 renames (sdk symbol has no +offset and isn't a section):
-- `sPlayer+0x18` cases are skipped -- dsd needs an exact split symbol at that
-  address and can't synthesize base+addend, so they can't match anyway.
-- A data_xxxx that maps to >1 distinct SDK name, or an SDK name claimed by >1
-  data_xxxx (ambiguous statics across TUs), is dropped.
-
-Run with --apply to add the renames to sdk_mappings.json (so apply_sdk_mappings
-renames symbols.txt + sources consistently).
-"""
+"""Discover NitroSDK data-global names by aligning matched funcs' literal pools
+(ROM data_xxxx vs SDK sPlayer/etc.); emits addend-0 1:1 renames only.
+Flag: --apply (write them to config/sdk_mappings.json)."""
 import argparse
 import json
 import re

@@ -4162,6 +4162,150 @@
       "library": "snd",
       "confidence": "likely",
       "note": "SDK-side; verify via match%"
+    },
+    {
+      "addr": "0x0202f648",
+      "sdk_name": "NNSi_SndPlayerFreeSeqPlayer",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036330",
+      "sdk_name": "GX_DisableBankForBG",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036344",
+      "sdk_name": "GX_DisableBankForOBJ",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036358",
+      "sdk_name": "GX_DisableBankForBGExtPltt",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203637c",
+      "sdk_name": "GX_DisableBankForOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020363a0",
+      "sdk_name": "GX_DisableBankForTex",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020363b4",
+      "sdk_name": "GX_DisableBankForTexPltt",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020363c8",
+      "sdk_name": "GX_DisableBankForLCDC",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020363dc",
+      "sdk_name": "GX_DisableBankForSubBG",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020363f0",
+      "sdk_name": "GX_DisableBankForSubOBJ",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036404",
+      "sdk_name": "GX_DisableBankForSubBGExtPltt",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203642c",
+      "sdk_name": "GX_DisableBankForSubOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037488",
+      "sdk_name": "GX_LoadBG2Scr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020374e8",
+      "sdk_name": "GXS_LoadBG2Scr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037548",
+      "sdk_name": "GX_LoadBG3Scr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020375a8",
+      "sdk_name": "GXS_LoadBG3Scr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037788",
+      "sdk_name": "GX_LoadBG2Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020377e8",
+      "sdk_name": "GXS_LoadBG2Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037848",
+      "sdk_name": "GX_LoadBG3Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020378a8",
+      "sdk_name": "GXS_LoadBG3Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038fb8",
+      "sdk_name": "OSi_IdleThreadProc",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039c14",
+      "sdk_name": "OS_GetTickLo",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203a070",
+      "sdk_name": "OS_Terminate",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203fd2c",
+      "sdk_name": "MIC_GetLastSamplingAddress",
+      "library": "spi",
+      "confidence": "certain"
     }
   ],
   "objdiff_units": [

@@ -10,7 +10,7 @@
 void func_0200907c() {
     UnkStruct_01ff94c4 * r7 = data_01ff94c4;
     s8 r8;
-    NNSSndHandle * r9 = &data_01ff94a8;
+    NNSSndHandle * r9 = &data_01ff94a4[1];
     s16 r10 = 1;
     u32 r11 = 0;
 

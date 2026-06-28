@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
-"""Audit delinked objects for branches that cross a symbol boundary but carry no
-relocation -- the 'trampoline' / relocs.txt-gap signature (objdiff renders these
-as `bl <invalid>`). The instruction bytes are usually correct (the encoded
-offset resolves), so this is a delink-FAITHFULNESS check, separate from the
-match-% in `make progress`.
-
-A branch is flagged when its resolved target is a *different* named symbol and
-the instruction has no R_ARM relocation. Intra-function local branches (targets
-named `.L_*`, or inside the current function) are ignored -- they're PC-relative
-and need no relocation.
-
-Exit status: 0 = clean, 1 = gaps found (so it can gate CI).
-"""
+"""Audit delinked objects for a branch that crosses a symbol boundary with no
+relocation (the `bl <invalid>` / relocs.txt-gap signature; a delink-faithfulness
+check, not match-%). Exit 1 if any gap. No args; run after `make delinks`."""
 import re
 import subprocess
 import sys

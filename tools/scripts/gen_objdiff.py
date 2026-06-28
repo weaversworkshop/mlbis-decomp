@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Emit objdiff.json by scanning .c files for `// objdiff-target:` comments
-and reading explicit SDK unit entries from config/sdk_mappings.json."""
+"""Emit objdiff.json (to stdout) by scanning .c for `// objdiff-target:` comments
+plus SDK units from config/sdk_mappings.json.  Usage: gen_objdiff.py > objdiff.json."""
 import json
 import re
 import sys

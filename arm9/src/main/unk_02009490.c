@@ -33,14 +33,14 @@ bool func_02009490(NNSSndHeapHandle param1, u32 param2, UnkStruct_01ff94d4 * par
     seqInfo = NNS_SndArcGetSeqInfo(param2);
     fileId = (u16)seqInfo->fileId;
     sz = NNS_SndArcGetFileSize(fileId);
-    void * ret = func_02009a9c(param1, sz, &func_02009fcc, (u32)&data_01ff9618, fileId);
+    void * ret = func_02009a9c(param1, sz, &func_02009fcc, &data_01ff9618, fileId);
     func_02009ad8(ret, sz, fileId, 0, NULL, NULL);
     param3->field00 = ret;
 
     bankInfo = NNS_SndArcGetBankInfo(seqInfo->param.bankNo);
     fileId = (u16)bankInfo->fileId;
     sz = NNS_SndArcGetFileSize(fileId);
-    ret = func_02009a9c(param1, sz, &func_0200a024, (u32)&data_01ff9618, fileId);
+    ret = func_02009a9c(param1, sz, &func_0200a024, &data_01ff9618, fileId);
     func_02009ad8(ret, sz, fileId, 0, NULL, NULL);
     param3->field04 = ret;
 
@@ -55,7 +55,7 @@ bool func_02009490(NNSSndHeapHandle param1, u32 param2, UnkStruct_01ff94d4 * par
                 r11 = true;
             } else {
                 u32 sz = NNS_SndArcGetFileSize(fileId);
-                void * ret = func_02009a9c(param1, sz, &func_02009ff4, (u32)&data_01ff9618, fileId);
+                void * ret = func_02009a9c(param1, sz, &func_02009ff4, &data_01ff9618, fileId);
                 func_02009ad8(ret, sz, fileId, 0, 0, 0);
                 param3->field08[i] = ret;
             }

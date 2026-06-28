@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Apply SDK function renames from config/sdk_mappings.json."""
+"""Apply config/sdk_mappings.json renames (func_XXXX -> sdk_name) across all
+symbols.txt and arm9/src + lib sources. Idempotent; a `make delinks` prereq.
+Flags: --dry-run, -v/--verbose."""
 import argparse
 import json
 import re

@@ -1,29 +1,9 @@
 #!/usr/bin/env python3
-"""Relocation-aware *recursive* equivalence checker for a candidate function.
-
-Where tu_diff.py masks every call/reloc to <C>/<R> (so it can't tell
-func_0200a0c8 from DisposeCallback), this tool keeps the real targets and
-decides EQUIVALENT / DIVERGES by:
-
-  1. instruction skeleton equality (same as tu_diff),
-  2. literal-pool / .word value+symbol equality,
-  3. call-target equality -- and when a target pair differs by name
-     (e.g. gap `func_0200a0c8` vs SDK `DisposeCallback`) it RECURSES into both
-     bodies before judging the caller. A caller is only EQUIVALENT if every
-     callee it reaches is itself EQUIVALENT (or the same SDK symbol / an
-     established mapping).
-
-So a function whose body is byte-identical to an SDK function but which calls a
-*forked* helper is correctly reported as DIVERGES, with the exact fork point.
-
-Usage:
-    # check one gap function against every skeleton-matching SDK function:
-    python tools/scripts/sdk_equiv.py func_02009fcc
-    # check against a specific SDK function:
-    python tools/scripts/sdk_equiv.py func_0200a0c8 --sdk-func DisposeCallback
-    # check several at once:
-    python tools/scripts/sdk_equiv.py func_02009fcc func_0200a024 func_02008f2c
-"""
+"""Decide whether a gap func_XXXX is genuinely an SDK function: matches the
+instruction skeleton + literal pool + reloc symbols and RECURSES into call
+targets (equivalent only if the whole call graph is stock SDK).
+Usage: sdk_equiv.py FUNC... [--sdk-func NAME] [--depth N] [--min N] [-v].
+Prefer `make sdk-check FUNC=...`."""
 import argparse
 import re
 import sys

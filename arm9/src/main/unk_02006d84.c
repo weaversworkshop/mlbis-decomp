@@ -10,9 +10,6 @@
 #include "main/unk_02009bcc.h"
 #include "main/unk_02009fcc.h"
 
-#include "structs/unk_01ff9504.h"
-#include "structs/unk_01ff9464.h"
-
 #include <nnsys/snd.h>
 
 // MATCHED 100%

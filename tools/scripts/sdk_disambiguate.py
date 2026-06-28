@@ -1,20 +1,7 @@
 #!/usr/bin/env python3
-"""Disambiguate SDK functions that sdk_match leaves AMBIGUOUS because they are
-byte-identical except for a literal-pool RELOCATION that differs only by addend
-(e.g. every GX_ResetBankForXxx is `bx resetBankForX_` + a `.word gGXState+N`, with N
-the only difference).
-
-sdk_match collapses every literal word to `.word`, so those functions look identical.
-This pass is relocation-aware: it parses `objdump -dr`, and for each collision group it
-resolves the shared base symbol's ROM address from an ALREADY-MAPPED anchor function that
-references the same base, then matches each collided ROM function by its unique addend.
-
-No contiguity / source-order / dead-strip assumption -- each function self-identifies by
-the absolute address its distinguishing relocation points at.
-
-  python tools/scripts/sdk_disambiguate.py          # report
-  python tools/scripts/sdk_disambiguate.py --apply   # merge into config/sdk_mappings.json
-"""
+"""Map byte-identical SDK sibling funcs (GX bank cluster, OS_Lock*, SNDi_*Mutex,
+CARD_*) by the addend of their one distinguishing literal-pool reloc.
+Flag: --apply.  Loop with `make delinks` after the sdk_match cascade."""
 import argparse
 import json
 import re

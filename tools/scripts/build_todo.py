@@ -1,25 +1,8 @@
 #!/usr/bin/env python3
-"""Build a Markdown checklist of remaining functions for a delinked target.
-
-Requires Python 3.8+. No third-party packages.
-
-Merges:
-  - asm/<target>.s      -> address, line count, # of unique data_* globals referenced
-  - objdiff report JSON -> owning unit + fuzzy match % (from `objdiff-cli report generate`)
-
-Default sort: match % desc, address asc. Unstarted functions (no match %) sort
-to the bottom by address. Use --sort to override.
-
-Usage (preferred — via Makefile, pipes the report on stdin):
-  make progress                              # default TARGET=main_7
-  make progress TARGET=ov001_1
-
-Usage (standalone):
-  tools/objdiff-cli.exe report generate -p . -o - | \
-      python tools/scripts/build_todo.py main_7 --report -
-  # ...or read from a saved file:
-  python tools/scripts/build_todo.py main_7 --report report.json --sort globals
-"""
+"""Markdown progress/TODO table for a delinked target: merges asm/<target>.s
+(addr, line count, #data_* refs) with an objdiff report (unit + match %).
+Usage: build_todo.py <target> --report <json|-> [--asm DIR] [--out-md F]
+       [--sort match|address|globals|lines] [--desc].  Prefer `make progress`."""
 import argparse
 import json
 import re

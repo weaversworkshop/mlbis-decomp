@@ -24,7 +24,7 @@ void func_02008c6c(UnkNode * param1) {
 
             if (NNS_SndArcGetFileAddress(fileId) == NULL) {
                 u32 sz = NNS_SndArcGetFileSize(fileId);
-                void * ret = func_02009a9c(data_01ff9468.field00, sz, &func_0200a024, (u32)&data_01ff9618, fileId);
+                void * ret = func_02009a9c(data_01ff9468.field00, sz, &func_0200a024, &data_01ff9618, fileId);
 
                 void * ret2 = func_02008f2c(bankInfo, ret, i);
                 func_02009ad8(ret, sz, fileId, 0, &func_02008d5c, ret2);

@@ -102,8 +102,8 @@ def extract(lines: list[str], func_name: str) -> list[str]:
                 # This is a literal pool .word. Use reloc symbol if available.
                 if reloc_target:
                     sym = reloc_target[1]
-                    # Strip any addend like "-0x8"
-                    sym = re.sub(r"[+-]0x[0-9a-f]+$", "", sym)
+                    # Preserve any addend (e.g. data_xxx+0x8) -- `as` encodes it
+                    # as an R_ARM_ABS32 base+addend reloc, which the target needs.
                     out.append(f"    .word {sym}")
                     i += 2
                     continue

@@ -27,7 +27,7 @@ void func_02008d5c(UnkNode * param1) {
                 func_02009714(fileId, data_01ff9468.field00, 0, 1, 1, &func_02008e48, r5->field08);
             } else {
                 u32 sz = NNS_SndArcGetFileSize(fileId);
-                void * ret = func_02009a9c(data_01ff9468.field00, sz, &func_02009ff4, (u32)&data_01ff9618, fileId);
+                void * ret = func_02009a9c(data_01ff9468.field00, sz, &func_02009ff4, &data_01ff9618, fileId);
                 func_02009ad8(ret, sz, fileId, 0, NULL, NULL);
                 NNS_SndArcSetFileAddress(fileId, ret);
             }

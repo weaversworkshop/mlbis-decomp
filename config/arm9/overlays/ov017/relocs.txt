@@ -2,8 +2,8 @@ from:0x020b8960 kind:load to:0x020bbf30 module:overlay(17)
 from:0x020b8968 kind:load to:0x020b8d68 module:overlay(17)
 from:0x020b8970 kind:load to:0x020b8978 module:overlay(17)
 from:0x020b8974 kind:load to:0x020b9864 module:overlay(17)
-from:0x020b9a14 kind:load to:0x02060000 module:main
-from:0x020b9a78 kind:load to:0x02060000 module:main
+from:0x020b9a14 kind:load to:0x0205fd4c add:0x2b4 module:main
+from:0x020b9a78 kind:load to:0x0205fd4c add:0x2b4 module:main
 from:0x020b9d84 kind:load to:0x02050000 module:main
 from:0x020b9dfc kind:load to:0x02050012 module:main
 from:0x020ba0ec kind:load to:0x020a0001 module:overlays(124,130)

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-extern u16 * func_02018538(s32 param1);
+u16 * func_02018538(s32 param1);
 
 #endif

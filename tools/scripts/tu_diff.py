@@ -1,20 +1,8 @@
 #!/usr/bin/env python3
-"""Content-based TU matcher: find which functions in a compiled NitroSDK object
-match functions in the delinked ROM gap object, regardless of symbol name.
-
-Catches SDK functions the name/fingerprint sweep misses (e.g. fx_cp): they only
-reference MMIO/each other, so there is nothing to grep -- but their *body* is
-identical to the SDK source compiled with the project's flags.
-
-Usage:
-    python tools/scripts/tu_diff.py <sdk.o> [<target.o>]
-    python tools/scripts/tu_diff.py --all          # every built SDK .o vs the gap
-    python tools/scripts/tu_diff.py --all --new     # only report unmapped hits
-
-Matching is on normalized disassembly: branch/call targets, pc-relative literal
-offsets, and relocated operands are masked, local branches keep their relative
-offset. Exact normalized equality => same function (independent of address/name).
-"""
+"""Find SDK funcs still named func_XXXX by normalized-disassembly content match
+(masks branch/call targets + relocated operands; keeps pool consts + ISA).
+Usage: tu_diff.py [SDK.o [TARGET.o]] | --all [--new] [--low] [--min N].
+Run `make sdk` first so build/lib/**/*.o exist."""
 import argparse
 import json
 import re

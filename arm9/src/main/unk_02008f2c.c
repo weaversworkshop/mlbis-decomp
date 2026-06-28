@@ -7,7 +7,7 @@
 #include <nnsys/snd.h>
 
 // MATCHED 100%
-extern void * func_02008f2c(const NNSSndArcBankInfo * param1, void * param2, u32 param3) {
+void * func_02008f2c(const NNSSndArcBankInfo * param1, void * param2, u32 param3) {
     UnkStruct_01ff9598 * r12 = &data_01ff9598[0];
     s32 r14 = 7;
 

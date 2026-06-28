@@ -1,25 +1,8 @@
 #!/usr/bin/env python3
-"""Find SDK functions present in the ROM by byte-matching compiled SDK objects.
-
-For every function in the compiled SDK objects (build/lib/NitroSDK, build/lib/NitroSystem),
-normalize its disassembly (strip addresses, reloc targets, literal-pool words) and look for
-a ROM `func_<addr>` with an identical instruction stream. Proposes addr->name mappings for
-still-unmapped ROM functions, so we can map every SDK function the game links instead of
-accidentally hand-decompiling one.
-
-Confidence:
-  - exact 1:1 normalized match, function is currently `func_<addr>` (unmapped)
-  - contiguity bonus: a source file's matched functions should land in a contiguous,
-    in-source-order run in the ROM (the linker keeps a TU together). Runs of >=2 are HIGH.
-
-Output: groups proposals by source file with the ROM address span. Use --json to emit
-mapping entries ready for config/sdk_mappings.json. Nothing is written automatically.
-
-Usage:
-  make sdk                                   # build all SDK objects first
-  python tools/scripts/sdk_match.py          # report
-  python tools/scripts/sdk_match.py --json   # emit mapping JSON lines
-"""
+"""Byte+size-match every compiled SDK function against unmapped ROM func_XXXX
+and propose mappings (unambiguous only; skips byte-identical-sibling collisions).
+Flags: --apply (write sdk_mappings.json + units), --json, --min-insns N.
+Loop with `make delinks` until 0 proposals; then run sdk_disambiguate.py."""
 import argparse
 import bisect
 import json

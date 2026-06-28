@@ -1,46 +1,9 @@
 #!/usr/bin/env python3
-"""Generate a vertical Mermaid call graph for a delinked target.
-
-Nodes  = "touched" functions (a match % in the objdiff report: a game .c we decompiled or
-         a mapped SDK function) PLUS one layer of the untouched functions they call -- the
-         "frontier" = what to go after next. The frontier is not expanded, so the graph
-         grows naturally as you decompile more. Flags: --touched-only drops the frontier;
-         --all shows every function fully expanded.
-Edges  = bl / blx / b (tail-call) / .word references between two nodes.
-
-Node COLOR encodes match % (from the objdiff report):
-    0%       gray        |  <100%   yellow-green
-    <=25%    red         |  100%    lime green
-    <60%     yellow
-
-Node SHAPE:
-    game, has calls       rectangle      [ name ]
-    game, LEAF            stadium        ( [ name ] )
-    SDK,  has calls       hexagon        {{ name }}
-    SDK,  LEAF            circle         (( name ))
-    CALLEE FRONTIER       parallelogram  [/ name /]   (gray, dashed -- callees: next
-       (untouched callee)                                targets DOWNSTREAM of what's done)
-    CALLER FRONTIER       rev-parallelo  [\\ name \\]  (blue, dashed -- callers: untouched
-       (untouched caller,                                funcs that CALL into touched ones;
-       only with --callers)                              shown only with --callers)
-
-SDK = address present in config/sdk_mappings.json. A LEAF is a *touched* node that calls
-nothing else in the graph; frontier nodes are never leaves. CALLER FRONTIER is the inbound
-mirror of the callee frontier -- "what becomes tractable now that this is understood".
-
-Usage (pipe the report in, like `make progress` does -- or `make callgraph`):
-  tools/objdiff-cli.exe report generate -p . -o - | \
-      python tools/scripts/call_graph.py main_7 --report - -o main_7_callgraph.mmd
-
-Scope it further:
-  ... call_graph.py main_7 --report - --root func_02009ab8 --depth 4
-  ... call_graph.py main_7 --report - --undone           # hide finished (100%) funcs
-  ... call_graph.py main_7 --report - --leaves            # only leaf nodes + direct callers
-  ... call_graph.py main_7 --report - --all              # every function, not just touched
-  ... call_graph.py main_7 --report - --game-only        # drop mapped SDK funcs (default in `make callgraph`)
-  ... call_graph.py main_7 --report - --callers          # also show untouched funcs that CALL touched ones
-  ... call_graph.py main_7 --report - --root func_X --depth 1 --callers   # one-hop neighborhood: pick next target
-"""
+"""Vertical Mermaid call graph for a delinked target: touched funcs (have an
+objdiff match %) + one frontier layer of their untouched callees = what to do
+next. Color = match %; shape = game/SDK/leaf/frontier.
+Usage: call_graph.py <target> --report <json> [-o F] [--root FUNC] [--depth N]
+       [--all] [--undone] [--leaves]."""
 import argparse
 import json
 import re

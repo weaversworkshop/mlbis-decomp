@@ -38,7 +38,7 @@ void * func_02009714(u32 fileId, NNSSndHeapHandle heap, u32 param3, u32 param4, 
     tableSize = sizeof(u32) * data_02056520.waveCount;
     len = sizeof(data_02056520) + tableSize * 2;
 
-    waveArc = NNS_SndHeapAlloc(heap, len + 0x20, &func_0200a054, (u32)&data_01ff9618, fileId);
+    waveArc = NNS_SndHeapAlloc(heap, len + 0x20, &func_0200a054, &data_01ff9618, fileId);
 
     if (param5 == 0) {
         NNS_SndArcReadFile(fileId, waveArc, tableSize + sizeof(data_02056520), 0);

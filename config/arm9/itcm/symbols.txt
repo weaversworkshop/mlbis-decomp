@@ -78,7 +78,6 @@ data_01ff948c kind:bss addr:0x01ff948c
 data_01ff9494 kind:bss addr:0x01ff9494
 data_01ff949c kind:bss addr:0x01ff949c
 data_01ff94a4 kind:bss addr:0x01ff94a4
-data_01ff94a8 kind:bss addr:0x01ff94a8
 data_01ff94ac kind:bss addr:0x01ff94ac
 data_01ff94b4 kind:bss addr:0x01ff94b4
 data_01ff94b8 kind:bss addr:0x01ff94b8

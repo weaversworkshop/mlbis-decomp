@@ -7,6 +7,6 @@
 
 #include <nnsys/snd.h>
 
-extern void * func_02009714(u32 fileId, NNSSndHeapHandle heap, u32 param3, u32 param4, u32 param5, void (*fn)(UnkStruct_02008e48 *), u32 param7);
+void * func_02009714(u32 fileId, NNSSndHeapHandle heap, u32 param3, u32 param4, u32 param5, void (*fn)(UnkStruct_02008e48 *), u32 param7);
 
 #endif

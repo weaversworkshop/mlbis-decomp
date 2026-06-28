@@ -389,7 +389,7 @@ from:0x02093c48 kind:load to:0x020a00ea module:overlays(124,130)
 from:0x02093c60 kind:load to:0x020e00ee module:overlays(4,112)
 from:0x02093dc8 kind:load to:0x020c00ec module:overlay(17)
 from:0x02093e70 kind:load to:0x021000ef module:overlay(4)
-from:0x02093ea0 kind:load to:0x020600e7 module:main
+from:0x02093ea0 kind:load to:0x0205fd4c add:0x39b module:main
 from:0x02093eb8 kind:load to:0x020700e7 module:overlays(11,131)
 from:0x02093f08 kind:load to:0x0209041f module:overlay(13)
 from:0x02093f20 kind:load to:0x0209041f module:overlay(13)
