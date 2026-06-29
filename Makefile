@@ -59,7 +59,8 @@ SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 SDK_DIFF_FILES := $(shell python -c "import json; print(' '.join(u['source'] for u in json.load(open('config/sdk_mappings.json')).get('objdiff_units', [])))")
 
 C_FILES   := $(call rwildcard,arm9/src,*.c) $(LIB_C_FILES) $(SDK_DIFF_FILES)
-OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o)
+CXX_FILES := $(call rwildcard,arm9/src,*.cpp)
+OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CXX_FILES:%.cpp=$(BUILD_DIR)/%.o)
 SDK_OBJ_FILES := $(SDK_C_FILES:%.c=$(BUILD_DIR)/%.o)
 
 DSD_CONFIG_DEPS := $(call rwildcard,config,*)
@@ -160,12 +161,21 @@ callgraph: all delinks
 # specific compiler versions or build-time defines.
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
 
+# Shipped with sp2p4 (sp1p2 mis-places func_02016254's literal pool).
+$(BUILD_DIR)/arm9/src/main/unk_tu_02015ebc.o: MWCC_OVERRIDE := $(TOOLS_DIR)/mwccarm/2.0/sp2p4/mwccarm.exe
+
 MWCC_OVERRIDE ?=
 EXTRA_CFLAGS  ?=
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
 	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+
+# C++ TUs: same flags, language swapped to C++.
+MWC_FLAGS_CXX := $(subst -lang=c99,-lang=c++,$(MWC_FLAGS))
+$(BUILD_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS_CXX) $(EXTRA_CFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c
 	@mkdir -p $(@D)

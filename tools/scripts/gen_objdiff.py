@@ -20,7 +20,10 @@ def scan_for_comment_targets():
     for root in SCAN_DIRS:
         if not root.exists():
             continue
-        for path in sorted(root.rglob("*.c")):
+        paths = sorted(
+            p for ext in ("*.c", "*.cpp") for p in root.rglob(ext)
+        )
+        for path in paths:
             if any(ex in path.parents for ex in SCAN_EXCLUDES):
                 continue
             target = None
@@ -31,18 +34,19 @@ def scan_for_comment_targets():
                         target = m.group(1).rstrip("\r")
                         break
             rel = path.relative_to(ROOT).as_posix()
+            ext_len = len(path.suffix)  # ".c" or ".cpp"
             if target is None:
                 print(f"gen_objdiff: skipping {rel} (no '// objdiff-target:' comment)",
                       file=sys.stderr)
                 continue
             if rel.startswith("lib/"):
-                name = "sdk/" + rel[len("lib/"):-len(".c")]
+                name = "sdk/" + rel[len("lib/"):-ext_len]
             else:
-                name = rel[len("arm9/src/"):-len(".c")]
+                name = rel[len("arm9/src/"):-ext_len]
             units.append({
                 "name": name,
                 "target_path": target,
-                "base_path": f"{BUILD_DIR}/{rel[:-len('.c')]}.o",
+                "base_path": f"{BUILD_DIR}/{rel[:-ext_len]}.o",
             })
     return units
 
@@ -71,7 +75,7 @@ def main():
         "custom_make": "make",
         "build_target": False,
         "build_base": True,
-        "watch_patterns": ["*.c", "*.h"],
+        "watch_patterns": ["*.c", "*.cpp", "*.h"],
         "units": units,
     }, indent=4))
 
