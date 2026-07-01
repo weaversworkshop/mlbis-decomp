@@ -1190,12 +1190,12 @@ from:0x02015dac kind:arm_call to:0x02015028 module:main
 from:0x02015e78 kind:arm_call to:0x02015028 module:main
 from:0x02015eb0 kind:arm_call to:0x02063ba8 module:overlay(0)
 from:0x02015ed8 kind:arm_call to:0x01ff8228 module:itcm
-from:0x02015ee4 kind:load to:0x0205266c module:main
+from:0x02015ee4 kind:load to:0x02052664 add:0x8 module:main
 from:0x02015ef4 kind:arm_call to:0x0201a168 module:main
 from:0x0201615c kind:load to:0x0204ac2c module:main
 from:0x02016168 kind:arm_call to:0x02015ebc module:main
 from:0x02016180 kind:arm_call to:0x01ff8228 module:itcm
-from:0x0201618c kind:load to:0x020526a0 module:main
+from:0x0201618c kind:load to:0x02052698 add:0x8 module:main
 from:0x02016198 kind:arm_call to:0x02015f00 module:main
 from:0x020161ac kind:arm_call to:0x02015f00 module:main
 from:0x020161b4 kind:arm_call to:0x0201a168 module:main

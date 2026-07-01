@@ -4,63 +4,22 @@ extern "C" {
 
 #include "globals.h"
 
-#include "main/unk_tu_02015ebc.h"
+#include "main/clGlobalEvent.h"
 
 #include <nitro/fx/fx_cp.h>
 #include <nitro/fx/fx_trig.h>
-#include <nitro/gx.h>
 
 // --- Struct Definitions --- //
 
-struct UnkStruct_02015f0c_00;
-struct UnkStruct_02015f0c_01;
-struct UnkStruct_02015f0c_02;
-
 typedef struct {
-    u8 field00;
-    u8 opcodes[0xf];
-} UnkStruct_02015f0c_00_04;
-
-struct UnkStruct_02015f0c_00 {
-    // field00 is the implicit vtable ptr for the struct
-    UnkStruct_02015f0c_00_04 * field04;
-    u8 pad_08[0x18];
-    u32 field20;
-    virtual u32 m00();
-    virtual u32 m04();
-    virtual u32 m08();
-    virtual u32 fn_0c(struct UnkStruct_02015f0c_01 *, u32);
-    virtual u32 fn_10(struct UnkStruct_02015f0c_01 *, struct UnkStruct_02015f0c_02 *);
-};
-
-typedef struct UnkStruct_02015f0c_01 {
-    u8 * field00;
-    u8 pad_04[0x60];
-    union {
-        u8 * field64[17];
-        struct {
-            u8 pad_64[4];
-            u8 * field68[16];
-        };
-    };
-    u16 fielda8;
-    u16 fieldaa;
-} UnkStruct_02015f0c_01;
-
-typedef struct UnkStruct_02015f0c_02 {
-    u16 field00;
+    s16 field00;
     u16 field02;
     u32 field04;
-    s32 field08[24];
-} UnkStruct_02015f0c_02;
-
-typedef struct { // TODO: Implement
-    u8 pad_00[0x10];
+    u32 field08;
+    u8 field0c_b0 : 1;
+    u8 field0c : 7;
+    u8 pad_0d[0x3];
 } UnkStruct_02019360;
-
-typedef struct {
-    u8 pad_00[0x10];
-} UnkGlobal_0205266c;
 
 typedef struct {
     u8 pad_00[0x20];
@@ -68,15 +27,6 @@ typedef struct {
     u8 pad_24[0xda];
     u16 fieldfc;
 } UnkGlobal_020563e4;
-
-typedef struct {
-    u8 pad_00[0x2];
-    u16 field02;
-} UnkGlobal_020564e4;
-
-// --- Extern Data Variables --- //
-
-extern u16 data_0204b1dc[];
 
 typedef struct {
     u8  pad_00[0x2];
@@ -92,88 +42,96 @@ typedef struct {
     u8 pad_2d[0x3];
 } UnkGlobal_02056370;
 
-extern UnkGlobal_02056370 data_02056370[];
-
 typedef struct {
     u32 field00;
     u8 pad_04[0x18];
 } UnkGlobal_02056504;
 
+// --- Extern Data --- //
+
+extern u8 data_0204ac2c[];
+extern UnkGlobal_020563e4 data_020563e4;
+extern UnkGlobal_02056370 data_02056370[];
 extern UnkGlobal_02056504 data_02056504;
 
 // --- Extern Functions --- //
-#include "main/unk_020057ac.h"
 
 extern void func_01ff8228(u32 * param1, u32 param2, u32 param3); // itcm function
 
-extern s32 func_020058bc(u16 id, UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2);
-extern void func_02005a78(u16 id, s32 value, UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2);
+extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
+extern void func_02005a78(u16 id, s32 value, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 extern void func_02005da0(UnkGlobal_02056504 * param1, s32 param2);
+// `func_02018048`
+extern u16 * func_02018538(s32 param1);
+// `func_020185d0`
+// `func_02018600`
+// `func_02018630`
+// `func_02018650`
+// `func_020187dc`
+extern s32 func_02018824(u16 param1);
+extern s32 func_02018878(u16 param1, s8 param2);
+extern s32 func_02018974(s32 param1);
+// `func_020189b4`
+extern void func_02018ec4(u8 param1, u16 param2, u8 param3);
+extern void func_02019028(u8 param1);
+extern void func_02019058(u8 param1, u16 param2);
+// `func_020190a4`
+// `func_02019154`
+extern void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3);
+// `func_020193c4`
+// `func_020193ec`
+extern s32 func_020194c4(UnkStruct_02019360 * param1);
+extern s32 func_020194f4(u8 param1, u8 param2, s8 param3);
+extern s32 func_02019564(UnkStruct_02019360 * param1);
+extern s32 func_02019574(UnkStruct_02019360 * param1);
+extern s32 func_0201957c(void);
+extern s32 func_02019584(UnkStruct_02019360 * param1);
+extern s32 func_020195a4(UnkStruct_02019360 * param1);
+extern s32 func_020195d4(UnkStruct_02019360 * param1);
+extern s32 func_02019618(UnkStruct_02019360 * param1);
+extern s32 func_02019620(UnkStruct_02019360 * param1);
+extern void func_0201a168(void * param1);
 extern u32 func_0201cf78(s32 param1);
 extern s64 func_0204536c(s32 param1, s32 param2);
 
-extern void func_ov008_0206406c(void);
+// --- Function Declarations --- // (local free functions; the class methods live in the classes)
 
-// --- Variable Definitions --- // (replace with real data later)
-
-extern u8 data_0204ac2c[];
-extern UnkGlobal_0205266c data_0205266c;
-extern UnkGlobal_020563e4 data_020563e4;
-extern UnkGlobal_020564e4 data_020564e4;
-extern u32 data_0205af98;
-
-// --- Function Declarations --- //
-UnkStruct_02015f0c_00 * func_02015ebc(UnkStruct_02015f0c_00 * param1);
-void func_02015f0c(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-//  `func_020160d4`
-// `func_02016160`
-//  `func_02016190`
-// `func_020161a4`
-// `func_020161c0`
-u32 func_020161d4(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2);
-u32 func_02016254(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-void func_02018ec4(u8 param1, u16 param2, u8 param3);
-// `0x02018048`
-u16 * func_02018538(s32 param1);
-// `0x020185d0`
-// `0x02018600`
-// `0x02018630`
-// `0x02018650`
-// `0x020187dc`
-s32 func_02017634(s32 param1, s32 param2, s32 param3);
-s32 func_02018824(u16 param1);
-s32 func_02018878(u16 param1, s8 param2);
-s32 func_02018974(s32 param1);
-// `func_020189b4`
-void func_02018ec4(u8 param1, u16 param2, u8 param3);
-void func_02019028(u8 param1);
-void func_02019058(u8 param1, u16 param2);
-// `func_020190a4`
-// `func_02019154`
-void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3);
-// `func_020193c4`
-// `func_020193ec`
-s32 func_020194c4(UnkStruct_02019360 * param1);
-s32 func_02019564(UnkStruct_02019360 * param1);
-s32 func_02019574(UnkStruct_02019360 * param1);
-s32 func_020195a4(UnkStruct_02019360 * param1);
-s32 func_020195d4(UnkStruct_02019360 * param1);
-s32 func_02019618(UnkStruct_02019360 * param1);
-s32 func_02019620(UnkStruct_02019360 * param1);
-// `func_02019684`
-void func_020198cc(void);
+void func_02015f00(void * param1);
+void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
+u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
+void * func_020161c0(void * param1);
+u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
+u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
+bool func_02017634(s32 param1, s32 param2, s32 param3);
+void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2);
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-UnkStruct_02015f0c_00 * func_02015ebc(UnkStruct_02015f0c_00 * param1) {
-    *(void **)param1 = &data_0205266c;
-    func_01ff8228(&param1->field20, 0, 8);
-    return param1;
+clScriptSystem::clScriptSystem() {
+    func_01ff8228(&this->field20, 0, 8);
+}
+
+void * clScriptSystem::m00() {
+// No-op
+}
+
+void * clScriptSystem::m04() {
+    func_0201a168(this);
+    return this;
 }
 
 // MATCHED 100%
-void func_02015f0c(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+void func_02015f00(void * param1) {
+// No-op
+}
+
+void clScriptSystem::m08(UnkStruct_02015f0c_00_04 * param) {
+    this->field04 = param;
+}
+
+// MATCHED 100%
+void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
     u8 * r4;
     u32 * dest;
     s32 r5;
@@ -249,7 +207,55 @@ void func_02015f0c(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param
 }
 
 // MATCHED 100%
-u32 func_020161d4(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2) {
+u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+    s32 idx;
+
+    UnkStruct_02015f0c_00_04 * entry = &param1->field04[param3->field00];
+    u8 header = entry->field00;
+    s32 count = header & 0x7f;
+
+    u32 r0 = 6;
+
+    if ((header & 0x80) != 0) {
+        r0 += 2;
+    }
+
+    for (idx = 0; idx < count; idx++) {
+        if (((param3->field04 >> idx) & 1) != 0) {
+            r0 += 2;
+        } else {
+            r0 += data_0204ac2c[entry->opcodes[idx / 2] >> (idx & 1) * 4 & 0xf];
+        }
+    }
+
+    param2->field00 -= r0;
+    return r0;
+}
+
+// MATCHED 100%
+clGlobalEvent::clGlobalEvent() {
+    func_01ff8228(&this->field08, 0, 0x80);
+}
+
+void * clGlobalEvent::m00() {
+    func_02015f00(this);
+    return this;
+}
+
+void * clGlobalEvent::m04() {
+    func_02015f00(this);
+    func_0201a168(this);
+    return this;
+}
+
+// MATCHED 100%
+void * func_020161c0(void * param1) {
+    func_02015f00(param1);
+    return param1;
+}
+
+// MATCHED 100%
+u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2) {
     u32 ret = 1;
 
     if (param2->field00 != NULL) {
@@ -271,7 +277,7 @@ u32 func_020161d4(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2
 }
 
 // MATCHED 100%
-u32 func_02016254(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
     s32 ret;
 
     switch (param3->field00) {
@@ -761,52 +767,61 @@ u32 func_02016254(UnkStruct_02015f0c_00 * param1, UnkStruct_02015f0c_01 * param2
     return param1->fn_10(param2, param3);
 }
 
-// MATCHED 100%
-u16 * func_02018538(s32 param1) {
-    u32 row = param1 & 0xfff;
+u32 clGlobalEvent::fn_10(UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+    return 1;
+}
 
-    switch (param1 & 0xf000) {
-        case 0x1000:
-            return &data_02052a68[row].field00;
-        case 0x2000:
-            return &data_020527f8[row].field00;
-        case 0x3000:
-            return &data_020526f8[row].field00;
-        case 0x4000:
-            return &data_02053b30[row].field00;
-        default:
-            return NULL;
-    }
+u32 clGlobalEvent::fn_14() {
+    return 0;
+}
+
+void clGlobalEvent::fn_18() {
+// No-op
+}
+
+s32 clGlobalEvent::fn_0c(UnkStruct_02015f0c_01 * param2, u32 param3) {
+    return func_020058bc(param3, this, param2);
 }
 
 // MATCHED 100%
-void func_020198cc() {
-
-    func_ov008_0206406c();
-
-    data_01ff9440 = 0;
-
-    data_020564e4.field02 = 0;
-
-    if (data_02055fe4.field504_13 == 3) {
-        GX_SetMasterBrightness(-0x10);
-        GXS_SetMasterBrightness(~0xf);
-
-        u16 hold = data_02055fe0->field2a;
-        func_020057ac(data_02055fe0, 2);
-        data_02055fe0->field2a = hold;
-    } else {
-        data_0205af98 = 0;
-
-        GX_SetMasterBrightness(-0x10);
-        GXS_SetMasterBrightness(~0xf);
-
-        if (data_02055fe0->field2a == 5) {
-            data_020563e4.fieldfc &= ~1;
-        }
-
-        func_020057ac(data_02055fe0, data_02055fe0->field2a);
+bool func_02017634(s32 param1, s32 param2, s32 param3) {
+    switch (param1) {
+        case 0:
+            return (param2 == param3);
+        case 1:
+            return (param2 != param3);
+        case 2:
+            return (param2 < param3);
+        case 3:
+            return (param2 > param3);
+        case 4:
+            return (param2 <= param3);
+        case 5:
+            return (param2 >= param3);
+        case 6:
+            return ((param2 & param3) != 0);
+        case 7:
+            return ((param2 | param3) != 0);
+        case 8:
+            return ((param2 ^ param3) != 0);
+        case 9:
+            return (param2 == 0);
+        case 10:
+            return (param2 != -1);
     }
-} // data_020563e4, data_020564e4, data_0205af98
+
+    return 0;
+}
+
+// MATCHED 100%
+void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2) {
+    param1->field00 = param2;
+
+    func_01ff8228(param1->field24, 0, 0x40);
+
+    param1->field64[0] = 0;
+    param1->fielda8 = 0;
+    param1->fieldaa = 0;
+}
 
 } // extern "C"

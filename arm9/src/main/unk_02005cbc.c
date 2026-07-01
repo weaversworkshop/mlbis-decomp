@@ -4,7 +4,7 @@
 
 #include "main/unk_02005ca4.h"
 #include "main/unk_02005cbc.h"
-#include "main/unk_tu_02015ebc.h"
+#include "main/clGlobalEvent.h"
 
 // MATCHED 100%
 u32 * func_02005cbc(s32 param1) {

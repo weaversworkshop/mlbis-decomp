@@ -21,41 +21,31 @@ FX_CONST_CSV    := lib/NitroSDK/gen/nitro/fx/fx_const.csv
 export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
+# -DSDK_TS: BIS's SDK target (overlay-digest + mmap sizes). See memory/project_sdk_drift.
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(call rwildcard,lib,*.c))
-# `make sdk` compiles every library .o we can, so tu_diff.py can content-match
-# the whole SDK surface against the ROM (catches inlined/linked SDK in game TUs).
-# Covers NitroSDK + NitroSystem + the DS2.0 MSL C runtime (the version this game
-# built with -- NOT the OLD / DS1.2 MSL trees in the submodule).
+# Whole library surface (NitroSDK + NitroSystem + DS2.0 MSL) for tu_diff content-match.
 MSL := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C
 SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c) \
                 $(call rwildcard,lib/NitroSystem,*.c) \
                 $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0,*.c) \
                 $(call rwildcard,lib/syscall,*.c)
 
-# Files that can't compile standalone in this tree:
-# - fs_overlay.c needs linker-script symbols; os_china.c needs China NVRAM.
-# - MSL formatted-I/O, alloc, wide-char, and EABI runtime-init reference a C++
-#   <ctime> header (and heap-config defines) not shipped in this MSL.
-SDK_SKIP := lib/NitroSDK/libraries/fs/src/fs_overlay.c \
-            lib/NitroSDK/libraries/os/src/os_china.c \
+# Can't compile standalone: os_china.c (China NVRAM); MSL formatted-I/O/alloc/wchar (need <ctime>).
+SDK_SKIP := lib/NitroSDK/libraries/os/src/os_china.c \
             $(MSL)/MSL_Common/Src/alloc.c $(MSL)/MSL_Common/Src/printf.c \
             $(MSL)/MSL_Common/Src/scanf.c $(MSL)/MSL_Common/Src/time.c \
             $(MSL)/MSL_Common/Src/char_io.c $(MSL)/MSL_Common/Src/direct_io.c \
             $(MSL)/MSL_Common/Src/mbstring.c \
             $(wildcard $(MSL)/MSL_Common/Src/w*.c) \
             lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_Extras/MSL_Common/Src/extras.c
-# MSL Runtime helpers (setjmp, rt_div0, Thumb_interworking, fp env, ...) live in
-# dirs with '(' in the path, which break make's recipe shell when passed in a
-# file list. Excluded here and compiled separately in the `sdk` recipe via find.
+# Runtime helpers live in dirs with '(' that break recipe shells; compiled via find in `sdk`.
 SDK_RUNTIME  := $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime,*.c)
 SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 
-# SDK files we treat as objdiff units (kept in sync with the `objdiff_units`
-# array in config/sdk_mappings.json). Compiled in the normal `make` so their
-# .o exists for objdiff to diff against the ROM.
+# objdiff units (synced with objdiff_units in sdk_mappings.json).
 SDK_DIFF_FILES := $(shell python -c "import json; print(' '.join(u['source'] for u in json.load(open('config/sdk_mappings.json')).get('objdiff_units', [])))")
 
 C_FILES   := $(call rwildcard,arm9/src,*.c) $(LIB_C_FILES) $(SDK_DIFF_FILES)
@@ -71,7 +61,7 @@ TARGET ?= main_7
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 
-.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk sdk-sweep sdk-check
+.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -119,50 +109,51 @@ diff: all delinks
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 
-# Faithfulness audit: branches across a symbol boundary with no relocation
-# (the `bl <invalid>` / trampoline class). Independent of the match-% report.
+# Faithfulness audit: cross-boundary branches with no reloc.
 check-relocs: delinks
 	python $(SCRIPTS)/check_relocs.py
 
-# SDK provenance -- two layers (both need `make sdk` run once for the SDK .o):
-#   sdk-sweep : DISCOVERY. tu_diff.py content-matches every built SDK .o against
-#               the whole gap -> surfaces *candidate* SDK functions. Fast, but
-#               matches modulo relocations (call targets masked) -> confirm hits.
-#   sdk-check : VERIFICATION of specific function(s). sdk_equiv.py is
-#               relocation-aware and RECURSES through call targets + .word data,
-#               so a stock-looking body over a forked callee is reported DIVERGES
-#               with the exact fork point. This is the authoritative check.
-#   make sdk-check FUNC=func_02009fcc
-#   make sdk-check FUNC="func_0200a024 func_0200a0c8" SDK_EQUIV_ARGS=-v
-#   make sdk-check FUNC=func_0200a0c8 SDK_EQUIV_ARGS="--sdk-func DisposeCallback"
+# SDK provenance (need `make sdk` first). sweep=DISCOVERY (tu_diff), check=VERIFY (sdk_equiv).
+# GAP picks the gap (default main_7; itcm_1/dtcm_1 for TCM-resident SDK).
+#   make sdk-sweep [GAP=itcm_1]  |  make sdk-sweep-all
+#   make sdk-check FUNC="func_xxxx ..." [GAP=itcm_1] [SDK_EQUIV_ARGS=-v]
+GAP ?= main_7
+GAP_O = $(BUILD_DIR)/delinks/_dsd_gap@$(GAP).o
 sdk-sweep: delinks
-	@python $(SCRIPTS)/tu_diff.py --all --new
+	@python $(SCRIPTS)/tu_diff.py --all --new --gap-o $(GAP_O)
+
+sdk-sweep-all: delinks
+	@for g in $(BUILD_DIR)/delinks/_dsd_gap@*.o; do \
+		out=$$(python $(SCRIPTS)/tu_diff.py --all --new --gap-o "$$g" 2>/dev/null); \
+		echo "$$out" | grep -qF '[NEW' && { echo "##### $$g #####"; echo "$$out"; } || true; \
+	done
+
+# sdk-audit: which SDK .c fail to compile (tu_diff blind spots).
+sdk-audit:
+	@python $(SCRIPTS)/sdk_compile_audit.py --reasons
 
 FUNC ?=
 SDK_EQUIV_ARGS ?=
 sdk-check: delinks
 	@test -n "$(FUNC)" || { echo 'usage: make sdk-check FUNC="func_xxxx [func_yyyy ...]" [SDK_EQUIV_ARGS=-v]'; exit 2; }
 	@test -n "$$(find $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | head -1)" || { echo "No SDK objects in $(BUILD_DIR)/lib -- run 'make sdk' first."; exit 2; }
-	@python $(SCRIPTS)/sdk_equiv.py $(FUNC) $(SDK_EQUIV_ARGS)
+	@python $(SCRIPTS)/sdk_equiv.py $(FUNC) --gap-o $(GAP_O) $(SDK_EQUIV_ARGS)
 
-# Mermaid call graph (vertical). By default drops lone nodes AND mapped SDK
-# functions (game functions only) via CALLGRAPH_FLAGS; scope a huge graph with
-# CALLGRAPH_ARGS, e.g.:
+# Mermaid call graph (game-only by default). Scope via CALLGRAPH_ARGS, e.g.
 #   make callgraph CALLGRAPH_ARGS="--root func_0200907c --undone"
-#   make callgraph CALLGRAPH_ARGS="--leaves"
-# To include SDK and/or lone nodes, override: make callgraph CALLGRAPH_FLAGS=
 CALLGRAPH_FLAGS ?= --connected-only --game-only
 CALLGRAPH_ARGS ?=
 callgraph: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
 
-# Per-file build overrides. Set MWCC_OVERRIDE for a different mwccarm binary,
-# EXTRA_CFLAGS for additional flags. Used to match ROM bytes that depend on
-# specific compiler versions or build-time defines.
+# Per-file overrides: MWCC_OVERRIDE (compiler), EXTRA_CFLAGS (defines).
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
 
-# Shipped with sp2p4 (sp1p2 mis-places func_02016254's literal pool).
-$(BUILD_DIR)/arm9/src/main/unk_tu_02015ebc.o: MWCC_OVERRIDE := $(TOOLS_DIR)/mwccarm/2.0/sp2p4/mwccarm.exe
+# Game TUs = sp2p4 (SDK stays sp1p2).
+$(BUILD_DIR)/arm9/src/%.o: MWCC_OVERRIDE := $(TOOLS_DIR)/mwccarm/2.0/sp2p4/mwccarm.exe
+
+# clScriptSystem/clGlobalEvent are real C++ classes (RTTI in ROM).
+$(BUILD_DIR)/arm9/src/main/clGlobalEvent.o: EXTRA_CFLAGS := -RTTI on
 
 MWCC_OVERRIDE ?=
 EXTRA_CFLAGS  ?=

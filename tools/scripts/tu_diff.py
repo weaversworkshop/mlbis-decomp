@@ -54,8 +54,15 @@ def disasm(objfile):
             continue
         m = RELOC_RE.match(line)
         if m and cur is not None and cur["insns"]:
+            reloc_off = int(m.group(1), 16)
             a, b, t, _ = cur["insns"][-1]
-            cur["insns"][-1] = (a, b, t, m.group(2))
+            # Only attach if the reloc is FOR this instruction (offset matches).
+            # A reloc past the last insn belongs to a trailing literal-pool word
+            # that objdump collapsed to '...' (zero-filled + reloc'd in the .o);
+            # blindly attaching it to the final pop/ldmia was turning EXACT SDK
+            # matches into phantom 1-insn near-matches (the `pop <R>` artifact).
+            if reloc_off == a:
+                cur["insns"][-1] = (a, b, t, m.group(2))
             continue
         m = INSN_RE.match(line)
         if m and cur is not None:
@@ -221,7 +228,10 @@ def match_object(sdk_o, gap_funcs, gap_index, sym_addrs, mapped, only_new, min_i
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("sdk_o", nargs="?", help="compiled SDK .o")
-    ap.add_argument("target_o", nargs="?", default=str(GAP_DEFAULT))
+    ap.add_argument("target_o", nargs="?", default=None)
+    ap.add_argument("--gap-o", dest="gap_o", default=None,
+                    help="gap/target .o to sweep (default _dsd_gap@main_7.o); "
+                         "e.g. build/delinks/_dsd_gap@itcm_1.o")
     ap.add_argument("--all", action="store_true", help="all built SDK .o vs gap")
     ap.add_argument("--new", action="store_true", help="only unmapped/func_ hits")
     ap.add_argument("--min", type=int, default=8,
@@ -230,7 +240,10 @@ def main():
                     help="also show low-confidence (short/ambiguous) matches")
     args = ap.parse_args()
 
-    gap_funcs = load_funcs(args.target_o)
+    # gap target precedence: --gap-o, then positional target_o, then default main_7.
+    target_o = args.gap_o or args.target_o or str(GAP_DEFAULT)
+
+    gap_funcs = load_funcs(target_o)
     gap_index = {}
     for tname, (key, _consts) in gap_funcs.items():
         gap_index.setdefault(key, []).append(tname)
