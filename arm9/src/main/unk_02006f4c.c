@@ -9,7 +9,7 @@
 
 #include <nnsys/snd.h>
 
-// MATCH 100%
+// MATCHED 100%
 void func_02006f4c(u16 * param1, u32 param2, u32 param3) {
     u16 * prgNos = param1;
     u16 successes;

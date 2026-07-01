@@ -6,7 +6,7 @@
 
 #include <nnsys/snd.h>
 
-// MATCH 100%
+// MATCHED 100%
 void func_02006688(u32 param1, u8 param2) {
     if (param1 == 0) {
         param1 = 8;

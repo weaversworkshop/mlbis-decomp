@@ -4,6 +4,7 @@ extern "C" {
 
 #include "globals.h"
 
+#include "main/backup.h"
 #include "main/unk_tu_02017bec.h"
 
 // --- Struct Definitions --- //
@@ -40,6 +41,9 @@ typedef struct {
 } UnkGlobal_02053b30;
 
 // --- Extern Data Variables --- //
+
+typedef struct { u8 data[SAVE_SLOT_SIZE]; } SaveSlot;
+extern SaveSlot data_02058f94[SAVE_SLOT_COUNT];
 
 // --- Extern Functions --- //
 
@@ -84,6 +88,48 @@ s32 func_02019618(UnkStruct_02019360 * param1);
 s32 func_02019620(UnkStruct_02019360 * param1);
 
 // --- Function Definitions --- //
+
+// MATCHED 100%
+BOOL func_02017b60(u32 slot_idx) {
+    if (slot_idx >= SAVE_SLOT_COUNT) {
+        return FALSE;
+    }
+
+    func_020179d8((void *)(slot_idx * SAVE_SLOT_SIZE + SAVE_SLOT_1_OFFSET), &data_02058f94[slot_idx], SAVE_PAYLOAD_SIZE, 1);
+
+    return TRUE;
+}
+
+
+BOOL func_02017ba4(u32 slot_idx) {
+//     .global func_02017ba4
+//     arm_func_start func_02017ba4
+// func_02017ba4: ; 0x02017ba4
+//     stmdb sp!, {r3, lr}
+//     cmp r0, #0x2
+//     movhs r0, #0x0
+//     ldmhsia sp!, {r3, pc}
+    if (slot_idx >= SAVE_SLOT_COUNT) {
+        return FALSE;
+    }
+//     ldr r1, .L_02017be0
+//     ldr r3, .L_02017be4
+//     mul r1, r0, r1
+//     add r0, r1, #0x3fc
+//     ldr r2, .L_02017be8
+//     add r0, r0, #0x400
+//     add r1, r3, r1
+//     mov r3, #0x1
+//     bl func_020179d8
+    func_020179d8((void *)(slot_idx * SAVE_SLOT_SIZE + SAVE_SLOT_2_OFFSET), &data_02058f94[slot_idx], SAVE_PAYLOAD_SIZE, 1);
+//     mov r0, #0x1
+//     ldmia sp!, {r3, pc}
+// .L_02017be0: .word 0xfd8
+// .L_02017be4: .word data_02058f94
+// .L_02017be8: .word 0x5f4
+//     arm_func_end func_02017ba4
+    return TRUE;
+}
 
 // func_02017bec: ; 0x02017bec
 //     stmdb sp!, {r3, r4, r5, r6, r7, lr}
