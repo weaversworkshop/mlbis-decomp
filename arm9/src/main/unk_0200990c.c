@@ -12,7 +12,7 @@ void func_0200990c(void * param1, SNDBankData * bank, u32 param3, u16 param4, NN
     SNDInstPos pos = SND_GetFirstInstDataPos(bank);
     SNDInstData inst;
 
-    while (SND_GetNextInstData(bank, &inst, &pos) != false) {
+    while (SND_GetNextInstData(bank, &inst, &pos)) {
         if (inst.type == 1 && param3 == inst.param.wave[1]) {
             func_020099b4(param1, inst.param.wave[0], param4, param5, 1);
         }

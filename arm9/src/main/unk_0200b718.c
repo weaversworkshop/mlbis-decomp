@@ -11,7 +11,7 @@
 // MATCHED 100%
 void func_0200b718(void) {
     func_02006274(1);
-    func_02005fe4(false, 0xa0000, 0x8ace0, 0x80);
+    func_02005fe4(FALSE, 0xa0000, 0x8ace0, 0x80);
     func_02006d14(0x47, 0xc00);
     func_02006464(0x5f, 0, 0xc00);
 }

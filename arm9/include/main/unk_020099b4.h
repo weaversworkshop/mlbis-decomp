@@ -5,6 +5,6 @@
 
 #include <nnsys/snd.h>
 
-bool func_020099b4(const SNDWaveArc * param1, s32 param2, u32 param3, NNSSndHeapHandle param4, u32 param5);
+BOOL func_020099b4(const SNDWaveArc * param1, s32 param2, u32 param3, NNSSndHeapHandle param4, u32 param5);
 
 #endif

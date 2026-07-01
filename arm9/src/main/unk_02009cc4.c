@@ -15,7 +15,7 @@
 
 // MATCHED 100%
 void func_02009cc4() {
-    if (func_02009e7c() == false) {
+    if (!func_02009e7c()) {
         return;
     }
 

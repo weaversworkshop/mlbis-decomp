@@ -22,7 +22,7 @@ void func_020091e4(u8 param1, s16 param2, u32 param3, u32 param4) {
 
         NNS_SndHeapClear(heap);
 
-        bool truthy = func_02009490(heap, param2, &data_01ff94d4[param1]);
+        BOOL truthy = func_02009490(heap, param2, &data_01ff94d4[param1]);
         u32 r3 = (param3 != 0);
 
         data_01ff9488.field00 = param4;

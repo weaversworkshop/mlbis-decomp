@@ -9,7 +9,7 @@
 #include <nnsys/snd.h>
 
 // MATCHED 100%
-bool func_02009e7c(void) {
+BOOL func_02009e7c(void) {
     UnkNode ** new_node;
     u32 chunk;
     u32 accumulator = 0;
@@ -42,10 +42,10 @@ bool func_02009e7c(void) {
 
         data_01ff9504.field24 = 0;
 
-        bool truthy = false;
+        BOOL truthy = FALSE;
         if (data_01ff9504.field1c != invalid
             && data_01ff9504.field1c->next == invalid) {
-            truthy = true;
+            truthy = TRUE;
             func_02009ab8();
         }
 
@@ -76,7 +76,7 @@ bool func_02009e7c(void) {
     } while (chunk < data_01ff9488.field00 && (accumulator += chunk) < data_01ff9488.field00);
 
     true_exit:
-        return true;
+        return TRUE;
     false_exit:
-        return false;
+        return FALSE;
 }

@@ -38,7 +38,7 @@ void func_020092e0(u32 param1, u8 param2, u32 param3) {
 
     NNS_SndArcPlayerStartSeqEx(
         &data_01ff94a4[param2], 
-        (param2 != 0) ? true : false, 
+        (param2 != 0) ? TRUE : FALSE, 
         -1, -1, param1
     );
 

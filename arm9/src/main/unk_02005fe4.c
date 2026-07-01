@@ -16,7 +16,7 @@ extern void func_0202eea8(void);
 extern void func_020318f0(u32 param1, NNSSndHeapHandle param2); // DEFERRED : function interleaved with SDK
 
 // MATCHED 100%
-void func_02005fe4(bool param1, u32 param2, u32 param3, u32 param4) {
+void func_02005fe4(BOOL param1, u32 param2, u32 param3, u32 param4) {
     func_0202eea8();
     func_0200a600();
 

@@ -89,14 +89,14 @@ void func_02019a74(UnkStruct_02019a74 * param1, u16 param2) {
 }
 
 // MATCHED 100%
-bool func_02005f24(UnkStruct_02005ddc * param1) {
+BOOL func_02005f24(UnkStruct_02005ddc * param1) {
     func_02019a74(&param1->field08, PAD_Read());
 
     if (param1->field08.field00 == 0x30c && (param1->field08.field02 & 0x30c)) {
-        return true;
+        return TRUE;
     }
 
-    return false;
+    return FALSE;
 }
 
 // MATCHED 100%
@@ -114,7 +114,7 @@ void func_02005ddc(UnkStruct_02005ddc * param1) {
         return;
     }
 
-    if (func_02005f24(param1) == false) {
+    if (!func_02005f24(param1)) {
         return;
     }
 

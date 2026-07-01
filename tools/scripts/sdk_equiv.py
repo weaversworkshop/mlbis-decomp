@@ -152,7 +152,9 @@ def equiv(reg, gname, sname, memo, trail, depth, maxdepth):
     for (gk2, gv), (sk2, sv) in zip(gp, sp):
         if gk2 == "abs" and sk2 == "abs":
             if gv != sv:
-                res = (False, f".word const {gv:#x} vs {sv:#x}")
+                gh = f"{gv:#x}" if isinstance(gv, int) else repr(gv)
+                sh = f"{sv:#x}" if isinstance(sv, int) else repr(sv)
+                res = (False, f".word const {gh} vs {sh}")
                 memo[pair] = res
                 return res
         elif gk2 == "rel" and sk2 == "rel":

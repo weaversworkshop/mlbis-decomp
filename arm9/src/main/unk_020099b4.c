@@ -10,9 +10,9 @@
 #include <nnsys/snd.h>
 
 // MATCHED 100%  -- LoadSingleWave modified
-bool func_020099b4(const SNDWaveArc * waveArc, s32 waveNo, u32 fileId, NNSSndHeapHandle heap, u32 param5) {
+BOOL func_020099b4(const SNDWaveArc * waveArc, s32 waveNo, u32 fileId, NNSSndHeapHandle heap, u32 param5) {
     if (SND_GetWaveDataAddress(waveArc, waveNo) != NULL) {
-        return false;
+        return FALSE;
     }
 
     u32 waveCount = SND_GetWaveDataCount(waveArc);
@@ -31,5 +31,5 @@ bool func_020099b4(const SNDWaveArc * waveArc, s32 waveNo, u32 fileId, NNSSndHea
     }
 
     SND_SetWaveDataAddress((SNDWaveArc *)waveArc, waveNo, ret);
-    return true;
+    return TRUE;
 }

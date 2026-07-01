@@ -211,12 +211,6 @@
       "note": "FLOOR 99.91%: references DTCM autoload/linker symbols (SDK_AUTOLOAD_DTCM_START, data_027e00xx) absent as ROM data symbols. crt0-special. Identity correct."
     },
     {
-      "addr": "0x02017b50",
-      "sdk_name": "NNSi_GetLockedChannel",
-      "library": "snd",
-      "confidence": "certain"
-    },
-    {
       "addr": "0x0201ada4",
       "sdk_name": "ENV_SetResourceSet",
       "library": "env",
