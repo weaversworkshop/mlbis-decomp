@@ -31,7 +31,16 @@
         u8 pad_4cd[0x4e8 - 0x4cd];
         u16 field4e8[10];
         u8 pad_4fc[0x504 - 0x4fc];
-        u32 field504_00 : 13;
-        u32 field504_13 : 2;
+        union {
+            struct {
+                u32 field504_00 : 2;
+                u32 field504_02 : 11;
+                u32 field504_13 : 2;
+            };
+            struct {
+                u32 field504_0b : 1;
+                u32 field504_1b : 1;
+            };
+        };
     } UnkGlobal_02055fe4;
 #endif
