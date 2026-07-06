@@ -686,7 +686,7 @@ from:0x020d2858 kind:arm_call to:0x02099978 module:overlay(14)
 from:0x020d28bc kind:load to:0x02064f08 module:overlay(8)
 from:0x020d28c4 kind:load to:0x020d9020 module:overlay(109)
 from:0x020d28cc kind:load to:0x02055fe4 module:main
-from:0x020d28dc kind:load to:0x020564e4 module:main
+from:0x020d28dc kind:load to:0x020563e4 add:0x100 module:main
 from:0x020d28ec kind:load to:0x020d903c module:overlay(109)
 from:0x020d28f4 kind:load to:0x020b8900 module:overlay(16)
 from:0x020d2908 kind:load to:0x020d9058 module:overlay(109)

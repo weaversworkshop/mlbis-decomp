@@ -394,7 +394,7 @@ from:0x02070148 kind:arm_call to:0x01ff8380 module:itcm
 from:0x02070150 kind:arm_call to:0x01ff82ac module:itcm
 from:0x020701e0 kind:arm_call to:0x01ff8380 module:itcm
 from:0x020701ec kind:arm_call to:0x01ff82ac module:itcm
-from:0x02070330 kind:load to:0x02056040 module:main
+from:0x02070330 kind:load to:0x02055fe4 add:0x5c module:main
 from:0x020705f8 kind:arm_call to:0x02036464 module:main
 from:0x020705fc kind:arm_call to:0x0201f0bc module:main
 from:0x02070878 kind:arm_call to:0x02036464 module:main

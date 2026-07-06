@@ -4,17 +4,12 @@
 
 #include "main/unk_tu_02019628.h"
 
+#include "structs/unk_020563e4.h"
+
 #include <nitro/fs.h>
 #include <nitro/gx.h>
 
 // --- Struct Definitions --- //
-
-typedef struct {
-    u8 pad_00[0x20];
-    u16 field20;
-    u8 pad_24[0xda];
-    u16 fieldfc;
-} UnkGlobal_020563e4;
 
 typedef struct {
     u8 pad_00[0x2];
@@ -34,8 +29,6 @@ extern void func_ov008_0206406c(void);
 
 // --- Variable Definitions --- // (replace with real data later)
 
-extern UnkGlobal_020563e4 data_020563e4;
-extern UnkGlobal_020564e4 data_020564e4;
 extern u32 data_0205af98;
 
 // --- Function Declarations --- //
@@ -69,7 +62,7 @@ void func_020198cc() {
 
     data_01ff9440 = 0;
 
-    data_020564e4.field02 = 0;
+    data_020563e4.field102 = 0;
 
     if (data_02055fe4.field504_13 == 3) {
         GX_SetMasterBrightness(-0x10);

@@ -327,7 +327,7 @@ from:0x020cf544 kind:arm_call to:0x020cb454 module:overlay(31)
 from:0x020cf560 kind:arm_call to:0x02097538 module:overlay(14)
 from:0x020cf62c kind:load to:0x02064f08 module:overlay(8)
 from:0x020cf630 kind:load to:0x020d43e0 module:overlay(31)
-from:0x020cf634 kind:load to:0x020564e4 module:main
+from:0x020cf634 kind:load to:0x020563e4 add:0x100 module:main
 from:0x020cf644 kind:load to:0x020b8900 module:overlay(16)
 from:0x020cf648 kind:load to:0x020cf654 module:overlay(31)
 from:0x020cf664 kind:arm_call to:0x02066dac module:overlay(11)

@@ -6,6 +6,8 @@ extern "C" {
 
 #include "main/clGlobalEvent.h"
 
+#include "structs/unk_020563e4.h"
+
 #include <nitro/fx/fx_cp.h>
 #include <nitro/fx/fx_trig.h>
 
@@ -22,27 +24,6 @@ typedef struct {
 } UnkStruct_02019360;
 
 typedef struct {
-    u8 pad_00[0x20];
-    u16 field20;
-    u8 pad_24[0xda];
-    u16 fieldfc;
-} UnkGlobal_020563e4;
-
-typedef struct {
-    u8  pad_00[0x2];
-    u16 field02[14];
-    u8 pad_1e[0x2];
-    u32 field20;
-    u32 field24;
-    u8 field28;
-    u8 field29;
-    u8 field2a;
-    u8 pad_2b[0x1];
-    u8  field2c;
-    u8 pad_2d[0x3];
-} UnkGlobal_02056370;
-
-typedef struct {
     u32 field00;
     u8 pad_04[0x18];
 } UnkGlobal_02056504;
@@ -50,8 +31,6 @@ typedef struct {
 // --- Extern Data --- //
 
 extern u8 data_0204ac2c[];
-extern UnkGlobal_020563e4 data_020563e4;
-extern UnkGlobal_02056370 data_02056370[];
 extern UnkGlobal_02056504 data_02056504;
 
 // --- Extern Functions --- //
@@ -600,7 +579,7 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
             func_02005a78(param3->field02, ret, param1, param2);
             return 0;
         case 69: {
-            UnkGlobal_02056370 *obj = &data_02056370[param3->field08[0]];
+            UnkGlobal_02056370 *obj = &data_02056370.tbl[param3->field08[0]];
             UnkStruct_02019360 local;
 
             switch (param3->field08[1]) {
@@ -678,13 +657,13 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
                     ret = obj->field24 >> 24;
                     break;
                 case 22:
-                    ret = obj->field28 | 0x4000;
+                    ret = obj->field28[0] | 0x4000;
                     break;
                 case 23:
-                    ret = obj->field29 | 0x4000;
+                    ret = obj->field28[1] | 0x4000;
                     break;
                 case 24:
-                    ret = obj->field2a | 0x4000;
+                    ret = obj->field28[2] | 0x4000;
                     break;
                 case 25:
                     ret = obj->field2c | 0x3000;
@@ -697,7 +676,7 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
         case 70: {
             s32 id = param3->field08[0];
             s32 val = param3->field08[2];
-            UnkGlobal_02056370 *obj = &data_02056370[id];
+            UnkGlobal_02056370 *obj = &data_02056370.tbl[id];
             UnkStruct_02019360 local;
 
             switch (param3->field08[1]) {

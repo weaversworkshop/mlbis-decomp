@@ -494,7 +494,7 @@ from:0x0211d02c kind:load to:0x0210fda8 module:overlay(4)
 from:0x0211d030 kind:load to:0x02055fe4 module:main
 from:0x0211d0f8 kind:arm_call to:0x020caf6c module:overlay(4)
 from:0x0211d114 kind:load to:0x0210fda8 module:overlay(4)
-from:0x0211d118 kind:load to:0x020564e4 module:main
+from:0x0211d118 kind:load to:0x020563e4 add:0x100 module:main
 from:0x0211d134 kind:arm_call to:0x020cbe50 module:overlays(4,30,39,60)
 from:0x0211d140 kind:load to:0x0210fda8 module:overlay(4)
 from:0x0211d160 kind:load to:0x0210fda8 module:overlay(4)
@@ -512,9 +512,9 @@ from:0x0211d250 kind:load to:0x0205afa8 module:main
 from:0x0211d254 kind:load to:0x0205afbc module:main
 from:0x0211d25c kind:arm_call to:0x0201e434 module:main
 from:0x0211d280 kind:arm_call to:0x01ff8228 module:itcm
-from:0x0211d28c kind:load to:0x02056148 module:main
+from:0x0211d28c kind:load to:0x02055fe4 add:0x164 module:main
 from:0x0211d2a0 kind:arm_call to:0x01ff8228 module:itcm
-from:0x0211d2ac kind:load to:0x02056148 module:main
+from:0x0211d2ac kind:load to:0x02055fe4 add:0x164 module:main
 from:0x0211d2fc kind:arm_call to:0x02005a78 module:main
 from:0x0211d308 kind:load to:0x0210fda8 module:overlay(4)
 from:0x0211d344 kind:arm_call to:0x020160d4 module:main
@@ -687,8 +687,8 @@ from:0x02120e38 kind:arm_call to:0x02015dd0 module:main
 from:0x02120e4c kind:arm_call to:0x02005a78 module:main
 from:0x02120ea0 kind:arm_call to:0x01ff8380 module:itcm
 from:0x02120ea8 kind:arm_call to:0x01ff82ac module:itcm
-from:0x02120ed8 kind:load to:0x02056024 module:main
-from:0x02120edc kind:load to:0x02056034 module:main
+from:0x02120ed8 kind:load to:0x02055fe4 add:0x40 module:main
+from:0x02120edc kind:load to:0x02055fe4 add:0x50 module:main
 from:0x02120ee0 kind:load to:0x0210fda8 module:overlay(4)
 from:0x02120ee4 kind:load to:0x02050144 module:main
 from:0x02121108 kind:arm_call to:0x020152ec module:main
@@ -697,8 +697,8 @@ from:0x021211dc kind:arm_call to:0x02005a78 module:main
 from:0x02121230 kind:arm_call to:0x01ff8380 module:itcm
 from:0x02121238 kind:arm_call to:0x01ff82ac module:itcm
 from:0x02121268 kind:load to:0x0210fda8 module:overlay(4)
-from:0x0212126c kind:load to:0x02056024 module:main
-from:0x02121270 kind:load to:0x02056034 module:main
+from:0x0212126c kind:load to:0x02055fe4 add:0x40 module:main
+from:0x02121270 kind:load to:0x02055fe4 add:0x50 module:main
 from:0x02121274 kind:load to:0x02050144 module:main
 from:0x02121348 kind:load to:0x0210fda8 module:overlay(4)
 from:0x021213ec kind:load to:0x0210fda8 module:overlay(4)

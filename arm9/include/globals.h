@@ -21,6 +21,7 @@
     #include "structs/unk_02005ddc.h"
     #include "structs/unk_02019a74.h"
     #include "structs/unk_02055fe4.h"
+    #include "structs/unk_02056370.h"
     #include "structs/unk_0205afa8.h"
     #include "structs/unk_0205b7f8.h"
     #include "structs/unk_0205ba70.h"
@@ -68,6 +69,7 @@
     extern u32 * data_020564bc[];
     extern UnkStruct_020057ac_00 * data_02055fe0;
     extern UnkGlobal_02055fe4 data_02055fe4;
+    extern UnkGlobalContainer_02056370 data_02056370;
     extern UnkGlobal_0205afa8 data_0205afa8;
     extern UnkGlobal_0205b7f8 data_0205b7f0[4];
     extern UnkGlobal_0205ba70 data_0205ba70;

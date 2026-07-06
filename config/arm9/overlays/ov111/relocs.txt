@@ -117,7 +117,7 @@ from:0x020ccaa4 kind:load to:0x020d3b98 module:overlay(111)
 from:0x020ccaac kind:load to:0x020b8900 module:overlay(16)
 from:0x020ccab4 kind:load to:0x020d1984 module:overlay(111)
 from:0x020ccab8 kind:load to:0x020d3ac0 module:overlay(111)
-from:0x020ccac8 kind:load to:0x020564e4 module:main
+from:0x020ccac8 kind:load to:0x020563e4 add:0x100 module:main
 from:0x020ccad4 kind:load to:0x020d9f34 module:overlay(111)
 from:0x020ccb08 kind:arm_call to:0x02066e7c module:overlay(11)
 from:0x020ccb1c kind:arm_call to:0x02066e7c module:overlay(11)
