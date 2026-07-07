@@ -5,19 +5,18 @@
 
 #ifdef __cplusplus
 
-// EXPORT this to the right TU when able
 class clYanaAnim {
 public:
     s32 field04_00 : 23;
-    u32 field04_17 : 1;
-    u32 field04_18 : 1;
-    u32 field04_19 : 7;
+    u32 field04_23 : 1;
+    u32 field04_24 : 1;
+    u32 field04_25 : 7;
 
     s16 field08;
 
     u16 field0a_00 : 14;
-    u16 field0a_0e : 1;
-    u16 field0a_0f : 1;
+    u16 field0a_14 : 1;
+    u16 field0a_15 : 1;
 
     virtual ~clYanaAnim();
     virtual void m08();

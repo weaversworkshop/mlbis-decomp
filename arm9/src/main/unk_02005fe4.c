@@ -5,7 +5,7 @@
 #include "main/unk_02005fe4.h"
 #include "main/unk_02007900.h"
 #include "main/unk_02009ab8.h"
-#include "main/unk_0201a150.h"
+#include "main/heap.h"
 #include "main/unk_0202f1b4.h"
 
 #include <nnsys/snd.h>

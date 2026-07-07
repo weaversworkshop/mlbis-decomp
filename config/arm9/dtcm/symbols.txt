@@ -22,3 +22,4 @@ data_027e1164 kind:bss addr:0x027e1164
 data_027e1180 kind:bss addr:0x027e1180
 data_027e1190 kind:bss addr:0x027e1190
 OSi_IrqThreadQueue kind:bss addr:0x027e11f0
+SDK_AUTOLOAD_DTCM_END kind:data(any) addr:0x027e1200

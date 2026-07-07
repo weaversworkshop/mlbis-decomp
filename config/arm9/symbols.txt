@@ -372,10 +372,10 @@ func_02019c90 kind:function(arm,size=0x180) addr:0x02019c90
 func_02019e10 kind:function(arm,size=0x9c) addr:0x02019e10
 func_02019eac kind:function(arm,size=0x1ac) addr:0x02019eac
 func_0201a058 kind:function(arm,size=0xe0) addr:0x0201a058
-func_0201a138 kind:function(arm,size=0x18) addr:0x0201a138
-func_0201a150 kind:function(arm,size=0x18) addr:0x0201a150
+_ZnwmmPvm kind:function(arm,size=0x18) addr:0x0201a138
+_ZnammPvm kind:function(arm,size=0x18) addr:0x0201a150
 _ZdlPv kind:function(arm,size=0xc) addr:0x0201a168
-func_0201a174 kind:function(arm,size=0xc) addr:0x0201a174
+_ZdaPv kind:function(arm,size=0xc) addr:0x0201a174
 func_0201a180 kind:function(arm,size=0x40) addr:0x0201a180
 func_0201a1c0 kind:function(arm,size=0x98) addr:0x0201a1c0
 func_0201a258 kind:function(arm,size=0x64) addr:0x0201a258
@@ -2264,7 +2264,6 @@ data_0205afc4 kind:bss addr:0x0205afc4
 data_0205b3c4 kind:bss addr:0x0205b3c4
 data_0205b7a8 kind:bss addr:0x0205b7a8
 data_0205b7f0 kind:bss addr:0x0205b7f0
-data_0205b840 kind:bss addr:0x0205b840
 data_0205ba70 kind:bss addr:0x0205ba70
 data_0205ba74 kind:bss addr:0x0205ba74
 data_0205ba78 kind:bss addr:0x0205ba78
@@ -2431,3 +2430,4 @@ data_020638e0 kind:bss addr:0x020638e0
 data_020639e0 kind:bss addr:0x020639e0
 data_02063ae0 kind:bss addr:0x02063ae0
 data_02063afc kind:bss addr:0x02063afc
+SDK_MAIN_ARENA_LO kind:data(any) addr:0x021277c0

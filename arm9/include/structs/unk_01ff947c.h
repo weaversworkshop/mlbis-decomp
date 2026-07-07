@@ -3,9 +3,8 @@
 
     #include "types.h"
 
-    #include "structs/unk_0201a058.h"
 
     typedef struct {
-        UnkStruct_0201a058 * field00;
+        void * field00;
     } UnkGlobal_01ff947c;
 #endif

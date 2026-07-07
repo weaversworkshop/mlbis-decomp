@@ -3,10 +3,11 @@
 
     #include "types.h"
 
-    #include "structs/unk_0201a058.h"
+    typedef struct UnkHeader_0201a058 UnkHeader_0201a058;
 
     typedef struct {
         UnkHeader_0201a058 * field00[2][2];
-        u8 pad_10[0x4];
+        u32 field10_00 : 27;
+        u32 field10_27 : 5;
     } UnkGlobal_0205b7f8;
 #endif

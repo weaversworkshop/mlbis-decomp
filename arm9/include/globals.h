@@ -71,7 +71,7 @@
     extern UnkGlobal_02055fe4 data_02055fe4;
     extern UnkGlobalContainer_02056370 data_02056370;
     extern UnkGlobal_0205afa8 data_0205afa8;
-    extern UnkGlobal_0205b7f8 data_0205b7f0[4];
+    extern UnkGlobal_0205b7f8 data_0205b7f0[32];
     extern UnkGlobal_0205ba70 data_0205ba70;
     extern UnkGlobal_0205bad4 data_0205bad4;
     extern UnkGlobal_0205f6b0 data_0205f6b0;

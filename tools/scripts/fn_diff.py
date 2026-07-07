@@ -85,7 +85,7 @@ def find_mine(symbol):
         for o in sorted(base.rglob("*.o")):
             r = subprocess.run([OBJDUMP, "-t", str(o)], capture_output=True, text=True)
             if r.returncode == 0 and re.search(
-                rf"^\S+.* {re.escape(symbol)}$", r.stdout, re.M
+                rf"^\S+(?!.*\*UND\*).* {re.escape(symbol)}$", r.stdout, re.M
             ):
                 return o
     return None

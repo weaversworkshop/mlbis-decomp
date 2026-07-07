@@ -6,7 +6,7 @@
 #include "main/unk_020068c4.h"
 #include "main/unk_02006c34.h"
 #include "main/unk_02007398.h"
-#include "main/unk_0201a174.h"
+#include "main/heap.h"
 
 // MATCHED 100%
 void func_02006274(u32 param1) {
