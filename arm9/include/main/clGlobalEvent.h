@@ -1,5 +1,5 @@
-#ifndef MAIN_CLGLOBALEVENT_H
-#define MAIN_CLGLOBALEVENT_H
+#ifndef MAIN_CL_GLOBAL_EVENT_H
+#define MAIN_CL_GLOBAL_EVENT_H
 // 0x02018538–0x02019628 //
 
 #include "types.h"
@@ -45,20 +45,13 @@ public:
 
     clScriptSystem();
 
-    virtual void * m00();
-    virtual void * m04();
+    virtual ~clScriptSystem();
+
     virtual void m08(UnkStruct_02015f0c_00_04 * param);
 };
 
 class clGlobalEvent : public clScriptSystem {
 public:
-    clGlobalEvent();
-    virtual void * m00();
-    virtual void * m04();
-    virtual s32  fn_0c(UnkStruct_02015f0c_01 *, u32);
-    virtual u32  fn_10(UnkStruct_02015f0c_01 *, UnkStruct_02015f0c_02 *);
-    virtual u32  fn_14();
-    virtual void fn_18();
     u8 pad_04[0x20];
     u32 field24[16];
     union {
@@ -70,6 +63,15 @@ public:
     };
     u16 fielda8;
     u16 fieldaa;
+    
+    clGlobalEvent();
+
+    virtual ~clGlobalEvent();
+    
+    virtual s32  fn_0c(UnkStruct_02015f0c_01 *, u32);
+    virtual u32  fn_10(UnkStruct_02015f0c_01 *, UnkStruct_02015f0c_02 *);
+    virtual u32  fn_14();
+    virtual void fn_18();
 };
 
 #endif // __cplusplus

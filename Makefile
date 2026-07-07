@@ -100,7 +100,7 @@ $(DELINKS_DIR)/.stamp: $(DSD_CONFIG_DEPS) $(SDK_MAPPINGS)
 	@touch $@
 
 objdiff: objdiff.json
-objdiff.json: $(C_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py
+objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py
 	python $(SCRIPTS)/gen_objdiff.py > $@
 
 diff: all delinks

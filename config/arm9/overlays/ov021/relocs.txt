@@ -385,7 +385,7 @@ from:0x020cffa8 kind:arm_call to:0x02096730 module:overlay(14)
 from:0x020d0028 kind:arm_call to:0x020951cc module:overlay(14)
 from:0x020d0038 kind:arm_call to:0x020f1eb8 module:overlay(118)
 from:0x020d00b4 kind:load to:0x02064f08 module:overlay(8)
-from:0x020d00bc kind:load to:0x02054f14 module:main
+from:0x020d00bc kind:load to:0x02054f0c add:0x8 module:main
 from:0x020d00c0 kind:load to:0x02070e80 module:overlay(11)
 from:0x020d00c4 kind:load to:0x02070e38 module:overlay(11)
 from:0x020d00c8 kind:load to:0x020710c0 module:overlay(11)

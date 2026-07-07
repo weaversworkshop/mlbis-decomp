@@ -12,16 +12,6 @@ extern "C" {
 // --- Struct Definitions --- //
 
 typedef struct {
-    s16 field00;
-    u16 field02;
-    u32 field04;
-    u32 field08;
-    u8 field0c_b0 : 1;
-    u8 field0c : 7;
-    u8 pad_0d[0x3];
-} UnkStruct_02019360;
-
-typedef struct {
     u32 field00_00 : 10;
     u32 field00_0a : 10;
     u32 field00_14 : 10;

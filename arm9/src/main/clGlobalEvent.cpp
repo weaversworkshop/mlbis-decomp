@@ -5,6 +5,7 @@ extern "C" {
 #include "globals.h"
 
 #include "main/clGlobalEvent.h"
+#include "main/playerStatus.h"
 
 #include "structs/unk_020563e4.h"
 
@@ -12,16 +13,6 @@ extern "C" {
 #include <nitro/fx/fx_trig.h>
 
 // --- Struct Definitions --- //
-
-typedef struct {
-    s16 field00;
-    u16 field02;
-    u32 field04;
-    u32 field08;
-    u8 field0c_b0 : 1;
-    u8 field0c : 7;
-    u8 pad_0d[0x3];
-} UnkStruct_02019360;
 
 typedef struct {
     u32 field00;
@@ -40,45 +31,17 @@ extern void func_01ff8228(u32 * param1, u32 param2, u32 param3); // itcm functio
 extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 extern void func_02005a78(u16 id, s32 value, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 extern void func_02005da0(UnkGlobal_02056504 * param1, s32 param2);
-// `func_02018048`
-extern u16 * func_02018538(s32 param1);
-// `func_020185d0`
-// `func_02018600`
-// `func_02018630`
-// `func_02018650`
-// `func_020187dc`
-extern s32 func_02018824(u16 param1);
-extern s32 func_02018878(u16 param1, s8 param2);
-extern s32 func_02018974(s32 param1);
-// `func_020189b4`
-extern void func_02018ec4(u8 param1, u16 param2, u8 param3);
-extern void func_02019028(u8 param1);
-extern void func_02019058(u8 param1, u16 param2);
-// `func_020190a4`
-// `func_02019154`
-extern void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3);
-// `func_020193c4`
-// `func_020193ec`
-extern s32 func_020194c4(UnkStruct_02019360 * param1);
-extern s32 func_020194f4(u8 param1, u8 param2, s8 param3);
-extern s32 func_02019564(UnkStruct_02019360 * param1);
-extern s32 func_02019574(UnkStruct_02019360 * param1);
-extern s32 func_0201957c(void);
-extern s32 func_02019584(UnkStruct_02019360 * param1);
-extern s32 func_020195a4(UnkStruct_02019360 * param1);
-extern s32 func_020195d4(UnkStruct_02019360 * param1);
-extern s32 func_02019618(UnkStruct_02019360 * param1);
-extern s32 func_02019620(UnkStruct_02019360 * param1);
+
 extern void func_0201a168(void * param1);
+
 extern u32 func_0201cf78(s32 param1);
+
 extern s64 func_0204536c(s32 param1, s32 param2);
 
 // --- Function Declarations --- // (local free functions; the class methods live in the classes)
 
-void func_02015f00(void * param1);
 void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
 u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-void * func_020161c0(void * param1);
 u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
 bool func_02017634(s32 param1, s32 param2, s32 param3);
@@ -91,20 +54,10 @@ clScriptSystem::clScriptSystem() {
     func_01ff8228(&this->field20, 0, 8);
 }
 
-void * clScriptSystem::m00() {
-// No-op
-}
-
-void * clScriptSystem::m04() {
-    func_0201a168(this);
-    return this;
-}
+// MATCHED 100%
+clScriptSystem::~clScriptSystem() {}
 
 // MATCHED 100%
-void func_02015f00(void * param1) {
-// No-op
-}
-
 void clScriptSystem::m08(UnkStruct_02015f0c_00_04 * param) {
     this->field04 = param;
 }
@@ -216,22 +169,8 @@ clGlobalEvent::clGlobalEvent() {
     func_01ff8228(&this->field08, 0, 0x80);
 }
 
-void * clGlobalEvent::m00() {
-    func_02015f00(this);
-    return this;
-}
-
-void * clGlobalEvent::m04() {
-    func_02015f00(this);
-    func_0201a168(this);
-    return this;
-}
-
 // MATCHED 100%
-void * func_020161c0(void * param1) {
-    func_02015f00(param1);
-    return param1;
-}
+clGlobalEvent::~clGlobalEvent() {}
 
 // MATCHED 100%
 u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2) {
@@ -746,18 +685,20 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
     return param1->fn_10(param2, param3);
 }
 
+// MATCHED 100%
 u32 clGlobalEvent::fn_10(UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
     return 1;
 }
 
+// MATCHED 100%
 u32 clGlobalEvent::fn_14() {
     return 0;
 }
 
-void clGlobalEvent::fn_18() {
-// No-op
-}
+// MATCHED 100%
+void clGlobalEvent::fn_18() {}
 
+// MATCHED 100%
 s32 clGlobalEvent::fn_0c(UnkStruct_02015f0c_01 * param2, u32 param3) {
     return func_020058bc(param3, this, param2);
 }

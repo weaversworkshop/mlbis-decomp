@@ -194,7 +194,7 @@ from:0x0206bd4c kind:arm_call to:0x020348fc module:main
 from:0x0206bd6c kind:arm_call to:0x020348fc module:main
 from:0x0206bd7c kind:arm_call to:0x020348fc module:main
 from:0x0206bdd8 kind:load to:0x02054eec module:main
-from:0x0206bddc kind:load to:0x02054f14 module:main
+from:0x0206bddc kind:load to:0x02054f0c add:0x8 module:main
 from:0x0206bde0 kind:load to:0x02054f54 module:main
 from:0x0206bde4 kind:load to:0x02054f84 module:main
 from:0x0206bde8 kind:load to:0x02055914 module:main

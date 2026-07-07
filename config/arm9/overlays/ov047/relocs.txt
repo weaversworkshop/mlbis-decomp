@@ -4,7 +4,7 @@ from:0x020cb47c kind:arm_call to:0x02096730 module:overlay(14)
 from:0x020cb518 kind:arm_call to:0x020cb540 module:overlay(47)
 from:0x020cb524 kind:load to:0x02064f08 module:overlay(8)
 from:0x020cb528 kind:load to:0x020710c0 module:overlay(11)
-from:0x020cb52c kind:load to:0x02054f14 module:main
+from:0x020cb52c kind:load to:0x02054f0c add:0x8 module:main
 from:0x020cb530 kind:load to:0x02070e80 module:overlay(11)
 from:0x020cb534 kind:load to:0x02070e38 module:overlay(11)
 from:0x020cb538 kind:load to:0x02071a60 module:overlay(11)

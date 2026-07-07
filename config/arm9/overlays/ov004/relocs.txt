@@ -146,7 +146,7 @@ from:0x0208a94c kind:arm_call to:0x02020494 module:main
 from:0x0208a9dc kind:arm_call to:0x02020998 module:main
 from:0x0208aa00 kind:load to:0x0210fda8 module:overlay(4)
 from:0x0208aa04 kind:load to:0x02054eec module:main
-from:0x0208aa08 kind:load to:0x02054f14 module:main
+from:0x0208aa08 kind:load to:0x02054f0c add:0x8 module:main
 from:0x0208aa0c kind:load to:0x02054f54 module:main
 from:0x0208aa10 kind:load to:0x02054f84 module:main
 from:0x0208aa14 kind:load to:0x02055914 module:main

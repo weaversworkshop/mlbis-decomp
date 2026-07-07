@@ -144,10 +144,10 @@ from:0x020cf808 kind:load to:0x0204b1dc module:main
 from:0x020cf834 kind:arm_call to:0x02047364 module:main
 from:0x020cf87c kind:load to:0x020cf8cc module:overlay(20)
 from:0x020cf880 kind:load to:0x020cf890 module:overlay(20)
-from:0x020cf884 kind:load to:0x02054f14 module:main
+from:0x020cf884 kind:load to:0x02054f0c add:0x8 module:main
 from:0x020cf888 kind:load to:0x020cd4d4 module:overlays(19,21,88,101)
 from:0x020cf88c kind:load to:0x020cd4b0 module:overlays(19,88)
-from:0x020cf8c0 kind:load to:0x02054f14 module:main
+from:0x020cf8c0 kind:load to:0x02054f0c add:0x8 module:main
 from:0x020cf8c4 kind:load to:0x020cd4d4 module:overlays(19,21,88,101)
 from:0x020cf8c8 kind:load to:0x020cd4f8 module:overlays(19,88)
 from:0x020cf8d4 kind:arm_call to:0x02020774 module:main
