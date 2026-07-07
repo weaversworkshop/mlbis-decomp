@@ -32,8 +32,6 @@ extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 *
 extern void func_02005a78(u16 id, s32 value, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 extern void func_02005da0(UnkGlobal_02056504 * param1, s32 param2);
 
-extern void func_0201a168(void * param1);
-
 extern u32 func_0201cf78(s32 param1);
 
 extern s64 func_0204536c(s32 param1, s32 param2);

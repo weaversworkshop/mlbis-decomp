@@ -12,8 +12,6 @@ extern u8 data_0205bb20[];
 
 // --- Extern Functions --- //
 
-extern void func_0201a168(void * param1);
-
 extern s64 func_0204536c(s32 param1, s32 param2);
 
 } // extern "C"
