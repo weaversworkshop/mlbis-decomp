@@ -1,0 +1,139 @@
+// objdiff-target: build/delinks/_dsd_gap@main_7.o
+
+#include "globals.h"
+
+#include "main/system.h"
+
+#include <nitro/hw/common/lcd.h>
+#include <nitro/os.h>
+#include <nitro/pad.h>
+
+#include "main/heap.h"
+
+// --- Struct Definitions --- //
+
+typedef struct {
+    u8 pad_00[0x1c];
+    u16 field1c_00 : 8;
+    u16 field1c_08 : 1;
+    s16 field1e;
+    u16 field20;
+    s16 field22;
+    s16 field24;
+    s16 field26;
+    u8 pad_28[0x6];
+    s16 field2e;
+    s16 field30;
+    s16 field32;
+} UnkStruct_0205b7a8;
+
+// --- Extern Data --- //
+
+extern void ** data_0205afc4;
+extern void ** data_0205b3c4;
+extern UnkStruct_0205b7a8 data_0205b7a8;
+
+// --- Extern Functions --- //
+
+extern void func_02037fdc(u32 param1, u32 param2);
+extern void func_02039888(void);
+
+// --- Function Declarations --- //
+
+void func_02019a18(void);
+void func_02019a2c(void);
+void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);
+void func_02019b2c(void);
+void func_02019bf4(u32 dmaNo);
+void func_02019c4c(void);
+void func_02019c7c(u16 param1, u16 param2);
+
+// --- Function Definitions --- //
+
+// MATCHED 100%
+void func_02019a18() {
+    func_02039888();
+    OS_Init();
+    func_02019c90();
+}
+
+// MATCHED 100%
+void func_02019a2c() {
+    func_02019a74(&data_0205afa8, PAD_Read());
+}
+
+// MATCHED 100%
+void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2) {
+    u32 r3 = 0;
+
+    param1->field02 = ~param1->field00 & param2;
+    param1->field04 = param1->field00 & ~param2;
+
+    u16 r14 = param1->field00;
+    for (u32 i = 0; i < 10; i++) {
+        u16 r7 = (param2 & data_0204ac4c[i]);
+        if (r7 != 0) {
+            if ((r14 & r7) == 0) {
+                r3 |= r7;
+                param1->field0a[i] = param1->field08;
+            } else if (--param1->field0a[i] == 0) {
+                    r3 |= r7;
+                    param1->field0a[i] = param1->field09;
+            }
+        } else {
+            param1->field0a[i] = 0;
+        }
+    }
+
+    param1->field06 = r3;
+    param1->field00 = param2;
+}
+
+// MATCHED 100%
+void func_02019b2c() {
+    data_0205b7a8.field1c_08 = 1;
+
+    s32 r1 = reg_GX_VCOUNT;
+    data_0205b7a8.field20 = r1;
+
+    if (r1 < data_0205b7a8.field1e) {
+        r1 += HW_LCD_LINES;
+    }
+
+    if (data_0205b7a8.field30 == 0 || data_0205b7a8.field2e < data_0205b7a8.field22) {
+        data_0205b7a8.field30 = data_0205b7a8.field32;
+        data_0205b7a8.field2e = data_0205b7a8.field22;
+    } else {
+        data_0205b7a8.field30--;
+    }
+
+    r1 -= data_0205b7a8.field1e;
+    data_0205b7a8.field22 = data_0205b7a8.field26 * HW_LCD_LINES + r1;
+
+    func_02037fdc(1, 1);
+
+    data_0205b7a8.field1e = reg_GX_VCOUNT;
+    data_0205b7a8.field24 = data_0205b7a8.field26;
+    data_0205b7a8.field26 = 0;
+}
+
+// MATCHED 100%
+void func_02019bf4(u32 dmaNo) {
+    DC_FlushRange(&data_0205afc4, 0x400);
+    MI_DmaCopy32(dmaNo, &data_0205afc4, HW_OAM, 0x400);
+
+    DC_FlushRange(&data_0205b3c4, 0x400);
+    MI_DmaCopy32(dmaNo, &data_0205b3c4, HW_DB_OAM, 0x400);
+}
+
+// MATCHED 100%
+void func_02019c4c() {
+    MIi_CpuClearFast(0x200, &data_0205afc4, 0x400);
+    MIi_CpuClearFast(0x200, &data_0205b3c4, 0x400);
+}
+
+// MATCHED 100%
+void func_02019c7c(u16 param1, u16 param2) {
+    *(vu16 *)HW_BG_PLTT = param1;
+    *(vu16 *)HW_DB_BG_PLTT = param2;
+}

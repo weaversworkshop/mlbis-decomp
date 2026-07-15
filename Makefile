@@ -61,7 +61,7 @@ TARGET ?= main_7
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 
-.PHONY: all clean distclean diff objdiff delinks progress callgraph check-relocs sdk-rename sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: all clean distclean diff objdiff delinks progress data-catalog callgraph check-relocs sdk-rename sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -108,6 +108,10 @@ diff: all delinks
 
 progress: all delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	@python $(SCRIPTS)/data_catalog.py
+
+data-catalog: delinks
+	python $(SCRIPTS)/data_catalog.py
 
 # Faithfulness audit: cross-boundary branches with no reloc.
 check-relocs: delinks

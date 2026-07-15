@@ -4,6 +4,8 @@
 
 #include "main/btlBoot.h"
 
+#include "main/heap.h"
+
 #include <nitro/fs.h>
 #include <nitro/gx.h>
 
@@ -39,7 +41,6 @@ FS_EXTERN_OVERLAY(OVY_121);
 #include "main/unk_020057ac.h"
 
 extern u32 func_0201a138(u32 param1, u32 param2, u32 param3, u32 param4);
-extern u32 func_0201a2bc(void * param2);
 extern u32 func_0201b180(FSOverlayID param1, u32 param2);
 
 extern void func_ov008_0206406c(void);

@@ -9,7 +9,6 @@
 void func_02005ddc(UnkStruct_02005ddc * param1);
 BOOL func_02005f24(UnkStruct_02005ddc * param1);
 void func_02005f8c(UnkStruct_02005ddc * param1);
-void func_02019a74(UnkStruct_02019a74 * param1, u16 param2);
 void func_0201a91c(void);
 
 #endif

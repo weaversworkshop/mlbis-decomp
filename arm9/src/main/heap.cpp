@@ -38,7 +38,7 @@ extern void SDK_AUTOLOAD_DTCM_END(void);
 
 // --- Function Declarations --- //
 
-void func_02019c90();
+void func_02019c90(void);
 void func_02019e10(UnkGlobal_0205b7f8 * param1);
 void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);
 void func_0201a058(void * param1);
