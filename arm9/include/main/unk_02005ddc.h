@@ -4,7 +4,6 @@
 #include "types.h"
 
 #include "structs/unk_02005ddc.h"
-#include "structs/unk_02019a74.h"
 
 void func_02005ddc(UnkStruct_02005ddc * param1);
 BOOL func_02005f24(UnkStruct_02005ddc * param1);

@@ -1,14 +1,13 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
-extern "C" {
-
 #include "globals.h"
+
+#include "main/savedata.h"
 
 #include <nitro/math.h>
 
 #include "main/backup.h"
 #include "main/clGlobalEvent.h"
-#include "main/savedata.h"
 
 // --- Struct Definitions --- //
 
@@ -45,11 +44,9 @@ typedef struct {
     SaveCopy saves[SAVE_SLOT_COUNT * 2];
 } UnkStruct_02058f84;
 
-// --- Extern Data Variables --- //
-
 // --- Extern Functions --- //
 
-extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
+extern s32 func_020058bc(u16 id, void * param1, void * param2);
 
 // --- Variable Definitions --- // (replace with real data later)
 
@@ -255,5 +252,3 @@ s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup) {
 
     return (result) ? 0 : 2;
 }
-
-} // extern "C"

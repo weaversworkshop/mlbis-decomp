@@ -1,11 +1,10 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
-extern "C" {
-
 #include "globals.h"
 
-#include "main/backup.h"
 #include "main/playerStatus.h"
+
+#include "main/backup.h"
 
 #include "structs/unk_020563e4_head.h"
 
@@ -1008,5 +1007,3 @@ s32 func_02019618(UnkStruct_02019360 * param1) {
 s32 func_02019620(UnkStruct_02019360 * param1) {
     return param1->field08;
 }
-
-} // extern "C"

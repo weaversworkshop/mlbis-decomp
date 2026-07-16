@@ -1,29 +1,14 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
 #include "globals.h"
+
 #include "main/unk_02005ddc.h"
-#include "main/unk_0201a630.h"
 
 #include <nitro/os.h>
 #include <nitro/pad.h>
 
 #include "main/system.h"
-
-// MATCHED 100%
-void func_0201a91c() {
-    OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
-    UnkStruct_0205ba70_00 * node = data_0205ba70.field18;
-
-    while (node != NULL) {
-        if ( node->field11 != 0 &&  node->field11 != 0xff) {
-            node->field12_lo = node->field12_lo & ~0x1;
-            node->field12_lo = node->field12_lo | 0x2;
-        }
-        node = node->field0c;
-    }
-
-    OS_EnableIrqMask(mask);
-}
+#include "main/task.h"
 
 // MATCHED 100%
 void func_0201e8b4() {

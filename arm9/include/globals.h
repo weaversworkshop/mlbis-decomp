@@ -18,13 +18,10 @@
     #include "structs/unk_01ff9538.h"
     #include "structs/unk_01ff9598.h"
     #include "structs/unk_020057ac.h"
-    #include "structs/unk_02005ddc.h"
-    #include "structs/unk_02019a74.h"
     #include "structs/unk_02055fe4.h"
     #include "structs/unk_02056370.h"
     #include "structs/unk_0205afa8.h"
     #include "structs/unk_0205b7f8.h"
-    #include "structs/unk_0205ba70.h"
     #include "structs/unk_0205bad4.h"
     #include "structs/unk_0205f6b0.h"
 
@@ -72,7 +69,6 @@
     extern UnkGlobalContainer_02056370 data_02056370;
     extern UnkGlobal_0205afa8 data_0205afa8;
     extern UnkGlobal_0205b7f8 data_0205b7f0[32];
-    extern UnkGlobal_0205ba70 data_0205ba70;
     extern UnkGlobal_0205bad4 data_0205bad4;
     extern UnkGlobal_0205f6b0 data_0205f6b0;
 #endif

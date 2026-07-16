@@ -1,12 +1,9 @@
 #ifndef MAIN_CL_GLOBAL_EVENT_H
 #define MAIN_CL_GLOBAL_EVENT_H
-// 0x02018538–0x02019628 //
 
 #include "types.h"
 
 #ifdef __cplusplus
-
-// --- Script engine (clScriptSystem / clGlobalEvent) --- //
 
 typedef struct {
     u8 field00;
