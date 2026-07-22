@@ -19,13 +19,13 @@ public:
     u16 field0a_15 : 1;
 
     virtual ~clYanaAnim();
-    virtual void m08();
-    virtual void m0c();
+    virtual void m08();  // 0x02020930
+    virtual void m0c();  // 0x02020940
 
-    void func_020206e0(u16 param1);
-    void func_02020784();
-    void func_020207ec();
-    void func_020208c0();
+    void func_020206e0(u16 param1);  // 0x020206e0
+    void func_02020784();  // 0x02020784
+    void func_020207ec();  // 0x020207ec
+    void func_020208c0();  // 0x020208c0
 };
 
 #endif

@@ -5,6 +5,6 @@
 
 #include "structs/unk_01ff9470.h"
 
-UnkStruct_01ff9470_00 * func_020079bc(UnkStruct_01ff9470_00 * param1);
+UnkStruct_01ff9470_00 * func_020079bc(UnkStruct_01ff9470_00 * param1);  // 0x020079bc
 
 #endif

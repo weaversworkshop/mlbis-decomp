@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void func_02007900(void);
+void func_02007900(void);  // 0x02007900
 
 #endif

@@ -21,8 +21,8 @@ public:
     clTask(u8, u32, u32);
     virtual ~clTask();
 
-    void func_0201a5f4();
-    void func_0201a610();
+    void func_0201a5f4();  // 0x0201a5f4
+    void func_0201a610();  // 0x0201a610
 };
 
 class clVBlankTask {
@@ -40,7 +40,7 @@ public:
     clVBlankTask(u8 param1, u32 param2, u32 param3);
     virtual ~clVBlankTask();
 
-    void func_0201a8ec();
+    void func_0201a8ec();  // 0x0201a8ec
 };
 
 typedef struct {
@@ -64,10 +64,10 @@ typedef struct clVBlankTask clVBlankTask;
 extern "C" {
 #endif
 
-void func_0201a630(void);
-void func_0201a91c(void);
-void func_0201a974(void);
-void func_0201a9a4(clVBlankTask * task);
+void func_0201a630(void);  // 0x0201a630
+void func_0201a91c(void);  // 0x0201a91c
+void func_0201a974(void);  // 0x0201a974
+void func_0201a9a4(clVBlankTask * task);  // 0x0201a9a4
 
 #ifdef __cplusplus
 } // extern "C"

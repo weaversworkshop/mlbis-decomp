@@ -38,22 +38,20 @@ extern void func_020420b0(CARDBackupType type);
 
 // --- Function Declarations --- //
 
-void func_02017758(u32 param1);
-void func_02017844(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg); // FORK of CARD_ProgramAndVerifyBackupAsync ??
-void func_0201788c(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);
-void func_020178c0(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);
-void func_02017908(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);
-BOOL func_0201793c(void * dst, void * src, u32 len);
-void func_020179a4(void * param1);
+void func_02017758(u32 param1);  // 0x02017758
+void func_02017844(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);  // 0x02017844 FORK of CARD_ProgramAndVerifyBackupAsync ??
+void func_0201788c(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);  // 0x0201788c
+void func_020178c0(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);  // 0x020178c0
+void func_02017908(void * dst, void * src, u32 len, MIDmaCallback callback, void *arg);  // 0x02017908
+BOOL func_0201793c(void * dst, void * src, u32 len);  // 0x0201793c
+void func_020179a4(void * param1);  // 0x020179a4
 BOOL func_020179d8(void * dst, void * src, u32 len, u32 param4);
-void func_02017a54(void * param1);
-BOOL func_02017a88(void);
-void func_02017ac0(void);
-BOOL func_02017b0c(void);
-u16 func_02017b40(void * data, u32 len);
-u32 func_02017b50(void);
-BOOL func_02017b60(u32 slot_idx);
-BOOL func_02017ba4(u32 slot_idx);
+void func_02017a54(void * param1);  // 0x02017a54
+BOOL func_02017a88(void);  // 0x02017a88
+void func_02017ac0(void);  // 0x02017ac0
+BOOL func_02017b0c(void);  // 0x02017b0c
+u16 func_02017b40(void * data, u32 len);  // 0x02017b40
+u32 func_02017b50(void);  // 0x02017b50
 
 // --- Function Definitions --- //
 

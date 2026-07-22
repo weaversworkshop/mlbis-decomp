@@ -5,6 +5,6 @@
 
 #include "structs/unk_01ff9504.h"
 
-void func_02008c6c(UnkNode * param1);
+void func_02008c6c(UnkNode * param1);  // 0x02008c6c
 
 #endif

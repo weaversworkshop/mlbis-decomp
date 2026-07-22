@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void func_02006c34(void);
+void func_02006c34(void);  // 0x02006c34
 
 #endif

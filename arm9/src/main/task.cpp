@@ -11,7 +11,7 @@ extern "C" {
 // --- Function Declarations --- //
 
 void func_0201a630();
-void func_0201a67c();
+void func_0201a67c();  // 0x0201a67c
 void func_0201a974();
 void func_0201a9a4(clVBlankTask *task);
 

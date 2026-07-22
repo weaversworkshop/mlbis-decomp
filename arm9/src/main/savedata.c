@@ -54,9 +54,9 @@ extern UnkStruct_02058f84 data_02058f84;
 
 // --- Function Declarations --- //
 
-BOOL func_02017b60(u32 slot_idx);
-BOOL func_02017ba4(u32 slot_idx);
-s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup);
+BOOL func_02017b60(u32 slot_idx);  // 0x02017b60
+BOOL func_02017ba4(u32 slot_idx);  // 0x02017ba4
+s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup);  // 0x02017bec
 
 // --- Function Definitions --- //
 

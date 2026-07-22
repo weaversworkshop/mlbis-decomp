@@ -5,6 +5,6 @@
 
 #include "structs/unk_02008e48.h"
 
-void func_02009880(UnkStruct_02008e48 * param1);
+void func_02009880(UnkStruct_02008e48 * param1);  // 0x02009880
 
 #endif

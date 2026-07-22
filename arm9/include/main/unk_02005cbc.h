@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-u32 * func_02005cbc(s32 param1);
+u32 * func_02005cbc(s32 param1);  // 0x02005cbc
 
 #endif

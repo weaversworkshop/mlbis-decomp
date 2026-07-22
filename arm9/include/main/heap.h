@@ -33,9 +33,9 @@ extern UnkGlobal_0205b7f8 data_0205b7f0[32];
 extern "C" {
 #endif
 
-void func_02019c90(void);
-void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);
-void func_0201a058(void * param1);
+void func_02019c90(void);  // 0x02019c90
+void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);  // 0x02019eac
+void func_0201a058(void * param1);  // 0x0201a058
 void func_0201a174(void * param1);
 
 #ifdef __cplusplus

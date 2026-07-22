@@ -5,6 +5,6 @@
 
 #include <nnsys/snd.h>
 
-void func_0202f1b4(NNSSndHandle * handle);
+void func_0202f1b4(NNSSndHandle * handle);  // 0x0202f1b4
 
 #endif

@@ -5,6 +5,6 @@
 
 #include <nnsys/snd.h>
 
-void * func_02009a9c(NNSSndHeapHandle param1, u32 param2, NNSSndHeapDisposeCallback callback, u32 param4, u32 param5);
+void * func_02009a9c(NNSSndHeapHandle param1, u32 param2, NNSSndHeapDisposeCallback callback, u32 param4, u32 param5);  // 0x02009a9c
 
 #endif

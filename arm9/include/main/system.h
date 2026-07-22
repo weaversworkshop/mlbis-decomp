@@ -20,6 +20,6 @@ typedef struct {
 
 extern UnkStruct_0205b7a8 data_0205b7a8;
 
-void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);
+void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);  // 0x02019a74
 
 #endif

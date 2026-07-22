@@ -130,7 +130,7 @@ def load_anchors(verbose):
     for d in ANCHOR_DIRS:
         if not d.exists():
             continue
-        for f in sorted(d.rglob("*.h")) + sorted(d.rglob("*.cpp")):
+        for f in sorted(d.rglob("*.h")) + sorted(d.rglob("*.cpp")) + sorted(d.rglob("*.c")):
             depth, stack = 0, []  # stack: (class name, depth at its open)
             for lineno, line in enumerate(
                 f.read_text(encoding="utf-8", errors="replace").splitlines(), 1
@@ -186,7 +186,11 @@ def resolve_anchor(anchors, by_name, scope, simple):
     a = anchors.get((scope, simple))
     if a is not None:
         return a
-    if re.match(r"[CD][0-9]$", simple):
+    # Name-only fallback is ONLY for unscoped (free) functions. A scoped method
+    # name (fn_10, m08, run, ...) or a ctor/dtor code (C1/D0) is shared across
+    # unrelated classes, so a lone anchor of it must NOT leak to the others via
+    # by_name -- require an exact (class, name) match for those.
+    if scope or re.match(r"[CD][0-9]$", simple):
         return None
     addrs = by_name.get(simple)
     if addrs and len(addrs) == 1:

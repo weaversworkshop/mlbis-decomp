@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void func_02009668(u32 seqNo, u8 param2);
+void func_02009668(u32 seqNo, u8 param2);  // 0x02009668
 
 #endif

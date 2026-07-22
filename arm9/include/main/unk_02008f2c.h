@@ -5,6 +5,6 @@
 
 #include <nnsys/snd.h>
 
-void * func_02008f2c(const NNSSndArcBankInfo * param1, void * param2, u32 param3);
+void * func_02008f2c(const NNSSndArcBankInfo * param1, void * param2, u32 param3);  // 0x02008f2c
 
 #endif

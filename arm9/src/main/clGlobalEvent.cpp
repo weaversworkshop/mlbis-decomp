@@ -38,12 +38,12 @@ extern s64 func_0204536c(s32 param1, s32 param2);
 
 // --- Function Declarations --- // (local free functions; the class methods live in the classes)
 
-void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
-u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);
-bool func_02017634(s32 param1, s32 param2, s32 param3);
-void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2);
+void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x02015f0c
+u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x020160d4
+u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);  // 0x020161d4
+u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x02016254
+bool func_02017634(s32 param1, s32 param2, s32 param3);  // 0x02017634
+void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2);  // 0x02017728
 
 // --- Function Definitions --- //
 

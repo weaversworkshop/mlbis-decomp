@@ -52,8 +52,8 @@ extern u32 data_0205af98;
 
 // --- Function Declarations --- //
 
-void func_02019628(u32 param1, u32 param2);
-void func_02019684(void);
+void func_02019628(u32 param1, u32 param2);  // 0x02019628
+void func_02019684(void);  // 0x02019684
 void func_020198cc(void);
 
 // --- Function Definitions --- //

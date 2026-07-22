@@ -95,37 +95,37 @@ extern s8 data_0205af8c[];
 
 // --- Function Declarations --- //
 
-void func_02018048(u32 param1);
-void func_020184a8(u8 param1, u8 param2);
+void func_02018048(u32 param1);  // 0x02018048
+void func_020184a8(u8 param1, u8 param2);  // 0x020184a8
 u16 * func_02018538(s32 param1);
-UnkGlobal_02052a68 * func_020185d0(u32 param1);
-UnkGlobal_02052a68 * func_02018600(u32 param1);
-UnkGlobal_020526f8 * func_02018630(u32 param1);
-UnkGlobal_02053b30 * func_02018650(u16 param1);
-UnkGlobal_02052778 * func_02018670(u32 param1);
-u32 func_02018688(u32 param1, u32 * param2, u32 * param3);
-s16 func_020187dc(s32 param1, s32 param2);
+UnkGlobal_02052a68 * func_020185d0(u32 param1);  // 0x020185d0
+UnkGlobal_02052a68 * func_02018600(u32 param1);  // 0x02018600
+UnkGlobal_020526f8 * func_02018630(u32 param1);  // 0x02018630
+UnkGlobal_02053b30 * func_02018650(u16 param1);  // 0x02018650
+UnkGlobal_02052778 * func_02018670(u32 param1);  // 0x02018670
+u32 func_02018688(u32 param1, u32 * param2, u32 * param3);  // 0x02018688
+s16 func_020187dc(s32 param1, s32 param2);  // 0x020187dc
 s32 func_02018824(u16 param1);
 s8 func_02018878(u16 param1, s8 param2);
 s32 func_02018974(s32 param1);
-void func_020189b4(UnkGlobal_02056370 * param1, u32 param2, s16 param3, u16 param4);
+void func_020189b4(UnkGlobal_02056370 * param1, u32 param2, s16 param3, u16 param4);  // 0x020189b4
 BOOL func_02018ec4(u8 param1, u16 param2, u8 param3);
 BOOL func_02019028(u8 param1);
 void func_02019058(u8 param1, u16 param2);
-BOOL func_020190a4(u8 param1, u8 param2, u8 * param3, u8 * param4);
-u16 func_02019154(u8 param1);
-BOOL func_02019178(u32 param1);
-s32 func_020191c0(u32 param1);
+BOOL func_020190a4(u8 param1, u8 param2, u8 * param3, u8 * param4);  // 0x020190a4
+u16 func_02019154(u8 param1);  // 0x02019154
+BOOL func_02019178(u32 param1);  // 0x02019178
+s32 func_020191c0(u32 param1);  // 0x020191c0
 void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3);
-void func_020193a0(UnkStruct_02019360 * param1, UnkStruct_02019360 * param2);
-void func_020193c4(UnkStruct_02019360 * param1, s32 param2);
-s32 func_020193ec(UnkStruct_02019360 * param1, s32 param2);
+void func_020193a0(UnkStruct_02019360 * param1, UnkStruct_02019360 * param2);  // 0x020193a0
+void func_020193c4(UnkStruct_02019360 * param1, s32 param2);  // 0x020193c4
+s32 func_020193ec(UnkStruct_02019360 * param1, s32 param2);  // 0x020193ec
 s8 func_020194c4(UnkStruct_02019360 * param1);
-s8 func_020194f4(u8 param1, u8 param2, s8 param3);
+s8 func_020194f4(u8 param1, u8 param2, s8 param3);  // 0x020194f4
 s32 func_02019564(UnkStruct_02019360 * param1);
 s32 func_02019574(UnkStruct_02019360 * param1);
-s32 func_0201957c(void);
-s32 func_02019584(UnkStruct_02019360 * param1);
+s32 func_0201957c(void);  // 0x0201957c
+s32 func_02019584(UnkStruct_02019360 * param1);  // 0x02019584
 s32 func_020195a4(UnkStruct_02019360 * param1);
 s32 func_020195d4(UnkStruct_02019360 * param1);
 s32 func_02019618(UnkStruct_02019360 * param1);

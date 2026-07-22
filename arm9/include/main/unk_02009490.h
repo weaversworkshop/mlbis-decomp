@@ -5,6 +5,6 @@
 
 #include "structs/unk_01ff94d4.h";
 
-BOOL func_02009490(NNSSndHeapHandle param1, u32 param2, UnkStruct_01ff94d4 * param3);
+BOOL func_02009490(NNSSndHeapHandle param1, u32 param2, UnkStruct_01ff94d4 * param3);  // 0x02009490
 
 #endif

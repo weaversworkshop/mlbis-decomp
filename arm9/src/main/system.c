@@ -22,13 +22,13 @@ extern void func_02039888(void);
 
 // --- Function Declarations --- //
 
-void func_02019a18(void);
-void func_02019a2c(void);
+void func_02019a18(void);  // 0x02019a18
+void func_02019a2c(void);  // 0x02019a2c
 void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);
-void func_02019b2c(void);
-void func_02019bf4(u32 dmaNo);
-void func_02019c4c(void);
-void func_02019c7c(u16 param1, u16 param2);
+void func_02019b2c(void);  // 0x02019b2c
+void func_02019bf4(u32 dmaNo);  // 0x02019bf4
+void func_02019c4c(void);  // 0x02019c4c
+void func_02019c7c(u16 param1, u16 param2);  // 0x02019c7c
 
 // --- Function Definitions --- //
 

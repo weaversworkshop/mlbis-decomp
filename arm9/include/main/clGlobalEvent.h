@@ -44,7 +44,7 @@ public:
 
     virtual ~clScriptSystem();
 
-    virtual void m08(UnkStruct_02015f0c_00_04 * param);
+    virtual void m08(UnkStruct_02015f0c_00_04 * param);  // 0x02015f04
 };
 
 class clGlobalEvent : public clScriptSystem {
@@ -65,14 +65,14 @@ public:
 
     virtual ~clGlobalEvent();
     
-    virtual s32  fn_0c(UnkStruct_02015f0c_01 *, u32);
-    virtual u32  fn_10(UnkStruct_02015f0c_01 *, UnkStruct_02015f0c_02 *);
-    virtual u32  fn_14();
-    virtual void fn_18();
+    virtual s32  fn_0c(UnkStruct_02015f0c_01 *, u32);  // 0x02017614
+    virtual u32  fn_10(UnkStruct_02015f0c_01 *, UnkStruct_02015f0c_02 *);  // 0x02017600
+    virtual u32  fn_14();  // 0x02017608
+    virtual void fn_18();  // 0x02017610
 };
 
 #endif // __cplusplus
 
-u16 * func_02018538(s32 param1);
+u16 * func_02018538(s32 param1);  // 0x02018538
 
 #endif

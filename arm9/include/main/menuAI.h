@@ -13,7 +13,7 @@ class clBtlMoveBase : public clYanaAnim {
 public:
     virtual ~clBtlMoveBase() {}
 
-    virtual void fn_10();
+    virtual void fn_10();  // 0x020199b0
     
     virtual void m08();
     
@@ -24,7 +24,7 @@ public:
 class clBtlMove : public clBtlMoveBase {
 public:
     virtual ~clBtlMove() {}
-    virtual void fn_10();
+    virtual void fn_10();  // 0x020199b4
 };
 
 }

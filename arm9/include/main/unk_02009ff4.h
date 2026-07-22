@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void func_02009ff4(void * mem, u32 size, u32 data1, u32 data2);
+void func_02009ff4(void * mem, u32 size, u32 data1, u32 data2);  // 0x02009ff4
 
 #endif

@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void func_02007f40(UnkStruct_01ff9470_00 * param1, u32 param2);
+void func_02007f40(UnkStruct_01ff9470_00 * param1, u32 param2);  // 0x02007f40
 
 #endif

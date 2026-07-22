@@ -21,14 +21,14 @@ extern void SDK_AUTOLOAD_DTCM_END(void);
 // --- Function Declarations --- //
 
 void func_02019c90(void);
-void func_02019e10(UnkGlobal_0205b7f8 * param1);
+void func_02019e10(UnkGlobal_0205b7f8 * param1);  // 0x02019e10
 void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);
 void func_0201a058(void * param1);
-void func_0201a180(UnkHeader_0201a058 * param1, UnkHeader_0201a058 * param2);
-s32 func_0201a1c0(s32 param1, u32 param2, void * param3, u32 param4);
-void func_0201a258(s32 param1);
-void func_0201a2bc(void * param1);
-void func_0201a2e0(u32 param1, void * param2);
+void func_0201a180(UnkHeader_0201a058 * param1, UnkHeader_0201a058 * param2);  // 0x0201a180
+s32 func_0201a1c0(s32 param1, u32 param2, void * param3, u32 param4);  // 0x0201a1c0
+void func_0201a258(s32 param1);  // 0x0201a258
+void func_0201a2bc(void * param1);  // 0x0201a2bc
+void func_0201a2e0(u32 param1, void * param2);  // 0x0201a2e0
 
 } // extern "C"
 

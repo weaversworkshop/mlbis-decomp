@@ -5,6 +5,6 @@
 
 #include "structs/unk_01ff9464.h"
 
-void func_02009bcc(UnkGlobal_01ff9464 * param1);
+void func_02009bcc(UnkGlobal_01ff9464 * param1);  // 0x02009bcc
 
 #endif

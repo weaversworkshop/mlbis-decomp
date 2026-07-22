@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void * func_020098c8(u32 param1, u32 param2);
+void * func_020098c8(u32 param1, u32 param2);  // 0x020098c8
 
 #endif

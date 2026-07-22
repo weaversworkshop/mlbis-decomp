@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-BOOL func_02009e7c(void);
+BOOL func_02009e7c(void);  // 0x02009e7c
 
 #endif

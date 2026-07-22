@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-u32 * func_02005ca4(u32 param1, u32 param2);
+u32 * func_02005ca4(u32 param1, u32 param2);  // 0x02005ca4
 
 #endif
