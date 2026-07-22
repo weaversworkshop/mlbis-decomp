@@ -18,7 +18,7 @@ public:
     u16 field12_06 : 4;
     u32 field14;
 
-    clTask(u8 param1, u32 param2, u32 param3);
+    clTask(u8, u32, u32);
     virtual ~clTask();
 
     void func_0201a5f4();

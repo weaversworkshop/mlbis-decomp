@@ -60,8 +60,9 @@ TARGET ?= main_7
 
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
+SYNC_NAMES   := python $(SCRIPTS)/sync_mangled_names.py
 
-.PHONY: all clean distclean diff objdiff delinks progress data-catalog callgraph check-relocs sdk-rename sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: all clean distclean diff objdiff delinks progress data-catalog callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -103,10 +104,17 @@ objdiff: objdiff.json
 objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py
 	python $(SCRIPTS)/gen_objdiff.py > $@
 
-diff: all delinks
+# sync-names harvests mwcc's mangled names from the compiled game .o into
+# symbols.txt (edits it), so delinks must run AFTER via recursive make.
+sync-names: all
+	$(SYNC_NAMES) $(SYNC_ARGS)
+
+diff: all sync-names
+	@$(MAKE) --no-print-directory delinks
 	$(OBJDIFF) -p .
 
-progress: all delinks
+progress: all sync-names
+	@$(MAKE) --no-print-directory delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 	@python $(SCRIPTS)/data_catalog.py
 

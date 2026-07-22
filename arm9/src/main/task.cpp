@@ -8,12 +8,6 @@ extern "C" {
 
 #include <nitro/os.h>
 
-// --- Struct Definitions --- //
-
-// --- Extern Data --- //
-
-// --- Extern Functions --- //
-
 // --- Function Declarations --- //
 
 void func_0201a630();
@@ -99,22 +93,10 @@ void clTask::func_0201a5f4() {
     this->field12_01 = 1;
 }
 
-
+// MATCHED 100%
 void clTask::func_0201a610() {
-//     .global func_0201a610
-//     arm_func_start func_0201a610
-// func_0201a610: ; 0x0201a610
-//     ldrh r1, [r0, #0x12]
-//     bic r1, r1, #0x1
-//     orr r1, r1, #0x1
-//     strh r1, [r0, #0x12]
     this->field12_00 = 1;
-//     ldrh r1, [r0, #0x12]
-//     orr r1, r1, #0x2
-//     strh r1, [r0, #0x12]
     this->field12_01 = 1;
-//     bx lr
-//     arm_func_end func_0201a610
 }
 
 // MATCHED 100%
@@ -227,7 +209,7 @@ void func_0201a91c() {
     clVBlankTask * task = data_0205ba70.vblHead;
 
     while (task != NULL) {
-        if ( task->priority != 0 &&  task->priority != 0xff) {
+        if (task->priority != 0 &&  task->priority != 0xff) {
             task->field12_00 = 0;
             task->field12_01 = 1;
         }

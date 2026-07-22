@@ -173,6 +173,13 @@ def equiv(reg, gname, sname, memo, trail, depth, maxdepth):
                     memo[pair] = res
                     return res
         else:
+            # One side abs, other rel: a resolved-vs-unresolved pool word.
+            # When the abs side's value is None it's a zero-filled + reloc'd word
+            # objdump collapsed (a symbol ref we couldn't name) -- the same benign
+            # case tu_diff.verify_pool accepts; the matching skeleton already
+            # constrains the rest. A real abs CONSTANT vs a rel symbol still fails.
+            if (gk2 == "abs" and gv is None) or (sk2 == "abs" and sv is None):
+                continue
             res = (False, f".word kind {gk2} vs {sk2}")
             memo[pair] = res
             return res

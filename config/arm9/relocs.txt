@@ -1605,7 +1605,7 @@ from:0x0201aac8 kind:arm_call to:0x02019eac module:main
 from:0x0201aae0 kind:arm_call to:0x02019eac module:main
 from:0x0201ab04 kind:arm_call to:0x0203d8e4 module:main
 from:0x0201ab34 kind:arm_call to:0x0203d8e4 module:main
-from:0x0201ab40 kind:load to:0x02054c6c module:main
+from:0x0201ab40 kind:load to:0x02054c64 add:0x8 module:main
 from:0x0201ab48 kind:load to:0x0205ba8c module:main
 from:0x0201ab5c kind:arm_call to:0x0201b390 module:main
 from:0x0201ab64 kind:arm_call to:0x0201a058 module:main
@@ -1613,7 +1613,7 @@ from:0x0201ab6c kind:arm_call to:0x0201a058 module:main
 from:0x0201ab74 kind:arm_call to:0x0201a058 module:main
 from:0x0201ab7c kind:arm_call to:0x0201a058 module:main
 from:0x0201ab84 kind:arm_call to:0x0201a588 module:main
-from:0x0201ab90 kind:load to:0x02054c6c module:main
+from:0x0201ab90 kind:load to:0x02054c64 add:0x8 module:main
 from:0x0201aba4 kind:arm_call to:0x0201b390 module:main
 from:0x0201abac kind:arm_call to:0x0201a058 module:main
 from:0x0201abb4 kind:arm_call to:0x0201a058 module:main
@@ -1621,14 +1621,14 @@ from:0x0201abbc kind:arm_call to:0x0201a058 module:main
 from:0x0201abc4 kind:arm_call to:0x0201a058 module:main
 from:0x0201abcc kind:arm_call to:0x0201a588 module:main
 from:0x0201abd4 kind:arm_call to:0x0201a168 module:main
-from:0x0201abe0 kind:load to:0x02054c6c module:main
+from:0x0201abe0 kind:load to:0x02054c64 add:0x8 module:main
 from:0x0201abf4 kind:arm_call to:0x0201b390 module:main
 from:0x0201abfc kind:arm_call to:0x0201a058 module:main
 from:0x0201ac04 kind:arm_call to:0x0201a058 module:main
 from:0x0201ac0c kind:arm_call to:0x0201a058 module:main
 from:0x0201ac14 kind:arm_call to:0x0201a058 module:main
 from:0x0201ac1c kind:arm_call to:0x0201a588 module:main
-from:0x0201ac28 kind:load to:0x02054c6c module:main
+from:0x0201ac28 kind:load to:0x02054c64 add:0x8 module:main
 from:0x0201ad9c kind:load to:0x0205b7a8 module:main
 from:0x0201adac kind:arm_call to:0x0201b390 module:main
 from:0x0201adb4 kind:arm_call to:0x0201a5f4 module:main

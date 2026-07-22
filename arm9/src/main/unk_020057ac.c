@@ -2,11 +2,9 @@
 
 #include "main/unk_020057ac.h"
 
-// MATCHED 100%
-void func_0201a610(UnkStruct_020057ac_00 * param1) {
-    param1->field12 = (param1->field12 & ~0x1) | 0x1;
-    param1->field12 |= 0x2;
-}
+// TODO: Reintegrate as part of clGameMain : clTask
+
+extern func_0201a610(UnkStruct_020057ac_00 * param1);
 
 // MATCHED 100%
 void func_020057ac(UnkStruct_020057ac_00 * param1, u16 param2) {

@@ -69,14 +69,14 @@ BOOL func_02009e7c(void) {
 
         if (*new_node == invalid) {
             data_01ff9504.field20 = 0;
-            goto true_exit;
+            break;
         }
 
         // Check loop conditions
     } while (chunk < data_01ff9488.field00 && (accumulator += chunk) < data_01ff9488.field00);
 
-    true_exit:
-        return TRUE;
-    false_exit:
-        return FALSE;
+    return TRUE;
+
+false_exit:
+    return FALSE;
 }

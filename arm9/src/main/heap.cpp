@@ -10,24 +10,6 @@ extern "C" {
 
 #include "main/cpu_mem.h"
 
-// --- Struct Definitions --- //
-
-struct UnkHeader_0201a058 {
-    struct UnkHeader_0201a058 * field00;
-    struct UnkHeader_0201a058 * field04;
-    union {
-        struct {
-            u32 field08_00 : 25;
-            u32 field08_25 : 1;
-            u32 field08_26 : 6;
-        };
-        struct {
-            u32 field08_size : 26;
-            u32 : 6;
-        };
-    };
-};
-
 // --- Extern Data --- //
 
 extern void SDK_MAIN_ARENA_LO(void);
@@ -113,13 +95,13 @@ void func_02019e10(UnkGlobal_0205b7f8 * param1) {
     node->field00 = NULL;
     node->field04 = param1->field00[0][1];
     node->field08_size = param1->field10_00 | 0x2000000;
-    node->field08_26 = param1->field10_27 * 2;
+    node->field08_heap = param1->field10_27 * 2;
 
     node = param1->field00[0][1];
     node->field00 = param1->field00[0][0];
     node->field04 = NULL;
     node->field08_size = param1->field10_00;
-    node->field08_26 = param1->field10_27 * 2 + 1;
+    node->field08_heap = param1->field10_27 * 2 + 1;
 }
 
 // MATCHED 100%
@@ -197,7 +179,7 @@ void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag) {
                 }
 
                 r14->field08_25 = 0;
-                r14->field08_26 = heap;
+                r14->field08_heap = heap;
 
                 return (void *)((u8 *)r14 + 0xc);
             }
@@ -214,11 +196,11 @@ void func_0201a058(void * param1) {
         return;
     }
 
-    UnkHeader_0201a058 * header = (UnkHeader_0201a058 *)((u8*)param1 - 0xc);
+    UnkHeader_0201a058 * header = GET_HEADER(param1);
     UnkHeader_0201a058 * r5 = header->field00;
     UnkHeader_0201a058 * r6 = header->field04;
 
-    s32 r3 = header->field08_26;
+    s32 r3 = header->field08_heap;
 
     header->field08_25 = 1;
 

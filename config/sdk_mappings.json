@@ -211,12 +211,6 @@
       "note": "FLOOR 99.91%: references DTCM autoload/linker symbols (SDK_AUTOLOAD_DTCM_START, data_027e00xx) absent as ROM data symbols. crt0-special. Identity correct."
     },
     {
-      "addr": "0x0201ada4",
-      "sdk_name": "ENV_SetResourceSet",
-      "library": "env",
-      "confidence": "certain"
-    },
-    {
       "addr": "0x0202b168",
       "sdk_name": "ENV_GetNextResourceSet",
       "library": "env",
@@ -685,6 +679,13 @@
       "sdk_name": "NNS_SndArcInit",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02030340",
+      "sdk_name": "NNS_SndArcSetup",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "115 insns, instruction-identical; sdk_equiv DIVERGES on rel-vs-abs pool word (benign over-rejection), confirmed via mnemonic diff"
     },
     {
       "addr": "0x02030518",
@@ -4552,6 +4553,139 @@
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0202eb94",
+      "sdk_name": "NNSi_FndInitHeapHead",
+      "library": "fnd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0202eea8",
+      "sdk_name": "NNS_SndInit",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0202f100",
+      "sdk_name": "NNS_SndPlayerCreateHeap",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0202fa2c",
+      "sdk_name": "NNS_SndStrmInit",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x020311a0",
+      "sdk_name": "LoadWaveArcTable",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02032ed4",
+      "sdk_name": "SetupStreamFunction",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02035480",
+      "sdk_name": "GX_SetGraphicsMode",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02037084",
+      "sdk_name": "G3i_OrthoW_",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02037c90",
+      "sdk_name": "GXS_EndLoadOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02038ee8",
+      "sdk_name": "OS_SetThreadPriority",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02039b08",
+      "sdk_name": "OSi_SetTimerReserved",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02039d88",
+      "sdk_name": "OS_InitReset",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203a1f8",
+      "sdk_name": "MI_DmaFill32Async",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203a538",
+      "sdk_name": "MI_HBlankDmaCopy16",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203a690",
+      "sdk_name": "MIi_FIFOCallback",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203a79c",
+      "sdk_name": "MI_SendGXCommandAsyncFast",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203fc60",
+      "sdk_name": "MIC_StartAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x0203fcf4",
+      "sdk_name": "MIC_StopAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
+      "addr": "0x02040f6c",
+      "sdk_name": "RTC_GetTime",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     }
   ],
   "objdiff_units": [
@@ -5129,6 +5263,16 @@
       "source": "lib/syscall/WaitByLoop.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/syscall/WaitByLoop"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_timer.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/os_timer"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/mi/src/mi_dma_hblank.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/mi/mi_dma_hblank"
     }
   ]
 }
