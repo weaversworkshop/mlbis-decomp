@@ -497,7 +497,7 @@ from:0x0206f81c kind:arm_call to:0x0206f794 module:overlay(122)
 from:0x0206f874 kind:arm_call to:0x0206f7dc module:overlay(122)
 from:0x0206f87c kind:load to:0x02075b58 module:overlay(122)
 from:0x0206f8d4 kind:arm_call to:0x0203aa68 module:main
-from:0x0206f8ec kind:arm_call to:0x01ff84fc module:none
+from:0x0206f8ec kind:arm_call to:0x01ff84fc module:itcm
 from:0x0206f8f4 kind:arm_call to:0x01ff845c module:itcm
 from:0x0206f90c kind:arm_call to:0x01ff8380 module:itcm
 from:0x0206f914 kind:arm_call to:0x01ff82ac module:itcm

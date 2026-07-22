@@ -1,5 +1,5 @@
-#ifndef MAIN_CPU_MEM_H
-#define MAIN_CPU_MEM_H
+#ifndef MAIN_CPU_MEM32_H
+#define MAIN_CPU_MEM32_H
 
 #include "types.h"
 

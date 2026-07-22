@@ -1,6 +1,6 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
-#include "main/cpu_mem.h"
+#include "main/cpu_mem32.h"
 
 // Duplicate of NitroSDK's MIi_CpuClear32.
 asm void cpu_clear32(register u32 data, register void *destp, register u32 size)

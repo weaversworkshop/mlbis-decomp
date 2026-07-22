@@ -159,10 +159,10 @@ from:0x020ca638 kind:load to:0x020ccfac module:overlay(94)
 from:0x020ca63c kind:load to:0x02064f08 module:overlay(8)
 from:0x020ca668 kind:arm_call to:0x02066c28 module:overlay(11)
 from:0x020ca704 kind:arm_call to:0x0201cf78 module:main
-from:0x020ca754 kind:arm_call to:0x01ff84fc module:none
+from:0x020ca754 kind:arm_call to:0x01ff84fc module:itcm
 from:0x020ca75c kind:arm_call to:0x01ff845c module:itcm
 from:0x020ca7d4 kind:arm_call to:0x0201cf78 module:main
-from:0x020ca828 kind:arm_call to:0x01ff84fc module:none
+from:0x020ca828 kind:arm_call to:0x01ff84fc module:itcm
 from:0x020ca830 kind:arm_call to:0x01ff845c module:itcm
 from:0x020caa3c kind:arm_call to:0x0201cf78 module:main
 from:0x020caa5c kind:arm_call to:0x0201cf78 module:main

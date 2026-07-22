@@ -8,7 +8,7 @@
 
 extern "C" {
 
-#include "main/cpu_mem.h"
+#include "main/cpu_mem32.h"
 
 // --- Extern Data --- //
 

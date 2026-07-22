@@ -356,7 +356,7 @@ from:0x02090020 kind:load to:0x0210cc48 module:overlay(4)
 from:0x02090078 kind:arm_call to:0x0201a058 module:main
 from:0x020900bc kind:arm_call to:0x0208f4e8 module:overlay(4)
 from:0x02090198 kind:arm_call to:0x02019eac module:main
-from:0x020901e8 kind:arm_call to:0x01ff84fc module:none
+from:0x020901e8 kind:arm_call to:0x01ff84fc module:itcm
 from:0x020901f0 kind:arm_call to:0x01ff845c module:itcm
 from:0x02090228 kind:arm_call to:0x02006f4c module:main
 from:0x02090230 kind:arm_call to:0x0201a058 module:main

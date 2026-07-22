@@ -1776,7 +1776,7 @@ from:0x0201cf80 kind:arm_call to:0x0201cf2c module:main
 from:0x0201cf88 kind:arm_call to:0x0204536c module:main
 from:0x0201cfc8 kind:arm_call to:0x01ff8228 module:itcm
 from:0x0201d000 kind:arm_call to:0x01ff845c module:itcm
-from:0x0201d008 kind:arm_call to:0x01ff84fc module:none
+from:0x0201d008 kind:arm_call to:0x01ff84fc module:itcm
 from:0x0201d03c kind:arm_call to:0x01ff82ac module:itcm
 from:0x0201d098 kind:arm_call to:0x01ff8380 module:itcm
 from:0x0201d0b4 kind:arm_call to:0x01ff8380 module:itcm
