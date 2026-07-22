@@ -32,7 +32,7 @@ extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 *
 extern void func_02005a78(u16 id, s32 value, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
 extern void func_02005da0(UnkGlobal_02056504 * param1, s32 param2);
 
-extern u32 func_0201cf78(s32 param1);
+extern u32 rand_range(s32 param1);
 
 extern s64 func_0204536c(s32 param1, s32 param2);
 
@@ -433,7 +433,7 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
             func_02005a78(param3->field02, FX_Atan2Idx(param3->field08[0], param3->field08[1]) * 360 / (1 << 16), param1, param2);
             return 0;
         case 41:
-            ret = func_0201cf78(param3->field08[0]);
+            ret = rand_range(param3->field08[0]);
             func_02005a78(param3->field02, ret, param1, param2);
             return 0;
         case 42:
