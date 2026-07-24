@@ -36,10 +36,13 @@ extern "C" {
 void func_02019c90(void);  // 0x02019c90
 void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);  // 0x02019eac
 void func_0201a058(void * param1);  // 0x0201a058
-void func_0201a174(void * param1);
 
 #ifdef __cplusplus
 }
+
+void * operator new(size_t size, u32 heap, void * ptr, u32 flag);
+void * operator new[](size_t size, u32 heap, void * ptr, u32 flag);
+
 #endif
 
 #endif

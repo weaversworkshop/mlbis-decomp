@@ -161,8 +161,9 @@ callgraph: all delinks
 # Per-file overrides: MWCC_OVERRIDE (compiler), EXTRA_CFLAGS (defines).
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
 
-# Game TUs = sp2p4 (SDK stays sp1p2).
-$(BUILD_DIR)/arm9/src/%.o: MWCC_OVERRIDE := $(TOOLS_DIR)/mwccarm/2.0/sp2p4/mwccarm.exe
+# Game TUs = sp2p3 (SDK stays sp1p2). b138 == b139 output project-wide (verified
+# 2026-07-24); sp2p3 (2008-06) predates JP ship, sp2p4 (2009-06) does not.
+$(BUILD_DIR)/arm9/src/%.o: MWCC_OVERRIDE := $(TOOLS_DIR)/mwccarm/2.0/sp2p3/mwccarm.exe
 
 # clScriptSystem/clGlobalEvent are real C++ classes (RTTI in ROM).
 $(BUILD_DIR)/arm9/src/main/clGlobalEvent.o: EXTRA_CFLAGS := -RTTI on

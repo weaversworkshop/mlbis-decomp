@@ -6,7 +6,8 @@
 #include "main/unk_020068c4.h"
 #include "main/unk_02006c34.h"
 #include "main/unk_02007398.h"
-#include "main/heap.h"
+
+extern void func_0201a174(void *);  // delete func from heap.cpp, need to change this to C++ when the TU is formed
 
 // MATCHED 100%
 void func_02006274(u32 param1) {

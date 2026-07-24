@@ -6,9 +6,9 @@ The goal is C source that compiles, byte-for-byte, to the same machine code as t
 
 ## Status
 
-Active. The `main_7` ARM9 module is the current focus: **~620 of ~1,850 functions** are identified and matching. The bulk so far is **NitroSDK / NitroSystem library code**, recovered with an automated SDK-mapping pipeline (see below); a handful of SDK functions sit at a documented near-100% floor (e.g. `SND_FlushCommand` at 97.86%, register-allocation). ~1,230 game functions remain, plus the overlays (delinked but largely untouched).
+Active. The `main_7` ARM9 module is the current focus: **~950 of ~1,850 functions** are identified and matching. SDK library code is essentially complete (**687/693**, recovered with the automated SDK-mapping pipeline below); game-code decomp is the active front (~23%). One region (a prebuilt third-party graphics library built with an unreleased compiler) is excluded from decomp. Overlays are delinked but largely untouched.
 
-Run `make progress` for the live per-function breakdown.
+Run `make progress` for the live per-function breakdown (written to `main_7_todo.md`).
 
 ## Requirements
 
@@ -25,7 +25,7 @@ Run `make progress` for the live per-function breakdown.
 | Item | Where it goes | Notes |
 |---|---|---|
 | Original ROM | `rom/M_and_L_BIS.nds` | You must legally own it. |
-| `mwccarm` toolchain | `tools/mwccarm/` | CodeWarrior for ARM (build 126 / CW DS 2.0 SP1p2). |
+| `mwccarm` toolchain | `tools/mwccarm/` | CodeWarrior for DS: `2.0/sp1p2` (SDK libs) **and** `2.0/sp2p3` (game TUs) — the Makefile selects per-file. |
 | `mwccarm` license | `tools/mwccarm/license.dat` | FLEXlm license. |
 | `dsd` | `tools/dsd.exe` | [AdrianCX/dsd](https://github.com/AdrianCX/dsd) — NDS delinker. |
 | `objdiff` GUI | `tools/objdiff.exe` | [encounter/objdiff](https://github.com/encounter/objdiff) — interactive diff. |
@@ -65,6 +65,8 @@ make clean        # remove compiled output (keeps dsd delinks)
 make distclean    # remove everything; next build re-runs dsd
 ```
 
+Fast inner loop for a single function: `python tools/scripts/fn_diff.py <symbol>` — normalized instruction diff of the compiled `.o` against the delinked ROM target.
+
 ## SDK mapping pipeline
 
 Most of `main_7` is NitroSDK/NitroSystem library code. Rather than hand-decomp it, we identify it and diff the SDK source directly:
@@ -83,6 +85,8 @@ Most of `main_7` is NitroSDK/NitroSystem library code. Rather than hand-decomp i
 4. Write the function (for BIOS wrappers use `asm void { svc N; bx lr }`; otherwise idiomatic C).
 5. `make diff` and iterate until green.
 
+Some TUs are real C++ classes (RTTI/vtables in ROM): use `.cpp` — the Makefile compiles it with `-lang=c++` automatically (RTTI TUs get a per-file `-RTTI on`). When you rename a function from `func_<addr>` to a semantic name, put a `// 0x<addr>` anchor comment on its declaration — `sync_mangled_names.py` (runs inside `make diff`/`make progress`) uses it to keep objdiff paired with the mangled symbol.
+
 If a stubborn function looks like it accesses a struct via base+offset but is really MMIO or SDK code, check `lib/NitroSDK` / run `tu_diff.py` before hand-decompiling — it may be an inlined or linked SDK routine.
 
 ## Project layout
@@ -96,6 +100,7 @@ mlbis/
 ├── build/               compiled .o + build/delinks/ (dsd target .o)
 ├── config/arm9/         dsd config: symbols.txt, relocs.txt, delinks.txt, config.yaml
 ├── config/sdk_mappings.json   ROM addr -> SDK symbol map
+├── main_7_todo.md       generated progress report (make progress)
 ├── lib/                 NitroSDK, NitroSystem, mw-libraries (submodules)
 ├── rom/ , extract/      your ROM + dsd extraction (gitignored)
 ├── tools/
@@ -107,7 +112,7 @@ mlbis/
 
 ## Conventions
 
-- **One function/TU per `.c`**, pret-style `unk_<addr>.c` + matching header.
+- **One TU per `.c`/`.cpp`** (C++ class TUs hold the whole class), pret-style `unk_<addr>` naming + matching header.
 - **Type names** follow NitroSDK (`u8/u16/u32/u64`, `s*`); see `arm9/include/types.h`.
 - **`asm` keyword** is CodeWarrior-specific: the whole body is raw ARM, no prologue/epilogue.
 - `"header.h"` for project headers, `<header.h>` for system/CodeWarrior headers.
