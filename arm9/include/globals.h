@@ -21,7 +21,6 @@
     #include "structs/unk_02055fe4.h"
     #include "structs/unk_02056370.h"
     #include "structs/unk_0205afa8.h"
-    #include "structs/unk_0205bad4.h"
     #include "structs/unk_0205f6b0.h"
 
     extern s8 data_01ff9438;
@@ -67,6 +66,5 @@
     extern UnkGlobal_02055fe4 data_02055fe4;
     extern UnkGlobalContainer_02056370 data_02056370;
     extern UnkGlobal_0205afa8 data_0205afa8;
-    extern UnkGlobal_0205bad4 data_0205bad4;
     extern UnkGlobal_0205f6b0 data_0205f6b0;
 #endif

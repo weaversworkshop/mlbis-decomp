@@ -1849,7 +1849,7 @@ from:0x0201e4d8 kind:arm_call to:0x0203f76c module:main
 from:0x0201e5e8 kind:load to:0x0205afa8 module:main
 from:0x0201e608 kind:arm_call to:0x02038374 module:main
 from:0x0201e6ec kind:arm_call to:0x02038344 module:main
-from:0x0201e6f8 kind:load to:0x02054de0 module:main
+from:0x0201e6f8 kind:load to:0x02054dd8 add:0x8 module:main
 from:0x0201e6fc kind:load to:0x0205bad4 module:main
 from:0x0201e768 kind:load to:0x0205bad4 module:main
 from:0x0201e7dc kind:arm_call to:0x0201a168 module:main

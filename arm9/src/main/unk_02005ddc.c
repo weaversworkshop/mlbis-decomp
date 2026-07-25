@@ -18,7 +18,7 @@ void func_02005f8c(UnkStruct_02005ddc * param1) {
     if (reg_OS_IE & REG_OS_IE_VB_MASK) {
         func_0201a91c();
     } else {
-        func_0201e8b4();
+        disableVCountTasks();
     }
 
     func_0201a630();
