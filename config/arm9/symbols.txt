@@ -501,9 +501,9 @@ _ZN6Spline9evalPointElRlS0_S0_ kind:function(arm,size=0x7c) addr:0x0201e070
 _ZN6Spline9setBufferEhPl kind:function(arm,size=0x30) addr:0x0201e0ec
 solveSplineCoeffs kind:function(arm,size=0x178) addr:0x0201e11c
 evalSplineAxis kind:function(arm,size=0xec) addr:0x0201e294
-func_0201e380 kind:function(arm,size=0xb4) addr:0x0201e380
-func_0201e434 kind:function(arm,size=0x58) addr:0x0201e434
-func_0201e48c kind:function(arm,size=0x160) addr:0x0201e48c
+startTouchSampling kind:function(arm,size=0xb4) addr:0x0201e380
+stopTouchSampling kind:function(arm,size=0x58) addr:0x0201e434
+readTouchpad kind:function(arm,size=0x160) addr:0x0201e48c
 func_0201e5ec kind:function(arm,size=0x114) addr:0x0201e5ec
 func_0201e700 kind:function(arm,size=0x6c) addr:0x0201e700
 func_0201e76c kind:function(arm,size=0x80) addr:0x0201e76c
@@ -2258,7 +2258,6 @@ data_0205af9c kind:bss addr:0x0205af9c
 data_0205afa0 kind:bss addr:0x0205afa0
 data_0205afa4 kind:bss addr:0x0205afa4
 data_0205afa8 kind:bss addr:0x0205afa8
-data_0205afbc kind:bss addr:0x0205afbc
 data_0205afc4 kind:bss addr:0x0205afc4
 data_0205b3c4 kind:bss addr:0x0205b3c4
 data_0205b7a8 kind:bss addr:0x0205b7a8
@@ -2266,7 +2265,7 @@ data_0205b7f0 kind:bss addr:0x0205b7f0
 data_0205ba70 kind:bss addr:0x0205ba70
 data_0205ba8c kind:bss addr:0x0205ba8c
 data_0205bac0 kind:bss addr:0x0205bac0
-data_0205bac4 kind:bss addr:0x0205bac4
+samplingBufs kind:bss addr:0x0205bac4
 data_0205bad4 kind:bss addr:0x0205bad4
 data_0205bad8 kind:bss addr:0x0205bad8
 data_0205badc kind:bss addr:0x0205badc

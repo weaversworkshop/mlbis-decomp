@@ -509,7 +509,7 @@ from:0x0211d204 kind:load to:0x0210fda8 module:overlay(4)
 from:0x0211d23c kind:arm_call to:0x01ff8228 module:itcm
 from:0x0211d244 kind:arm_call to:0x0201e380 module:main
 from:0x0211d250 kind:load to:0x0205afa8 module:main
-from:0x0211d254 kind:load to:0x0205afbc module:main
+from:0x0211d254 kind:load to:0x0205afa8 add:0x14 module:main
 from:0x0211d25c kind:arm_call to:0x0201e434 module:main
 from:0x0211d280 kind:arm_call to:0x01ff8228 module:itcm
 from:0x0211d28c kind:load to:0x02055fe4 add:0x164 module:main

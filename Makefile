@@ -60,7 +60,7 @@ TARGET ?= main_7
 
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
-SYNC_NAMES   := python $(SCRIPTS)/sync_mangled_names.py
+SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
 .PHONY: all clean distclean diff objdiff delinks progress data-catalog callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 

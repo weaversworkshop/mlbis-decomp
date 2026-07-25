@@ -950,7 +950,7 @@ from:0x020756bc kind:arm_call to:0x02036464 module:main
 from:0x020756c0 kind:arm_call to:0x0201f0bc module:main
 from:0x020756e8 kind:arm_call to:0x0206ad18 module:overlay(127)
 from:0x02075714 kind:arm_call to:0x0206a30c module:overlay(127)
-from:0x02075738 kind:load to:0x0205afbc module:main
+from:0x02075738 kind:load to:0x0205afa8 add:0x14 module:main
 from:0x02075740 kind:load to:0x02058f84 add:0x118 module:main
 from:0x02075744 kind:load to:0x02058f84 add:0x11a module:main
 from:0x02075748 kind:load to:0x02059294 module:main

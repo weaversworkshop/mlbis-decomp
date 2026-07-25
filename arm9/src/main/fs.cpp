@@ -7,7 +7,7 @@ extern "C" {
 #include "main/fs.h"
 
 #include <nitro/fs.h>
-#include <nitro/hw/common/lcd.h>
+#include <nitro/gx.h>
 #include <nitro/math.h>
 
 #include "main/heap.h"
@@ -92,7 +92,7 @@ void clFS::run() {
     if (data_0205b7a8.field26 == 0) {
         bool ready = true;
 
-        if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)HW_LCD_HEIGHT) {
+        if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
             ready = false;
         }
 
@@ -129,7 +129,7 @@ void clFS::run() {
         if (data_0205b7a8.field26 == 0) {
             bool ready = true;
 
-            if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)HW_LCD_HEIGHT) {
+            if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
                 ready = false;
             }
 
@@ -851,7 +851,7 @@ void clDAP::run() {
     if (data_0205b7a8.field26 == 0) {
         bool ready = true;
 
-        if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)HW_LCD_HEIGHT) {
+        if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
             ready = false;
         }
 
@@ -883,7 +883,7 @@ void clDAP::run() {
         if (data_0205b7a8.field26 == 0) {
             bool ready = true;
 
-            if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)HW_LCD_HEIGHT) {
+            if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
                 ready = false;
             }
 

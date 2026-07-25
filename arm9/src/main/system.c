@@ -4,9 +4,7 @@
 
 #include "main/system.h"
 
-#include <nitro/hw/common/lcd.h>
-#include <nitro/os.h>
-#include <nitro/pad.h>
+#include <nitro.h>
 
 #include "main/heap.h"
 

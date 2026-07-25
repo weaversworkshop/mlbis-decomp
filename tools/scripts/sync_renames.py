@@ -29,7 +29,7 @@ AND renames stay in sync with no hand edits to symbols.txt.
 Anti-forget: a compiled method with a semantic name and NO recoverable address
 (no func_<addr>, no anchor) is REPORTED, never silently dropped.
 
-Usage: sync_mangled_names.py [--dry-run] [--strict] [-v].  A `make diff`/`make
+Usage: sync_renames.py [--dry-run] [--strict] [-v].  A `make diff`/`make
 progress` step.
 """
 import argparse
@@ -78,6 +78,18 @@ CLASS_RE = re.compile(r"\b(?:class|struct)\s+([A-Za-z_]\w*)[^;{()]*\{")
 # Simple name that embeds its address: func_0201a610 (main/itcm/dtcm) or
 # func_ov001_02069cb8 (overlay-prefixed, as the delinked symbols.txt names them).
 FUNC_ADDR_RE = re.compile(r"^func_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
+DATA_ADDR_RE = re.compile(r"^data_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
+# A global variable definition/declaration with a trailing address anchor:
+#     TPData samplingBufs[2];              // 0x0205bac4
+#     extern UnkGlobal_0205afa8 inputState;  // 0x0205afa8
+# The identifier immediately before optional [dims] / = init / ';'. Only
+# consulted at global scope (never inside a class/struct body) and only when
+# the function ANCHOR_RE didn't match the line.
+DATA_ANCHOR_RE = re.compile(
+    r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*(?:=[^;]*)?;.*//.*0x(?P<addr>[0-9a-fA-F]+)"
+)
+# Defined global (non-weak) object symbol in a data-ish section of the .o.
+OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
 # The // objdiff-target: value -> owning module (main_7 -> main, ov001_1 -> ov001).
 OBJTARGET_RE = re.compile(r"^\s*//\s*objdiff-target:\s*(.+?)\s*$")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
@@ -112,6 +124,12 @@ def parse_name(sym):
 
 def qual(scope, name):
     return f"{scope}::{name}" if scope else name
+
+
+def embedded_addr(simple):
+    """Address embedded in a func_<addr>/data_<addr> style name, else None."""
+    m = FUNC_ADDR_RE.match(simple) or DATA_ADDR_RE.match(simple)
+    return int(m.group(1), 16) if m else None
 
 
 def is_userish(name):
@@ -152,6 +170,12 @@ def load_anchors(verbose):
                         scope = m.group("scope") or (stack[-1][0] if stack else "")
                         raw.setdefault((scope, m.group("name")), []).append(
                             (int(m.group("addr"), 16), loc))
+                    elif not stack:
+                        # global-scope data anchor (class members must not register)
+                        dm = DATA_ANCHOR_RE.search(line)
+                        if dm:
+                            raw.setdefault(("", dm.group("name")), []).append(
+                                (int(dm.group("addr"), 16), loc))
                 if CLASS_RE.search(line):
                     stack.append((CLASS_RE.search(line).group(1), depth))
                 depth += line.count("{") - line.count("}")
@@ -254,7 +278,10 @@ def dump_symbols(o_paths, verbose):
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
             sys.exit(f"objdump failed on {o}: {e}")
         for line in txt.splitlines():
-            if re.search(r"\bF\s+\.text\b", line):
+            dm = OBJ_DATA_SYM_RE.match(line)
+            if dm and re.match(r"_ZT[VIS]", line.split()[-1]):
+                continue  # vtables/RTTI: one-time manual mapping (map-cpp-tu)
+            if re.search(r"\bF\s+\.text\b", line) or dm:
                 dst = defined
             elif "*UND*" in line:
                 dst = undef
@@ -266,7 +293,8 @@ def dump_symbols(o_paths, verbose):
     # plain func_<addr> UND refs are stale externs, no information -- never
     # let them downgrade a real name.
     out += [parse_name(n) + (n, False) for n in undef
-            if n not in defined and not FUNC_ADDR_RE.match(n)]
+            if n not in defined and not FUNC_ADDR_RE.match(n)
+            and not DATA_ADDR_RE.match(n)]
     return out
 
 
@@ -301,8 +329,9 @@ def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
     # ambiguous; refuse to guess, report it.
     names_at = {}
     for scope, simple, full, _ in syms:
-        m = FUNC_ADDR_RE.match(simple)
-        addr = int(m.group(1), 16) if m else resolve_anchor(anchors, by_name, scope, simple)
+        addr = embedded_addr(simple)
+        if addr is None:
+            addr = resolve_anchor(anchors, by_name, scope, simple)
         if addr is not None:
             names_at.setdefault(addr, set()).add(full)
     ambiguous = {a for a, ns in names_at.items() if len(ns) > 1}
@@ -312,8 +341,9 @@ def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
 
     changed, unplaced = [], []
     for scope, simple, full, is_def in syms:
-        m = FUNC_ADDR_RE.match(simple)
-        addr = int(m.group(1), 16) if m else resolve_anchor(anchors, by_name, scope, simple)
+        addr = embedded_addr(simple)
+        if addr is None:
+            addr = resolve_anchor(anchors, by_name, scope, simple)
         if addr is None:
             if is_def and full not in present and is_userish(simple):
                 unplaced.append(full)
@@ -370,7 +400,7 @@ def main():
                   file=sys.stderr)
 
     verb = "would rename" if args.dry_run else "renamed"
-    print(f"sync_mangled_names: {verb} {total_changed}, {total_unplaced} unplaced, "
+    print(f"sync_renames: {verb} {total_changed}, {total_unplaced} unplaced, "
           f"{total_ambiguous} ambiguous, {conflicts} conflict(s) "
           f"across {len(by_mod)} module(s)")
     if args.strict and (total_unplaced or conflicts):

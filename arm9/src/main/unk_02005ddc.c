@@ -4,27 +4,11 @@
 
 #include "main/unk_02005ddc.h"
 
-#include <nitro/os.h>
 #include <nitro/pad.h>
 
 #include "main/system.h"
 #include "main/task.h"
-
-// MATCHED 100%
-void func_0201e8b4() {
-    OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
-    UnkStruct_0205bad4_00 * r3 = data_0205bad4.field08;
-
-    while (r3 != NULL) {
-        if (r3->field15 != 0 && r3->field15 != 0xff) {
-            r3->field16 = r3->field16 & ~1;
-            r3->field16 = r3->field16 | 2;
-        }
-        r3 = r3->field0c;
-    }
-
-    OS_EnableIrqMask(mask);
-}
+#include "main/touchpad.h"
 
 // MATCHED 100%
 void func_02005f8c(UnkStruct_02005ddc * param1) {

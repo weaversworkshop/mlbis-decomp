@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """One-shot: add `  // 0xADDR` anchor comments to function DECLARATIONS across
-game source/headers, so sync_mangled_names can auto-place any function after a
+game source/headers, so sync_renames can auto-place any function after a
 rename/param edit (see CLAUDE.md "C++ mangled-name sync").
 
 Anchors go on the DECLARATION (the `;`-terminated declarator), NOT the
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from sync_mangled_names import (  # reuse the exact same reducers
+from sync_renames import (  # reuse the exact same reducers
     parse_name, load_config_modules, SYMBOL_LINE_RE, CLASS_RE,
 )
 

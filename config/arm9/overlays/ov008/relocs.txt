@@ -87,7 +87,7 @@ from:0x020644e0 kind:arm_call to:0x0201f708 module:main
 from:0x02064500 kind:arm_call to:0x02038344 module:main
 from:0x02064538 kind:load to:0x02064f04 module:overlay(8)
 from:0x0206453c kind:load to:0x0205afa8 module:main
-from:0x02064540 kind:load to:0x0205afbc module:main
+from:0x02064540 kind:load to:0x0205afa8 add:0x14 module:main
 from:0x02064550 kind:load to:0x02056504 module:main
 from:0x02064570 kind:arm_call to:0x0206457c module:overlay(8)
 from:0x02064578 kind:load to:0x02064f04 module:overlay(8)
