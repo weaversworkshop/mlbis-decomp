@@ -62,7 +62,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: all clean distclean diff objdiff delinks progress data-catalog callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: all clean distclean diff objdiff delinks progress progress-py obj-match data-catalog callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -111,12 +111,25 @@ sync-names: all
 
 diff: all sync-names
 	@$(MAKE) --no-print-directory delinks
+	@python $(SCRIPTS)/asm_smell.py --sweep
 	$(OBJDIFF) -p .
 
 progress: all sync-names
 	@$(MAKE) --no-print-directory delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	@python $(SCRIPTS)/asm_smell.py --sweep
 	@python $(SCRIPTS)/data_catalog.py
+
+# Same table without objdiff-cli (which panics on CODE-flagged data sections and has 4 known false negatives)
+progress-py: all sync-names
+	@$(MAKE) --no-print-directory delinks
+	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	@python $(SCRIPTS)/asm_smell.py --sweep
+	@python $(SCRIPTS)/data_catalog.py
+
+# Per-unit match summary + unresolved callee names (UNIT=name to narrow).
+obj-match: delinks
+	@python $(SCRIPTS)/obj_match.py --text $(if $(UNIT),--unit $(UNIT),) $(OBJ_MATCH_ARGS)
 
 data-catalog: delinks
 	python $(SCRIPTS)/data_catalog.py

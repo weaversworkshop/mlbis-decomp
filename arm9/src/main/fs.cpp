@@ -6,9 +6,7 @@ extern "C" {
 
 #include "main/fs.h"
 
-#include <nitro/fs.h>
-#include <nitro/gx.h>
-#include <nitro/math.h>
+#include <nitro.h>
 
 #include "main/heap.h"
 #include "main/system.h"

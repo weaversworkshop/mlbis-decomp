@@ -15,15 +15,18 @@ extern void ** data_0205b3c4;
 
 // --- Extern Functions --- //
 
-extern void func_02037fdc(u32 param1, u32 param2);
 extern void func_02039888(void);
+
+// --- Variable Definitions --- // (replace with real data later)
+
+UnkStruct_0205b7a8 data_0205b7a8;
 
 // --- Function Declarations --- //
 
 void func_02019a18(void);  // 0x02019a18
 void func_02019a2c(void);  // 0x02019a2c
 void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);
-void func_02019b2c(void);  // 0x02019b2c
+void waitVBlankSync(void);  // 0x02019b2c
 void func_02019bf4(u32 dmaNo);  // 0x02019bf4
 void func_02019c4c(void);  // 0x02019c4c
 void func_02019c7c(u16 param1, u16 param2);  // 0x02019c7c
@@ -70,14 +73,14 @@ void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2) {
 }
 
 // MATCHED 100%
-void func_02019b2c() {
+void waitVBlankSync() {
     data_0205b7a8.field1c_08 = 1;
 
-    s32 r1 = reg_GX_VCOUNT;
-    data_0205b7a8.field20 = r1;
+    s32 vcount = reg_GX_VCOUNT;
+    data_0205b7a8.field20 = vcount;
 
-    if (r1 < data_0205b7a8.field1e) {
-        r1 += HW_LCD_LINES;
+    if (vcount < data_0205b7a8.field1e) {
+        vcount += HW_LCD_LINES;
     }
 
     if (data_0205b7a8.field30 == 0 || data_0205b7a8.field2e < data_0205b7a8.field22) {
@@ -87,10 +90,9 @@ void func_02019b2c() {
         data_0205b7a8.field30--;
     }
 
-    r1 -= data_0205b7a8.field1e;
-    data_0205b7a8.field22 = data_0205b7a8.field26 * HW_LCD_LINES + r1;
+    data_0205b7a8.field22 = (vcount - data_0205b7a8.field1e) + data_0205b7a8.field26 * HW_LCD_LINES;
 
-    func_02037fdc(1, 1);
+    OS_WaitIrq(TRUE, OS_IE_V_BLANK);
 
     data_0205b7a8.field1e = reg_GX_VCOUNT;
     data_0205b7a8.field24 = data_0205b7a8.field26;

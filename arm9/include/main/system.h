@@ -3,8 +3,11 @@
 
 #include "types.h"
 
+#include "structs/unk_0205afa8.h"
+
 typedef struct {
-    u8 pad_00[0x1c];
+    u16 field00;
+    u8 pad_02[0x1a];
     u16 field1c_00 : 8;
     u16 field1c_08 : 1;
     s16 field1e;
@@ -16,6 +19,7 @@ typedef struct {
     s16 field2e;
     s16 field30;
     s16 field32;
+    u8 pad_34[0x14];
 } UnkStruct_0205b7a8;
 
 extern UnkStruct_0205b7a8 data_0205b7a8;

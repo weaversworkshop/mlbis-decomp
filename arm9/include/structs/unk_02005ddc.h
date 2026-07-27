@@ -3,7 +3,7 @@
 
     #include "types.h"
 
-    #include "unk_0205afa8.h"
+    #include "structs/unk_0205afa8.h"
 
     typedef struct {
         union {
