@@ -5,30 +5,12 @@
 
     typedef struct {
         u16 chr;
-        union {
-            u16 stats[14];
-            struct {
-                u16 base[6];
-                u16 maxHp, hp;
-                u16 maxSp, sp;
-                u16 pow, def, speed, stache;    // effective stats (gear applied)
-            };
-        };
+        u16 stats[14]; // baseHP, baseSp, basePow, baseDef, baseSpeed, baseStache, maxHp, hp, maxSp, sp, pow, def, speed, stache
         u8 pad_1e[0x2];
-        union {
-            u32 levelExp;
-            struct {
-                u32 level : 8;
-                u32 exp : 24;
-            };
-        };
-        union {
-            u32 expSlots;
-            struct {
-                u32 expToNext : 24;
-                u32 gearSlots : 8;
-            };
-        };
+        u32 level : 8;
+        u32 exp : 24;
+        u32 expToNext : 24;
+        u32 gearSlots : 8;
         u8 gear[3];
         u8 pad_2b[0x1];
         u8 badge;

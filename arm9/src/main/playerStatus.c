@@ -89,8 +89,8 @@ void initParty(u32 preset) {
         switch (chr) {
             case CHR_MARIO:
                 p->chr = CHR_MARIO;
-                p->levelExp = (p->levelExp & ~0xff) | (sStartLvMario[preset] & 0xff);
-                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsMario[preset] << 0x18);
+                p->level = sStartLvMario[preset];
+                p->gearSlots = sStartGearSlotsMario[preset];
 
                 startBadge = sStartBadgeMario[preset];
 
@@ -100,8 +100,8 @@ void initParty(u32 preset) {
                 break;
             case CHR_LUIGI:
                 p->chr = CHR_LUIGI;
-                p->levelExp = (p->levelExp & ~0xff) | (sStartLvLuigi[preset] & 0xff);
-                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsLuigi[preset] << 0x18);
+                p->level = sStartLvLuigi[preset];
+                p->gearSlots = sStartGearSlotsLuigi[preset];
 
                 startBadge = sStartBadgeLuigi[preset];
 
@@ -111,8 +111,8 @@ void initParty(u32 preset) {
                 break;
             case CHR_BOWSER:
                 p->chr = CHR_BOWSER;
-                p->levelExp = (p->levelExp & ~0xff) | (sStartLvBowser[preset] & 0xff);
-                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsBowser[preset] << 0x18);
+                p->level = sStartLvBowser[preset];
+                p->gearSlots = sStartGearSlotsBowser[preset];
 
                 for (s32 i = 0; i < 4; i++) {
                     startGear[i] = sStartGearBowser[preset][i];
@@ -168,14 +168,14 @@ void initParty(u32 preset) {
 // MATCHED 100%
 void setLevel(u8 chr, u8 level) {
     PlayerStatus * p = &gParty.party[chr];
-    p->levelExp = (p->levelExp & ~0xff) | (level & 0xff);
+    p->level = level;
     
     if (chr < 2) {
         s8 rank = getRank(chr, level-1, -1);
-        p->expSlots = (p->expSlots & ~0xff000000) | (sGearSlotsBros[rank-1] << 0x18);
+        p->gearSlots = sGearSlotsBros[rank-1];
     } else {
         s8 rank = getRank(chr, level-1, -1);
-        p->expSlots = (p->expSlots & ~0xff000000) | (sGearSlotsBowser[rank-1] << 0x18);
+        p->gearSlots = sGearSlotsBowser[rank-1];
     }
 }
 

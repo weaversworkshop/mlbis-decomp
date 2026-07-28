@@ -562,35 +562,35 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     val = player->stats[13];
                     break;
                 case 14:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetRank(&local);
                     break;
                 case 15:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetLevel(&local);
                     break;
                 case 16:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetLevelIdx(&local);
                     break;
                 case 17:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetIntoLevel(&local);
                     break;
                 case 18:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetExp(&local);
                     break;
                 case 19:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetLevelCost(&local);
                     break;
                 case 20:
-                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    expInit(&local, inst->args[0], player->exp);
                     val = expGetNext(&local);
                     break;
                 case 21:
-                    val = player->expSlots >> 24;
+                    val = player->gearSlots;
                     break;
                 case 22:
                     val = player->gear[0] | ID_GEAR;
@@ -649,15 +649,15 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     refreshStats(id);
                     break;
                 case 17: {
-                    player->levelExp = (player->levelExp & 0xff) | (val << 8);
-                    expInit(&local, id, player->levelExp >> 8);
+                    player->exp = val;
+                    expInit(&local, id, player->exp);
 
-                    player->levelExp = (player->levelExp & ~0xff) | (expGetLevel(&local) & 0xff);
+                    player->level = expGetLevel(&local);
                     refreshStats(id);
                     break;
                 }
                 case 21:
-                    player->expSlots = (player->expSlots & 0x00ffffff) | (val << 24);
+                    player->gearSlots = val;
                     break;
                 case 22:
                     equipGear(id, val, 0);
