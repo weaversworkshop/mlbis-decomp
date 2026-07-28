@@ -77,7 +77,7 @@ from:0x02076f58 kind:load to:0x0205afa8 module:main
 from:0x02076f60 kind:load to:0x02076f7c module:overlay(132)
 from:0x02076f64 kind:load to:0x02056504 module:main
 from:0x02076f68 kind:load to:0x01ff93c4 module:itcm
-from:0x02076f6c kind:load to:0x02058f8c module:main
+from:0x02076f6c kind:load to:0x02058f84 add:0x8 module:main
 from:0x02076f70 kind:load to:0x02058f84 module:main
 from:0x02076f78 kind:load to:0x020799c0 module:overlay(132)
 from:0x02077060 kind:arm_call to:0x020765a8 module:overlay(132)

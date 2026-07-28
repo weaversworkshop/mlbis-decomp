@@ -11,10 +11,6 @@ extern "C" {
 #include "main/heap.h"
 #include "main/system.h"
 
-// --- Struct Definitions --- //
-
-// --- Extern Data --- //
-
 // --- Extern Functions --- //
 
 extern void func_01ff8000(u8 ** param1, u32 * param2, u32 * param3);
@@ -22,116 +18,125 @@ extern void func_01ff80a4(u8 ** param1, void ** param2);
 extern void func_01ff8150(u8 ** param1, void ** param2);
 extern void func_01ff8228(void * param1, u32 param2, u32 param3);
 
+// --- Variable Definitions --- //
+
+static ChunkSizeFn sChunkSizeFns[4] = {  // 0x02054c94
+    &clFS::getChunkSize, &clFS::getChunkDataSize,
+    &clFS::getChunkSize, &clFS::getChunkDataSize,
+};
+
+FSManager fsManager;  // 0x0205ba8c
+
 // --- Function Declarations --- //
 
-u32 func_0201adbc(FSChunkTable * tbl); // 0x0201adbc
-u8 * func_0201add4(FSChunkTable * tbl, u32 idx); // 0x0201add4
-u32 func_0201ade4(FSChunkTable * tbl, u32 idx); // 0x0201ade4
-BOOL func_0201b180(FSOverlayID id, MIProcessor target); // 0x0201b180
-BOOL func_0201b274(FSOverlayID id, MIProcessor target); // 0x0201b274
-BOOL func_0201b28c(u32 param1, void * p_mem, u32 size); // 0x0201b28c
-BOOL func_0201b2e4(void * p_mem, u32 size); // 0x0201b2e4
+u32 fsChunkCount(FSChunkTable *); // 0x0201adbc
+u8 * fsChunkPtr(FSChunkTable *, u32); // 0x0201add4
+u32 fsChunkSize(FSChunkTable *, u32); // 0x0201ade4
+BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
+BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
+BOOL fsInit(u32, void *, u32); // 0x0201b28c
+BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-clFS::clFS(u8 param1, u32 param2, u16 param3, u32 param4, u32 param5) : clTask(param1, param2, param5) {
-    this->fieldb0 = NULL;
-    this->fieldac = NULL;
-    this->fieldd4 = NULL;
-    this->fieldd0 = NULL;
+clFS::clFS(u8 priority, u32 param2, u16 numSlots, u32 dmaNo, u32 param5) : clTask(priority, param2, param5) {
+    this->reqTail = NULL;
+    this->reqHead = NULL;
+    this->tableReqTail = NULL;
+    this->tableReqHead = NULL;
 
-    this->fieldc0 = 0xa8;
-    this->fieldc4 = 5;
-    this->fieldc6 = 2;
-    this->fieldc8 = 0;
-    this->fieldca_07 = 0;
+    this->vcountBusyStart = 0xa8;
+    this->stallReset = 5;
+    this->stallLimit = 2;
+    this->stallCount = 0;
+    this->inCallback = 0;
 
-    this->fielda8 = 0;
+    this->ovyState = 0;
 
-    if (param4 != 0xffff7f7f) {
-        data_0205ba8c.dmaNo = param4;
-        FS_SetDefaultDMA(param4);
+    if (dmaNo != 0xffff7f7f) {
+        fsManager.dmaNo = dmaNo;
+        FS_SetDefaultDMA(dmaNo);
     }
 
-    this->fieldca_00 = param3;
+    this->numSlots = numSlots;
 
-    UnkHeader_0201a058 * header = GET_HEADER(this);
-    u16 heap = header->field08_heap;
+    HeapBlock * header = GET_HEADER(this);
+    u16 heap = header->heapId;
 
-    this->fieldb4 = (FSFile *)func_02019eac(heap, param3 * sizeof(FSFile), NULL, 0);
-    this->fieldbc = (FSChunkTable **)func_02019eac(heap, param3 * sizeof(FSChunkTable **), NULL, 0);
-    this->fieldb8 = (const char **)func_02019eac(heap, param3 * sizeof(const char *), NULL, 0);
-    this->fieldcc = (UnkStruct_FieldCC *)func_02019eac(heap, param3 * sizeof(UnkStruct_FieldCC), NULL, 0);
+    this->files = (FSFile *)heapAlloc(heap, numSlots * sizeof(FSFile), NULL, 0);
+    this->tables = (FSChunkTable **)heapAlloc(heap, numSlots * sizeof(FSChunkTable **), NULL, 0);
+    this->paths = (const char **)heapAlloc(heap, numSlots * sizeof(const char *), NULL, 0);
+    this->tableReqs = (FSTableReq *)heapAlloc(heap, numSlots * sizeof(FSTableReq), NULL, 0);
 
-    for (s16 i = 0; param3 > i; i++) {
-        FS_InitFile(&this->fieldb4[i]);
-        this->fieldb8[i] = NULL;
-        this->fieldbc[i] = NULL;
+    for (s16 i = 0; numSlots > i; i++) {
+        FS_InitFile(&this->files[i]);
+        this->paths[i] = NULL;
+        this->tables[i] = NULL;
     }
 
-    FS_InitFile(&this->field28);
+    FS_InitFile(&this->ovyFile);
 }
 
 // MATCHED 100%
 clFS::~clFS() {
-    func_0201b390();
+    closeAllFiles();
 
-    func_0201a058(this->fieldb4);
-    func_0201a058(this->fieldbc);
-    func_0201a058(this->fieldb8);
-    func_0201a058(this->fieldcc);
+    heapFree(this->files);
+    heapFree(this->tables);
+    heapFree(this->paths);
+    heapFree(this->tableReqs);
 }
 
 // MATCHED 100%
 void clFS::run() {
-    bool flag = false;
+    bool active = false;
 
-    if (data_0205b7a8.field26 == 0) {
-        bool ready = true;
+    if (frameTimer.frameSkips == 0) {
+        bool idle = true;
 
-        if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
-            ready = false;
+        if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+            idle = false;
         }
 
-        if (ready) {
-            flag = true;
+        if (idle) {
+            active = true;
         }
     }
 
-    if (flag) {
-        this->fieldc8 = 0;
-    } else if (this->fieldc8 >= this->fieldc6) {
-        this->fieldc8 = this->fieldc4;
-    } else if (++this->fieldc8 != this->fieldc4+1) {
+    if (active) {
+        this->stallCount = 0;
+    } else if (this->stallCount >= this->stallLimit) {
+        this->stallCount = this->stallReset;
+    } else if (++this->stallCount != this->stallReset+1) {
         return;
     }
 
     bool run = true;
     while (run) {
-        BOOL flag = (this->fieldd0 == NULL);
+        BOOL flag = (this->tableReqHead == NULL);
 
         if (!flag) {
             this->pumpTableLoads();
-        } else if (!(flag = (this->fieldac == NULL))) {
+        } else if (!(flag = (this->reqHead == NULL))) {
             this->pumpReads();
-        } else if (this->fielda8 != 0) {
+        } else if (this->ovyState != 0) {
             this->pumpOverlay();
         } else {
-            this->fieldc8 = 0;
+            this->stallCount = 0;
             return;
         }
 
         run = false;
 
-        if (data_0205b7a8.field26 == 0) {
-            bool ready = true;
+        if (frameTimer.frameSkips == 0) {
+            bool idle = true;
 
-            if (reg_GX_VCOUNT >= this->fieldc0 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
-                ready = false;
+            if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+                idle = false;
             }
 
-            if (ready) {
+            if (idle) {
                 run = true;
             }
         }
@@ -139,35 +144,35 @@ void clFS::run() {
 }
 
 // MATCHED 100%
-void clFS::func_0201ada4() {
-    func_0201b390();
-    this->func_0201a5f4();
+void clFS::shutdown() {
+    closeAllFiles();
+    this->disable();
 }
 
 // MATCHED 100%
-u32 func_0201adbc(FSChunkTable * tbl) {
-    return tbl->sizesArrOffset ? (tbl->sizesArrOffset - 8) / 4 : 0;
+u32 fsChunkCount(FSChunkTable * tbl) {
+    return tbl->tailOffset ? (tbl->tailOffset - 8) / 4 : 0;
 }
 
 // MATCHED 100%
-u8 * func_0201add4(FSChunkTable * tbl, u32 idx) {
+u8 * fsChunkPtr(FSChunkTable * tbl, u32 idx) {
     return (u8 *)tbl + CHUNK_OFFSET(tbl, idx);
 }
 
 // MATCHED 100%
-u32 func_0201ade4(FSChunkTable * tbl, u32 idx) {
+u32 fsChunkSize(FSChunkTable * tbl, u32 idx) {
     return CHUNK_OFFSET(tbl, idx+1) - CHUNK_OFFSET(tbl, idx);
 }
 
 // MATCHED 100%
-u32 clFS::func_0201adf8(s16 param1, const char * param2, u32 param3) {
-    this->func_0201b330(param1, param2);
+u32 clFS::getTableSize(s16 slot, const char * path, BOOL hasTails) {
+    this->openSlot(slot, path);
 
     u32 size;
-    FS_ReadFile(&this->fieldb4[param1], &size, 4);
+    FS_ReadFile(&this->files[slot], &size, 4);
 
     u32 bytes;
-    if (param3 == 1) {
+    if (hasTails == TRUE) {
             bytes = ((size != 0) ? (size - 8) >> 2 : 0) << 1;
     } else {
         bytes = 0;
@@ -177,192 +182,192 @@ u32 clFS::func_0201adf8(s16 param1, const char * param2, u32 param3) {
 }
 
 // MATCHED 100%
-FSChunkTable * clFS::func_0201ae68(u32 param1) {
-    if (FS_IsFile(&this->fieldb4[(u16)param1])) {
-        FS_CloseFile(&this->fieldb4[(u16)param1]);
+FSChunkTable * clFS::releaseSlot(u32 slot) {
+    if (FS_IsFile(&this->files[(u16)slot])) {
+        FS_CloseFile(&this->files[(u16)slot]);
     }
 
-    FSChunkTable * ptr = this->fieldbc[param1];
+    FSChunkTable * ptr = this->tables[slot];
 
-    this->fieldb8[param1] = NULL;
-    this->fieldbc[param1] = NULL;
+    this->paths[slot] = NULL;
+    this->tables[slot] = NULL;
 
     return ptr;
 }
 
 // MATCHED 100%
-void clFS::func_0201aecc(u32 param1) {
-    UnkStruct_FieldCC * val = &this->fieldcc[param1];
-    while ((val->field1e & 0x3) != 0) {
+void clFS::waitTableLoad(u32 slot) {
+    FSTableReq * val = &this->tableReqs[slot];
+    while ((val->state & FSREQ_STATE_MASK) != 0) {
         this->pumpTableLoads();
     }
 }
 
 // MATCHED 100%
-u32 clFS::func_0201af08(u32 param1, u32 param2) {
-    FSChunkTable * tbl = this->fieldbc[param1];
-    return CHUNK_OFFSET(tbl, param2+1) - CHUNK_OFFSET(tbl, param2);
+u32 clFS::getChunkSize(u32 slot, u32 idx) {
+    FSChunkTable * tbl = this->tables[slot];
+    return CHUNK_OFFSET(tbl, idx+1) - CHUNK_OFFSET(tbl, idx);
 }
 
 // MATCHED 100%
-u32 clFS::func_0201af24(u32 param1, u32 param2) {
-    FSChunkTable * tbl = this->fieldbc[param1];
-    return (CHUNK_OFFSET(tbl, param2 + 1) - CHUNK_OFFSET(tbl, param2)) - CHUNK_SIZE(tbl, param2);
+u32 clFS::getChunkDataSize(u32 slot, u32 idx) {
+    FSChunkTable * tbl = this->tables[slot];
+    return (CHUNK_OFFSET(tbl, idx+1) - CHUNK_OFFSET(tbl, idx)) - CHUNK_TAIL(tbl, idx);
 }
 
 // MATCHED 100%
-FSFileReq * clFS::func_0201af54(FSFileReq * param1, u32 param2, u8 * param3, u32 param4, s16 param5) {
-    if (param5 >= 0) {
-        param1->field24 = param5;
+FSFileReq * clFS::setupReq(FSFileReq * req, u32 chunkIdx, u8 * buf, u32 bufSize, s16 slot) {
+    if (slot >= 0) {
+        req->slot = slot;
     }
 
-    param1->field26 = param2;
-    param1->field10 = param3;
-    param1->field14 = param4;
+    req->chunkIdx = chunkIdx;
+    req->buf = buf;
+    req->bufSize = bufSize;
 
-    return param1;
+    return req;
 }
 
 // MATCHED 100%
-void clFS::func_0201af78(FSFileReq * param1) {
-    FSFileReq * r0 = this->fieldac;
+void clFS::waitReq(FSFileReq * req) {
+    FSFileReq * reqNode = this->reqHead;
 
-    while (r0 != NULL) {
-        if (r0 == param1) {
-            BOOL run = (this->fieldd0 == NULL);
-            while (!run) {
+    while (reqNode != NULL) {
+        if (reqNode == req) {
+            BOOL isEmpty = (this->tableReqHead == NULL);
+            while (!isEmpty) {
                 this->pumpTableLoads();
-                run = (this->fieldd0 == NULL);
+                isEmpty = (this->tableReqHead == NULL);
             }
 
-            while ((param1->field28 & 3) != 0) {
+            while ((req->state & FSREQ_STATE_MASK) != 0) {
                 this->pumpReads();
             }
             break;
         }
 
-        r0 = r0->field00;
+        reqNode = reqNode->next;
     }
 }
 
 // MATCHED 100%
-void clFS::func_0201b01c(FSFileReq * param1) {
-    if ((param1->field28 & 3) != 1) {
-        if ((param1->field28 & 3) == 2) {
-            FS_CancelFile(&this->fieldb4[param1->field24]);
+void clFS::cancelReq(FSFileReq * req) {
+    if ((req->state & FSREQ_STATE_MASK) != FSREQ_QUEUED) {
+        if ((req->state & FSREQ_STATE_MASK) == FSREQ_ACTIVE) {
+            FS_CancelFile(&this->files[req->slot]);
 
-            param1->field18 = 0;
-            param1->field28 |= 0x10;
+            req->remaining = 0;
+            req->state |= FSREQ_CANCELED;
         }
     } else {
-        FSFileReq * r2 = this->fieldac;
+        FSFileReq * reqNode = this->reqHead;
 
-        if (r2 == param1) {
-            FSFileReq * next = param1->field00;
-            this->fieldac = next;
+        if (reqNode == req) {
+            FSFileReq * next = req->next;
+            this->reqHead = next;
             if (next == NULL) {
-                this->fieldb0 = NULL;
+                this->reqTail = NULL;
             }
         } else {
-            while (r2 != NULL) {
-                FSFileReq * next = r2->field00;
+            while (reqNode != NULL) {
+                FSFileReq * next = reqNode->next;
 
-                if (r2->field00 == param1) {
-                    FSFileReq * newNext = param1->field00;
-                    r2->field00 = param1->field00;
+                if (reqNode->next == req) {
+                    FSFileReq * newNext = req->next;
+                    reqNode->next = req->next;
                     if (newNext == NULL) {
-                        this->fieldb0 = r2;
+                        this->reqTail = reqNode;
                     }
                     break;
                 }
 
-                r2 = next;
+                reqNode = next;
             }
         }
 
-        if (param1->fn != NULL) {
-            param1->fn(param1, false);
+        if (req->fn != NULL) {
+            req->fn(req, false);
         }
 
-        param1->field28 = 0x10;
+        req->state = FSREQ_CANCELED;
     }
 }
 
 // MATCHED 100%
-void clFS::func_0201b0e4() {
-    BOOL run = (this->fieldd0 == NULL);
+void clFS::waitAll() {
+    BOOL run = (this->tableReqHead == NULL);
     while (!run) {
         this->pumpTableLoads();
-        run = (this->fieldd0 == NULL);
+        run = (this->tableReqHead == NULL);
     }
 
-    run = (this->fieldac == 0);
+    run = (this->reqHead == 0);
     while (!run) {
         this->pumpReads();
-        run = (this->fieldac == 0);
+        run = (this->reqHead == 0);
     }
 }
 
 // MATCHED 100%
-BOOL func_0201b180(FSOverlayID id, MIProcessor target) {
+BOOL fsLoadOverlay(FSOverlayID id, MIProcessor target) {
     return FS_LoadOverlay(target, id);
 }
 
 // MATCHED 100%
-BOOL clFS::func_0201b198(FSOverlayID id, MIProcessor target) {
-    BOOL success = FS_LoadOverlayInfo(&this->field70, target, id);
+BOOL clFS::beginOverlayLoad(FSOverlayID id, MIProcessor target) {
+    BOOL success = FS_LoadOverlayInfo(&this->ovyInfo, target, id);
     if (!success) {
 
         return FALSE;
     }
 
-    FS_ClearOverlayImage(&this->field70);
+    FS_ClearOverlayImage(&this->ovyInfo);
 
-    if (FS_IsFile(&this->field28)) {
-        FS_CloseFile(&this->field28);
+    if (FS_IsFile(&this->ovyFile)) {
+        FS_CloseFile(&this->ovyFile);
     }
 
-    if (!FS_OpenFileFast(&this->field28, FS_GetOverlayFileID(&this->field70))) {
+    if (!FS_OpenFileFast(&this->ovyFile, FS_GetOverlayFileID(&this->ovyInfo))) {
         return FALSE;
     }
 
-    FS_ClearOverlayImage(&this->field70);
+    FS_ClearOverlayImage(&this->ovyInfo);
 
-    this->field9c = this->field70.header.ram_address;
+    this->ovyDst = this->ovyInfo.header.ram_address;
 
-    u32 size = this->field70.header.ram_size;
-    this->fielda0 = this->field70.header.ram_size;
-    this->fielda4 = MATH_MIN(size, CARD_ROM_PAGE_SIZE);
-    this->fielda8 = 1;
+    u32 size = this->ovyInfo.header.ram_size;
+    this->ovyRemaining = this->ovyInfo.header.ram_size;
+    this->ovyReadSize = MATH_MIN(size, CARD_ROM_PAGE_SIZE);
+    this->ovyState = 1;
 
     return TRUE;
 }
 
 // MATCHED 100%
-u32 clFS::func_0201b250() {
-    if (this->fielda8 != 0) {
+u32 clFS::startOverlay() {
+    if (this->ovyState != 0) {
         return 2;
     } else {
-        FS_StartOverlay(&this->field70);
+        FS_StartOverlay(&this->ovyInfo);
         return 0;
     }
 }
 
 // MATCHED 100%
-BOOL func_0201b274(FSOverlayID id, MIProcessor target) {
+BOOL fsUnloadOverlay(FSOverlayID id, MIProcessor target) {
     return FS_UnloadOverlay(target, id);
 }
 
 // MATCHED 100%
-BOOL func_0201b28c(u32 dmaNo, void * p_mem, u32 size) {
-    data_0205ba8c.dmaNo = dmaNo;
+BOOL fsInit(u32 dmaNo, void * p_mem, u32 size) {
+    fsManager.dmaNo = dmaNo;
 
     FS_Init(dmaNo);
 
     if (p_mem != NULL) {
         BOOL flag = (FS_TryLoadTable(p_mem, size) <= size);
         if (flag) {
-            data_0205ba8c.table = p_mem;
+            fsManager.table = p_mem;
         }
     }
 
@@ -370,8 +375,8 @@ BOOL func_0201b28c(u32 dmaNo, void * p_mem, u32 size) {
 }
 
 // MATCHED 100%
-BOOL func_0201b2e4(void * p_mem, u32 size) {
-    if (data_0205ba8c.table != NULL) {
+BOOL fsLoadFileTable(void * p_mem, u32 size) {
+    if (fsManager.table != NULL) {
         return FALSE;
     }
 
@@ -379,68 +384,68 @@ BOOL func_0201b2e4(void * p_mem, u32 size) {
     if (!flag) {
         return FALSE;
     } else {
-        data_0205ba8c.table = p_mem;
+        fsManager.table = p_mem;
         return TRUE;
     }
 }
 
 // MATCHED 100%
-bool clFS::func_0201b330(u16 param1, const char * param2) {
-    if (FS_IsFile(&this->fieldb4[param1])) {
-        FS_CloseFile(&this->fieldb4[param1]);
+bool clFS::openSlot(u16 slot, const char * path) {
+    if (FS_IsFile(&this->files[slot])) {
+        FS_CloseFile(&this->files[slot]);
     }
 
-    FS_OpenFile(&this->fieldb4[param1], param2);
+    FS_OpenFile(&this->files[slot], path);
 
-    this->fieldb8[param1] = param2;
+    this->paths[slot] = path;
 
     return true;
 }
 
 // MATCHED 100%
-void clFS::func_0201b390() {
-    s32 r7 = this->fieldca_00;
-    for (s16 i = 0; i < r7; i++) {
-        FSFile * file = &this->fieldb4[(u16)i];
+void clFS::closeAllFiles() {
+    s32 numSlots = this->numSlots;
+    for (s16 i = 0; i < numSlots; i++) {
+        FSFile * file = &this->files[(u16)i];
         if (FS_IsFile(file)) {
             FS_CloseFile(file);
         }
     }
 
-    if (FS_IsFile(&this->field28)) {
-        FS_CloseFile(&this->field28);
+    if (FS_IsFile(&this->ovyFile)) {
+        FS_CloseFile(&this->ovyFile);
     }
 }
 
 // MATCHED 100%
-bool clFS::queueTableLoad(u32 param1, FSChunkTable * param2, u32 param3, u32 param4, void (*param5)(UnkStruct_FieldCC *, bool), u32 param6, u32 param7) {
-    UnkStruct_FieldCC * r12 = this->fieldcc;
-    UnkStruct_FieldCC * r14 = &r12[param1];
+bool clFS::queueTableLoad(u32 slot, FSChunkTable * table, u32 size, u32 offset, void (*fn)(FSTableReq *, bool), u32 arg, u32 flags) {
+    FSTableReq * tblReqs = this->tableReqs;
+    FSTableReq * tblReq = &tblReqs[slot];
 
-    r14->fn = param5;
-    r14->field08 = param6;
+    tblReq->fn = fn;
+    tblReq->arg = arg;
 
-    this->fieldbc[param1] = param2;
+    this->tables[slot] = table;
 
-    r14->field0c = (u32 *)this->fieldbc[param1];
-    r14->field1c = param1;
-    r14->field10 = param3;
-    r14->field18 = param4;
-    r14->field1e = param7 | 1;
-    r12[param1].field00 = 0;
+    tblReq->dst = (u32 *)this->tables[slot];
+    tblReq->slot = slot;
+    tblReq->remaining = size;
+    tblReq->offset = offset;
+    tblReq->state = flags | 1;
+    tblReqs[slot].next = 0;
 
-    if (param7 != 0) {
-        param3 = MATH_MIN(param3, CARD_ROM_PAGE_SIZE);
+    if (flags != 0) {
+        size = MATH_MIN(size, CARD_ROM_PAGE_SIZE);
     }
 
-    r14->field14 = param3;
+    tblReq->readSize = size;
 
-    if (this->fieldd4 == NULL) {
-        this->fieldd0 = r14;
-        this->fieldd4 = r14;
+    if (this->tableReqTail == NULL) {
+        this->tableReqHead = tblReq;
+        this->tableReqTail = tblReq;
     } else {
-        this->fieldd4->field00 = r14;
-        this->fieldd4 = this->fieldd4->field00;
+        this->tableReqTail->next = tblReq;
+        this->tableReqTail = this->tableReqTail->next;
     }
 
     return true;
@@ -448,94 +453,94 @@ bool clFS::queueTableLoad(u32 param1, FSChunkTable * param2, u32 param3, u32 par
 
 // MATCHED 100%
 bool clFS::pumpTableLoads() {
-    UnkStruct_FieldCC * r4 = this->fieldd0;
-    FSFile * file = &this->fieldb4[r4->field1c];
+    FSTableReq * req = this->tableReqHead;
+    FSFile * file = &this->files[req->slot];
 
     if (FS_IsBusy(file)) {
         return false;
     }
 
-    if ((r4->field1e & 3) == 2) {
-        if ((r4->field1e & 0x8000) && r4->field10 > CARD_ROM_PAGE_SIZE) {
-            r4->field0c += CARD_ROM_PAGE_SIZE / sizeof(u32);
-            r4->field18 += CARD_ROM_PAGE_SIZE;
-            r4->field10 -= CARD_ROM_PAGE_SIZE;
-            if (r4->field10 < CARD_ROM_PAGE_SIZE) {
-                r4->field14 = r4->field10;
+    if ((req->state & FSREQ_STATE_MASK) == FSREQ_ACTIVE) {
+        if ((req->state & FSREQ_PAGED) && req->remaining > CARD_ROM_PAGE_SIZE) {
+            req->dst += CARD_ROM_PAGE_SIZE / sizeof(u32);
+            req->offset += CARD_ROM_PAGE_SIZE;
+            req->remaining -= CARD_ROM_PAGE_SIZE;
+            if (req->remaining < CARD_ROM_PAGE_SIZE) {
+                req->readSize = req->remaining;
             }
         } else {
-            if (r4->fn != NULL) {
-                this->fieldca_07 = 1;
-                r4->fn(r4, (r4->field1e & 0x10) == 0);
-                this->fieldca_07 = 0;
+            if (req->fn != NULL) {
+                this->inCallback = 1;
+                req->fn(req, (req->state & FSREQ_CANCELED) == 0);
+                this->inCallback = 0;
             }
 
-            r4->field1e &= 0x10;
-            this->fieldd0 = r4->field00;
-            r4->field00 = NULL;
+            req->state &= FSREQ_CANCELED;
+            this->tableReqHead = req->next;
+            req->next = NULL;
 
-            r4 = this->fieldd0;
-            if (r4 == NULL) {
-                this->fieldd4 = NULL;
+            req = this->tableReqHead;
+            if (req == NULL) {
+                this->tableReqTail = NULL;
                 return true;
             }
 
-            file = &this->fieldb4[r4->field1c];
+            file = &this->files[req->slot];
             goto start;
         }
 
         if (!FS_IsFile(file)) {
-            this->func_0201b330(r4->field1c, this->fieldb8[r4->field1c]);
-            FS_SeekFile(file, r4->field18, FS_SEEK_SET);
+            this->openSlot(req->slot, this->paths[req->slot]);
+            FS_SeekFile(file, req->offset, FS_SEEK_SET);
         }
     } else {
 start:
-        r4->field1e = (r4->field1e & ~3) | 2;
+        req->state = (req->state & ~FSREQ_STATE_MASK) | FSREQ_ACTIVE;
         if (!FS_IsFile(file)) {
-            this->func_0201b330(r4->field1c, this->fieldb8[r4->field1c]);
+            this->openSlot(req->slot, this->paths[req->slot]);
         }
-        FS_SeekFile(file, r4->field18, FS_SEEK_SET);
+        FS_SeekFile(file, req->offset, FS_SEEK_SET);
     }
     
-    FS_ReadFile(file, r4->field0c, r4->field14);
+    FS_ReadFile(file, req->dst, req->readSize);
     return true;
 }
 
 // MATCHED 100%
-bool clFS::queueRead(FSFileReq * param1, u32 param2, s32 param3, void (*param4)(FSFileReq *, bool), u32 param5, u32 param6) {
-    if (param3 >= 0) {
-        param1->field24 = param3;
+bool clFS::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags) {
+    if (slot >= 0) {
+        req->slot = slot;
     }
 
-    param1->fn = param4;
-    param1->field08 = param5;
-    param1->field28 = param6 | 1;
-    param1->field20 = param2;
-    param1->field0c = param1->field10;
-    param1->field00 = NULL;
+    req->fn = fn;
+    req->arg = arg;
+    req->state = flags | 1;
+    req->offset = offset;
+    req->dst = req->buf;
+    req->next = NULL;
 
-    s32 size = this->func_0201af08((s16)param1->field24, param1->field26) - param2;
-    if (param1->field14 != 0) {
-        size = param1->field14;
+    s32 size = this->getChunkSize((s16)req->slot, req->chunkIdx) - offset;
+    if (req->bufSize != 0) {
+        size = req->bufSize;
     }
 
-    param1->field18 = size;
+    req->remaining = size;
     if (size == 0) {
         return false;
     }
 
-    if (param6 != 0) {
+    if (flags != 0) {
         size = MATH_MIN(size, CARD_ROM_PAGE_SIZE);
     }
 
-    param1->field1c = size;
+    req->readSize = size;
 
-    if (this->fieldb0 == NULL) {
-        this->fieldac = param1;
-        this->fieldb0 = param1;
+    if (this->reqTail == NULL) {
+        this->reqHead = req;
+        this->reqTail = req;
     } else {
-        this->fieldb0->field00 = param1;
-        this->fieldb0 = this->fieldb0->field00;
+        this->reqTail->next = req;
+        this->reqTail = this->reqTail->next;
     }
 
     return true;
@@ -543,345 +548,345 @@ bool clFS::queueRead(FSFileReq * param1, u32 param2, s32 param3, void (*param4)(
 
 // MATCHED 100%
 bool clFS::pumpReads() {
-    FSFileReq * req = this->fieldac;
-    FSFile * file = &this->fieldb4[req->field24];
+    FSFileReq * req = this->reqHead;
+    FSFile * file = &this->files[req->slot];
 
     if (FS_IsBusy(file)) {
         return false;
     }
 
-    if ((req->field28 & 3) == 2) { 
-        if ((req->field28 & 0x8000) && req->field18 > CARD_ROM_PAGE_SIZE) {
-            req->field0c += CARD_ROM_PAGE_SIZE;
-            req->field20 += CARD_ROM_PAGE_SIZE;
-            req->field18 -= CARD_ROM_PAGE_SIZE;
-            if (req->field18 < CARD_ROM_PAGE_SIZE) {
-                req->field1c = req->field18;
+    if ((req->state & FSREQ_STATE_MASK) == FSREQ_ACTIVE) { 
+        if ((req->state & FSREQ_PAGED) && req->remaining > CARD_ROM_PAGE_SIZE) {
+            req->dst += CARD_ROM_PAGE_SIZE;
+            req->offset += CARD_ROM_PAGE_SIZE;
+            req->remaining -= CARD_ROM_PAGE_SIZE;
+            if (req->remaining < CARD_ROM_PAGE_SIZE) {
+                req->readSize = req->remaining;
             }
         } else {
             if (req->fn != NULL) {
-                this->fieldca_07 = 1;
-                req->fn(req, (req->field28 & 0x10) == 0);
-                this->fieldca_07 = 0;
+                this->inCallback = 1;
+                req->fn(req, (req->state & FSREQ_CANCELED) == 0);
+                this->inCallback = 0;
             }
 
-            req->field28 &= 0x10;
-            this->fieldac = req->field00;
-            req->field00 = NULL;
+            req->state &= FSREQ_CANCELED;
+            this->reqHead = req->next;
+            req->next = NULL;
 
-            req = this->fieldac;
+            req = this->reqHead;
             if (req == NULL) {
-                this->fieldb0 = NULL;
+                this->reqTail = NULL;
                 return true;
             }
 
-            file = &this->fieldb4[req->field24];
+            file = &this->files[req->slot];
             goto start;
         }
 
         if (!FS_IsFile(file)) {
-            this->func_0201b330(req->field24, this->fieldb8[req->field24]);
-            FS_SeekFile(file, req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26), FS_SEEK_SET);
+            this->openSlot(req->slot, this->paths[req->slot]);
+            FS_SeekFile(file, req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx), FS_SEEK_SET);
         }
     } else {
 start:
-        req->field28 = (req->field28 & ~3) | 2;
+        req->state = (req->state & ~FSREQ_STATE_MASK) | FSREQ_ACTIVE;
 
         if (!FS_IsFile(file)) {
-            this->func_0201b330(req->field24, this->fieldb8[req->field24]);
+            this->openSlot(req->slot, this->paths[req->slot]);
         }
-        FS_SeekFile(file, req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26), FS_SEEK_SET);
+        FS_SeekFile(file, req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx), FS_SEEK_SET);
     }
 
-    FS_ReadFile(file, req->field0c, req->field1c);
+    FS_ReadFile(file, req->dst, req->readSize);
     return true;
 }
 
 // MATCHED 100%
 bool clFS::pumpOverlay() {
-    if (FS_IsBusy(&this->field28)) {
+    if (FS_IsBusy(&this->ovyFile)) {
         return false;
     }
 
-    if (this->fielda8 == 2) {
-        if (this->fielda0 <= CARD_ROM_PAGE_SIZE) {
-            if (FS_IsFile(&this->field28)) {
-                FS_CloseFile(&this->field28);
+    if (this->ovyState == 2) {
+        if (this->ovyRemaining <= CARD_ROM_PAGE_SIZE) {
+            if (FS_IsFile(&this->ovyFile)) {
+                FS_CloseFile(&this->ovyFile);
             }
 
-            this->fielda8 = 0;
+            this->ovyState = 0;
 
             return true;
         }
 
-        this->field9c += CARD_ROM_PAGE_SIZE;
-        this->fielda0 -= CARD_ROM_PAGE_SIZE;
-        if (this->fielda0 < CARD_ROM_PAGE_SIZE) {
-            this->fielda4 = this->fielda0;
+        this->ovyDst += CARD_ROM_PAGE_SIZE;
+        this->ovyRemaining -= CARD_ROM_PAGE_SIZE;
+        if (this->ovyRemaining < CARD_ROM_PAGE_SIZE) {
+            this->ovyReadSize = this->ovyRemaining;
         }
     } else {
-        this->fielda8 = 2;
+        this->ovyState = 2;
     }
 
-    if (!FS_IsFile(&this->field28)) {
-        if (!FS_OpenFileFast(&this->field28, FS_GetOverlayFileID(&this->field70))) {
+    if (!FS_IsFile(&this->ovyFile)) {
+        if (!FS_OpenFileFast(&this->ovyFile, FS_GetOverlayFileID(&this->ovyInfo))) {
             return false;
         }
 
-        FS_SeekFile(&this->field28, this->field70.header.ram_size - this->fielda0, FS_SEEK_SET);
+        FS_SeekFile(&this->ovyFile, this->ovyInfo.header.ram_size - this->ovyRemaining, FS_SEEK_SET);
     }
 
-    FS_ReadFile(&this->field28, this->field9c, this->fielda4);
+    FS_ReadFile(&this->ovyFile, this->ovyDst, this->ovyReadSize);
 
     return true;
 }
 
 // MATCHED 100%
-clFSEx::clFSEx(u8 param1, u32 param2, u16 param3, u16 param4, u32 param5, u32 param6) : clDPP::clDPP(param1, param2, param4, param5, param6) {
-    u32 heap = GET_HEADER(this)->field08_heap;
-    this->fieldc10 = (FSFileReqEx *)func_02019eac(heap, param3 * sizeof(FSFileReqEx), NULL, 0);
-    this->fieldc0c = (ChunkSizeFn *)func_02019eac(heap, param4 * sizeof(ChunkSizeFn), NULL, 0);;
-    this->fieldc14 = NULL;
-    this->fieldc18 = (u8*)this->fieldc10 + param3 * sizeof(FSFileReqEx) * sizeof(FSFileReqEx);
+clFSEx::clFSEx(u8 priority, u32 param2, u16 count, u16 numSlots, u32 dmaNo, u32 param6) : clDPP::clDPP(priority, param2, numSlots, dmaNo, param6) {
+    u32 heap = GET_HEADER(this)->heapId;
+    this->reqPool = (FSFileReqEx *)heapAlloc(heap, count * sizeof(FSFileReqEx), NULL, 0);
+    this->sizeFns = (ChunkSizeFn *)heapAlloc(heap, numSlots * sizeof(ChunkSizeFn), NULL, 0);;
+    this->freeList = NULL;
+    this->reqPoolEnd = (u8*)this->reqPool + count * sizeof(FSFileReqEx) * sizeof(FSFileReqEx);
 
-    func_01ff8228(this->fieldc10, 0, param3 * sizeof(FSFileReqEx));
-    func_01ff8228(&this->fieldc1c, 0, 2 * sizeof(u32));
+    func_01ff8228(this->reqPool, 0, count * sizeof(FSFileReqEx));
+    func_01ff8228(&this->externTable, 0, 2 * sizeof(u32));
 
-    FSFileReqEx * ptr = this->fieldc10;
-    while (param3 != 0) {
-        ptr->field00 = this->fieldc14;
-        this->fieldc14 = ptr;
-        param3--;
+    FSFileReqEx * ptr = this->reqPool;
+    while (count != 0) {
+        ptr->next = this->freeList;
+        this->freeList = ptr;
+        count--;
         ptr++;
     }
 }
 
 // MATCHED 100%
 clFSEx::~clFSEx() {
-    s16 size = this->fieldca_00;
+    s16 size = this->numSlots;
     for (s16 r7 = 0; r7 < size; r7++) {
-        if ((this->fieldc1c[r7 >> 5] & (1 << (r7 & 0x1f))) != 0) {
-            this->func_0201ae68(r7);
-            this->fieldc1c[r7 >> 5] &= ~(1 << (r7 & 0x1f));
+        if ((this->externTable[r7 >> 5] & (1 << (r7 & 0x1f))) != 0) {
+            this->releaseSlot(r7);
+            this->externTable[r7 >> 5] &= ~(1 << (r7 & 0x1f));
         } else {
-            func_0201a058(this->func_0201ae68(r7));
+            heapFree(this->releaseSlot(r7));
         }
     }
 
-    func_0201a058(this->fieldc10);
-    func_0201a058(this->fieldc0c);
+    heapFree(this->reqPool);
+    heapFree(this->sizeFns);
 }
 
 // MATCHED 100%
-bool clFSEx::func_0201bdfc(s16 param1, const char * param2, void (*param3)(UnkStruct_FieldCC *, bool), u32 param4, u32 param5, u32 param6, u32 param7, u32 param8) {
-    if (this->fieldbc[param1] != NULL) {
-        if ((this->fieldc1c[param1 >> 5] & 1 << (param1 & 0x1f)) != 0) {
-            this->func_0201ae68(param1);
-            this->fieldc1c[param1 >> 5] &= ~(1 << (param1 & 0x1f));
+bool clFSEx::openArchive(s16 slot, const char * path, void (*fn)(FSTableReq *, bool), u32 arg, BOOL hasTails, u32 heapId, u32 flags, u32 align) {
+    if (this->tables[slot] != NULL) {
+        if ((this->externTable[slot >> 5] & 1 << (slot & 0x1f)) != 0) {
+            this->releaseSlot(slot);
+            this->externTable[slot >> 5] &= ~(1 << (slot & 0x1f));
         } else {
-            func_0201a058(this->func_0201ae68(param1));
+            heapFree(this->releaseSlot(slot));
         }
-        this->fieldbc[param1] = NULL;
+        this->tables[slot] = NULL;
     }
 
-    u32 size = this->func_0201adf8(param1, param2, param5);
-    this->fieldc0c[param1] = (param5 == 0) ? data_02054c94[2] : data_02054c94[1];
+    u32 size = this->getTableSize(slot, path, hasTails);
+    this->sizeFns[slot] = (hasTails == 0) ? sChunkSizeFns[2] : sChunkSizeFns[1];
     
-    FSChunkTable * tbl = (FSChunkTable *)func_02019eac(param6, size, NULL, param8);
-    this->queueTableLoad(param1, tbl, size, 0, param3, param4, param7);
+    FSChunkTable * tbl = (FSChunkTable *)heapAlloc(heapId, size, NULL, align);
+    this->queueTableLoad(slot, tbl, size, 0, fn, arg, flags);
 
     return true;
 }
 
 // MATCHED 100%
-void clFSEx::func_0201bf34(s16 param1, const char * param2, FSChunkTable * param3, u32 param4) {
-    if (this->fieldbc[param1] != NULL) {
-        if ((this->fieldc1c[param1 >> 5] & 1 << (param1 & 0x1f)) != 0) {
-            this->func_0201ae68(param1);
-            this->fieldc1c[param1 >> 5] &= ~(1 << (param1 & 0x1f));
+void clFSEx::setArchive(s16 slot, const char * path, FSChunkTable * table, BOOL hasTails) {
+    if (this->tables[slot] != NULL) {
+        if ((this->externTable[slot >> 5] & 1 << (slot & 0x1f)) != 0) {
+            this->releaseSlot(slot);
+            this->externTable[slot >> 5] &= ~(1 << (slot & 0x1f));
         } else {
-            func_0201a058(this->func_0201ae68(param1));
+            heapFree(this->releaseSlot(slot));
         }
-        this->fieldbc[param1] = NULL;
+        this->tables[slot] = NULL;
     }
 
-    this->func_0201b330(param1, param2);
+    this->openSlot(slot, path);
 
-    this->fieldc0c[param1] = (param4 == 0) ? data_02054c94[0] : data_02054c94[3];
-    this->fieldbc[param1] = param3;
-    this->fieldc1c[param1 >> 5] |= (1 << (param1 & 0x1f));
+    this->sizeFns[slot] = (hasTails == FALSE) ? sChunkSizeFns[0] : sChunkSizeFns[3];
+    this->tables[slot] = table;
+    this->externTable[slot >> 5] |= (1 << (slot & 0x1f));
 }
 
 // MATCHED 100%
-u8 * clFSEx::func_0201c044(s16 param1, u32 param2, u32 param3, u8 * param4, s32 * param5, void (*param6)(FSFileReq *, bool), u32 param7, u32 param8, u32 param9, u32 param10) {
-    u32 size = (this->*this->fieldc0c[param1])(param1, param2);
+u8 * clFSEx::readChunk(s16 slot, u32 chunkIdx, u32 offset, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags, u32 heapId, u32 align) {
+    u32 size = (this->*this->sizeFns[slot])(slot, chunkIdx);
     if (size == 0) {
-        if (param5 != NULL) {
-            *param5 = 0;
+        if (pSize != NULL) {
+            *pSize = 0;
         }
         return NULL;
     }
 
-    FSFileReqEx * res = this->func_0201c344();
-    if (res == NULL) {
-        if (param5 != NULL) {
-            *param5 = -1;
+    FSFileReqEx * reqEx = this->allocReq();
+    if (reqEx == NULL) {
+        if (pSize != NULL) {
+            *pSize = -1;
         }
         return NULL;
     }
 
     u32 oldSize = size;
-    if (param4 == 0) {
-        param4 = (u8 *)func_02019eac(param9, size, NULL, param10);
-    } else if (param5 != NULL && *param5 != 0) {
-        size = *param5;
+    if (dst == 0) {
+        dst = (u8 *)heapAlloc(heapId, size, NULL, align);
+    } else if (pSize != NULL && *pSize != 0) {
+        size = *pSize;
     }
 
-    if (param5 != NULL) {
-        *param5 = oldSize;
+    if (pSize != NULL) {
+        *pSize = oldSize;
     }
 
-    if (param4 == NULL) {
+    if (dst == NULL) {
         return NULL;
     }
 
-    res->field2c = param4;
+    reqEx->dstBase = dst;
 
-    FSFileReq * req = this->func_0201af54(res, param2, param4, size, -1);
-    this->clDPP::queueRead(req, param3, param1, param6, param7, param8);
+    FSFileReq * req = this->setupReq(reqEx, chunkIdx, dst, size, -1);
+    this->clDPP::queueRead(req, offset, slot, fn, arg, flags);
 
-    return param4;
+    return dst;
 }
 
 // MATCHED 100%
-void clFSEx::func_0201c194() {
-    FSFileReq * req = this->fieldac;
+void clFSEx::cancelAll() {
+    FSFileReq * req = this->reqHead;
     while (req != NULL) {
-        this->func_0201c890(req);
+        this->cancelStream(req);
 
-        BOOL flag = (req->field28 & 3) == 0;
+        BOOL flag = (req->state & FSREQ_STATE_MASK) == 0;
         if (!flag) {
-            req = req->field00;
+            req = req->next;
         } else {
             FSFileReq * oldReq = req;
-            req = req->field00;
-            oldReq->field00 = this->fieldc14;
-            this->fieldc14 = (FSFileReqEx *)oldReq;
+            req = req->next;
+            oldReq->next = this->freeList;
+            this->freeList = (FSFileReqEx *)oldReq;
         }
     }
 }
 
 // MATCHED 100%
-u8 * clFSEx::func_0201c1f8(s16 param1, u32 param2, u8 * param3, u32 param4, u8 * param5, s32 * param6, void (*param7)(FSFileReq *, bool), u32 param8, s32 param9, u32 param10) {
-    if (this->func_0201af08(param1, param2) == 0) {
-        if (param6 != NULL) {
-            *param6 = 0;
+u8 * clFSEx::readChunkStream(s16 slot, u32 chunkIdx, u8 * headerBuf, u32 headerSize, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, bool), u32 arg, s32 heapId, u32 align) {
+    if (this->getChunkSize(slot, chunkIdx) == 0) {
+        if (pSize != NULL) {
+            *pSize = 0;
         }
         return NULL;
     }
 
-    FSFileReqEx * req = this->func_0201c344();
+    FSFileReqEx * req = this->allocReq();
     if (req == NULL) {
-        if (param6 != NULL) {
-            *param6 = -1;
+        if (pSize != NULL) {
+            *pSize = -1;
         }
         return NULL;
     }
 
-    param4 = this->func_0201c700((FSFileReqEx *)this->func_0201af54(req, param2, param3, param4, param1), -1);
+    headerSize = this->readStreamHeader((FSFileReqEx *)this->setupReq(req, chunkIdx, headerBuf, headerSize, slot), -1);
 
-    if (param6 != NULL) {
-        *param6 = param4;
+    if (pSize != NULL) {
+        *pSize = headerSize;
     }
 
-    if (param5 == NULL) {
-        param5 = (u8 *)func_02019eac(param9, param4, NULL, param10);
+    if (dst == NULL) {
+        dst = (u8 *)heapAlloc(heapId, headerSize, NULL, align);
     }
 
-    if (param5 == NULL) {
+    if (dst == NULL) {
         return NULL;
     }
 
-    this->func_0201c7a0(req, (u32*)param5, param7, param8);
+    this->queueStream(req, (u32*)dst, fn, arg);
 
-    return param5;
+    return dst;
 }
 
 // MATCHED 100%
 bool clFSEx::pumpReads() {
-    FSFileReqEx * req = (FSFileReqEx *)this->fieldac;
+    FSFileReqEx * req = (FSFileReqEx *)this->reqHead;
     if (!this->clDPP::pumpReads()) {
         return false;
     }
 
-    if (req != this->fieldac && req >= this->fieldc10 && req < this->fieldc18) {
-        req->field00 = this->fieldc14;
-        this->fieldc14 = req;
+    if (req != this->reqHead && req >= this->reqPool && req < this->reqPoolEnd) {
+        req->next = this->freeList;
+        this->freeList = req;
     }
 
     return true;
 }
 
 // MATCHED 100%
-FSFileReqEx * clFSEx::func_0201c344() {
-    FSFileReqEx * req = this->fieldc14;
+FSFileReqEx * clFSEx::allocReq() {
+    FSFileReqEx * req = this->freeList;
     if (req == NULL) {
         return NULL;
     } else {
-        this->fieldc14 = (FSFileReqEx *)req->field00;
+        this->freeList = (FSFileReqEx *)req->next;
         return req;
     }
 }
 
 // MATCHED 100%
-clDAP::clDAP(u8 param1, u32 param2, u32 param3) : clTask::clTask(param1, param2, param3) {
-    this->field2c = NULL;
-    this->field28 = NULL;
-    this->field30 = 0xa8;
-    this->field34 = 5;
-    this->field36 = 2;
-    this->field38 = 0;
+clDAP::clDAP(u8 priority, u32 param2, u32 param3) : clTask::clTask(priority, param2, param3) {
+    this->tail = NULL;
+    this->head = NULL;
+    this->vcountBusyStart = 0xa8;
+    this->stallReset = 5;
+    this->stallLimit = 2;
+    this->stallCount = 0;
 }
 
 // MATCHED 100%
 void clDAP::run() {
-    bool flag = false;
-    if (data_0205b7a8.field26 == 0) {
-        bool ready = true;
+    bool active = false;
+    if (frameTimer.frameSkips == 0) {
+        bool idle = true;
 
-        if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
-            ready = false;
+        if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+            idle = false;
         }
 
-        if (ready) {
-            flag = true;
+        if (idle) {
+            active = true;
         }
     }
 
-    if (flag) {
-        this->field38 = 0;
-    } else if (this->field38 >= this->field36) {
-        this->field38 = this->field34;
-    } else if (++this->field38 != this->field34+1) {
+    if (active) {
+        this->stallCount = 0;
+    } else if (this->stallCount >= this->stallLimit) {
+        this->stallCount = this->stallReset;
+    } else if (++this->stallCount != this->stallReset+1) {
         return;
     }
 
     bool run = true;
     while (run) {
-        BOOL flag = (this->field28 == NULL) ? TRUE : FALSE;
+        BOOL flag = (this->head == NULL) ? TRUE : FALSE;
         if (flag) {
-            this->field38 = 0;
+            this->stallCount = 0;
             break;
         }
 
-        this->func_0201c5c8();
+        this->pumpJobs();
 
         run = false;
 
-        if (data_0205b7a8.field26 == 0) {
+        if (frameTimer.frameSkips == 0) {
             bool ready = true;
 
-            if (reg_GX_VCOUNT >= this->field30 && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+            if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
                 ready = false;
             }
 
@@ -893,170 +898,169 @@ void clDAP::run() {
 }
 
 // MATCHED 100%
-u32 clDAP::func_0201c4f4(FSFileReqEx * param1) {
-    param1->field0c = param1->field10;
+u32 clDAP::beginJob(FSFileReqEx * req) {
+    req->dst = req->buf;
 
     u32 local;
-    func_01ff8000(&param1->field0c, &local, &param1->field34);
+    func_01ff8000(&req->dst, &local, &req->totalSize);
 
-    param1->field38 = local;
-    param1->field2a = 1;
-    return param1->field34;
+    req->recordsLeft = local;
+    req->streamState = DPP_PREPARED;
+    return req->totalSize;
 }
 
 // MATCHED 100%
-void clDAP::func_0201c534(FSFileReqEx * param1, u32 * param2) {
-    param1->field2c = param2;
-    param1->field30 = param2;
-    param1->field2a = 2;
-    param1->field00 = NULL;
+void clDAP::queueJob(FSFileReqEx * req, u32 * dst) {
+    req->dstBase = dst;
+    req->dstCur = dst;
+    req->streamState = DPP_QUEUED;
+    req->next = NULL;
 
-    if (this->field2c != NULL) {
-        this->field2c->field00 = param1;
-        this->field2c = (FSFileReqEx *)this->field2c->field00;
+    if (this->tail != NULL) {
+        this->tail->next = req;
+        this->tail = (FSFileReqEx *)this->tail->next;
     } else {
-        this->field28 = param1;
-        this->field2c = param1;
+        this->head = req;
+        this->tail = req;
     } 
 }
 
 // MATCHED 100%
-void clDAP::func_0201c574(FSFileReq * param1) {
-    FSFileReq * req = this->field28;
-    while (req != NULL) {
-        if (req == param1) {
-            while (param1->field2a != 0) {
-                this->func_0201c5c8();
+void clDAP::waitJob(FSFileReq * req) {
+    FSFileReq * reqNode = this->head;
+    while (reqNode != NULL) {
+        if (reqNode == req) {
+            while (req->streamState != DPP_IDLE) {
+                this->pumpJobs();
             }
             break;
         }
-
-        req = req->field00;
+        reqNode = reqNode->next;
     }
 }
 
 // MATCHED 100%
-void clDAP::func_0201c5c8() {
-    this->field28->field0c += 2;
+void clDAP::pumpJobs() {
+    this->head->dst += 2;
 
-    if (this->field28->field30 >= (void *)HW_PLTT && this->field28->field30 < (void *)HW_OAM_END) {
-        func_01ff8150(&this->field28->field0c, &this->field28->field30);
+    if (this->head->dstCur >= (void *)HW_PLTT && this->head->dstCur < (void *)HW_OAM_END) {
+        func_01ff8150(&this->head->dst, &this->head->dstCur);
     } else {
-        func_01ff80a4(&this->field28->field0c, &this->field28->field30);
+        func_01ff80a4(&this->head->dst, &this->head->dstCur);
     }
 
-    this->field28->field2a = 3;
+    this->head->streamState = DPP_COPYING;
 
-    if (--this->field28->field38 == 0) {
-        FSFileReqEx * req = this->field28;
-        req->field2a = 0;
-        this->field28 = (FSFileReqEx *)req->field00;
-        req->field00 = NULL;
-        if (this->field28 == NULL) {
-            this->field2c = NULL;
+    if (--this->head->recordsLeft == 0) {
+        FSFileReqEx * req = this->head;
+        req->streamState = DPP_IDLE;
+        this->head = (FSFileReqEx *)req->next;
+        req->next = NULL;
+        if (this->head == NULL) {
+            this->tail = NULL;
         }
     }
 }
 
 // MATCHED 100%
-clDPP::clDPP(u8 param1, u32 param2, u16 param3, u32 param4, u32 param5) : clFS::clFS(param1, param2, param3, param4, param5) {
+clDPP::clDPP(u8 priority, u32 param2, u16 numSlots, u32 dmaNo, u32 param5) : clFS::clFS(priority, param2, numSlots, dmaNo, param5) {
     this->alignedBuf = (u8*)((u32)(this->buffer + 0x1f) & ~0x1f);
-    this->bufIdx = 0;
+    this->page = 0;
 }
 
 // MATCHED 100%
-u32 clDPP::func_0201c700(FSFileReqEx * param1, s16 param2) {
-    if (param2 >= 0) {
-        param1->field24 = param2;
+u32 clDPP::readStreamHeader(FSFileReqEx * req, s16 slot) {
+    if (slot >= 0) {
+        req->slot = slot;
     }
 
-    u32 res = this->func_0201af08((s16)param1->field24, param1->field26);
-    if (res == 0) {
+    u32 size = this->getChunkSize((s16)req->slot, req->chunkIdx);
+    if (size == 0) {
         return 0;
     }
 
     u8 arr[0x8];
-    param1->field0c = arr;
-    param1->field1c = 8;
-    param1->field20 = 0;
+    req->dst = arr;
+    req->readSize = 8;
+    req->offset = 0;
 
-    this->func_0201c8d8(param1, 0);
+    this->readSync(req, 0);
 
-    u32 local;
-    func_01ff8000(&param1->field0c, &local, &param1->field34);
+    u32 recordsLeft;
+    func_01ff8000(&req->dst, &recordsLeft, &req->totalSize);
 
-    param1->field20 = param1->field0c - (u8*)arr;
-    param1->field18 = res - param1->field20;
-    param1->field2a = 1;
-    param1->field38 = local;
-    return param1->field34;
+    req->offset = req->dst - (u8*)arr;
+    req->remaining = size - req->offset;
+    req->streamState = DPP_PREPARED;
+    req->recordsLeft = recordsLeft;
+    return req->totalSize;
 }
 
 // MATCHED 100%
-void clDPP::func_0201c7a0(FSFileReqEx * param1, u32 * param2, void (*param3)(FSFileReq *, bool), u32 param4) {
-    param1->fn = param3;
-    param1->field08 = param4;
-    param1->field2c = param2;
-    param1->field30 = param2;
-    param1->field28 = 1;
-    param1->field2a = 2;
-    param1->field00 = NULL;
+void clDPP::queueStream(FSFileReqEx * req, u32 * dst, void (*fn)(FSFileReq *, bool), u32 arg) {
+    req->fn = fn;
+    req->arg = arg;
+    req->dstBase = dst;
+    req->dstCur = dst;
+    req->state = FSREQ_QUEUED;
+    req->streamState = DPP_QUEUED;
+    req->next = NULL;
 
-    if (param1->field10 == NULL) {
-        param1->field10 = this->alignedBuf;
-        param1->field14 = 0xb00;
-        param1->field1c = CARD_ROM_PAGE_SIZE;
+    if (req->buf == NULL) {
+        req->buf = this->alignedBuf;
+        req->bufSize = 0xb00;
+        req->readSize = CARD_ROM_PAGE_SIZE;
     } else {
-        if (data_0205ba8c.dmaNo < 4) {
-            u32 alignment = ((u32)param1->field10 & 0x1f);
-            if (((u32)param1->field10 & 0x1f) != 0) {
-                param1->field14 -= 32 - alignment;
+        if (fsManager.dmaNo < 4) {
+            u32 alignment = ((u32)req->buf & 0x1f);
+            if (((u32)req->buf & 0x1f) != 0) {
+                req->bufSize -= 32 - alignment;
             }
-            param1->field10 = (u8*)(((u32)param1->field10 + 0x1f) & ~0x1f);
-            param1->field1c = -CARD_ROM_PAGE_SIZE & (param1->field14 / 6);
+            req->buf = (u8*)(((u32)req->buf + 0x1f) & ~0x1f);
+            req->readSize = -CARD_ROM_PAGE_SIZE & (req->bufSize / 6);
         } else {
-            param1->field1c = param1->field14 / 6;
+            req->readSize = req->bufSize / 6;
         }
     }
 
-    if (this->fieldb0 != NULL) {
-        this->fieldb0->field00 = param1;
-        this->fieldb0 = this->fieldb0->field00;
+    if (this->reqTail != NULL) {
+        this->reqTail->next = req;
+        this->reqTail = this->reqTail->next;
     } else {
-        this->fieldac = param1;
-        this->fieldb0 = param1;
+        this->reqHead = req;
+        this->reqTail = req;
     }
 }
 
 // MATCHED 100%
-void clDPP::func_0201c890(FSFileReq * param1) {
-    param1->field2a = 0;
-    this->func_0201b01c(param1);
+void clDPP::cancelStream(FSFileReq * req) {
+    req->streamState = DPP_IDLE;
+    this->cancelReq(req);
 }
 
 // MATCHED 100%
-bool clDPP::queueRead(FSFileReq * param1, u32 param2, s32 param3, void (*param4)(FSFileReq *, bool), u32 param5, u32 param6) {
-    param1->field2a = 0;
-    return clFS::queueRead(param1, param2, param3, param4, param5, param6);
+bool clDPP::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags) {
+    req->streamState = DPP_IDLE;
+    return clFS::queueRead(req, offset, slot, fn, arg, flags);
 }
 
 // MATCHED 100%
-void clDPP::func_0201c8d8(FSFileReqEx * param1, u32 param2) {
-    FSFile * file = &this->fieldb4[param1->field24];
+void clDPP::readSync(FSFileReqEx * req, u32 param2) {
+    FSFile * file = &this->files[req->slot];
 
     if (FS_IsBusy(file)) {
         FS_WaitAsync(file);
     }
 
     if (!FS_IsFile(file)) {
-        this->func_0201b330(param1->field24, this->fieldb8[param1->field24]);
+        this->openSlot(req->slot, this->paths[req->slot]);
     }
 
     FSFile newFile;
     FS_InitFile(&newFile);
     FS_CreateFileFromRom(&newFile, file->prop.file.top, file->prop.file.bottom - file->prop.file.top);
-    FS_SeekFile(&newFile, param1->field20 + CHUNK_OFFSET(this->fieldbc[param1->field24], param1->field26), FS_SEEK_SET);
-    FS_ReadFile(&newFile, param1->field0c, param1->field1c);
+    FS_SeekFile(&newFile, req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx), FS_SEEK_SET);
+    FS_ReadFile(&newFile, req->dst, req->readSize);
     FS_CloseFile(&newFile);
 }
 
@@ -1069,136 +1073,136 @@ bool clDPP::pumpReads() {
     u8 * ptr;
     u8 * cursor;
     
-    req = (FSFileReqEx *)this->fieldac;
+    req = (FSFileReqEx *)this->reqHead;
     cursor = NULL;
-    file = &this->fieldb4[req->field24];
+    file = &this->files[req->slot];
 
     if (FS_IsBusy(file)) {
         return false;
     }
 
-    if ((req->field28 & 3) == 2) {
-        if (data_0205ba8c.dmaNo < 4 &&
-            (req->field2a != 0 || ((req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26)) & 0x1ff) == 0) &&
-            ((u32)req->field0c & 0x1f) == 0 && 
-            (req->field1c & 0x1ff) == 0) {
-                    DC_InvalidateRange(req->field0c, req->field1c);
+    if ((req->state & FSREQ_STATE_MASK) == FSREQ_ACTIVE) {
+        if (fsManager.dmaNo < 4 &&
+            (req->streamState != DPP_IDLE || ((req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx)) & 0x1ff) == 0) &&
+            ((u32)req->dst & 0x1f) == 0 && 
+            (req->readSize & 0x1ff) == 0) {
+                    DC_InvalidateRange(req->dst, req->readSize);
         }
 
-        if (req->field2a != 0) {
-            this->func_0201ced8(req);
+        if (req->streamState != DPP_IDLE) {
+            this->selectCopyFn(req);
             doneReq = req;
             cursor = this->cursor;
             remaining = this->remaining;
-            if (req->field18 > 0) {
-                req->field0c = ((u8*)req->field10 + req->field1c * this->bufIdx);
-                req->field18 -= req->field1c;
-                req->field20 += req->field1c;
-                if (++this->bufIdx >= 4) {
-                    this->bufIdx = 0;
+            if (req->remaining > 0) {
+                req->dst = ((u8*)req->buf + req->readSize * this->page);
+                req->remaining -= req->readSize;
+                req->offset += req->readSize;
+                if (++this->page >= 4) {
+                    this->page = 0;
                 }
             } else {
                 goto pop;
             }
-        } else if ((req->field28 & 0x8000) && req->field18 > CARD_ROM_PAGE_SIZE) {
-            req->field0c += CARD_ROM_PAGE_SIZE;
-            req->field20 += CARD_ROM_PAGE_SIZE;
-            req->field18 -= CARD_ROM_PAGE_SIZE;
-            if (req->field18 < CARD_ROM_PAGE_SIZE) {
-                req->field1c = req->field18;
+        } else if ((req->state & FSREQ_PAGED) && req->remaining > CARD_ROM_PAGE_SIZE) {
+            req->dst += CARD_ROM_PAGE_SIZE;
+            req->offset += CARD_ROM_PAGE_SIZE;
+            req->remaining -= CARD_ROM_PAGE_SIZE;
+            if (req->remaining < CARD_ROM_PAGE_SIZE) {
+                req->readSize = req->remaining;
             }
         } else {
             if (req->fn != NULL) {
-                this->fieldca_07 = 1;
-                req->fn(req, (req->field28 & 0x10) == 0);
-                this->fieldca_07 = 0;
+                this->inCallback = 1;
+                req->fn(req, (req->state & FSREQ_CANCELED) == 0);
+                this->inCallback = 0;
             }
 pop:
-            this->fieldac = req->field00;
-            req->field00 = NULL;
-            req->field28 &= 0x10;
-            req = (FSFileReqEx *)this->fieldac;
+            this->reqHead = req->next;
+            req->next = NULL;
+            req->state &= FSREQ_CANCELED;
+            req = (FSFileReqEx *)this->reqHead;
             if (req == NULL) {
-                this->fieldb0 = NULL;
+                this->reqTail = NULL;
                 goto drain;
             }
-            file = &this->fieldb4[req->field24];
+            file = &this->files[req->slot];
             goto start;
         }
 
         if (!FS_IsFile(file)) {
-            this->func_0201b330(req->field24, this->fieldb8[req->field24]);
-            FS_SeekFile(file, req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26), FS_SEEK_SET);
+            this->openSlot(req->slot, this->paths[req->slot]);
+            FS_SeekFile(file, req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx), FS_SEEK_SET);
         }
     } else {
 start:
-        if (req->field2a != 0) {
-            u32 align = (req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26)) & 0x1ff;
-            this->remaining = req->field1c - align;
-            req->field18 -= this->remaining;
-            ptr = req->field10;
-            req->field0c = ptr + req->field1c * this->bufIdx;
-            req->field20 -= align;
-            this->cursor = req->field0c + align;
-            this->bufIdx++;
-            if (this->bufIdx >= 4) {
-                this->bufIdx = 0;
+        if (req->streamState != DPP_IDLE) {
+            u32 align = (req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx)) & 0x1ff;
+            this->remaining = req->readSize - align;
+            req->remaining -= this->remaining;
+            ptr = req->buf;
+            req->dst = ptr + req->readSize * this->page;
+            req->offset -= align;
+            this->cursor = req->dst + align;
+            this->page++;
+            if (this->page >= 4) {
+                this->page = 0;
             }
         }
 
-        req->field28 = (req->field28 & ~3) | 2;
+        req->state = (req->state & ~FSREQ_STATE_MASK) | FSREQ_ACTIVE;
 
         if (!FS_IsFile(file)) {
-            this->func_0201b330(req->field24, this->fieldb8[req->field24]);
+            this->openSlot(req->slot, this->paths[req->slot]);
         }
-        FS_SeekFile(file, req->field20 + CHUNK_OFFSET(this->fieldbc[req->field24], req->field26), FS_SEEK_SET);
+        FS_SeekFile(file, req->offset + CHUNK_OFFSET(this->tables[req->slot], req->chunkIdx), FS_SEEK_SET);
     }
-    FS_ReadFileAsync(file, req->field0c, req->field1c);
+    FS_ReadFileAsync(file, req->dst, req->readSize);
 
 drain:
-    if (cursor != NULL && doneReq->field38 != 0) {
-        ptr = &doneReq->field10[doneReq->field1c * 4];
+    if (cursor != NULL && doneReq->recordsLeft != 0) {
+        ptr = &doneReq->buf[doneReq->readSize * 4];
         if (cursor == ptr) {
-            cursor = doneReq->field10;
+            cursor = doneReq->buf;
         }
 
-        u16 r4 = (cursor[0] | cursor[1] << 8) + 2;
+        u16 recLen = (cursor[0] | cursor[1] << 8) + 2;
         if (&cursor[2] > ptr) {
-            r4 = (remaining >= 2) ? (cursor[0] | doneReq->field10[0] << 8) + 2 : 0xffff;
+            recLen = (remaining >= 2) ? (cursor[0] | doneReq->buf[0] << 8) + 2 : 0xffff;
         }
 
-        u8 * local;
-        while (remaining > 1 && r4 <= remaining) {
-            local = cursor + 2;
-            if (cursor + r4 > ptr) {
-                u32 sz = (u32)(cursor + ((u8*)r4 - ptr));
-                MI_CpuCopy8(doneReq->field10, ptr, sz);
-                cursor = doneReq->field10 + sz;
+        u8 * payload;
+        while (remaining > 1 && recLen <= remaining) {
+            payload = cursor + 2;
+            if (cursor + recLen > ptr) {
+                u32 size = (u32)(cursor + ((u8*)recLen - ptr));
+                MI_CpuCopy8(doneReq->buf, ptr, size);
+                cursor = doneReq->buf + size;
             } else {
-                cursor += (s32)r4;
+                cursor += (s32)recLen;
             }
 
-            this->fn_d8(&local, &doneReq->field30);
-            if (--doneReq->field38 == 0) {
+            this->copyFn(&payload, &doneReq->dstCur);
+            if (--doneReq->recordsLeft == 0) {
                 if (doneReq->fn != NULL) {
-                    this->fieldca_07 = 1;
-                    doneReq->fn(doneReq, (doneReq->field28 & 0x10) == 0);
-                    this->fieldca_07 = 0;
+                    this->inCallback = 1;
+                    doneReq->fn(doneReq, (doneReq->state & FSREQ_CANCELED) == 0);
+                    this->inCallback = 0;
                 }
-                doneReq->field2a = 0;
+                doneReq->streamState = DPP_IDLE;
                 goto done;
             }
 
-            remaining -= r4;
+            remaining -= recLen;
 
-            r4 = (cursor[0] | (u16)(cursor[1] << 8)) + 2;
+            recLen = (cursor[0] | (u16)(cursor[1] << 8)) + 2;
             if (&cursor[2] > ptr) {
-                r4 = (remaining >= 2) ? (cursor[0] | (u16)(doneReq->field10[0] << 8)) + 2 : 0xffff;
+                recLen = (remaining >= 2) ? (cursor[0] | (u16)(doneReq->buf[0] << 8)) + 2 : 0xffff;
             }
         }
 
         this->cursor = cursor;
-        this->remaining = remaining + doneReq->field1c;
+        this->remaining = remaining + doneReq->readSize;
     }
 done:
 
@@ -1210,14 +1214,14 @@ done:
 }
 
 // MATCHED 100%
-void clDPP::func_0201ced8(FSFileReqEx * param1) {
+void clDPP::selectCopyFn(FSFileReqEx * req) {
     bool inGraphicsRAM = false;
-    if (param1->field30 >= (void *)HW_PLTT && param1->field30 < (void *)HW_OAM_END) {
+    if (req->dstCur >= (void *)HW_PLTT && req->dstCur < (void *)HW_OAM_END) {
         inGraphicsRAM = true;
     }
 
-    this->fn_d8 = (inGraphicsRAM) ? func_01ff8150 : func_01ff80a4;
-    param1->field2a = 3;
+    this->copyFn = (inGraphicsRAM) ? func_01ff8150 : func_01ff80a4;
+    req->streamState = DPP_COPYING;
 }
 
 } // extern "C"

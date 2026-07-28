@@ -4,37 +4,34 @@
 
 #include <nitro.h>
 
-#include "main/system.h"
-
 #include "main/frameSync.h"
-
-// --- Extern Functions --- //
+#include "main/system.h"
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
 void waitFrameSync() {
-    data_0205b7a8.field1c_08 = 1;
+    frameTimer.syncPending = 1;
 
     s32 vcount = reg_GX_VCOUNT;
-    data_0205b7a8.field20 = vcount;
+    frameTimer.syncVCount = vcount;
 
-    if (data_0205b7a8.field20 < data_0205b7a8.field1e) {
+    if (frameTimer.syncVCount < frameTimer.lastSyncVCount) {
         vcount += HW_LCD_LINES;
     }
 
-    if (data_0205b7a8.field30 == 0 || data_0205b7a8.field2e < data_0205b7a8.field22) {
-        data_0205b7a8.field30 = data_0205b7a8.field32;
-        data_0205b7a8.field2e = data_0205b7a8.field22;
+    if (frameTimer.frameHold == 0 || frameTimer.framePeak < frameTimer.frameScanlines) {
+        frameTimer.frameHold = frameTimer.frameHoldReload;
+        frameTimer.framePeak = frameTimer.frameScanlines;
     } else {
-        data_0205b7a8.field30--;
+        frameTimer.frameHold--;
     }
 
-    data_0205b7a8.field22 = (vcount - data_0205b7a8.field1e) + data_0205b7a8.field26 * HW_LCD_LINES;
+    frameTimer.frameScanlines = (vcount - frameTimer.lastSyncVCount) + frameTimer.frameSkips * HW_LCD_LINES;
 
     OS_WaitIrq(TRUE, OS_IE_V_COUNT);
 
-    data_0205b7a8.field1e = reg_GX_VCOUNT;
-    data_0205b7a8.field24 = data_0205b7a8.field26;
-    data_0205b7a8.field26 = 0;
+    frameTimer.lastSyncVCount = reg_GX_VCOUNT;
+    frameTimer.prevFrameSkips = frameTimer.frameSkips;
+    frameTimer.frameSkips = 0;
 }

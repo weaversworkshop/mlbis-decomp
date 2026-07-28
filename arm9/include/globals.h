@@ -19,8 +19,7 @@
     #include "structs/unk_01ff9598.h"
     #include "structs/unk_020057ac.h"
     #include "structs/unk_02055fe4.h"
-    #include "structs/unk_02056370.h"
-    #include "structs/unk_0205afa8.h"
+    #include "structs/party.h"
     #include "structs/unk_0205f6b0.h"
 
     extern s8 data_01ff9438;
@@ -58,13 +57,11 @@
     extern UnkGlobal_01ff9464 data_01ff96ac;
     extern UnkStruct_01ff9470_00 data_01ff986c[20];
     extern NNSSndStrmThread data_01ff9c7c;
-    extern u16 data_0204ac4c[10];
     extern void * data_02050088;
     extern const char data_02050094[];
     extern u32 * data_020564bc[];
     extern UnkStruct_020057ac_00 * data_02055fe0;
     extern UnkGlobal_02055fe4 data_02055fe4;
-    extern UnkGlobalContainer_02056370 data_02056370;
-    extern UnkGlobal_0205afa8 data_0205afa8;
+    extern PartyStatus gParty;  // 0x02056370
     extern UnkGlobal_0205f6b0 data_0205f6b0;
 #endif

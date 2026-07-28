@@ -8,463 +8,399 @@
 
 #include "structs/unk_020563e4_head.h"
 
-// --- Struct Definitions --- //
-
-typedef struct {
-    u32 field00_00 : 10;
-    u32 field00_0a : 10;
-    u32 field00_14 : 10;
-    u32 pad_00_1e : 2;
-
-    u32 field04_00 : 10;
-    u32 field04_0a : 10;
-    u32 field04_14 : 10;
-    u32 pad_04_1e : 2;
-
-    u16 field08;
-    u8  pad_0a[0x2];
-} UnkStruct_020526ec;
-
-typedef struct {
-    u16 field00;
-    u8 pad_02[0xd];
-} UnkGlobal_020526f8;
-
-typedef struct {
-    u8 pad_00[0x2];
-    u8 field02;
-    u8 pad_03[0x1];
-    u16 field04;
-    u8 pad_06[0x2];
-} UnkGlobal_02052778;
-
-typedef struct {
-    u16 field00;
-    u8 pad_02[0x16];
-} UnkGlobal_02052a68;
-
-typedef struct {
-    u16 field00;
-    u8 pad_02[0xd];
-    u8 field0f_00 : 1;
-    u8 field0f_01 : 4;
-    u8 field0f_05 : 3;
-    s16 field10[6];
-    u8 field1c;
-    u8 field1d;
-    u8 field1e;
-    u8 pad_1f[0x1];
-} UnkGlobal_02053b30;
-
 // --- Extern Data Variables --- //
 
-extern s8 data_0204ac40[];
-extern s8 data_0204ac44[];
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void * param1, u32 param2, u32 param3);
-
-// --- Variable Definitions --- // (replace with real data later)
+extern LevelStats * sLevelTable[];  // 0x020526ec
+extern BadgeInfo sBadgeInfo[];  // 0x020526f8
+extern BadgeComboInfo sBadgeCombo[];  // 0x02052778
+extern ItemInfo sItemInfo[];  // 0x020527f8
+extern ItemInfo sKeyItemInfo[];  // 0x02052a68
+extern GearInfo sGearInfo[];  // 0x02053b30
 
 extern s8 data_020526bc[];
 extern s8 data_020526c0[];
-extern s16 data_020526c4[];
-extern s16 data_020526c6[];
-extern s16 data_020526c8[];
-extern u16 data_020526ca[];
-extern s16 data_020526cc[];
-extern u16 data_020526ce[];
-extern s16 data_020526d0[];
-extern s16 data_020526d2[];
-extern u16 data_020526d4[][4];
-extern u16 data_020526dc[][4];
-extern u16 data_020526e4[][4];
-
-extern UnkStruct_020526ec * data_020526ec[];
-extern UnkGlobal_020526f8 data_020526f8[];
-extern UnkGlobal_02052778 data_02052778[];
-extern UnkGlobal_02052a68 data_020527f8[];
-extern UnkGlobal_02052a68 data_02052a68[];
-
-extern UnkGlobal_02053b30 data_02053b30[];
+extern s16 sStartLvBowser[];  // 0x020526c4
+extern s16 sStartGearSlotsLuigi[];  // 0x020526c6
+extern s16 sStartGearSlotsBowser[];  // 0x020526c8
+extern u16 sStartBadgeLuigi[];  // 0x020526ca
+extern s16 sStartGearSlotsMario[];  // 0x020526cc
+extern u16 sStartBadgeMario[];  // 0x020526ce
+extern s16 sStartLvLuigi[];  // 0x020526d0
+extern s16 sStartLvMario[];  // 0x020526d2
+extern u16 sStartGearMario[][4];  // 0x020526d4
+extern u16 sStartGearLuigi[][4];  // 0x020526dc
+extern u16 sStartGearBowser[][4];  // 0x020526e4
 
 extern s8 data_0205af84[];
 extern s8 data_0205af88[];
 extern s8 data_0205af8c[];
 
+// --- Extern Functions --- //
+
+extern void func_01ff8228(void *, u32, u32);
+
+// --- Variable Definitions --- // (replace with real data later)
+
+const s8 sGearSlotsBowser[4] = { 1, 2, 3, 3 };  // 0x0204ac40
+const s8 sGearSlotsBros[8] = { 1, 2, 3, 3, 3, 3 };  // 0x0204ac44
+
 // --- Function Declarations --- //
 
-void func_02018048(u32 param1);  // 0x02018048
-void func_020184a8(u8 param1, u8 param2);  // 0x020184a8
-u16 * func_02018538(s32 param1);
-UnkGlobal_02052a68 * func_020185d0(u32 param1);  // 0x020185d0
-UnkGlobal_02052a68 * func_02018600(u32 param1);  // 0x02018600
-UnkGlobal_020526f8 * func_02018630(u32 param1);  // 0x02018630
-UnkGlobal_02053b30 * func_02018650(u16 param1);  // 0x02018650
-UnkGlobal_02052778 * func_02018670(u32 param1);  // 0x02018670
-u32 func_02018688(u32 param1, u32 * param2, u32 * param3);  // 0x02018688
-s16 func_020187dc(s32 param1, s32 param2);  // 0x020187dc
-s32 func_02018824(u16 param1);
-s8 func_02018878(u16 param1, s8 param2);
-s32 func_02018974(s32 param1);
-void func_020189b4(UnkGlobal_02056370 * param1, u32 param2, s16 param3, u16 param4);  // 0x020189b4
-BOOL func_02018ec4(u8 param1, u16 param2, u8 param3);
-BOOL func_02019028(u8 param1);
-void func_02019058(u8 param1, u16 param2);
-BOOL func_020190a4(u8 param1, u8 param2, u8 * param3, u8 * param4);  // 0x020190a4
-u16 func_02019154(u8 param1);  // 0x02019154
-BOOL func_02019178(u32 param1);  // 0x02019178
-s32 func_020191c0(u32 param1);  // 0x020191c0
-void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3);
-void func_020193a0(UnkStruct_02019360 * param1, UnkStruct_02019360 * param2);  // 0x020193a0
-void func_020193c4(UnkStruct_02019360 * param1, s32 param2);  // 0x020193c4
-s32 func_020193ec(UnkStruct_02019360 * param1, s32 param2);  // 0x020193ec
-s8 func_020194c4(UnkStruct_02019360 * param1);
-s8 func_020194f4(u8 param1, u8 param2, s8 param3);  // 0x020194f4
-s32 func_02019564(UnkStruct_02019360 * param1);
-s32 func_02019574(UnkStruct_02019360 * param1);
-s32 func_0201957c(void);  // 0x0201957c
-s32 func_02019584(UnkStruct_02019360 * param1);  // 0x02019584
-s32 func_020195a4(UnkStruct_02019360 * param1);
-s32 func_020195d4(UnkStruct_02019360 * param1);
-s32 func_02019618(UnkStruct_02019360 * param1);
-s32 func_02019620(UnkStruct_02019360 * param1);
+void initParty(u32);  // 0x02018048
+void setLevel(u8, u8);  // 0x020184a8
+u16 * getNameIdPtr(s32);  // 0x02018538
+ItemInfo * getKeyItemInfo(u32);  // 0x020185d0
+ItemInfo * getItemInfo(u32);  // 0x02018600
+BadgeInfo * getBadgeInfo(u32);  // 0x02018630
+GearInfo * getGearInfo(u16);  // 0x02018650
+BadgeComboInfo * getBadgeCombo(u32);  // 0x02018670
+u32 getBadgeComboEffect(u32, u32 *, u32 *);  // 0x02018688
+s16 badgeComboIdx(s32, s32);  // 0x020187dc
+void calcStats(PlayerStatus *, u32, s16, u16);  // 0x020189b4
+BOOL findGearEffect(u8, u8, u8 *, u8 *);  // 0x020190a4
+u16 getEquippedBadge(u8);  // 0x02019154
+BOOL keyItemFlagSet(u32);  // 0x02019178
+s32 keyItemToFlag(u32);  // 0x020191c0
+void expCopy(ExpCounter *, ExpCounter *);  // 0x020193a0
+void expAdd(ExpCounter *, s32);  // 0x020193c4
+s32 expAddStep(ExpCounter *, s32);  // 0x020193ec
+s8 getRank(u8, u8, s8);  // 0x020194f4
+s32 getMaxLevelIdx(void);  // 0x0201957c
+s32 expGetNextLevel(ExpCounter *);  // 0x02019584
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_02018048(u32 param1) {
-    u16 r6;
-    s32 r7;
-    u32 r8;
-    UnkGlobal_02056370 * r9;
+void initParty(u32 preset) {
+    u16 startBadge;
+    s32 chr;
+    u32 slot;
+    PlayerStatus * p;
 
-    func_01ff8228(&data_02056370, 0, 0x140);
+    func_01ff8228(&gParty, 0, sizeof(PartyStatus));
 
-    r6 = 0;
-    u16 arr[4] = { 0, 0, 0, 0 };
-    r9 = data_02056370.tbl;
+    startBadge = 0;
+    u16 startGear[4] = { 0, 0, 0, 0 };
+    p = gParty.party;
 
-    for (r7 = 0; r7 < 3; r7++) {
-        UnkStruct_020526ec * r0 = data_020526ec[r7];
+    for (chr = 0; chr < 3; chr++) {
+        LevelStats * lvl = sLevelTable[chr];
 
-        switch (r7) {
-            case 0:
-                r9->field00 = 0;
-                r9->field20 = (r9->field20 & ~0xff) | (data_020526d2[param1] & 0xff);
-                r9->field24 = (r9->field24 & ~0xff000000) | (data_020526cc[param1] << 0x18);
+        switch (chr) {
+            case CHR_MARIO:
+                p->chr = CHR_MARIO;
+                p->levelExp = (p->levelExp & ~0xff) | (sStartLvMario[preset] & 0xff);
+                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsMario[preset] << 0x18);
 
-                r6 = data_020526ce[param1];
+                startBadge = sStartBadgeMario[preset];
 
                 for (s32 i = 0; i < 4; i++) {
-                    arr[i] = data_020526d4[param1][i];
+                    startGear[i] = sStartGearMario[preset][i];
                 }
                 break;
-            case 1:
-                r9->field00 = 1;
-                r9->field20 = (r9->field20 & ~0xff) | (data_020526d0[param1] & 0xff);
-                r9->field24 = (r9->field24 & ~0xff000000) | (data_020526c6[param1] << 0x18);
+            case CHR_LUIGI:
+                p->chr = CHR_LUIGI;
+                p->levelExp = (p->levelExp & ~0xff) | (sStartLvLuigi[preset] & 0xff);
+                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsLuigi[preset] << 0x18);
 
-                r6 = data_020526ca[param1];
+                startBadge = sStartBadgeLuigi[preset];
 
                 for (s32 i = 0; i < 4; i++) {
-                    arr[i] = data_020526dc[param1][i];
+                    startGear[i] = sStartGearLuigi[preset][i];
                 }
                 break;
-
-            case 2:
-                r9->field00 = 2;
-                r9->field20 = (r9->field20 & ~0xff) | (data_020526c4[param1] & 0xff);
-                r9->field24 = (r9->field24 & ~0xff000000) | (data_020526c8[param1] << 0x18);
+            case CHR_BOWSER:
+                p->chr = CHR_BOWSER;
+                p->levelExp = (p->levelExp & ~0xff) | (sStartLvBowser[preset] & 0xff);
+                p->expSlots = (p->expSlots & ~0xff000000) | (sStartGearSlotsBowser[preset] << 0x18);
 
                 for (s32 i = 0; i < 4; i++) {
-                    arr[i] = data_020526e4[param1][i];
+                    startGear[i] = sStartGearBowser[preset][i];
                 }
         }
 
-        r9->field02[0] = r0[r9->field20_00-1].field00_00;
-        r9->field02[1] = r0[r9->field20_00-1].field00_0a;
-        r9->field02[2] = r0[r9->field20_00-1].field00_14;
-        r9->field02[3] = r0[r9->field20_00-1].field04_00;
-        r9->field02[4] = r0[r9->field20_00-1].field04_0a;
-        r9->field02[5] = r0[r9->field20_00-1].field04_14;
-        r9->field24_00 = r0[r9->field20_00].field08;
+        p->stats[0] = lvl[p->level-1].hp;
+        p->stats[1] = lvl[p->level-1].sp;
+        p->stats[2] = lvl[p->level-1].pow;
+        p->stats[3] = lvl[p->level-1].def;
+        p->stats[4] = lvl[p->level-1].speed;
+        p->stats[5] = lvl[p->level-1].stache;
+        p->expToNext = lvl[p->level].expNext;
 
-        for (u32 k = 1; k < r9->field20_00; k++) {
-            r9->field20_08 += r0[k-1].field08;
+        for (u32 lvlIdx = 1; lvlIdx < p->level; lvlIdx++) {
+            p->exp += lvl[lvlIdx-1].expNext;
         }
 
-        r9->field02[6] = r9->field02[0];
-        r9->field02[8] = r9->field02[1];
-        r9->field02[10] = r9->field02[2];
-        r9->field02[11] = r9->field02[3];
-        r9->field02[12] = r9->field02[4];
-        r9->field02[13] = r9->field02[5];
+        p->stats[6] = p->stats[0];
+        p->stats[8] = p->stats[1];
+        p->stats[10] = p->stats[2];
+        p->stats[11] = p->stats[3];
+        p->stats[12] = p->stats[4];
+        p->stats[13] = p->stats[5];
 
-        for (r8 = 0; r8 < r9->field24_18; r8++) {
-            func_02018878(arr[r8], 1);
-            func_02018ec4(r7, arr[r8], r8);
+        for (slot = 0; slot < p->gearSlots; slot++) {
+            addItem(startGear[slot], 1);
+            equipGear(chr, startGear[slot], slot);
         }
 
-        if (r6 != 0) {
-            func_02018878(r6, 1);
-            func_02019058(r7, r6);
+        if (startBadge != 0) {
+            addItem(startBadge, 1);
+            equipBadge(chr, startBadge);
         }
 
-        r9->field02[7] = r9->field02[6];
-        r9->field02[9] = r9->field02[8];
+        p->stats[7] = p->stats[6];
+        p->stats[9] = p->stats[8];
         
-        r9++;
+        p++;
     }
 
     data_02055fe4.field41c = 0;
 
     data_020563e4.field20 = 0;
 
-    data_02055fe4.field422 = data_020526c0[param1];
-    data_02055fe4.field43a = data_0205af8c[param1];
-    data_02055fe4.field423 = data_0205af88[param1];
-    data_02055fe4.field432 = data_020526bc[param1];
-    data_02055fe4.field42d = data_0205af84[param1];
+    data_02055fe4.field422 = data_020526c0[preset];
+    data_02055fe4.field43a = data_0205af8c[preset];
+    data_02055fe4.field423 = data_0205af88[preset];
+    data_02055fe4.field432 = data_020526bc[preset];
+    data_02055fe4.field42d = data_0205af84[preset];
 }
 
 // MATCHED 100%
-void func_020184a8(u8 param1, u8 param2) {
-    UnkGlobal_02056370 * r4 = &data_02056370.tbl[param1];
-    r4->field20 = (r4->field20 & ~0xff) | (param2 & 0xff);
+void setLevel(u8 chr, u8 level) {
+    PlayerStatus * p = &gParty.party[chr];
+    p->levelExp = (p->levelExp & ~0xff) | (level & 0xff);
     
-    if (param1 < 2) {
-        s8 idx = func_020194f4(param1, param2-1, -1);
-        r4->field24 = (r4->field24 & ~0xff000000) | (data_0204ac44[idx-1] << 0x18);
+    if (chr < 2) {
+        s8 rank = getRank(chr, level-1, -1);
+        p->expSlots = (p->expSlots & ~0xff000000) | (sGearSlotsBros[rank-1] << 0x18);
     } else {
-        s8 idx = func_020194f4(param1, param2-1, -1);
-        r4->field24 = (r4->field24 & ~0xff000000) | (data_0204ac40[idx-1] << 0x18);
+        s8 rank = getRank(chr, level-1, -1);
+        p->expSlots = (p->expSlots & ~0xff000000) | (sGearSlotsBowser[rank-1] << 0x18);
     }
 }
 
 // MATCHED 100%
-u16 * func_02018538(s32 param1) {
-    u32 row = param1 & 0xfff;
+u16 * getNameIdPtr(s32 id) {
+    u32 idx = id & ID_INDEX_MASK;
 
-    switch (param1 & 0xf000) {
-        case 0x1000:
-            return &data_02052a68[row].field00;
-        case 0x2000:
-            return &data_020527f8[row].field00;
-        case 0x3000:
-            return &data_020526f8[row].field00;
-        case 0x4000:
-            return &data_02053b30[row].field00;
+    switch (id & ID_SPACE_MASK) {
+        case ID_KEYITEM:
+            return &sKeyItemInfo[idx].nameId;
+        case ID_ITEM:
+            return &sItemInfo[idx].nameId;
+        case ID_BADGE:
+            return &sBadgeInfo[idx].nameId;
+        case ID_GEAR:
+            return &sGearInfo[idx].nameId;
         default:
             return NULL;
     }
 }
 
 // MATCHED 100%
-UnkGlobal_02052a68 * func_020185d0(u32 param1) {
-    if ((param1 & 0x1000) != 0x1000) {
+ItemInfo * getKeyItemInfo(u32 id) {
+    if ((id & ID_KEYITEM) != ID_KEYITEM) {
         return NULL;
     }
 
-    return &data_02052a68[param1 & 0xfff];
+    return &sKeyItemInfo[id & ID_INDEX_MASK];
 }
 
 // MATCHED 100%
-UnkGlobal_02052a68 * func_02018600(u32 param1) {
-    if ((param1 & 0x2000) != 0x2000) {
+ItemInfo * getItemInfo(u32 id) {
+    if ((id & ID_ITEM) != ID_ITEM) {
         return NULL;
     }
 
-    return &data_020527f8[param1 & 0xfff];
+    return &sItemInfo[id & ID_INDEX_MASK];
 }
 
 // MATCHED 100%;
-UnkGlobal_020526f8 * func_02018630(u32 param1) {
-    if ((param1 & 0x3000) != 0x3000) {
+BadgeInfo * getBadgeInfo(u32 id) {
+    if ((id & ID_BADGE) != ID_BADGE) {
         return NULL;
     }
     
-    return &data_020526f8[param1 & 0xfff];
+    return &sBadgeInfo[id & ID_INDEX_MASK];
 }
 
 // MATCHED 100%
-UnkGlobal_02053b30 * func_02018650(u16 param1) {
-    if ((param1 & 0xf000) != 0x4000) {
+GearInfo * getGearInfo(u16 id) {
+    if ((id & ID_SPACE_MASK) != ID_GEAR) {
         return NULL;
     }
     
-    return &data_02053b30[param1 & 0xfff];
+    return &sGearInfo[id & ID_INDEX_MASK];
 }
 
 // MATCHED 100%
-UnkGlobal_02052778 * func_02018670(u32 param1) {
-    if (param1 >= 0x10) {
+BadgeComboInfo * getBadgeCombo(u32 idx) {
+    if (idx >= 0x10) {
         return NULL;
     }
 
-    return &data_02052778[param1];
+    return &sBadgeCombo[idx];
 }
 
 // MATCHED 100%
-u32 func_02018688(u32 param1, u32 * param2, u32 * param3) {
-    UnkGlobal_02052778 * ptr = func_02018670(param1);
+u32 getBadgeComboEffect(u32 idx, u32 * outValue, u32 * outExtra) {
+    BadgeComboInfo * combo = getBadgeCombo(idx);
 
-    switch (ptr->field02) {
+    switch (combo->effect) {
         case 0:
-            if (param2 != NULL) {
-                *param2 = ptr->field04 & ~0x8000;
+            if (outValue != NULL) {
+                *outValue = combo->value & ~0x8000;
             }
 
-            if (param3 != NULL && (ptr->field04 & 0x8000) != 0) {
-                *param3 = 1;
+            if (outExtra != NULL && (combo->value & 0x8000) != 0) {
+                *outExtra = 1;
             } else {
-                *param3 = 0;
+                *outExtra = 0;
             }
             break;
         case 1:
-            if (param2 != NULL) {
-                *param2 = ptr->field04 << 8;
+            if (outValue != NULL) {
+                *outValue = combo->value << 8;
             }
             
-            if (param3 != NULL) {
-                *param3 = 0;
+            if (outExtra != NULL) {
+                *outExtra = 0;
             }
             break;
         case 2:
-            if (param2 != NULL) {
-                *param2 = (u32)ptr->field04 << 0x18 >> 0x10;
+            if (outValue != NULL) {
+                *outValue = (u32)combo->value << 0x18 >> 0x10;
             }
 
-            if (param3 != NULL) {
-                *param3 = ptr->field04 & 0xff00;
+            if (outExtra != NULL) {
+                *outExtra = combo->value & 0xff00;
             }
             break;
         case 3:
-            if (param2 != NULL) {
-                *param2 = ptr->field04;
+            if (outValue != NULL) {
+                *outValue = combo->value;
             }
             
-            if (param3 != NULL) {
-                *param3 = 0;
+            if (outExtra != NULL) {
+                *outExtra = 0;
             }
             break;
         case 4:
-            if (param2 != NULL) {
-                *param2 = 0;
+            if (outValue != NULL) {
+                *outValue = 0;
             }
 
-            if (param3 != NULL) {
-                *param3 = 0;
+            if (outExtra != NULL) {
+                *outExtra = 0;
             }
             break;
         case 5:
-            if (param2 != NULL) {
-                *param2 = ptr->field04;
+            if (outValue != NULL) {
+                *outValue = combo->value;
             }
             
-            if (param3 != NULL) {
-                *param3 = 0;
+            if (outExtra != NULL) {
+                *outExtra = 0;
             }
             break;
         case 6:
-            if (param2 != NULL) {
-                *param2 = ptr->field04 & ~0x8000;
+            if (outValue != NULL) {
+                *outValue = combo->value & ~0x8000;
             }
 
-            if (param3 != NULL && (ptr->field04 & 0x8000) != 0) {
-                *param3 = 1;
+            if (outExtra != NULL && (combo->value & 0x8000) != 0) {
+                *outExtra = 1;
             } else {
-                *param3 = 0;
+                *outExtra = 0;
             }
             break;
     }
 
-    return ptr->field02;
+    return combo->effect;
 }
 
 // MATCHED 100%
-s16 func_020187dc(s32 param1, s32 param2) {
-    if ((param1 & 0xfff) >= 4) {
+s16 badgeComboIdx(s32 marioBadge, s32 luigiBadge) {
+    if ((marioBadge & ID_INDEX_MASK) >= 4) {
         return -1;
     }
 
-    s32 val = param2 & 0xfff;
-    if (val < 4 || val >= 8) {
+    s32 luigi = luigiBadge & ID_INDEX_MASK;
+    if (luigi < 4 || luigi >= 8) {
         return -1;
     }
 
-    return val - 4 + (param1 & 0xfff) * 4;
+    return luigi - 4 + (marioBadge & ID_INDEX_MASK) * 4;
 }
 
 // MATCHED 100%
-s32 func_02018824(u16 param1) {
-    s32 ret = 0;
+s32 getItemCount(u16 id) {
+    s32 count = 0;
 
-    switch ((param1 & 0xf000)) {
-        case 0x2000:
-            ret = data_02056370.field96[param1 & 0xfff];
+    switch ((id & ID_SPACE_MASK)) {
+        case ID_ITEM:
+            count = gParty.itemCount[id & ID_INDEX_MASK];
             break;
-        case 0x4000:
-            ret = data_02056370.fieldb6[param1 & 0xfff];
+        case ID_GEAR:
+            count = gParty.gearCount[id & ID_INDEX_MASK];
     }
-    return ret;
+    return count;
 }
 
 // MATCHED 100%
-s8 func_02018878(u16 param1, s8 param2) {
+s8 addItem(u16 id, s8 delta) {
     s8 ret = 0;
-    u16 r2 = (param1 & 0xfff);
+    u16 idx = (id & ID_INDEX_MASK);
     
-    UnkGlobalContainer_02056370 * lr = &data_02056370;
+    PartyStatus * party = &gParty;
 
-    switch ((u16)(param1 & 0xf000)) {
-        case 0x3000: {
-            if (param2 < 0) {
-                if (lr->field_137 & (1 << r2)) {
+    switch ((u16)(id & ID_SPACE_MASK)) {
+        case ID_BADGE: {
+            if (delta < 0) {
+                if (party->badgeOwned & (1 << idx)) {
                     ret = -1;
                 }
 
-                lr->field_137 &= ~(1 << r2);
+                party->badgeOwned &= ~(1 << idx);
 
                 return ret;
             } else {
-                if (!(lr->field_137 & (1 << r2))) {
+                if (!(party->badgeOwned & (1 << idx))) {
                     ret = 1;
                 }
 
-                lr->field_137 |= (1 << r2);
+                party->badgeOwned |= (1 << idx);
 
                 return ret;
             }
         }
-        case 0x4000: {
-            s8 old = lr->fieldb6[r2];
-            s16 r1 = param2 + old;
-            if (r1 < 0) {
-                r1 = 0;
+        case ID_GEAR: {
+            s8 old = party->gearCount[idx];
+            s16 val = delta + old;
+            if (val < 0) {
+                val = 0;
             }
-            if (r1 > 9) {
-                r1 = 9;
+            if (val > 9) {
+                val = 9;
             }
 
-            lr->fieldb6[r2] = r1;
+            party->gearCount[idx] = val;
 
-            return (s8)(r1 - old);
+            return (s8)(val - old);
         }
-        case 0x2000: {
-            s8 old = lr->field96[r2];
-            s16 r1 = param2 + old;
-            if (r1 < 0) {
-                r1 = 0;
+        case ID_ITEM: {
+            s8 old = party->itemCount[idx];
+            s16 val = delta + old;
+            if (val < 0) {
+                val = 0;
             }
-            if (r1 > 99) {
-                r1 = 99;
+            if (val > 99) {
+                val = 99;
             }
 
-            lr->field96[r2] = r1;
+            party->itemCount[idx] = val;
 
-            return (s8)(r1 - old);
+            return (s8)(val - old);
         }
     }
 
@@ -472,14 +408,14 @@ s8 func_02018878(u16 param1, s8 param2) {
 }
 
 // MATCHED 100%
-s32 func_02018974(s32 param1) {
+s32 addCoins(s32 delta) {
     u32 old = data_02055fe4.field41c;
-    s32 coins = old + param1;
+    s32 coins = old + delta;
     if (coins < 0) {
         data_02055fe4.field41c = 0;
     } else {
-        if (coins > 999999) {
-            data_02055fe4.field41c = 999999;
+        if (coins > COIN_MAX) {
+            data_02055fe4.field41c = COIN_MAX;
         } else {
             data_02055fe4.field41c = coins;
         }
@@ -489,320 +425,320 @@ s32 func_02018974(s32 param1) {
 }
 
 // MATCHED 100%
-void func_020189b4(UnkGlobal_02056370 * param1, u32 param2, s16 param3, u16 param4) {
-    UnkGlobal_02056370 * r10 = &data_02056370.tbl[param2];
+void calcStats(PlayerStatus * dst, u32 chr, s16 slot, u16 gearId) {
+    PlayerStatus * src = &gParty.party[chr];
 
-    s32 r5 = r10->field02[0];
-    param1->field02[0] = r5;
+    s32 hp = src->stats[0];
+    dst->stats[0] = hp;
 
-    s32 r6 = r10->field02[1];
-    param1->field02[1] = r6;
+    s32 sp = src->stats[1];
+    dst->stats[1] = sp;
 
-    s32 r7 = r10->field02[2];
-    param1->field02[2] = r7;
+    s32 pow = src->stats[2];
+    dst->stats[2] = pow;
 
-    s32 r8 = r10->field02[3];
-    param1->field02[3] = r8;
+    s32 def = src->stats[3];
+    dst->stats[3] = def;
 
-    s32 r9 = r10->field02[4];
-    param1->field02[4] = r9;
+    s32 speed = src->stats[4];
+    dst->stats[4] = speed;
 
-    s32 stat6 = r10->field02[5];
-    param1->field02[5] = stat6;
+    s32 stache = src->stats[5];
+    dst->stats[5] = stache;
 
-    for (u32 i = 0; i < r10->field24_18; i++) {
-        UnkGlobal_02053b30 * ptr;
-        if (param3 == i) {
-            ptr = func_02018650(param4);
+    for (u32 i = 0; i < src->gearSlots; i++) {
+        GearInfo * gear;
+        if (slot == i) {
+            gear = getGearInfo(gearId);
         } else {
-            ptr = func_02018650(r10->field28[i] | 0x4000);
+            gear = getGearInfo(src->gear[i] | ID_GEAR);
         }
 
-        r5 += ptr->field10[0];
-        r6 += ptr->field10[1];
-        r7 += ptr->field10[2];
-        r8 += ptr->field10[3];
-        r9 += ptr->field10[4];
-        stat6 += ptr->field10[5];
+        hp += gear->statBonus[0];
+        sp += gear->statBonus[1];
+        pow += gear->statBonus[2];
+        def += gear->statBonus[3];
+        speed += gear->statBonus[4];
+        stache += gear->statBonus[5];
     }
 
-    s32 val = 999;
-    if (r5 <= 999) {
-        val = (r5 < 0) ? 0 : r5;
+    s32 val = STAT_MAX;
+    if (hp <= STAT_MAX) {
+        val = (hp < 0) ? 0 : hp;
     }
     if (val == 0) {
-        r5 = 1;
-        param1->field02[6] = r5;
+        hp = 1;
+        dst->stats[6] = hp;
     } else {
-        if (r5 > 999) {
-            r5 = 999;
-        } else if (r5 < 0) {
-            r5 = 0;
+        if (hp > STAT_MAX) {
+            hp = STAT_MAX;
+        } else if (hp < 0) {
+            hp = 0;
         }
-        param1->field02[6] = r5;
+        dst->stats[6] = hp;
     }
 
-    val = 999;
-    if (r6 > val) {
-        r6 = val;
-    } else if (r6 < 0) {
-        r6 = 0;
+    val = STAT_MAX;
+    if (sp > val) {
+        sp = val;
+    } else if (sp < 0) {
+        sp = 0;
     }
-    param1->field02[8] = r6;
+    dst->stats[8] = sp;
 
-    if (r7 > 999) {
-        r7 = 999;
-    } else if (r7 < 0) {
-        r7 = 0;
+    if (pow > STAT_MAX) {
+        pow = STAT_MAX;
+    } else if (pow < 0) {
+        pow = 0;
     }
-    param1->field02[10] = r7;
+    dst->stats[10] = pow;
 
-    val = 999;
-    if (r8 <= 999) {
-        val = (r8 < 0) ? 0 : r8;
+    val = STAT_MAX;
+    if (def <= STAT_MAX) {
+        val = (def < 0) ? 0 : def;
     }
 
     if (val == 0) {
-        r8 = 1;
-        param1->field02[11] = r8;
+        def = 1;
+        dst->stats[11] = def;
     } else {
-        if (r8 > 999) {
-            r8 = 999;
-        } else if (r8 < 0) {
-            r8 = 0;
+        if (def > STAT_MAX) {
+            def = STAT_MAX;
+        } else if (def < 0) {
+            def = 0;
         }
-        param1->field02[11] = r8;
+        dst->stats[11] = def;
     }
 
-    if (r9 > 999) {
-        r9 = 999;
-    } else if (r9 < 0) {
-        r9 = 0;
+    if (speed > STAT_MAX) {
+        speed = STAT_MAX;
+    } else if (speed < 0) {
+        speed = 0;
     }
-    param1->field02[12] = r9;
+    dst->stats[12] = speed;
 
-    if (stat6 > 999) {
-        stat6 = 999;
-    } else if (stat6 < 0) {
-        stat6 = 0;
+    if (stache > STAT_MAX) {
+        stache = STAT_MAX;
+    } else if (stache < 0) {
+        stache = 0;
     }
-    param1->field02[13] = stat6;
+    dst->stats[13] = stache;
 
-    for (u32 i = 0; i < r10->field24_18; i++) {
-        UnkGlobal_02053b30 * ptr;
-        if (param3 == i) {
-            ptr = func_02018650(param4);
+    for (u32 i = 0; i < src->gearSlots; i++) {
+        GearInfo * gear;
+        if (slot == i) {
+            gear = getGearInfo(gearId);
         } else {
-            ptr = func_02018650(r10->field28[i] | 0x4000);
+            gear = getGearInfo(src->gear[i] | ID_GEAR);
         }
 
-        switch (ptr->field1c) {
+        switch (gear->effect) {
             case 1: {
-                s32 v = r5 * (ptr->field1d + 100);
-                r5 = (v % 100 < 50) ? v / 100 : v / 100 + 1;
+                s32 v = hp * (gear->effectValue + 100);
+                hp = (v % 100 < 50) ? v / 100 : v / 100 + 1;
                 break;
             }
             case 2: {
-                s32 v = r6 * (ptr->field1d + 100);
-                r6 = (v % 100 < 50) ? v / 100 : v / 100 + 1;
+                s32 v = sp * (gear->effectValue + 100);
+                sp = (v % 100 < 50) ? v / 100 : v / 100 + 1;
                 break;
             }
             case 3: {
-                s32 v = r7 * (ptr->field1d + 100);
-                r7 = (v % 100 < 50) ? v / 100 : v / 100 + 1;
+                s32 v = pow * (gear->effectValue + 100);
+                pow = (v % 100 < 50) ? v / 100 : v / 100 + 1;
                 break;
             }
             case 0x46: { // 70
-                s32 v = r8 * (ptr->field1d + 100);
-                r8 = (v % 100 < 50) ? v / 100 : v / 100 + 1;
+                s32 v = def * (gear->effectValue + 100);
+                def = (v % 100 < 50) ? v / 100 : v / 100 + 1;
                 break;
             }
             case 4: {
-                s32 v = r9 * (ptr->field1d + 100);
-                r9 = (v % 100 < 50) ? v / 100 : v / 100 + 1;
+                s32 v = speed * (gear->effectValue + 100);
+                speed = (v % 100 < 50) ? v / 100 : v / 100 + 1;
                 break;
             }
         }
     }
 
-    val = 999;
-    if (r5 <= 999) {
-        val = (r5 < 0)  ? 0 : r5;
+    val = STAT_MAX;
+    if (hp <= STAT_MAX) {
+        val = (hp < 0)  ? 0 : hp;
     }
 
     if (val == 0) {
-        param1->field02[6] = 1;
+        dst->stats[6] = 1;
     } else {
-        if (r5 > 999) {
-            r5 = 999;
-        } else if (r5 < 0) {
-            r5 = 0;
+        if (hp > STAT_MAX) {
+            hp = STAT_MAX;
+        } else if (hp < 0) {
+            hp = 0;
         }
-        param1->field02[6] = r5;
+        dst->stats[6] = hp;
     }
 
-    if (r6 > 999) {
-        r6 = 999;
-    } else if (r6 < 0) {
-        r6 = 0;
+    if (sp > STAT_MAX) {
+        sp = STAT_MAX;
+    } else if (sp < 0) {
+        sp = 0;
     }
-    param1->field02[8] = r6;
+    dst->stats[8] = sp;
 
-    if (r7 > 999) {
-        r7 = 999;
-    } else if (r7 < 0) {
-        r7 = 0;
+    if (pow > STAT_MAX) {
+        pow = STAT_MAX;
+    } else if (pow < 0) {
+        pow = 0;
     }
-    param1->field02[10] = r7;
+    dst->stats[10] = pow;
 
-    val = 999;
-    if (r8 <= 999) {
-        val = (r8 < 0) ? 0 : r8;
+    val = STAT_MAX;
+    if (def <= STAT_MAX) {
+        val = (def < 0) ? 0 : def;
     }
 
     if (val == 0) {
-        param1->field02[11] = 1;
+        dst->stats[11] = 1;
     } else {
-        if (r8 > 999) {
-            r8 = 999;
-        } else if (r8 < 0) {
-            r8 = 0;
+        if (def > STAT_MAX) {
+            def = STAT_MAX;
+        } else if (def < 0) {
+            def = 0;
         }
-        param1->field02[11] = r8;
+        dst->stats[11] = def;
     }
 
-    if (r9 > 999) {
-        r9 = 999;
-    } else if (r9 < 0) {
-        r9 = 0;
+    if (speed > STAT_MAX) {
+        speed = STAT_MAX;
+    } else if (speed < 0) {
+        speed = 0;
     }
-    param1->field02[12] = r9;
+    dst->stats[12] = speed;
 
-    if (stat6 > 999) {
-        stat6 = 999;
-    } else if (stat6 < 0) {
-        stat6 = 0;
+    if (stache > STAT_MAX) {
+        stache = STAT_MAX;
+    } else if (stache < 0) {
+        stache = 0;
     }
-    param1->field02[13] = stat6;
+    dst->stats[13] = stache;
 }
 
 // MATCHED 100%
-BOOL func_02018ec4(u8 param1, u16 param2, u8 param3) {
-    UnkGlobal_02053b30 * ptr;
+BOOL equipGear(u8 chr, u16 gearId, u8 slot) {
+    GearInfo * gear;
     u32 i;
 
-    UnkGlobal_02056370 * r6 = &data_02056370.tbl[param1];
+    PlayerStatus * p = &gParty.party[chr];
 
-    ptr = func_02018650(param2);
+    gear = getGearInfo(gearId);
 
-    if (ptr->field0f_01 != 0) {
-        for (i = 0; i < r6->field24_18; i++) {
-            UnkGlobal_02053b30 * ret = func_02018650(r6->field28[i] | 0x4000);
-            if (param3 != i && ptr->field0f_01 == ret->field0f_01) {
+    if (gear->category != 0) {
+        for (i = 0; i < p->gearSlots; i++) {
+            GearInfo * other = getGearInfo(p->gear[i] | ID_GEAR);
+            if (slot != i && gear->category == other->category) {
                 return FALSE;
             }
         }
 
-        if (ptr->field0f_00 != 0 && param1 != 2) {
+        if (gear->bowserOnly != 0 && chr != CHR_BOWSER) {
             return FALSE;
         }
 
-        if (ptr->field0f_00 == 0 && param1 == 2) {
+        if (gear->bowserOnly == 0 && chr == CHR_BOWSER) {
             return FALSE;
         }
 
-        if (param3 >= r6->field24_18) {
+        if (slot >= p->gearSlots) {
             return FALSE;
         }
 
-        ptr = func_02018650(param2);
+        gear = getGearInfo(gearId);
 
-        if (func_020194f4(param1, r6->field20_00-1, 0) < ptr->field0f_05) {
+        if (getRank(chr, p->level-1, 0) < gear->reqRank) {
             return FALSE;
         }
     }
 
-    func_020189b4(r6, param1, param3, param2);
+    calcStats(p, chr, slot, gearId);
 
-    r6->field28[param3] = param2 & 0xfff;
+    p->gear[slot] = gearId & ID_INDEX_MASK;
 
-    if (r6->field02[7] > r6->field02[6]) {
-        r6->field02[7] = r6->field02[6];
+    if (p->stats[7] > p->stats[6]) {
+        p->stats[7] = p->stats[6];
     }
 
-    if (r6->field02[9] > r6->field02[8]) {
-        r6->field02[9] = r6->field02[8];
+    if (p->stats[9] > p->stats[8]) {
+        p->stats[9] = p->stats[8];
     }
 
     return TRUE;
 }
 
 // MATCHED 100%
-BOOL func_02019028(u8 param1) {
-    return func_02018ec4(param1, data_02056370.tbl[param1].field28[0] | 0x4000, 0);
+BOOL refreshStats(u8 chr) {
+    return equipGear(chr, gParty.party[chr].gear[0] | ID_GEAR, 0);
 }
 
 // MATCHED 100%
-void func_02019058(u8 param1, u16 param2) {
-    data_02056370.tbl[param1].field2c = param2 & 0xfff;
+void equipBadge(u8 chr, u16 badgeId) {
+    gParty.party[chr].badge = badgeId & ID_INDEX_MASK;
 
-    s16 ret = func_020187dc(data_02055fe4.field3b8, data_02055fe4.field3e8);
-    if (ret != -1) {
-        data_02055fe4.field4c4 = ret;
+    s16 combo = badgeComboIdx(data_02055fe4.field3b8, data_02055fe4.field3e8);
+    if (combo != -1) {
+        data_02055fe4.field4c4 = combo;
     }
 }
 
 // MATCHED 100%
-BOOL func_020190a4(u8 param1, u8 param2, u8 * param3, u8 * param4) {
+BOOL findGearEffect(u8 chr, u8 effect, u8 * outValue, u8 * outValue2) {
 
-    UnkGlobal_02056370 * r4 = &data_02056370.tbl[param1];
-    BOOL r11 = FALSE;
-    u8 r5 = 0;
-    u8 r6 = 0;
+    PlayerStatus * p = &gParty.party[chr];
+    BOOL found = FALSE;
+    u8 bestValue = 0;
+    u8 bestValue2 = 0;
 
-    for (u32 i = 0; i < r4->field24_18; i++) {
-        UnkGlobal_02053b30 * ret = func_02018650(r4->field28[i] | 0x4000);
+    for (u32 i = 0; i < p->gearSlots; i++) {
+        GearInfo * gear = getGearInfo(p->gear[i] | ID_GEAR);
 
-        if (ret->field1c == param2) {
-            if (ret->field1d > r5 || (ret->field1d == r5 && ret->field1e > r6)) {
-                r6 = ret->field1e;
-                r5 = ret->field1d;
+        if (gear->effect == effect) {
+            if (gear->effectValue > bestValue || (gear->effectValue == bestValue && gear->effectValue2 > bestValue2)) {
+                bestValue2 = gear->effectValue2;
+                bestValue = gear->effectValue;
 
-                if (param3 != NULL) {
-                    *param3 = ret->field1d;
+                if (outValue != NULL) {
+                    *outValue = gear->effectValue;
                 }
 
-                if (param4 != NULL) {
-                    *param4 = r6;
+                if (outValue2 != NULL) {
+                    *outValue2 = bestValue2;
                 }
             }
 
-            r11 = TRUE;
+            found = TRUE;
         }
     }
 
-    return r11;
+    return found;
 }
 
 // MATCHED 100%
-u16 func_02019154(u8 param1) {
-    return data_02056370.tbl[param1].field2c | 0x3000;
+u16 getEquippedBadge(u8 chr) {
+    return gParty.party[chr].badge | ID_BADGE;
 }
 
 // MATCHED 100%
-BOOL func_02019178(u32 param1) {
-    s32 ret = func_020191c0(param1);
-    if (ret == 0) {
+BOOL keyItemFlagSet(u32 keyItemId) {
+    s32 flag = keyItemToFlag(keyItemId);
+    if (flag == 0) {
         return 0;
     }
 
-    u32 val = data_02055fe4.field54[(ret & 0xfff) >> 5] >> (ret & 0x1f);
+    u32 val = data_02055fe4.field54[(flag & 0xfff) >> 5] >> (flag & 0x1f);
     return ((val & 1) != 0);
 }
 
 // MATCHED 100%
-s32 func_020191c0(u32 param1) {
-    switch (param1 - 0x1000) {
+s32 keyItemToFlag(u32 keyItemId) {
+    switch (keyItemId - 0x1000) {
         case 20:
             return 0;
         case 21:
@@ -860,94 +796,94 @@ s32 func_020191c0(u32 param1) {
         case 19:
             return 0;
     }
-    return param1;
+    return keyItemId;
 }
 
 // MATCHED 100%
-void func_02019360(UnkStruct_02019360 * param1, s32 param2, u32 param3) {
-    param1->field00 = param2;
-    param1->field02 = 0;
-    param1->field04 = 0;
-    param1->field08 = func_020195d4(param1);
-    param1->field0c_b0 = 0;
+void expInit(ExpCounter * ctr, s32 chr, u32 exp) {
+    ctr->chr = chr;
+    ctr->levelIdx = 0;
+    ctr->exp = 0;
+    ctr->expNext = expGetLevelCost(ctr);
+    ctr->leveledUp = 0;
 
-    func_020193c4(param1, param3);
+    expAdd(ctr, exp);
 }
 
 // MATCHED 100%
-void func_020193a0(UnkStruct_02019360 * param1, UnkStruct_02019360 * param2) {
-    param1->field00 = param2->field00;
-    param1->field02 = param2->field02;
-    param1->field04 = param2->field04;
-    param1->field08 = param2->field08;
+void expCopy(ExpCounter * dst, ExpCounter * src) {
+    dst->chr = src->chr;
+    dst->levelIdx = src->levelIdx;
+    dst->exp = src->exp;
+    dst->expNext = src->expNext;
 }
 
 // MATCHED 100%
-void func_020193c4(UnkStruct_02019360 * param1, s32 param2) {
-    while (param2 > 0) {
-        param2 = func_020193ec(param1, param2);
+void expAdd(ExpCounter * ctr, s32 amount) {
+    while (amount > 0) {
+        amount = expAddStep(ctr, amount);
     }
 }
 
 // MATCHED 100%
-s32 func_020193ec(UnkStruct_02019360 * param1, s32 param2) {
-    s32 diff = func_02019620(param1) - func_02019618(param1);
+s32 expAddStep(ExpCounter * ctr, s32 amount) {
+    s32 need = expGetNext(ctr) - expGetExp(ctr);
 
-    if (param2 - diff < 0 || func_0201957c() <= func_02019574(param1)) {
-        s32 val = func_02019618(param1);
-        if (val + param2 < 0) {
-            param1->field04 = 0;
-        } else if (val + param2 > 0x98967f) {
-            param1->field04 = 0x98967f;
+    if (amount - need < 0 || getMaxLevelIdx() <= expGetLevelIdx(ctr)) {
+        s32 cur = expGetExp(ctr);
+        if (cur + amount < 0) {
+            ctr->exp = 0;
+        } else if (cur + amount > EXP_MAX) {
+            ctr->exp = EXP_MAX;
         } else {
-            param1->field04 = val + param2;
+            ctr->exp = cur + amount;
         }
         return 0;
     }
 
-    param1->field0c_b0 = 1;
-    param1->field02++;
-    param1->field04 = func_02019620(param1);
+    ctr->leveledUp = 1;
+    ctr->levelIdx++;
+    ctr->exp = expGetNext(ctr);
 
-    s32 val = func_02019620(param1) + func_020195d4(param1);
+    s32 val = expGetNext(ctr) + expGetLevelCost(ctr);
     if (val < 0) {
-        param1->field08 = 0;
-    } else if (val > 0x98967f) {
-        param1->field08 = 0x98967f;
+        ctr->expNext = 0;
+    } else if (val > EXP_MAX) {
+        ctr->expNext = EXP_MAX;
     } else {
-        param1->field08 = val;
+        ctr->expNext = val;
     }
 
-    return param2 - diff;
+    return amount - need;
 }
 
 // MATCHED 100%
-s8 func_020194c4(UnkStruct_02019360 * param1) {
-    return func_020194f4(param1->field00, param1->field02, param1->field0c_b0);
+s8 expGetRank(ExpCounter * ctr) {
+    return getRank(ctr->chr, ctr->levelIdx, ctr->leveledUp);
 }
 
 // MATCHED 100%
-s8 func_020194f4(u8 param1, u8 param2, s8 param3) {
-    if (param1 == 2) {
-        if (param2 < 9) {
+s8 getRank(u8 chr, u8 levelIdx, s8 param3) {
+    if (chr == 2) {
+        if (levelIdx < 9) {
             return 1;
-        } else if (param2 < 19) {
+        } else if (levelIdx < 19) {
             return 2;
-        } else if (param2 < 39) {
+        } else if (levelIdx < 39) {
             return 3;
         } else {
             return 4;
         }
     } else {
-        if (param2 < 5) {
+        if (levelIdx < 5) {
             return 1;
-        } else if (param2 < 11) {
+        } else if (levelIdx < 11) {
             return 2;
-        } else if (param2 < 17) {
+        } else if (levelIdx < 17) {
             return 3;
-        } else if (param2 < 24) {
+        } else if (levelIdx < 24) {
             return 4;
-        } else if (param2 < 39) {
+        } else if (levelIdx < 39) {
             return 5;
         } else {
             return 6;
@@ -956,54 +892,53 @@ s8 func_020194f4(u8 param1, u8 param2, s8 param3) {
 }
 
 // MATCHED 100%
-s32 func_02019564(UnkStruct_02019360 * param1) {
-    return func_02019574(param1) + 1;
+s32 expGetLevel(ExpCounter * ctr) {
+    return expGetLevelIdx(ctr) + 1;
 }
 
 // MATCHED 100%
-s32 func_02019574(UnkStruct_02019360 * param1) {
-    return param1->field02;
+s32 expGetLevelIdx(ExpCounter * ctr) {
+    return ctr->levelIdx;
 }
 
 // MATCHED 100%
-s32 func_0201957c() {
-    return 98;
+s32 getMaxLevelIdx() {
+    return LEVEL_IDX_MAX;
 }
 
 // MATCHED 100%
-s32 func_02019584(UnkStruct_02019360 * param1) {
-    s32 val1 = func_02019574(param1);
-    val1++;
+s32 expGetNextLevel(ExpCounter * ctr) {
+    s32 next = expGetLevelIdx(ctr);
+    next++;
 
-    s32 val2 = func_0201957c();
-
-    if (val2 < val1) {
-        val1 = val2;
+    s32 max = getMaxLevelIdx();
+    if (max < next) {
+        next = max;
     }
 
-    return val1 + 1;
+    return next + 1;
 }
 
 // MATCHED 100%
-s32 func_020195a4(UnkStruct_02019360 * param1) {
-    return func_02019618(param1) - (func_02019620(param1) - func_020195d4(param1));
+s32 expGetIntoLevel(ExpCounter * ctr) {
+    return expGetExp(ctr) - (expGetNext(ctr) - expGetLevelCost(ctr));
 }
 
 // MATCHED 100%
-s32 func_020195d4(UnkStruct_02019360 * param1) {
-    if (func_02019574(param1) >= func_0201957c()) {
+s32 expGetLevelCost(ExpCounter * ctr) {
+    if (expGetLevelIdx(ctr) >= getMaxLevelIdx()) {
         return 0;
     }
 
-    return data_020526ec[param1->field00][param1->field02].field08;
+    return sLevelTable[ctr->chr][ctr->levelIdx].expNext;
 }
 
 // MATCHED 100%
-s32 func_02019618(UnkStruct_02019360 * param1) {
-    return param1->field04;
+s32 expGetExp(ExpCounter * ctr) {
+    return ctr->exp;
 }
 
 // MATCHED 100%
-s32 func_02019620(UnkStruct_02019360 * param1) {
-    return param1->field08;
+s32 expGetNext(ExpCounter * ctr) {
+    return ctr->expNext;
 }

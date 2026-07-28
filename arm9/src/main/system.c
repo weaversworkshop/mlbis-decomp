@@ -4,118 +4,111 @@
 
 #include "main/system.h"
 
-#include <nitro.h>
-
 #include "main/heap.h"
-
-// --- Extern Data --- //
-
-extern void ** data_0205afc4;
-extern void ** data_0205b3c4;
 
 // --- Extern Functions --- //
 
 extern void func_02039888(void);
 
-// --- Variable Definitions --- // (replace with real data later)
+// --- Variable Definitions --- //
 
-UnkStruct_0205b7a8 data_0205b7a8;
+const u16 repeatKeyMasks[10] = {  // 0x0204ac4c
+    PAD_KEY_UP | PAD_KEY_DOWN,
+    PAD_KEY_RIGHT | PAD_KEY_LEFT,
+    PAD_BUTTON_A, PAD_BUTTON_B, PAD_BUTTON_X, PAD_BUTTON_Y,
+    PAD_BUTTON_START, PAD_BUTTON_SELECT, PAD_BUTTON_L, PAD_BUTTON_R,
+};
 
-// --- Function Declarations --- //
-
-void func_02019a18(void);  // 0x02019a18
-void func_02019a2c(void);  // 0x02019a2c
-void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);
-void waitVBlankSync(void);  // 0x02019b2c
-void func_02019bf4(u32 dmaNo);  // 0x02019bf4
-void func_02019c4c(void);  // 0x02019c4c
-void func_02019c7c(u16 param1, u16 param2);  // 0x02019c7c
+InputState inputState;  // 0x0205afa8
+GXOamAttr oamBuffer[128];  // 0x0205afc4
+GXOamAttr subOamBuffer[128];  // 0x0205b3c4
+FrameTimer frameTimer;  // 0x0205b7a8
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_02019a18() {
+void initSystem() {
     func_02039888();
     OS_Init();
-    func_02019c90();
+    initHeaps();
 }
 
 // MATCHED 100%
-void func_02019a2c() {
-    func_02019a74(&data_0205afa8, PAD_Read());
+void readKeypad() {
+    decodeKeypad(&inputState, PAD_Read());
 }
 
 // MATCHED 100%
-void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2) {
-    u32 r3 = 0;
+void decodeKeypad(InputState * input, u16 keys) {
+    u32 repeat = 0;
 
-    param1->field02 = ~param1->field00 & param2;
-    param1->field04 = param1->field00 & ~param2;
+    input->press = ~input->hold & keys;
+    input->release = input->hold & ~keys;
 
-    u16 r14 = param1->field00;
+    u16 prevHold = input->hold;
     for (u32 i = 0; i < 10; i++) {
-        u16 r7 = (param2 & data_0204ac4c[i]);
-        if (r7 != 0) {
-            if ((r14 & r7) == 0) {
-                r3 |= r7;
-                param1->field0a[i] = param1->field08;
-            } else if (--param1->field0a[i] == 0) {
-                    r3 |= r7;
-                    param1->field0a[i] = param1->field09;
+        u16 held = (keys & repeatKeyMasks[i]);
+        if (held != 0) {
+            if ((prevHold & held) == 0) {
+                repeat |= held;
+                input->repeatTimers[i] = input->field08;
+            } else if (--input->repeatTimers[i] == 0) {
+                    repeat |= held;
+                    input->repeatTimers[i] = input->field09;
             }
         } else {
-            param1->field0a[i] = 0;
+            input->repeatTimers[i] = 0;
         }
     }
 
-    param1->field06 = r3;
-    param1->field00 = param2;
+    input->repeat = repeat;
+    input->hold = keys;
 }
 
 // MATCHED 100%
 void waitVBlankSync() {
-    data_0205b7a8.field1c_08 = 1;
+    frameTimer.syncPending = 1;
 
     s32 vcount = reg_GX_VCOUNT;
-    data_0205b7a8.field20 = vcount;
+    frameTimer.syncVCount = vcount;
 
-    if (vcount < data_0205b7a8.field1e) {
+    if (vcount < frameTimer.lastSyncVCount) {
         vcount += HW_LCD_LINES;
     }
 
-    if (data_0205b7a8.field30 == 0 || data_0205b7a8.field2e < data_0205b7a8.field22) {
-        data_0205b7a8.field30 = data_0205b7a8.field32;
-        data_0205b7a8.field2e = data_0205b7a8.field22;
+    if (frameTimer.frameHold == 0 || frameTimer.framePeak < frameTimer.frameScanlines) {
+        frameTimer.frameHold = frameTimer.frameHoldReload;
+        frameTimer.framePeak = frameTimer.frameScanlines;
     } else {
-        data_0205b7a8.field30--;
+        frameTimer.frameHold--;
     }
 
-    data_0205b7a8.field22 = (vcount - data_0205b7a8.field1e) + data_0205b7a8.field26 * HW_LCD_LINES;
+    frameTimer.frameScanlines = (vcount - frameTimer.lastSyncVCount) + frameTimer.frameSkips * HW_LCD_LINES;
 
     OS_WaitIrq(TRUE, OS_IE_V_BLANK);
 
-    data_0205b7a8.field1e = reg_GX_VCOUNT;
-    data_0205b7a8.field24 = data_0205b7a8.field26;
-    data_0205b7a8.field26 = 0;
+    frameTimer.lastSyncVCount = reg_GX_VCOUNT;
+    frameTimer.prevFrameSkips = frameTimer.frameSkips;
+    frameTimer.frameSkips = 0;
 }
 
 // MATCHED 100%
-void func_02019bf4(u32 dmaNo) {
-    DC_FlushRange(&data_0205afc4, 0x400);
-    MI_DmaCopy32(dmaNo, &data_0205afc4, HW_OAM, 0x400);
+void flushOam(u32 dmaNo) {
+    DC_FlushRange(&oamBuffer, sizeof(oamBuffer));
+    MI_DmaCopy32(dmaNo, &oamBuffer, HW_OAM, sizeof(oamBuffer));
 
-    DC_FlushRange(&data_0205b3c4, 0x400);
-    MI_DmaCopy32(dmaNo, &data_0205b3c4, HW_DB_OAM, 0x400);
+    DC_FlushRange(&subOamBuffer, sizeof(subOamBuffer));
+    MI_DmaCopy32(dmaNo, &subOamBuffer, HW_DB_OAM, sizeof(subOamBuffer));
 }
 
 // MATCHED 100%
-void func_02019c4c() {
-    MIi_CpuClearFast(0x200, &data_0205afc4, 0x400);
-    MIi_CpuClearFast(0x200, &data_0205b3c4, 0x400);
+void clearOam() {
+    MIi_CpuClearFast(0x200, &oamBuffer, sizeof(oamBuffer));
+    MIi_CpuClearFast(0x200, &subOamBuffer, sizeof(subOamBuffer));
 }
 
 // MATCHED 100%
-void func_02019c7c(u16 param1, u16 param2) {
-    *(vu16 *)HW_BG_PLTT = param1;
-    *(vu16 *)HW_DB_BG_PLTT = param2;
+void setBackdropColor(u16 color, u16 subColor) {
+    *(vu16 *)HW_BG_PLTT = color;
+    *(vu16 *)HW_DB_BG_PLTT = subColor;
 }

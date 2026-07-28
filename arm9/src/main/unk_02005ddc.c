@@ -16,19 +16,19 @@ void func_02005f8c(UnkStruct_02005ddc * param1) {
     param1->dst = param1->src;
 
     if (reg_OS_IE & REG_OS_IE_VB_MASK) {
-        func_0201a91c();
+        resetTasks();
     } else {
         disableVCountTasks();
     }
 
-    func_0201a630();
+    disableAllTasks();
 }
 
 // MATCHED 100%
 BOOL func_02005f24(UnkStruct_02005ddc * param1) {
-    func_02019a74(&param1->field08, PAD_Read());
+    decodeKeypad(&param1->field08, PAD_Read());
 
-    if (param1->field08.field00 == 0x30c && (param1->field08.field02 & 0x30c)) {
+    if (param1->field08.hold == RESET_COMBO && (param1->field08.press & RESET_COMBO)) {
         return TRUE;
     }
 

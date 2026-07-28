@@ -14,4 +14,8 @@
 #define SAVE_SLOT_PRIMARY_OFFSET  0x10
 #define SAVE_SLOT_BACKUP_OFFSET  (SAVE_SLOT_PRIMARY_OFFSET + SAVE_COPY_STRIDE)
 
+BOOL writeSavePrimary(u32);  // 0x02017b60
+BOOL writeSaveBackup(u32);  // 0x02017ba4
+s32 commitSave(s32, u32, u32, BOOL);  // 0x02017bec
+
 #endif

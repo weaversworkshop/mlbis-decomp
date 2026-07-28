@@ -3,27 +3,72 @@
 
 #include "types.h"
 
-#include "structs/unk_0205afa8.h"
+#include <nitro.h>
 
 typedef struct {
-    u16 field00;
-    u8 pad_02[0x1a];
-    u16 field1c_00 : 8;
-    u16 field1c_08 : 1;
-    s16 field1e;
-    u16 field20;
-    s16 field22;
-    s16 field24;
-    s16 field26;
-    u8 pad_28[0x6];
-    s16 field2e;
-    s16 field30;
-    s16 field32;
-    u8 pad_34[0x14];
-} UnkStruct_0205b7a8;
+    u8 x;
+    u8 y;
+    u8 prevX;
+    u8 prevY;
+    union {
+        struct {
+            u8 active : 1;
+            u8 hold : 1;
+            u8 trigger : 1;
+            u8 press : 1;
+            u8 release : 1;
+            u8 sampling : 1;
+            u8 : 2;
+        };
+        u8 flags;
+    };
+    u8 pad_05[0x3];
+} TouchpadStruct;
 
-extern UnkStruct_0205b7a8 data_0205b7a8;
+typedef struct {
+    u16 hold;
+    u16 press;
+    u16 release;
+    u16 repeat;
+    u8 field08;
+    u8 field09;
+    u8 repeatTimers[10];
+    TouchpadStruct touch;
+} InputState;
 
-void func_02019a74(UnkGlobal_0205afa8 * param1, u16 param2);  // 0x02019a74
+typedef struct {
+    u8 oamOverrunPad[0x1c];
+    u16 pad_1c_00 : 8;
+    u16 syncPending : 1;
+    s16 lastSyncVCount;
+    u16 syncVCount;
+    s16 frameScanlines;
+    s16 prevFrameSkips;
+    s16 frameSkips;
+    s16 vblankStartVCount;
+    s16 vblankEndVCount;
+    s16 vblankScanlines;
+    s16 framePeak;
+    s16 frameHold;
+    s16 frameHoldReload;
+    s16 vblankPeak;
+    s16 vblankHold;
+    s16 vblankHoldReload;
+    u8 pad_3a[0xe];
+} FrameTimer;
+
+
+extern InputState inputState;
+extern GXOamAttr oamBuffer[128];
+extern GXOamAttr subOamBuffer[128];
+extern FrameTimer frameTimer;
+
+void initSystem(void);  // 0x02019a18
+void readKeypad(void);  // 0x02019a2c
+void decodeKeypad(InputState *, u16);
+void waitVBlankSync(void);  // 0x02019b2c
+void flushOam(u32);  // 0x02019bf4
+void clearOam(void);  // 0x02019c4c
+void setBackdropColor(u16, u16);  // 0x02019c7c
 
 #endif

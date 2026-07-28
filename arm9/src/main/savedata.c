@@ -11,90 +11,98 @@
 
 // --- Struct Definitions --- //
 
+#define SAVE_OK         0
+#define SAVE_DISABLED   1
+#define SAVE_FAILED     2
+
+#define EVENT_FLAG_WORD(id) (((id) & 0xfff) >> 5)
+#define EVENT_FLAG_BIT(id)  (1u << ((id) & 0x1f))
+
+
 typedef struct {
     u8 pad_00[0x8];
     u32 field08_0 : 4;
-    u32 field08_4_7 : 4;
+    u32 slotValid : 4;
     u32 field08_8 : 24;
     u8 pad0c[0x4];
 } SaveHeader;
 
 typedef struct { 
-    u8 pad[0xe0];
-    u32 flags_e0;
-    u32 flags_e4;
-} UnkStruct_02059148;
+    u32 eventFlags[0x3a];
+} SaveEventFlags;
 
 typedef struct {
     u8 pad_000[0x54];
-    s32 coins; // ??
+    s32 coins;
     u8 pad_058[0x78 - 0x58];
-    s8 field078[0x84];
+    s8 gearCounts[0x84];
     u8 pad_0fc[0x10e - 0x0fc];
     u16 field10e[10];
     u8 pad_122[0x1b4 - 0x122];
-    UnkStruct_02059148 field1b4;
+    SaveEventFlags eventFlags;
     u8 data[SAVE_COPY_STRIDE - 0x29c];
 } SaveCopy;
-
-typedef struct { SaveCopy copy[2]; } SaveSlot;
 
 typedef struct {
     SaveHeader header;
     SaveCopy saves[SAVE_SLOT_COUNT * 2];
-} UnkStruct_02058f84;
+    u8 pad_1fc0[0x40];
+} SaveData;
 
 // --- Extern Functions --- //
 
-extern s32 func_020058bc(u16 id, void * param1, void * param2);
+extern s32 func_020058bc(u16, void *, void *);
 
 // --- Variable Definitions --- // (replace with real data later)
 
-extern UnkStruct_02058f84 data_02058f84;
-
-// --- Function Declarations --- //
-
-BOOL func_02017b60(u32 slot_idx);  // 0x02017b60
-BOOL func_02017ba4(u32 slot_idx);  // 0x02017ba4
-s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup);  // 0x02017bec
+SaveData saveData;  // 0x02058f84
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-BOOL func_02017b60(u32 slot_idx) {  // Save into primary slot
-    if (slot_idx >= SAVE_SLOT_COUNT) {
+BOOL writeSavePrimary(u32 slotIdx) {  // Save into primary slot
+    if (slotIdx >= SAVE_SLOT_COUNT) {
         return FALSE;
     }
 
-    func_020179d8((void *)(slot_idx * SAVE_SLOT_SIZE + SAVE_SLOT_PRIMARY_OFFSET), &data_02058f84.saves[slot_idx * 2], SAVE_PAYLOAD_SIZE, 1);
+    backupWrite((void *)(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_PRIMARY_OFFSET), &saveData.saves[slotIdx * 2], SAVE_PAYLOAD_SIZE, 1);
 
     return TRUE;
 }
 
 // MATCHED 100%
-BOOL func_02017ba4(u32 slot_idx) {  // Save into backup slot
-    if (slot_idx >= SAVE_SLOT_COUNT) {
+BOOL writeSaveBackup(u32 slotIdx) {  // Save into backup slot
+    if (slotIdx >= SAVE_SLOT_COUNT) {
         return FALSE;
     }
 
-    func_020179d8((void *)(slot_idx * SAVE_SLOT_SIZE + SAVE_SLOT_BACKUP_OFFSET), &data_02058f84.saves[slot_idx * 2], SAVE_PAYLOAD_SIZE, 1);
+    backupWrite((void *)(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_BACKUP_OFFSET), &saveData.saves[slotIdx * 2], SAVE_PAYLOAD_SIZE, 1);
 
     return TRUE;
 }
 
+// Helper inline function for `commitSave()`
+static inline void snapshotEventFlag(SaveEventFlags * record, u16 id) {
+    if (func_020058bc(id, NULL, NULL) != 0) {
+        record->eventFlags[EVENT_FLAG_WORD(id)] |=  EVENT_FLAG_BIT(id);
+    } else {
+        record->eventFlags[EVENT_FLAG_WORD(id)] &= ~EVENT_FLAG_BIT(id);
+    }
+}
+
 // MATCHED 100%
-s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup) {
+s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
     u32 slot = data_02055fe4.field4cc_3_4;
-    u32 r7 = 2 * slot;
+    u32 slotBase = 2 * slot;
 
-    if ((data_02058f84.header.field08_4_7 & (1 << r7)) == 0) {
-        return 1;
+    if ((saveData.header.slotValid & (1 << slotBase)) == 0) {
+        return SAVE_DISABLED;
     }
 
-    u32 n = (r7 + is_bkup);
+    u32 copyIdx = (slotBase + useBackup);
 
-    s32 coins = data_02058f84.saves[n].coins;
-    coins += param1;
+    s32 coins = saveData.saves[copyIdx].coins;
+    coins += coinDelta;
     if (coins < 0) {
         coins = 0;
     }
@@ -102,153 +110,53 @@ s32 func_02017bec(s32 param1, u32 param2, u32 param3, BOOL is_bkup) {
     if (coins > MAX_COINS) {
         coins = MAX_COINS;
     }
-    data_02058f84.saves[n].coins = coins;
+    saveData.saves[copyIdx].coins = coins;
 
-    if (param2 != 0) {
-        if (data_02058f84.saves[n].field078[param2 & 0xfff] < 9) {
-            data_02058f84.saves[n].field078[param2 & 0xfff]++;
+    if (gearId1 != 0) {
+        if (saveData.saves[copyIdx].gearCounts[gearId1 & 0xfff] < 9) {
+            saveData.saves[copyIdx].gearCounts[gearId1 & 0xfff]++;
         }
     }
 
-    if (param3 != 0) {
-        if (data_02058f84.saves[n].field078[param3 & 0xfff] < 9) {
-            data_02058f84.saves[n].field078[param3 & 0xfff]++;
+    if (gearId2 != 0) {
+        if (saveData.saves[copyIdx].gearCounts[gearId2 & 0xfff] < 9) {
+            saveData.saves[copyIdx].gearCounts[gearId2 & 0xfff]++;
         }
     }
 
     for (s32 i = 0; i < 10; i++) {
-        data_02058f84.saves[n].field10e[i] = data_02055fe4.field4e8[i];
+        saveData.saves[copyIdx].field10e[i] = data_02055fe4.field4e8[i];
     }
 
-    UnkStruct_02059148 * rec =  &data_02058f84.saves[n].field1b4;
+    SaveEventFlags * record = &saveData.saves[copyIdx].eventFlags;
 
-    if (func_020058bc(0xe713, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x80000;
-    } else {
-        rec->flags_e0 &= ~0x80000;
-    }
-
-    if (func_020058bc(0xe714, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x100000;
-    } else {
-        rec->flags_e0 &= ~0x100000;
-    }
-
-    if (func_020058bc(0xe715, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x200000;
-    } else {
-        rec->flags_e0 &= ~0x200000;
-    }
-
-    if (func_020058bc(0xe716, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x400000;
-    } else {
-        rec->flags_e0 &= ~0x400000;
-    }
-
-    if (func_020058bc(0xe717, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x800000;
-    } else {
-        rec->flags_e0 &= ~0x800000;
-    }
-
-    if (func_020058bc(0xe718, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x1000000;
-    } else {
-        rec->flags_e0 &= ~0x1000000;
-    }
-
-    if (func_020058bc(0xe719, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x2000000;
-    } else {
-        rec->flags_e0 &= ~0x2000000;
-    }
-
-    if (func_020058bc(0xe71a, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x4000000;
-    } else {
-        rec->flags_e0 &= ~0x4000000;
-    }
-
-    if (func_020058bc(0xe71b, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x8000000;
-    } else {
-        rec->flags_e0 &= ~0x8000000;
-    }
-
-    if (func_020058bc(0xe71c, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x10000000;
-    } else {
-        rec->flags_e0 &= ~0x10000000;
-    }
-
-    if (func_020058bc(0xe71d, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x20000000;
-    } else {
-        rec->flags_e0 &= ~0x20000000;
-    }
-
-    if (func_020058bc(0xe71e, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x40000000;
-    } else {
-        rec->flags_e0 &= ~0x40000000;
-    }
-
-    if (func_020058bc(0xe71f, NULL, NULL) != 0) {
-        rec->flags_e0 |= 0x80000000;
-    } else {
-        rec->flags_e0 &= ~0x80000000;
-    }
-
-
-    if (func_020058bc(0xe720, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x1;
-    } else {
-        rec->flags_e4 &= ~0x1;
-    }
-
-    if (func_020058bc(0xe721, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x2;
-    } else {
-        rec->flags_e4 &= ~0x2;
-    }
-
-    if (func_020058bc(0xe722, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x4;
-    } else {
-        rec->flags_e4 &= ~0x4;
-    }
-
-    if (func_020058bc(0xe723, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x8;
-    } else {
-        rec->flags_e4 &= ~0x8;
-    }
-
-    if (func_020058bc(0xe724, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x10;
-    } else {
-        rec->flags_e4 &= ~0x10;
-    }
-
-    if (func_020058bc(0xe725, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x20;
-    } else {
-        rec->flags_e4 &= ~0x20;
-    }
-
-    if (func_020058bc(0xe726, NULL, NULL) != 0) {
-        rec->flags_e4 |= 0x40;
-    } else {
-        rec->flags_e4 &= ~0x40;
-    }
+    snapshotEventFlag(record, 0xe713);
+    snapshotEventFlag(record, 0xe714);
+    snapshotEventFlag(record, 0xe715);
+    snapshotEventFlag(record, 0xe716);
+    snapshotEventFlag(record, 0xe717);
+    snapshotEventFlag(record, 0xe718);
+    snapshotEventFlag(record, 0xe719);
+    snapshotEventFlag(record, 0xe71a);
+    snapshotEventFlag(record, 0xe71b);
+    snapshotEventFlag(record, 0xe71c);
+    snapshotEventFlag(record, 0xe71d);
+    snapshotEventFlag(record, 0xe71e);
+    snapshotEventFlag(record, 0xe71f);
+    snapshotEventFlag(record, 0xe720);
+    snapshotEventFlag(record, 0xe721);
+    snapshotEventFlag(record, 0xe722);
+    snapshotEventFlag(record, 0xe723);
+    snapshotEventFlag(record, 0xe724);
+    snapshotEventFlag(record, 0xe725);
+    snapshotEventFlag(record, 0xe726);
 
     BOOL result;
-    if (is_bkup) {
-        result = func_02017ba4(slot);
+    if (useBackup) {
+        result = writeSaveBackup(slot);
     } else {
-        result = func_02017b60(slot);
+        result = writeSavePrimary(slot);
     }
 
-    return (result) ? 0 : 2;
+    return (result) ? SAVE_OK : SAVE_FAILED;
 }

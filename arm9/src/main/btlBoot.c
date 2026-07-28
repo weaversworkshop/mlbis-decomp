@@ -2,29 +2,22 @@
 
 #include "globals.h"
 
-#include "main/btlBoot.h"
+#include <nitro.h>
 
+#include "main/btlBoot.h"
 #include "main/heap.h"
 
-#include <nitro/fs.h>
-#include <nitro/gx.h>
+#include "main/unk_020057ac.h"
 
-// --- Struct Definitions --- //
+// --- Extern Data Variables --- //
 
-typedef struct {
-    u8 pad_00[0x2];
-    u16 field02;
-} UnkGlobal_020564e4;
+#include "structs/unk_020563e4.h"
 
 typedef struct {
     u8 pad_00[0x1cf4];
     s16 field1cf4;
     s16 field1cf6;
 } UnkStruct_ov008_02064f0c;
-
-// --- Extern Data Variables --- //
-
-#include "structs/unk_020563e4.h"
 
 extern UnkStruct_ov008_02064f0c * data_ov008_02064f0c;
 
@@ -35,31 +28,22 @@ FS_EXTERN_OVERLAY(OVY_119);
 FS_EXTERN_OVERLAY(OVY_120);
 FS_EXTERN_OVERLAY(OVY_121);
 
-
 // --- Extern Functions --- //
 
-#include "main/unk_020057ac.h"
-
-extern u32 func_0201a138(u32 param1, u32 param2, u32 param3, u32 param4);
-extern u32 func_0201b180(FSOverlayID param1, u32 param2);
+extern u32 func_0201a138(u32, u32, u32, u32);
+extern u32 fsLoadOverlay(FSOverlayID, u32);
 
 extern void func_ov008_0206406c(void);
 extern void func_ov009_02064f30(void);
 
-// --- Variable Definitions --- // (replace with real data later)
+// --- Variable Definitions --- //
 
-extern u32 data_0205af98;
-
-// --- Function Declarations --- //
-
-void func_02019628(u32 param1, u32 param2);  // 0x02019628
-void func_02019684(void);  // 0x02019684
-void func_020198cc(void);  // 0x020198cc
+u32 data_0205af98;  // 0x0205af98
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_02019628(u32 param1, u32 param2) {
+void btlEnter(u32 param1, u32 param2) {
     FSOverlayInfo info;
     void * ret;
     if (FS_LoadOverlayInfo(&info, MI_PROCESSOR_ARM9, FS_OVERLAY_ID(OVY_8))) {
@@ -68,13 +52,13 @@ void func_02019628(u32 param1, u32 param2) {
         ret = NULL;
     }
 
-    func_0201a2bc(ret);
-    func_0201b180(FS_OVERLAY_ID(OVY_8), 0);
-    func_02019684();
+    setMainHeapBase(ret);
+    fsLoadOverlay(FS_OVERLAY_ID(OVY_8), 0);
+    btlSetup();
 }
 
 // MATCHED 100%
-void func_02019684() {
+void btlSetup() {
     switch ((s16)data_020563e4.fieldfc) {
         case 0x3001:
         case 0x3002:
@@ -106,7 +90,7 @@ void func_02019684() {
                 ret = NULL;
             }
 
-            func_0201a2bc(ret);
+            setMainHeapBase(ret);
             break;
         }
         case 1: {
@@ -118,7 +102,7 @@ void func_02019684() {
                 ret = NULL;
             }
 
-            func_0201a2bc(ret);
+            setMainHeapBase(ret);
             break;
         }
         case 2: {
@@ -130,7 +114,7 @@ void func_02019684() {
                 ret = NULL;
             }
 
-            func_0201a2bc(ret);
+            setMainHeapBase(ret);
             break;
         }
         case 3: {
@@ -142,12 +126,12 @@ void func_02019684() {
                 ret = NULL;
             }
 
-            func_0201a2bc(ret);
+            setMainHeapBase(ret);
             break;
         }
     }
 
-    func_0201b180(FS_OVERLAY_ID(OVY_9), 0);
+    fsLoadOverlay(FS_OVERLAY_ID(OVY_9), 0);
 
     if (func_0201a138(0x1d20, 0, 0, 0)) {
         func_ov009_02064f30();
@@ -158,7 +142,7 @@ void func_02019684() {
 }
 
 // MATCHED 100%
-void func_020198cc() {
+void btlExit() {
 
     func_ov008_0206406c();
 

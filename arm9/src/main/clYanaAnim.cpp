@@ -6,98 +6,98 @@
 
 extern "C" {
 
-// --- Extern Data --- //
-
-extern u8 data_0205bb20[];
-
 // --- Extern Functions --- //
 
-extern s64 func_0204536c(s32 param1, s32 param2);
+extern s64 func_0204536c(s32, s32);
+
+// --- Variable Definitions --- // (replace with real data later)
+
+u8 animEnded;  // 0x0205bb20
 
 } // extern "C"
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void clYanaAnim::func_020206e0(u16 param1) {
-    this->field04_00 = 0;
-    this->field04_24 = 1;
-    this->field04_25 = 1;
-    this->field08 = 0x100;
-    this->field0a_00 = param1;
-    this->field0a_14 = 0;
-    this->field0a_15 = 0;
+void clYanaAnim::init(u16 length) {
+    this->pos = 0;
+    this->needsRewind = 1;
+    this->loopsRemaining = 1;
+    this->speed = 256;
+    this->length = length;
+    this->atEnd = 0;
+    this->stopped = 0;
 }
 
 // MATCHED 100%
 clYanaAnim::~clYanaAnim() {
-    field0a_14 = 1;
+    atEnd = 1;
 }
 
 // MATCHED 100%
-void clYanaAnim::func_02020784() {
-    data_0205bb20[0] = 0;
+void clYanaAnim::beginUpdate() {
+    animEnded = 0;
 
-    if (this->field04_24 != 0) {
-        this->field04_24 = 0;
-        this->field04_00 = (this->field08 < 0) ? (this->field0a_00 << 8) : 0;
+    if (this->needsRewind != 0) {
+        this->needsRewind = 0;
+        this->pos = (this->speed < 0) ? (this->length << 8) : 0;
     }
 }
 
 // MATCHED 100%
-void clYanaAnim::func_020207ec() {
-    if (this->field0a_15 == 0) {
-        s32 r4 = this->field0a_00 << 8;
+void clYanaAnim::advance() {
+    if (this->stopped == 0) {
+        s32 end = this->length << 8;
 
-        if (r4 == 0) {
-            this->field0a_14 = 1;
-            this->field04_00 = 0;
+        if (end == 0) {
+            this->atEnd = 1;
+            this->pos = 0;
         } else {
-            s32 val = this->field04_00 + this->field08;
-            if (val > 0 && val < r4) {
-                this->field0a_14 = 0;
+            s32 next = this->pos + this->speed;
+            if (next > 0 && next < end) {
+                this->atEnd = 0;
             } else {
-                this->field0a_14 = 1;
+                this->atEnd = 1;
 
-                if (this->field04_25 == 1) {
-                    val = (val < 0) ? 0 : r4;
+                if (this->loopsRemaining == 1) {
+                    next = (next < 0) ? 0 : end;
                 } else {
-                    val = (s32)(func_0204536c(val, r4) >> 32);
-                    if (val < 0) {
-                        val += r4;
+                    next = (s32)(func_0204536c(next, end) >> 32);
+                    if (next < 0) {
+                        next += end;
                     }
                 }
             }
 
-            this->field04_00 = val;
+            this->pos = next;
         }
     }
 }
 
 // MATCHED 100%
-void clYanaAnim::func_020208c0() {
-    if (this->field0a_15 == 0 && this->field0a_14 != 0 && this->field04_25 != 0) {
-        if (--this->field04_25 == 0) {
-            this->field0a_15 = 1;
-            data_0205bb20[0] = 1;
+void clYanaAnim::updateLoop() {
+    if (this->stopped == 0 && this->atEnd != 0 && this->loopsRemaining != 0) {
+        if (--this->loopsRemaining == 0) {
+            this->stopped = 1;
+            animEnded = 1;
 
-            this->m08();
+            this->onEnd();
         }
     }
 }
 
 // MATCHED 100%
-void clYanaAnim::m08() {
-    this->field0a_14 = 1;
+void clYanaAnim::onEnd() {
+    this->atEnd = 1;
 }
 
 // MATCHED 100%
-void clYanaAnim::m0c() {
-    this->field04_00 = this->field0a_00 << 8;
+void clYanaAnim::seekEnd() {
+    this->pos = this->length << 8;
 
-    if (this->field04_25 == 0) {
-        this->field0a_15 = 0;
+    if (this->loopsRemaining == 0) {
+        this->stopped = 0;
     } else {
-        this->field04_25 = 1;
+        this->loopsRemaining = 1;
     }
 }

@@ -82,11 +82,13 @@ DATA_ADDR_RE = re.compile(r"^data_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
 # A global variable definition/declaration with a trailing address anchor:
 #     TPData samplingBufs[2];              // 0x0205bac4
 #     extern UnkGlobal_0205afa8 inputState;  // 0x0205afa8
-# The identifier immediately before optional [dims] / = init / ';'. Only
+# The identifier immediately before optional [dims] / = init / ';' or a brace
+# initializer's '{' (multi-line tables put the ';' out of reach). Only
 # consulted at global scope (never inside a class/struct body) and only when
 # the function ANCHOR_RE didn't match the line.
 DATA_ANCHOR_RE = re.compile(
-    r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*(?:=[^;]*)?;.*//.*0x(?P<addr>[0-9a-fA-F]+)"
+    r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*(?:=\s*\{|(?:=[^;]*)?;)"
+    r".*//.*0x(?P<addr>[0-9a-fA-F]+)"
 )
 # Defined global (non-weak) object symbol in a data-ish section of the .o.
 OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")

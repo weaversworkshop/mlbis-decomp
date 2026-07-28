@@ -11,19 +11,18 @@ namespace nsMenuAI {
 
 class clBtlMoveBase : public clYanaAnim {
 public:
-    virtual ~clBtlMoveBase() {}
+    virtual ~clBtlMoveBase() {}  // D1 0x020199b8 D0 0x020199cc
 
     virtual void fn_10();  // 0x020199b0
-    
-    virtual void m08();
-    
-    virtual void fn_14();
-    virtual void fn_18();
+    virtual void onEnd();  // 0x0206db30
+    virtual void start(u16 length);  // 0x0206d9c4
+    virtual void stop();  // 0x0206d9b4
 };
 
 class clBtlMove : public clBtlMoveBase {
 public:
-    virtual ~clBtlMove() {}
+    virtual ~clBtlMove() {}  // D1 0x020199e8 D0 0x020199fc
+    
     virtual void fn_10();  // 0x020199b4
 };
 

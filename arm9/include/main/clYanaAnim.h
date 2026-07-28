@@ -7,25 +7,23 @@
 
 class clYanaAnim {
 public:
-    s32 field04_00 : 23;
-    u32 field04_23 : 1;
-    u32 field04_24 : 1;
-    u32 field04_25 : 7;
+    s32 pos : 23;
+    u32 unk04_23 : 1;
+    u32 needsRewind : 1;
+    u32 loopsRemaining : 7;
+    s16 speed;
+    u16 length : 14;
+    u16 atEnd : 1;
+    u16 stopped : 1;
 
-    s16 field08;
+    virtual ~clYanaAnim();  // D1 0x02020744 D0 0x02020754 D2 0x02020774
+    virtual void onEnd();  // 0x02020930
+    virtual void seekEnd();  // 0x02020940
 
-    u16 field0a_00 : 14;
-    u16 field0a_14 : 1;
-    u16 field0a_15 : 1;
-
-    virtual ~clYanaAnim();
-    virtual void m08();  // 0x02020930
-    virtual void m0c();  // 0x02020940
-
-    void func_020206e0(u16 param1);  // 0x020206e0
-    void func_02020784();  // 0x02020784
-    void func_020207ec();  // 0x020207ec
-    void func_020208c0();  // 0x020208c0
+    void init(u16);  // 0x020206e0
+    void beginUpdate();  // 0x02020784
+    void advance();  // 0x020207ec
+    void updateLoop();  // 0x020208c0
 };
 
 #endif

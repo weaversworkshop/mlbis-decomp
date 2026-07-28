@@ -6,11 +6,11 @@ extern "C" {
 
 #include "main/clGlobalEvent.h"
 #include "main/playerStatus.h"
+#include "main/rng.h"
 
 #include "structs/unk_020563e4.h"
 
-#include <nitro/fx/fx_cp.h>
-#include <nitro/fx/fx_trig.h>
+#include <nitro.h>
 
 // --- Struct Definitions --- //
 
@@ -21,171 +21,171 @@ typedef struct {
 
 // --- Extern Data --- //
 
-extern u8 data_0204ac2c[];
 extern UnkGlobal_02056504 data_02056504;
 
 // --- Extern Functions --- //
 
-extern void func_01ff8228(u32 * param1, u32 param2, u32 param3); // itcm function
+extern void func_01ff8228(u32 *, u32, u32);
 
-extern s32 func_020058bc(u16 id, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
-extern void func_02005a78(u16 id, s32 value, clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);
-extern void func_02005da0(UnkGlobal_02056504 * param1, s32 param2);
+extern s32 func_020058bc(u16, clGlobalEvent *, EventContext *);
+extern void func_02005a78(u16, s32, clGlobalEvent *, EventContext *);
+extern void func_02005da0(UnkGlobal_02056504 *, s32);
+extern s64 func_0204536c(s32, s32);
 
-extern u32 rand_range(s32 param1);
+// --- Variable Definitions --- //
 
-extern s64 func_0204536c(s32 param1, s32 param2);
+const u8 argSizes[12] = { 1, 2, 4, 1, 2, 4, 2, 4, 4, 2, 0, 0 };  // 0x0204ac2c
 
-// --- Function Declarations --- // (local free functions; the class methods live in the classes)
+// --- Function Declarations --- //
 
-void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x02015f0c
-u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x020160d4
-u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2);  // 0x020161d4
-u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3);  // 0x02016254
-bool func_02017634(s32 param1, s32 param2, s32 param3);  // 0x02017634
-void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2);  // 0x02017728
+void fetchInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x02015f0c
+u32 rewindInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x020160d4
+u32 stepScript(clGlobalEvent *, EventContext *);  // 0x020161d4
+u32 execInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x02016254
+bool evalCompare(s32, s32, s32);  // 0x02017634
+void initContext(EventContext *, u8 *);  // 0x02017728
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
 clScriptSystem::clScriptSystem() {
-    func_01ff8228(&this->field20, 0, 8);
+    func_01ff8228(&this->vars[6], 0, 2 * sizeof(u32));
 }
 
 // MATCHED 100%
 clScriptSystem::~clScriptSystem() {}
 
 // MATCHED 100%
-void clScriptSystem::m08(UnkStruct_02015f0c_00_04 * param) {
-    this->field04 = param;
+void clScriptSystem::setOpInfo(EventOpInfo * param) {
+    this->opInfo = param;
 }
 
 // MATCHED 100%
-void func_02015f0c(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
-    u8 * r4;
-    u32 * dest;
-    s32 r5;
-    UnkStruct_02015f0c_00_04 * r6;
-    s32 r7;
-    u8 * src;
-    u32 r11;
+void fetchInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
+    u8 * head;
+    u32 * arg;
+    s32 i;
+    EventOpInfo * info;
+    s32 argCount;
+    u8 * p;
+    u32 mask;
     
 
-    r4 = param2->field00;
-    src = &param2->field00[6];
-    param3->field00 = r4[0] | (r4[1] << 8);
+    head = ctx->pc;
+    p = &ctx->pc[6];
+    inst->opcode = head[0] | (head[1] << 8);
 
-    r6 = &param1->field04[param3->field00];
+    info = &sys->opInfo[inst->opcode];
 
-    r11 = r4[2] | (r4[3] << 8) | (r4[4] << 16) | (r4[5] << 24);
-    param3->field04 = r11;
+    mask = head[2] | (head[3] << 8) | (head[4] << 16) | (head[5] << 24);
+    inst->varArgMask = mask;
 
-    if ((r6->field00 & 0x80) != 0) {
-        param3->field02 = src[0] | (src[1] << 8);
-        src += 2;
+    if (EV_HAS_DEST(info->argInfo)) {
+        inst->destVar = p[0] | (p[1] << 8);
+        p += 2;
     }
 
-    r7 = r6->field00 & 0x7f;
+    argCount = EV_ARG_COUNT(info->argInfo);
 
-    if (r7 != 0) {
+    if (argCount != 0) {
 
-        dest = (u32 *)param3->field08;
+        arg = (u32 *)inst->args;
 
-        for (r5 = 0; r5 < r7; r5++) {
+        for (i = 0; i < argCount; i++) {
 
-            if ((r11 >> r5 & 1) != 0) {
-                dest[0] = param1->fn_0c(param2, src[0] | (src[1] << 8));
-                src += 2;
+            if ((mask >> i & 1) != 0) {
+                arg[0] = sys->getVar(ctx, p[0] | (p[1] << 8));
+                p += 2;
             } else {
-                switch ((r6->opcodes[r5/2] >> (r5 & 1) * 4) & 0xf) {
+                switch ((info->argTypes[i/2] >> (i & 1) * 4) & 0xf) {
                     case 0:
-                        dest[0] = src[0];
-                        src++;
+                        arg[0] = p[0];
+                        p++;
                         break;
                     case 3:
-                        dest[0] = (s8)src[0];
-                        src++;
+                        arg[0] = (s8)p[0];
+                        p++;
                         break;
                     case 1:
-                        dest[0] = (u16)(src[0] | (src[1] << 8));
-                        src += 2;
+                        arg[0] = (u16)(p[0] | (p[1] << 8));
+                        p += 2;
                         break;
                     case 4:
                     case 6:
-                        dest[0] = (s16)(src[0] | (src[1] << 8));
-                        src += 2;
+                        arg[0] = (s16)(p[0] | (p[1] << 8));
+                        p += 2;
                         break;
                     case 2:
-                        dest[0] = (src[0] | (src[1] << 8) | (src[2] << 16) | (src[3] << 24));
-                        src += 4;
+                        arg[0] = (p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+                        p += 4;
                         break;
                     case 5:
                     case 7:
-                        dest[0] = (s32)(src[0] | (src[1] << 8) | (src[2] << 16) | (src[3] << 24));
-                        src += 4;
+                        arg[0] = (s32)(p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+                        p += 4;
                         break;
                     default:
                         break;
                 }
             }
 
-            dest++;
+            arg++;
         }
     }
 
-    param2->field00 = src;
+    ctx->pc = p;
 }
 
 // MATCHED 100%
-u32 func_020160d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+u32 rewindInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
     s32 idx;
 
-    UnkStruct_02015f0c_00_04 * entry = &param1->field04[param3->field00];
-    u8 header = entry->field00;
-    s32 count = header & 0x7f;
+    EventOpInfo * entry = &sys->opInfo[inst->opcode];
+    u8 header = entry->argInfo;
+    s32 count = EV_ARG_COUNT(header);
 
     u32 r0 = 6;
 
-    if ((header & 0x80) != 0) {
+    if (EV_HAS_DEST(header)) {
         r0 += 2;
     }
 
     for (idx = 0; idx < count; idx++) {
-        if (((param3->field04 >> idx) & 1) != 0) {
+        if (((inst->varArgMask >> idx) & 1) != 0) {
             r0 += 2;
         } else {
-            r0 += data_0204ac2c[entry->opcodes[idx / 2] >> (idx & 1) * 4 & 0xf];
+            r0 += argSizes[entry->argTypes[idx / 2] >> (idx & 1) * 4 & 0xf];
         }
     }
 
-    param2->field00 -= r0;
+    ctx->pc -= r0;
     return r0;
 }
 
 // MATCHED 100%
 clGlobalEvent::clGlobalEvent() {
-    func_01ff8228(&this->field08, 0, 0x80);
+    func_01ff8228(this->vars, 0, 32 * sizeof(u32));
 }
 
 // MATCHED 100%
 clGlobalEvent::~clGlobalEvent() {}
 
 // MATCHED 100%
-u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2) {
+u32 stepScript(clGlobalEvent * sys, EventContext * ctx) {
     u32 ret = 1;
 
-    if (param2->field00 != NULL) {
-        if (param2->fieldaa != 0) {
-            if (--param2->fieldaa != 0) {
+    if (ctx->pc != NULL) {
+        if (ctx->waitFrames != 0) {
+            if (--ctx->waitFrames != 0) {
                 return 3;
             }
         }
 
-        UnkStruct_02015f0c_02 r4;
+        EventInstruction r4;
         ret = 0;
         while (ret == 0) {
-            func_02015f0c(param1, param2, &r4);
-            ret = func_02016254(param1, param2, &r4);
+            fetchInstruction(sys, ctx, &r4);
+            ret = execInstruction(sys, ctx, &r4);
         }
     }
 
@@ -193,305 +193,304 @@ u32 func_020161d4(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2) {
 }
 
 // MATCHED 100%
-u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
-    s32 ret;
+u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
+    s32 val;
 
-    switch (param3->field00) {
-        case 0:
-            param2->field00 = NULL;
+    switch (inst->opcode) {
+        case END:
+            ctx->pc = NULL;
             return 1;
-        case 1:
-            if (param2->fielda8 == 0) {
-                param2->field00 = NULL;
+        case RET:
+            if (ctx->sp == 0) {
+                ctx->pc = NULL;
                 return 2;
             }
-            param2->fielda8--;
-            param2->field00 = param2->field68[param2->fielda8];
+            ctx->sp--;
+            ctx->pc = ctx->stack[ctx->sp];
             return 0;
-        case 3:
-            if (param3->field08[0] == 1) {
-                param2->field68[param2->fielda8] = param2->field00;
-                param2->fielda8++;
+        case JUMP:
+            if (inst->args[0] == 1) {
+                ctx->stack[ctx->sp] = ctx->pc;
+                ctx->sp++;
             }
-
-            param2->field00 += param3->field08[1];
+            ctx->pc += inst->args[1];
             return 0;
-        case 4:
-            param2->fieldaa = param3->field08[0];
+        case WAIT:
+            ctx->waitFrames = inst->args[0];
             return 3;
-        case 2:
-            ret = func_02017634(param3->field08[0], param3->field08[1], param3->field08[2]);
-            if (param3->field08[3] == ret) {
-                param2->field00 += param3->field08[4];
+        case BRANCH_IF:
+            val = evalCompare(inst->args[0], inst->args[1], inst->args[2]);
+            if (inst->args[3] == val) {
+                ctx->pc += inst->args[4];
             }
             return 0;
-        case 59:
-        case 60:
-        case 61:
-        case 62:
-        case 63:
+        case NOOP59:
+        case NOOP60:
+        case NOOP61:
+        case NOOP62:
+        case NOOP63:
             return 0;
-        case 5:
-            param2->field68[param2->fielda8] = (u8 *)param3->field08[0];
-            param2->fielda8++;
+        case PUSH:
+            ctx->stack[ctx->sp] = (u8 *)inst->args[0];
+            ctx->sp++;
             return 0;
-        case 6:
-            param2->fielda8--;
-            func_02005a78(param3->field02, (s32)param2->field68[param2->fielda8], param1, param2);
+        case POP_TO_VAR:
+            ctx->sp--;
+            func_02005a78(inst->destVar, (s32)ctx->stack[ctx->sp], sys, ctx);
             return 0;
-        case 7: {
-            u32 r5 = param2->fielda8;
-            u8 ** r6 = param2->field64;
-            u32 r7 = param3->field08[0] & 0xf;
+        case LOOP: {
+            u32 sp = ctx->sp;
+            u8 ** stackTop = ctx->stackTop;
+            u32 mode = inst->args[0] & 0xf;
 
-            if (r7 == 3) {
-                r6[r5]++;
-            } else if (r7 == 4) {
-                r6[r5]--;
+            if (mode == 3) {
+                stackTop[sp]++;
+            } else if (mode == 4) {
+                stackTop[sp]--;
             }
 
-            ret = func_02017634(param3->field08[1], param3->field08[2], (s32)r6[r5]);
+            val = evalCompare(inst->args[1], inst->args[2], (s32)stackTop[sp]);
 
-            if (ret != 0) {
-                param2->field00 += param3->field08[3];
-                if ((param3->field08[0] & 0x30) == 0x10) {
-                    param2->fielda8--;
+            if (val != 0) {
+                ctx->pc += inst->args[3];
+                if ((inst->args[0] & 0x30) == 0x10) {
+                    ctx->sp--;
                     return 0;
                 }
-            } else if ((param3->field08[0] & 0x30) == 0x20) {
-                param2->fielda8--;
+            } else if ((inst->args[0] & 0x30) == 0x20) {
+                ctx->sp--;
                 return 0;
             }
 
-            if (r7 == 1) {
-                r6[r5]++;
-            } else if (r7 == 2) {
-                r6[r5]--;
+            if (mode == 1) {
+                stackTop[sp]++;
+            } else if (mode == 2) {
+                stackTop[sp]--;
             }
             return 0;
         }
-        case 57: {
-            u8 * rec = &param2->field00[param3->field08[0]];
+        case TABLE_GET: {
+            u8 * rec = &ctx->pc[inst->args[0]];
             u16 header = rec[0] | (rec[1] << 8);
             s32 type = (header & 0xf00) >> 8;
-            u8 * elem = (rec + 2) + data_0204ac2c[type] * (param3->field08[1] & 0xff);
+            u8 * elem = (rec + 2) + argSizes[type] * (inst->args[1] & 0xff);
 
             switch (type) {
                 case 0:
-                    ret = elem[0];
+                    val = elem[0];
                     break;
                 case 3:
-                    ret = (s8)elem[0];
+                    val = (s8)elem[0];
                     break;
                 case 1:
-                    ret = (u16)(elem[0] | (elem[1] << 8));
+                    val = (u16)(elem[0] | (elem[1] << 8));
                     break;
                 case 4:
                 case 6:
-                    ret = (s16)(elem[0] | (elem[1] << 8));
+                    val = (s16)(elem[0] | (elem[1] << 8));
                     break;
                 case 2:
-                    ret = (elem[0] | (elem[1] << 8) | (elem[2] << 16) | (elem[3] << 24));
+                    val = (elem[0] | (elem[1] << 8) | (elem[2] << 16) | (elem[3] << 24));
                     break;
                 case 5:
                 case 7:
-                    ret = (s32)(elem[0] | (elem[1] << 8) | (elem[2] << 16) | (elem[3] << 24));
+                    val = (s32)(elem[0] | (elem[1] << 8) | (elem[2] << 16) | (elem[3] << 24));
                     break;
                 default:
-                    ret = 0;
+                    val = 0;
                     break;
             }
 
-            func_02005a78(param3->field02, ret, param1, param2);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
         }
-        case 58: {
-            u8 * ptr = &param2->field00[param3->field08[0]];
-            func_02005a78(param3->field02, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, param1, param2);
+        case BYTE_GET: {
+            u8 * ptr = &ctx->pc[inst->args[0]];
+            func_02005a78(inst->destVar, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, sys, ctx);
             return 0;
         }
-        case 8:
-            func_02005a78(param3->field02, param3->field08[0], param1, param2);
+        case MOV:
+            func_02005a78(inst->destVar, inst->args[0], sys, ctx);
             return 0;
-        case 9:
-            func_02005a78(param3->field02, param3->field08[0] + param3->field08[1], param1, param2);
+        case ADD:
+            func_02005a78(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
             return 0;
-        case 10:
-            func_02005a78(param3->field02, param3->field08[0] - param3->field08[1], param1, param2);
+        case SUB:
+            func_02005a78(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
             return 0;
-        case 11:
-            func_02005a78(param3->field02, param3->field08[0] * param3->field08[1], param1, param2);
+        case MUL:
+            func_02005a78(inst->destVar, inst->args[0] * inst->args[1], sys, ctx);
             return 0;
-        case 12: {
-            s64 divmod_val = func_0204536c(param3->field08[0], param3->field08[1]);
-            func_02005a78(param3->field02, (s32)divmod_val, param1, param2);
-            return 0;
-        }
-        case 13: {
-            s64 divmod_val = func_0204536c(param3->field08[0], param3->field08[1]);
-            func_02005a78(param3->field02, (s32)(divmod_val >> 32), param1, param2);
+        case DIV: {
+            s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
+            func_02005a78(inst->destVar, (s32)divmod_val, sys, ctx);
             return 0;
         }
-        case 14:
-            func_02005a78(param3->field02, param3->field08[0] << param3->field08[1], param1, param2);
-            return 0;
-        case 15:
-            func_02005a78(param3->field02, param3->field08[0] >> param3->field08[1], param1, param2);
-            return 0;
-        case 16:
-            func_02005a78(param3->field02, param3->field08[0] & param3->field08[1], param1, param2);
-            return 0;
-        case 17:
-            func_02005a78(param3->field02, param3->field08[0] | param3->field08[1], param1, param2);
-            return 0;
-        case 18:
-            func_02005a78(param3->field02, param3->field08[0] ^ param3->field08[1], param1, param2);
-            return 0;
-        case 19:
-            func_02005a78(param3->field02, -param3->field08[0], param1, param2);
-            return 0;
-        case 20:
-            func_02005a78(param3->field02, (param3->field08[0] == 0), param1, param2);
-            return 0;
-        case 21:
-            func_02005a78(param3->field02, ~param3->field08[0], param1, param2);
-            return 0;
-        case 22:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, ret+1, param1, param2);
-            return 0;
-        case 23:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, ret-1, param1, param2);
-            return 0;
-        case 24:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, param3->field08[0]+ret, param1, param2);
-            return 0;
-        case 25:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, ret-param3->field08[0], param1, param2);
-            return 0;
-        case 26:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, param3->field08[0]*ret, param1, param2);
-            return 0;
-        case 27: {
-            ret = func_020058bc(param3->field02, param1, param2);
-            s64 divmod_val = func_0204536c(ret, param3->field08[0]);
-            func_02005a78(param3->field02, (s32)divmod_val, param1, param2);
+        case MOD: {
+            s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
+            func_02005a78(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
             return 0;
         }
-        case 28: {
-            ret = func_020058bc(param3->field02, param1, param2);
-            s64 divmod_val = func_0204536c(ret, param3->field08[0]);
-            func_02005a78(param3->field02, (s32)(divmod_val >> 32), param1, param2);
+        case SHL:
+            func_02005a78(inst->destVar, inst->args[0] << inst->args[1], sys, ctx);
+            return 0;
+        case SHR:
+            func_02005a78(inst->destVar, inst->args[0] >> inst->args[1], sys, ctx);
+            return 0;
+        case AND:
+            func_02005a78(inst->destVar, inst->args[0] & inst->args[1], sys, ctx);
+            return 0;
+        case OR:
+            func_02005a78(inst->destVar, inst->args[0] | inst->args[1], sys, ctx);
+            return 0;
+        case XOR:
+            func_02005a78(inst->destVar, inst->args[0] ^ inst->args[1], sys, ctx);
+            return 0;
+        case NEG:
+            func_02005a78(inst->destVar, -inst->args[0], sys, ctx);
+            return 0;
+        case LNOT:
+            func_02005a78(inst->destVar, (inst->args[0] == 0), sys, ctx);
+            return 0;
+        case BNOT:
+            func_02005a78(inst->destVar, ~inst->args[0], sys, ctx);
+            return 0;
+        case INC:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, val+1, sys, ctx);
+            return 0;
+        case DEC:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, val-1, sys, ctx);
+            return 0;
+        case ADD_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, inst->args[0]+val, sys, ctx);
+            return 0;
+        case SUB_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, val-inst->args[0], sys, ctx);
+            return 0;
+        case MUL_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, inst->args[0]*val, sys, ctx);
+            return 0;
+        case DIV_EQ: {
+            val = func_020058bc(inst->destVar, sys, ctx);
+            s64 divmod_val = func_0204536c(val, inst->args[0]);
+            func_02005a78(inst->destVar, (s32)divmod_val, sys, ctx);
             return 0;
         }
-        case 29:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, ret << param3->field08[0], param1, param2);
+        case MOD_EQ: {
+            val = func_020058bc(inst->destVar, sys, ctx);
+            s64 divmod_val = func_0204536c(val, inst->args[0]);
+            func_02005a78(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
             return 0;
-        case 30:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, ret >> param3->field08[0], param1, param2);
+        }
+        case SHL_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, val << inst->args[0], sys, ctx);
             return 0;
-        case 31:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, param3->field08[0] & ret, param1, param2);
+        case SHR_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, val >> inst->args[0], sys, ctx);
             return 0;
-        case 32:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, param3->field08[0] | ret, param1, param2);
+        case AND_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, inst->args[0] & val, sys, ctx);
             return 0;
-        case 33:
-            ret = func_020058bc(param3->field02, param1, param2);
-            func_02005a78(param3->field02, param3->field08[0] ^ ret, param1, param2);
+        case OR_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, inst->args[0] | val, sys, ctx);
             return 0;
-        case 34:
-            ret = FX_Sqrt(param3->field08[0] << FX32_SHIFT);
-            func_02005a78(param3->field02, ret / FX32_ONE, param1, param2);
+        case XOR_EQ:
+            val = func_020058bc(inst->destVar, sys, ctx);
+            func_02005a78(inst->destVar, inst->args[0] ^ val, sys, ctx);
             return 0;
-        case 35:
-            ret = FX_InvSqrt(param3->field08[0] << FX32_SHIFT);
-            func_02005a78(param3->field02, ret / FX32_ONE, param1, param2);
+        case SQRT:
+            val = FX_Sqrt(inst->args[0] << FX32_SHIFT);
+            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
-        case 36:
-            ret = FX_Inv(param3->field08[0] << FX32_SHIFT);
-            func_02005a78(param3->field02, ret / FX32_ONE, param1, param2);
+        case INVSQRT:
+            val = FX_InvSqrt(inst->args[0] << FX32_SHIFT);
+            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
-        case 37:
-            func_02005a78(param3->field02, FX_SinIdx((u16)((param3->field08[0] << 16) / 360)), param1, param2);
+        case INV:
+            val = FX_Inv(inst->args[0] << FX32_SHIFT);
+            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
-        case 38:
-            func_02005a78(param3->field02, FX_CosIdx((u16)((param3->field08[0] << 16) / 360)), param1, param2);
+        case SIN:
+            func_02005a78(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
             return 0;
-        case 39:
-            func_02005a78(param3->field02, FX_AtanIdx(param3->field08[0]) * 360 / (1 << 16), param1, param2);
+        case COS:
+            func_02005a78(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
             return 0;
-        case 40:
-            func_02005a78(param3->field02, FX_Atan2Idx(param3->field08[0], param3->field08[1]) * 360 / (1 << 16), param1, param2);
+        case ATAN:
+            func_02005a78(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 16), sys, ctx);
             return 0;
-        case 41:
-            ret = rand_range(param3->field08[0]);
-            func_02005a78(param3->field02, ret, param1, param2);
+        case ATAN2:
+            func_02005a78(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 16), sys, ctx);
             return 0;
-        case 42:
-            func_02005a78(param3->field02, param3->field08[0], param1, param2);
+        case RAND:
+            val = rand_range(inst->args[0]);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
-        case 48:
-            func_02005a78(param3->field02, FX_Whole(param3->field08[0]), param1, param2);
+        case MOV_FX:
+            func_02005a78(inst->destVar, inst->args[0], sys, ctx);
             return 0;
-        case 49:
-            func_02005a78(param3->field02, FX_Floor(param3->field08[0]), param1, param2);
+        case FX_TRUNC:
+            func_02005a78(inst->destVar, FX_Whole(inst->args[0]), sys, ctx);
             return 0;
-        case 50:
-            func_02005a78(param3->field02, FX_Sqrt(param3->field08[0]), param1, param2);
+        case FX_FLOOR:
+            func_02005a78(inst->destVar, FX_Floor(inst->args[0]), sys, ctx);
             return 0;
-        case 51:
-            func_02005a78(param3->field02, FX_InvSqrt(param3->field08[0]), param1, param2);
+        case FX_SQRT:
+            func_02005a78(inst->destVar, FX_Sqrt(inst->args[0]), sys, ctx);
             return 0;
-        case 52:
-            func_02005a78(param3->field02, FX_Inv(param3->field08[0]), param1, param2);
+        case FX_INVSQRT:
+            func_02005a78(inst->destVar, FX_InvSqrt(inst->args[0]), sys, ctx);
             return 0;
-        case 53:
-            func_02005a78(param3->field02, FX_SinIdx((u16)((param3->field08[0] << 4) / 360)), param1, param2);
+        case FX_INV:
+            func_02005a78(inst->destVar, FX_Inv(inst->args[0]), sys, ctx);
             return 0;
-        case 54:
-            func_02005a78(param3->field02, FX_CosIdx((u16)((param3->field08[0] << 4) / 360)), param1, param2);
+        case FX_SIN:
+            func_02005a78(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
             return 0;
-        case 55: 
-            func_02005a78(param3->field02, FX_AtanIdx(param3->field08[0]) * 360 / (1 << 4), param1, param2);
+        case FX_COS:
+            func_02005a78(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
             return 0;
-        case 43:
-            func_02005a78(param3->field02, param3->field08[0] + param3->field08[1], param1, param2);
+        case FX_ATAN: 
+            func_02005a78(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 4), sys, ctx);
             return 0;
-        case 44:
-            func_02005a78(param3->field02, param3->field08[0] - param3->field08[1], param1, param2);
+        case FX_ADD:
+            func_02005a78(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
             return 0;
-        case 45:
-            func_02005a78(param3->field02, FX_MUL(param3->field08[0], param3->field08[1]), param1, param2);
+        case FX_SUB:
+            func_02005a78(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
             return 0;
-        case 46:
-            func_02005a78(param3->field02, FX_Div(param3->field08[0], param3->field08[1]), param1, param2);
+        case FX_MUL:
+            func_02005a78(inst->destVar, FX_MUL(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
-        case 47:
-            func_02005a78(param3->field02, FX_ModS32(param3->field08[0], param3->field08[1]), param1, param2);
+        case FX_DIV:
+            func_02005a78(inst->destVar, FX_Div(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
-        case 56: 
-            func_02005a78(param3->field02, FX_Atan2Idx(param3->field08[0], param3->field08[1]) * 360 / (1 << 4), param1, param2);
+        case FX_MOD:
+            func_02005a78(inst->destVar, FX_ModS32(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
-        case 64:
+        case FX_ATAN2: 
+            func_02005a78(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
+            return 0;
+        case OP64:
             func_02005da0(&data_02056504, -1);
             data_02056504.field00 |= 2;
             return 0;
-        case 65:
-            ret = func_02018974(param3->field08[0]);
-            func_02005a78(param3->field02, ret, param1, param2);
+        case OP65:
+            val = addCoins(inst->args[0]);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
-        case 66: {
+        case ADD_COINS: {
             u16 old = data_020563e4.field20;
-            u32 sum = old + param3->field08[0];
+            u32 sum = old + inst->args[0];
 
             if (sum > 999) {
                 data_020563e4.field20 = 999;
@@ -499,178 +498,178 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
                 data_020563e4.field20 = sum;
             }
 
-            func_02005a78(param3->field02, data_020563e4.field20 - old, param1, param2);
+            func_02005a78(inst->destVar, data_020563e4.field20 - old, sys, ctx);
             return 0;
         }
-        case 67:
-            if ((param3->field08[0] & 0x3000) == 0x3000) {
-                ret = (data_02055fe4.field4c3 >> (param3->field08[0] & 0xfff)) & 1;
+        case GET_FLAG:
+            if ((inst->args[0] & 0x3000) == 0x3000) {
+                val = (data_02055fe4.field4c3 >> (inst->args[0] & 0xfff)) & 1;
             } else {
-                ret = func_02018824(param3->field08[0]);
+                val = getItemCount(inst->args[0]);
             }
 
-            func_02005a78(param3->field02, ret, param1, param2);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
-        case 68:
-            ret = func_02018878(param3->field08[0], param3->field08[1]);
-            func_02005a78(param3->field02, ret, param1, param2);
+        case OP68:
+            val = addItem(inst->args[0], inst->args[1]);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
-        case 69: {
-            UnkGlobal_02056370 *obj = &data_02056370.tbl[param3->field08[0]];
-            UnkStruct_02019360 local;
+        case ACTOR_GET: {
+            PlayerStatus *player = &gParty.party[inst->args[0]];
+            ExpCounter local;
 
-            switch (param3->field08[1]) {
+            switch (inst->args[1]) {
                 case 0:
-                    ret = obj->field02[0];
+                    val = player->stats[0];
                     break;
                 case 1:
-                    ret = obj->field02[1];
+                    val = player->stats[1];
                     break;
                 case 2:
-                    ret = obj->field02[2];
+                    val = player->stats[2];
                     break;
                 case 3:
-                    ret = obj->field02[3];
+                    val = player->stats[3];
                     break;
                 case 4:
-                    ret = obj->field02[4];
+                    val = player->stats[4];
                     break;
                 case 5:
-                    ret = obj->field02[5];
+                    val = player->stats[5];
                     break;
                 case 6:
-                    ret = obj->field02[6];
+                    val = player->stats[6];
                     break;
                 case 7:
-                    ret = obj->field02[7];
+                    val = player->stats[7];
                     break;
                 case 8:
-                    ret = obj->field02[8];
+                    val = player->stats[8];
                     break;
                 case 9:
-                    ret = obj->field02[9];
+                    val = player->stats[9];
                     break;
                 case 10:
-                    ret = obj->field02[10];
+                    val = player->stats[10];
                     break;
                 case 11:
-                    ret = obj->field02[11];
+                    val = player->stats[11];
                     break;
                 case 12:
-                    ret = obj->field02[12];
+                    val = player->stats[12];
                     break;
                 case 13:
-                    ret = obj->field02[13];
+                    val = player->stats[13];
                     break;
                 case 14:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_020194c4(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetRank(&local);
                     break;
                 case 15:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_02019564(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetLevel(&local);
                     break;
                 case 16:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_02019574(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetLevelIdx(&local);
                     break;
                 case 17:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_020195a4(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetIntoLevel(&local);
                     break;
                 case 18:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_02019618(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetExp(&local);
                     break;
                 case 19:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_020195d4(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetLevelCost(&local);
                     break;
                 case 20:
-                    func_02019360(&local, param3->field08[0], obj->field20 >> 8);
-                    ret = func_02019620(&local);
+                    expInit(&local, inst->args[0], player->levelExp >> 8);
+                    val = expGetNext(&local);
                     break;
                 case 21:
-                    ret = obj->field24 >> 24;
+                    val = player->expSlots >> 24;
                     break;
                 case 22:
-                    ret = obj->field28[0] | 0x4000;
+                    val = player->gear[0] | ID_GEAR;
                     break;
                 case 23:
-                    ret = obj->field28[1] | 0x4000;
+                    val = player->gear[1] | ID_GEAR;
                     break;
                 case 24:
-                    ret = obj->field28[2] | 0x4000;
+                    val = player->gear[2] | ID_GEAR;
                     break;
                 case 25:
-                    ret = obj->field2c | 0x3000;
+                    val = player->badge | ID_BADGE;
                     break;
             }
 
-            func_02005a78(param3->field02, ret, param1, param2);
+            func_02005a78(inst->destVar, val, sys, ctx);
             return 0;
         }
-        case 70: {
-            s32 id = param3->field08[0];
-            s32 val = param3->field08[2];
-            UnkGlobal_02056370 *obj = &data_02056370.tbl[id];
-            UnkStruct_02019360 local;
+        case ACTOR_SET: {
+            s32 id = inst->args[0];
+            s32 val = inst->args[2];
+            PlayerStatus *player = &gParty.party[id];
+            ExpCounter local;
 
-            switch (param3->field08[1]) {
+            switch (inst->args[1]) {
                 case 0:
-                    obj->field02[0] = val;
-                    func_02019028(id);
+                    player->stats[0] = val;
+                    refreshStats(id);
                     break;
                 case 1:
-                    obj->field02[1] = val;
-                    func_02019028(id);
+                    player->stats[1] = val;
+                    refreshStats(id);
                     break;
                 case 2:
-                    obj->field02[2] = val;
-                    func_02019028(id);
+                    player->stats[2] = val;
+                    refreshStats(id);
                     break;
                 case 3:
-                    obj->field02[3] = val;
-                    func_02019028(id);
+                    player->stats[3] = val;
+                    refreshStats(id);
                     break;
                 case 4:
-                    obj->field02[4] = val;
-                    func_02019028(id);
+                    player->stats[4] = val;
+                    refreshStats(id);
                     break;
                 case 5:
-                    obj->field02[5] = val;
-                    func_02019028(id);
+                    player->stats[5] = val;
+                    refreshStats(id);
                     break;
                 case 7:
-                    obj->field02[7] = val;
-                    func_02019028(id);
+                    player->stats[7] = val;
+                    refreshStats(id);
                     break;
                 case 9:
-                    obj->field02[9] = val;
-                    func_02019028(id);
+                    player->stats[9] = val;
+                    refreshStats(id);
                     break;
                 case 17: {
-                    obj->field20 = (obj->field20 & 0xff) | (val << 8);
-                    func_02019360(&local, id, obj->field20 >> 8);
+                    player->levelExp = (player->levelExp & 0xff) | (val << 8);
+                    expInit(&local, id, player->levelExp >> 8);
 
-                    obj->field20 = (obj->field20 & ~0xff) | (func_02019564(&local) & 0xff);
-                    func_02019028(id);
+                    player->levelExp = (player->levelExp & ~0xff) | (expGetLevel(&local) & 0xff);
+                    refreshStats(id);
                     break;
                 }
                 case 21:
-                    obj->field24 = (obj->field24 & 0x00ffffff) | (val << 24);
+                    player->expSlots = (player->expSlots & 0x00ffffff) | (val << 24);
                     break;
                 case 22:
-                    func_02018ec4(id, val, 0);
+                    equipGear(id, val, 0);
                     break;
                 case 23:
-                    func_02018ec4(id, val, 1);
+                    equipGear(id, val, 1);
                     break;
                 case 24:
-                    func_02018ec4(id, val, 2);
+                    equipGear(id, val, 2);
                     break;
                 case 25:
-                    func_02019058(id, val);
+                    equipBadge(id, val);
                     break;
             }
             return 0;
@@ -680,66 +679,66 @@ u32 func_02016254(clGlobalEvent * param1, UnkStruct_02015f0c_01 * param2, UnkStr
 
     }
 
-    return param1->fn_10(param2, param3);
+    return sys->execCustom(ctx, inst);
 }
 
 // MATCHED 100%
-u32 clGlobalEvent::fn_10(UnkStruct_02015f0c_01 * param2, UnkStruct_02015f0c_02 * param3) {
+u32 clGlobalEvent::execCustom(EventContext * param1, EventInstruction * param2) {
     return 1;
 }
 
 // MATCHED 100%
-u32 clGlobalEvent::fn_14() {
+s32 clGlobalEvent::getCustomVariable(EventContext * ctx, u32 id) {
     return 0;
 }
 
 // MATCHED 100%
-void clGlobalEvent::fn_18() {}
+void clGlobalEvent::setCustomVariable(EventContext * ctx, u32 id, s32 value) {}
 
 // MATCHED 100%
-s32 clGlobalEvent::fn_0c(UnkStruct_02015f0c_01 * param2, u32 param3) {
+s32 clGlobalEvent::getVar(EventContext * param2, u32 param3) {
     return func_020058bc(param3, this, param2);
 }
 
 // MATCHED 100%
-bool func_02017634(s32 param1, s32 param2, s32 param3) {
-    switch (param1) {
+bool evalCompare(s32 op, s32 lhs, s32 rhs) {
+    switch (op) {
         case 0:
-            return (param2 == param3);
+            return (lhs == rhs);
         case 1:
-            return (param2 != param3);
+            return (lhs != rhs);
         case 2:
-            return (param2 < param3);
+            return (lhs < rhs);
         case 3:
-            return (param2 > param3);
+            return (lhs > rhs);
         case 4:
-            return (param2 <= param3);
+            return (lhs <= rhs);
         case 5:
-            return (param2 >= param3);
+            return (lhs >= rhs);
         case 6:
-            return ((param2 & param3) != 0);
+            return ((lhs & rhs) != 0);
         case 7:
-            return ((param2 | param3) != 0);
+            return ((lhs | rhs) != 0);
         case 8:
-            return ((param2 ^ param3) != 0);
+            return ((lhs ^ rhs) != 0);
         case 9:
-            return (param2 == 0);
+            return (lhs == 0);
         case 10:
-            return (param2 != -1);
+            return (lhs != -1);
     }
 
     return 0;
 }
 
 // MATCHED 100%
-void func_02017728(UnkStruct_02015f0c_01 * param1, u8 * param2) {
-    param1->field00 = param2;
+void initContext(EventContext * ctx, u8 * code) {
+    ctx->pc = code;
 
-    func_01ff8228(param1->field24, 0, 0x40);
+    func_01ff8228(ctx->locals, 0, sizeof(ctx->locals));
 
-    param1->field64[0] = 0;
-    param1->fielda8 = 0;
-    param1->fieldaa = 0;
+    ctx->flags = 0;
+    ctx->sp = 0;
+    ctx->waitFrames = 0;
 }
 
 } // extern "C"

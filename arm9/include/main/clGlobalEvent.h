@@ -6,73 +6,89 @@
 #ifdef __cplusplus
 
 typedef struct {
-    u8 field00;
-    u8 opcodes[0xf];
-} UnkStruct_02015f0c_00_04;
+    u8 argInfo;
+    u8 argTypes[0xf];
+} EventOpInfo;
 
-typedef struct UnkStruct_02015f0c_01 {
-    u8 * field00;
-    u8 pad_04[0x20];
-    u32 field24[16];
+#define EV_ARG_COUNT(x) ((x) & 0x7f)
+#define EV_HAS_DEST(x)  ((x) & 0x80)
+
+typedef struct EventContext {
+    u8 * pc;
+    u32 args[8];
+    u32 locals[16];
     union {
-        u8 * field64[17];
+        u8 * stackTop[17];
         struct {
-            u8 pad_64[4];
-            u8 * field68[16];
+            u32  flags;
+            u8 * stack[16];
         };
     };
-    u16 fielda8;
-    u16 fieldaa;
-} UnkStruct_02015f0c_01;
+    u16 sp;
+    u16 waitFrames;
+} EventContext;
 
-typedef struct UnkStruct_02015f0c_02 {
-    u16 field00;
-    u16 field02;
-    u32 field04;
-    s32 field08[24];
-} UnkStruct_02015f0c_02;
+enum Opcode {
+    END, RET,
+    BRANCH_IF, JUMP,
+    WAIT,
+    PUSH, POP_TO_VAR,
+    LOOP,
+    MOV,
+    ADD, SUB, MUL, DIV, MOD,
+    SHL, SHR,
+    AND, OR, XOR, NEG,
+    LNOT, BNOT,
+    INC, DEC,
+    ADD_EQ, SUB_EQ, MUL_EQ, DIV_EQ, MOD_EQ,
+    SHL_EQ, SHR_EQ,
+    AND_EQ, OR_EQ, XOR_EQ,
+    SQRT, INVSQRT, INV,
+    SIN, COS, ATAN, ATAN2,
+    RAND,
+    MOV_FX,
+    FX_ADD, FX_SUB, FX_MUL, FX_DIV, FX_MOD,
+    FX_TRUNC, FX_FLOOR,
+    FX_SQRT, FX_INVSQRT, FX_INV,
+    FX_SIN, FX_COS, FX_ATAN, FX_ATAN2,
+    TABLE_GET, BYTE_GET,
+    NOOP59, NOOP60, NOOP61, NOOP62, NOOP63, // op 59-63 are noops??
+    OP64, OP65, // unknown opcode
+    ADD_COINS,
+    GET_FLAG,
+    OP68,   // unknown opcode
+    ACTOR_GET, ACTOR_SET,
+};
+
+typedef struct EventInstruction {
+    u16 opcode;
+    u16 destVar;
+    u32 varArgMask;
+    s32 args[24];
+} EventInstruction;
 
 class clScriptSystem {
 public:
-    UnkStruct_02015f0c_00_04 * field04;
-    u32 field08;
-    u8 pad_0c[0x14];
-    u32 field20;
-    u32 field24;
+    EventOpInfo * opInfo;
+    u32 vars[32];
 
-    clScriptSystem();
+    clScriptSystem();  // 0x02015ebc
+    virtual ~clScriptSystem();  // D1 0x02015ee8 D0 0x02015eec D2 0x02015f00
 
-    virtual ~clScriptSystem();
-
-    virtual void m08(UnkStruct_02015f0c_00_04 * param);  // 0x02015f04
+    virtual void setOpInfo(EventOpInfo *);  // 0x02015f04
 };
 
 class clGlobalEvent : public clScriptSystem {
-public:
-    u8 pad_04[0x20];
-    u32 field24[16];
-    union {
-        u8 * field64[17];
-        struct {
-            u8 pad_64[4];
-            u8 * field68[16];
-        };
-    };
-    u16 fielda8;
-    u16 fieldaa;
+public:    
+    clGlobalEvent();  // C1 0x02016160
+    virtual ~clGlobalEvent();  // D1 0x02016190 D0 0x020161a4 D2 0x020161c0
     
-    clGlobalEvent();
-
-    virtual ~clGlobalEvent();
-    
-    virtual s32  fn_0c(UnkStruct_02015f0c_01 *, u32);  // 0x02017614
-    virtual u32  fn_10(UnkStruct_02015f0c_01 *, UnkStruct_02015f0c_02 *);  // 0x02017600
-    virtual u32  fn_14();  // 0x02017608
-    virtual void fn_18();  // 0x02017610
+    virtual s32  getVar(EventContext *, u32);  // 0x02017614
+    virtual u32  execCustom(EventContext *, EventInstruction *);  // 0x02017600
+    virtual s32  getCustomVariable(EventContext *, u32);  // 0x02017608
+    virtual void setCustomVariable(EventContext *, u32, s32);  // 0x02017610
 };
 
 #endif // __cplusplus
-
-u16 * func_02018538(s32 param1);  // 0x02018538
 
 #endif

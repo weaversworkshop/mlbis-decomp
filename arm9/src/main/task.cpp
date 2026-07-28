@@ -8,28 +8,25 @@ extern "C" {
 
 #include <nitro/os.h>
 
-// --- Function Declarations --- //
+// --- Variable Definitions --- //
 
-void func_0201a630();
-void func_0201a67c();  // 0x0201a67c
-void func_0201a974();
-void func_0201a9a4(clVBlankTask *task);
+TaskManager taskMgr;  // 0x0205ba70
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-clTask::clTask(u8 param1, u32 param2, u32 param3) {
-    clTask * task = data_0205ba70.taskHead;
+clTask::clTask(u8 priority, u32 param2, u32 param3) {
+    clTask * task = taskMgr.taskHead;
 
     if (task == NULL) {
-        data_0205ba70.taskHead = this;
+        taskMgr.taskHead = this;
         this->next = NULL;
         this->prev = NULL;
     } else {
         while (TRUE) {
-            if (task->priority > param1) {
+            if (task->priority > priority) {
                 if (task->next == NULL) {
-                    data_0205ba70.taskHead = this;
+                    taskMgr.taskHead = this;
                     this->next = NULL;
                 } else {
                     task->next->prev = this;
@@ -54,14 +51,14 @@ clTask::clTask(u8 param1, u32 param2, u32 param3) {
 
     this->field04 = param3;
     this->field10 = 0;
-    this->priority = param1;
-    this->field12_00 = 1;
-    this->field12_01 = 1;
-    this->field12_02 = 1;
-    this->field12_06 = 0;
-    this->field14 = 0;
+    this->priority = priority;
+    this->enabled = 1;
+    this->hasRan = 1;
+    this->rate = 1;
+    this->counter = 0;
+    this->numRuns = 0;
 
-    data_0205ba70.taskCount++;
+    taskMgr.taskCount++;
 }
 
 // MATCHED 100%
@@ -71,71 +68,71 @@ clTask::~clTask() {
     }
 
     if (this->next == NULL) {
-        data_0205ba70.taskHead = this->prev;
+        taskMgr.taskHead = this->prev;
     } else {
         this->next->prev = this->prev;
     }
 
-    data_0205ba70.taskCount--;
+    taskMgr.taskCount--;
 
-    if (data_0205ba70.field04 == this) {
-        data_0205ba70.field04 = NULL;
+    if (taskMgr.taskCur == this) {
+        taskMgr.taskCur = NULL;
     }
 
-    if (data_0205ba70.field08 == this) {
-        data_0205ba70.field08 = this->prev;
+    if (taskMgr.taskNext == this) {
+        taskMgr.taskNext = this->prev;
     }
 }
 
 // MATCHED 100%
-void clTask::func_0201a5f4() {
-    this->field12_00 = 0;
-    this->field12_01 = 1;
+void clTask::disable() {
+    this->enabled = 0;
+    this->hasRan = 1;
 }
 
 // MATCHED 100%
-void clTask::func_0201a610() {
-    this->field12_00 = 1;
-    this->field12_01 = 1;
+void clTask::enable() {
+    this->enabled = 1;
+    this->hasRan = 1;
 }
 
 // MATCHED 100%
-void func_0201a630() {
-    clTask * task = data_0205ba70.taskHead;
+void disableAllTasks() {
+    clTask * task = taskMgr.taskHead;
 
     while (task != NULL) {
         u8 r0 = task->priority;
         if (task->priority != 0 && task->priority != 0xff) {
-            task->field12_00 = 0;
-            task->field12_01 = 1;
+            task->enabled = 0;
+            task->hasRan = 1;
         }
         task = task->prev;
     }
 }
 
 // MATCHED 100%
-void func_0201a67c() {
-    data_0205ba70.taskCount = 0;
-    data_0205ba70.taskHead = NULL;
-    data_0205ba70.field04 = NULL;
-    data_0205ba70.field08 = NULL;
+void resetTasks() {
+    taskMgr.taskCount = 0;
+    taskMgr.taskHead = NULL;
+    taskMgr.taskCur = NULL;
+    taskMgr.taskNext = NULL;
 }
 
 // MATCHED 100%
 clVBlankTask::clVBlankTask(u8 param1, u32 param2, u32 param3) {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
-    clVBlankTask * task = data_0205ba70.vblHead;
+    clVBlankTask * task = taskMgr.vblHead;
 
     if (task == NULL) {
-        data_0205ba70.vblHead = this;
+        taskMgr.vblHead = this;
         this->next = NULL;
         this->prev = NULL;
     } else {
         while (TRUE) {
             if (task->priority > param1) {
                 if (task->next == NULL) {
-                    data_0205ba70.vblHead = this;
+                    taskMgr.vblHead = this;
                     this->next = NULL;
                 } else {
                     task->next->prev = this;
@@ -161,11 +158,11 @@ clVBlankTask::clVBlankTask(u8 param1, u32 param2, u32 param3) {
     this->field04 = param3;
     this->field10 = 0;
     this->priority = param1;
-    this->field12_00 = 0;
-    this->field12_01 = 1;
-    this->field14 = 0;
+    this->enabled = 0;
+    this->hasRan = 1;
+    this->numRuns = 0;
 
-    data_0205ba70.vblCount++;
+    taskMgr.vblCount++;
 
     OS_EnableIrqMask(mask);
 }
@@ -177,41 +174,41 @@ clVBlankTask::~clVBlankTask() {
     }
 
     if (this->next == NULL) {
-        data_0205ba70.vblHead = this->prev;
+        taskMgr.vblHead = this->prev;
     } else {
         this->next->prev = this->prev;
     }
 
-    data_0205ba70.vblCount--;
+    taskMgr.vblCount--;
 
-    if (data_0205ba70.field0c == this) {
-        data_0205ba70.field0c = NULL;
+    if (taskMgr.vblCur == this) {
+        taskMgr.vblCur = NULL;
     }
 
-    if (data_0205ba70.field10 == this) {
-        data_0205ba70.field10 = this->prev;
+    if (taskMgr.vblNext == this) {
+        taskMgr.vblNext = this->prev;
     }
 }
 
 // MATCHED 100%
-void clVBlankTask::func_0201a8ec() {
+void clVBlankTask::enable() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
-    this->field12_00 = 1;
-    this->field12_01 = 1;
+    this->enabled = 1;
+    this->hasRan = 1;
 
     OS_EnableIrqMask(mask);
 }
 
 // MATCHED 100%
-void func_0201a91c() {
+void disableAllVBlankTasks() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
-    clVBlankTask * task = data_0205ba70.vblHead;
+    clVBlankTask * task = taskMgr.vblHead;
 
     while (task != NULL) {
         if (task->priority != 0 &&  task->priority != 0xff) {
-            task->field12_00 = 0;
-            task->field12_01 = 1;
+            task->enabled = 0;
+            task->hasRan = 1;
         }
         task = task->prev;
     }
@@ -220,19 +217,19 @@ void func_0201a91c() {
 }
 
 // MATCHED 100%
-void func_0201a974() {
+void resetVBlankTasks() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
-    data_0205ba70.vblCount = 0;
-    data_0205ba70.vblHead = NULL;
-    data_0205ba70.field0c = NULL;
-    data_0205ba70.field10 = NULL;
+    taskMgr.vblCount = 0;
+    taskMgr.vblHead = NULL;
+    taskMgr.vblCur = NULL;
+    taskMgr.vblNext = NULL;
 
     OS_EnableIrqMask(mask);
 }
 
 // MATCHED 100%
-void func_0201a9a4(clVBlankTask * task) {
+void deleteVBlankTask(clVBlankTask * task) {
     if (task != NULL) {
         OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 

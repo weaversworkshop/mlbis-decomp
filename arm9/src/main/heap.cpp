@@ -18,215 +18,206 @@ extern void SDK_SYS_STACKSIZE(void);
 extern void SDK_AUTOLOAD_ITCM_END(void);
 extern void SDK_AUTOLOAD_DTCM_END(void);
 
-// --- Function Declarations --- //
+// --- Variable Definitions --- //
 
-void func_02019c90(void);
-void func_02019e10(UnkGlobal_0205b7f8 * param1);  // 0x02019e10
-void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag);
-void func_0201a058(void * param1);
-void func_0201a180(UnkHeader_0201a058 * param1, UnkHeader_0201a058 * param2);  // 0x0201a180
-s32 func_0201a1c0(s32 param1, u32 param2, void * param3, u32 param4);  // 0x0201a1c0
-void func_0201a258(s32 param1);  // 0x0201a258
-void func_0201a2bc(void * param1);  // 0x0201a2bc
-void func_0201a2e0(u32 param1, void * param2);  // 0x0201a2e0
+Heap heaps[32];  // 0x0205b7f0
 
 } // extern "C"
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_02019c90() {
-    cpu_clear32(0, &data_0205b7f0, 0x280);
+void initHeaps() {
+    cpu_clear32(0, &heaps, 32 * sizeof(Heap));
 
-    u32 base0 = ((u32)SDK_MAIN_ARENA_LO + 0x1f) & ~0x1f;
-    u32 end0 = HW_MAIN_MEM_MAIN_END - 0xc;
-    data_0205b7f0[0].field00[0][0] = (UnkHeader_0201a058 *)base0;
-    data_0205b7f0[0].field00[0][1] = (UnkHeader_0201a058 *)end0;
+    u32 mainLo = ((u32)SDK_MAIN_ARENA_LO + 0x1f) & ~0x1f;
+    u32 mainTail = HW_MAIN_MEM_MAIN_END - sizeof(HeapBlock);
+    heaps[0].bounds[0][0] = (HeapBlock *)mainLo;
+    heaps[0].bounds[0][1] = (HeapBlock *)mainTail;
     
-    u32 itcmBase = (u32)SDK_AUTOLOAD_ITCM_END;
-    u32 itcmTop = HW_ITCM_END - 0x18;
-    u32 dtcmFloor = HW_DTCM + 0x3f80 - (u32)SDK_IRQ_STACKSIZE - (u32)SDK_SYS_STACKSIZE;
-    u32 size1 = itcmTop - itcmBase;
-    u32 size0 = end0 - 0xc - base0;
-    data_0205b7f0[1].field00[0][0] = (UnkHeader_0201a058 *)itcmBase;
-    u32 end1 = HW_ITCM_END - 0xc;
-    data_0205b7f0[1].field00[0][1] = (UnkHeader_0201a058 *)end1;
+    u32 itcmLo = (u32)SDK_AUTOLOAD_ITCM_END;
+    u32 itcmPayloadEnd = HW_ITCM_END - 2 * sizeof(HeapBlock);
+    u32 stackBottom = HW_DTCM_IRQ_STACK_END - (u32)SDK_IRQ_STACKSIZE - (u32)SDK_SYS_STACKSIZE;
+    u32 itcmSize = itcmPayloadEnd - itcmLo;
+    u32 mainSize = mainTail - sizeof(HeapBlock) - mainLo;
+    heaps[1].bounds[0][0] = (HeapBlock *)itcmLo;
+    u32 itcmTail = HW_ITCM_END - sizeof(HeapBlock);
+    heaps[1].bounds[0][1] = (HeapBlock *)itcmTail;
 
-    u32 dtcmBase = (u32)SDK_AUTOLOAD_DTCM_END;
-    u32 end2 = dtcmFloor - 0x100c;
-    u32 size2 = dtcmFloor - 0x1000 - dtcmBase;
-    data_0205b7f0[2].field00[0][0] = (UnkHeader_0201a058 *)dtcmBase;
-    data_0205b7f0[2].field00[0][1] = (UnkHeader_0201a058 *)end2;
+    u32 dtcmLo = (u32)SDK_AUTOLOAD_DTCM_END;
+    u32 dtcmTail = stackBottom - DTCM_STACK_RESERVE - sizeof(HeapBlock);
+    u32 dtcmSize = stackBottom - DTCM_STACK_RESERVE - dtcmLo;
+    heaps[2].bounds[0][0] = (HeapBlock *)dtcmLo;
+    heaps[2].bounds[0][1] = (HeapBlock *)dtcmTail;
 
-    u32 sharedBase = HW_MAIN_MEM_SHARED;
-    u32 sharedEnd = HW_MAIN_MEM_SYSTEM - 0xc;
-    data_0205b7f0[3].field00[0][0] = (UnkHeader_0201a058 *)sharedBase;
-    data_0205b7f0[3].field00[0][1] = (UnkHeader_0201a058 *)sharedEnd;
+    u32 sharedLo = HW_MAIN_MEM_SHARED;
+    u32 sharedTail = HW_MAIN_MEM_SYSTEM - sizeof(HeapBlock);
+    heaps[3].bounds[0][0] = (HeapBlock *)sharedLo;
+    heaps[3].bounds[0][1] = (HeapBlock *)sharedTail;
 
-    data_0205b7f0[0].field00[1][0] = (UnkHeader_0201a058 *)base0;
-    data_0205b7f0[0].field00[1][1] = (UnkHeader_0201a058 *)end0;
-    data_0205b7f0[1].field00[1][0] = (UnkHeader_0201a058 *)itcmBase;
-    data_0205b7f0[1].field00[1][1] = (UnkHeader_0201a058 *)end1;
-    data_0205b7f0[2].field00[1][0] = (UnkHeader_0201a058 *)dtcmBase;
-    data_0205b7f0[2].field00[1][1] = (UnkHeader_0201a058 *)end2;
-    data_0205b7f0[3].field00[1][0] = (UnkHeader_0201a058 *)sharedBase;
-    data_0205b7f0[3].field00[1][1] = (UnkHeader_0201a058 *)sharedEnd;
+    heaps[0].bounds[1][0] = (HeapBlock *)mainLo;
+    heaps[0].bounds[1][1] = (HeapBlock *)mainTail;
+    heaps[1].bounds[1][0] = (HeapBlock *)itcmLo;
+    heaps[1].bounds[1][1] = (HeapBlock *)itcmTail;
+    heaps[2].bounds[1][0] = (HeapBlock *)dtcmLo;
+    heaps[2].bounds[1][1] = (HeapBlock *)dtcmTail;
+    heaps[3].bounds[1][0] = (HeapBlock *)sharedLo;
+    heaps[3].bounds[1][1] = (HeapBlock *)sharedTail;
 
-    data_0205b7f0[0].field10_00 = size0;
-    data_0205b7f0[1].field10_00 = size1;
-    data_0205b7f0[2].field10_00 = size2 - 0x18;
-    data_0205b7f0[3].field10_00 = 0xbe8;
+    heaps[0].size = mainSize;
+    heaps[1].size = itcmSize;
+    heaps[2].size = dtcmSize - 2 * sizeof(HeapBlock);
+    heaps[3].size = HW_MAIN_MEM_SYSTEM - HW_MAIN_MEM_SHARED - 2 * sizeof(HeapBlock);
 
-    data_0205b7f0[0].field10_27 = 0;
-    data_0205b7f0[1].field10_27 = 1;
-    data_0205b7f0[2].field10_27 = 2;
-    data_0205b7f0[3].field10_27 = 3;
+    heaps[0].slot = 0;
+    heaps[1].slot = 1;
+    heaps[2].slot = 2;
+    heaps[3].slot = 3;
 
-    UnkGlobal_0205b7f8 * d = data_0205b7f0;
+    Heap * d = heaps;
     for (s32 i = 4; i > 0; i--) {
-        func_02019e10(d);
+        initHeapBlocks(d);
         d++;
     }
 }
 
 // MATCHED 100%
-void func_02019e10(UnkGlobal_0205b7f8 * param1) {
-    UnkHeader_0201a058 * node = param1->field00[0][0];
-    node->field00 = NULL;
-    node->field04 = param1->field00[0][1];
-    node->field08_size = param1->field10_00 | 0x2000000;
-    node->field08_heap = param1->field10_27 * 2;
+void initHeapBlocks(Heap * heap) {
+    HeapBlock * node = heap->bounds[0][0];
+    node->prev = NULL;
+    node->next = heap->bounds[0][1];
+    node->sizeFree = heap->size | 0x2000000;
+    node->heapId = heap->slot * 2;
 
-    node = param1->field00[0][1];
-    node->field00 = param1->field00[0][0];
-    node->field04 = NULL;
-    node->field08_size = param1->field10_00;
-    node->field08_heap = param1->field10_27 * 2 + 1;
+    node = heap->bounds[0][1];
+    node->prev = heap->bounds[0][0];
+    node->next = NULL;
+    node->sizeFree = heap->size;
+    node->heapId = heap->slot * 2 + 1;
 }
 
 // MATCHED 100%
-void * func_02019eac(s32 heap, u32 size, void * ptr, u32 flag) {
-    s32 idx;
-    u32 sz;
-    s32 offset;
-    u32 r6;
-    UnkHeader_0201a058 * r14;
+void * heapAlloc(s32 heapId, u32 size, void * ptr, BOOL useFrontier) {
+    s32 dir;
+    u32 blockSize;
+    s32 tmp;
+    u32 searchFwd;
+    HeapBlock * block;
 
     if (size != 0) {
-        offset = heap / 2;
-        idx = heap & 1;
-        if (flag == 1) {
-            r14 = data_0205b7f0[offset].field00[1][idx];
+        tmp = heapId / 2;
+        dir = heapId & 1;
+        if (useFrontier == TRUE) {
+            block = heaps[tmp].bounds[1][dir];
         } else {
-            r14 = data_0205b7f0[offset].field00[0][idx];
+            block = heaps[tmp].bounds[0][dir];
         }
 
-        if (idx != 0) {
-            r14 = r14->field00;
+        if (dir != 0) {
+            block = block->prev;
         }
 
         size = (size + 3) & ~3;
 
-        r6 = (idx == 0);
+        searchFwd = (dir == 0);
         do {
-            sz = r14->field08_00;
-            if (r14->field08_25 != 0 && sz >= size) {
-                offset = size + 0xc;
-                if (sz > offset) {
-                    if (idx == 0) {
+            blockSize = block->size;
+            if (block->free != 0 && blockSize >= size) {
+                tmp = size + sizeof(HeapBlock);
+                if (blockSize > tmp) {
+                    if (dir == 0) {
 
-                        UnkHeader_0201a058 * r2 = (UnkHeader_0201a058 *)((u8 *)r14 + 0xc + size);
-                        r2->field08_size = (sz - offset) | 0x2000000;
-                        r2->field00 = r14;
+                        HeapBlock * rest = (HeapBlock *)((u8 *)block + sizeof(HeapBlock) + size);
+                        rest->sizeFree = (blockSize - tmp) | 0x2000000;
+                        rest->prev = block;
 
-                        UnkHeader_0201a058 * f4 = r14->field04;
-                        r2->field04 = f4;
+                        HeapBlock * next = block->next;
+                        rest->next = next;
 
-                        if (f4 != NULL) {
-                            f4->field00 = r2;
+                        if (next != NULL) {
+                            next->prev = rest;
                         }
 
-                        r14->field08_size = size;
-                        r14->field04 = r2;
+                        block->sizeFree = size;
+                        block->next = rest;
 
-                        if (data_0205b7f0[heap / 2].field00[1][0] < r2) {
-                            data_0205b7f0[heap / 2].field00[1][0] = r2;
+                        if (heaps[heapId / 2].bounds[1][0] < rest) {
+                            heaps[heapId / 2].bounds[1][0] = rest;
                         }
                     } else {
-                        UnkHeader_0201a058 * old = r14;
-                        r14 = (UnkHeader_0201a058 *)((u8 *)r14 + (sz - size));
-                        r14->field08_size = size;
-                        r14->field00 = old;
+                        HeapBlock * base = block;
+                        block = (HeapBlock *)((u8 *)block + (blockSize - size));
+                        block->sizeFree = size;
+                        block->prev = base;
 
-                        UnkHeader_0201a058 * neighbor = old->field04;
-                        r14->field04 = neighbor;
+                        HeapBlock * neighbor = base->next;
+                        block->next = neighbor;
 
                         if (neighbor != NULL) {
-                            neighbor->field00 = r14;
+                            neighbor->prev = block;
                         }
 
-                        size = sz - (size + 0xc);
+                        size = blockSize - (size + sizeof(HeapBlock));
 
-                        old->field08_size = size | 0x2000000;
-                        old->field04 = r14;
+                        base->sizeFree = size | 0x2000000;
+                        base->next = block;
 
-                        if (data_0205b7f0[heap / 2].field00[1][1] > r14) {
-                            data_0205b7f0[heap / 2].field00[1][1] = r14;
+                        if (heaps[heapId / 2].bounds[1][1] > block) {
+                            heaps[heapId / 2].bounds[1][1] = block;
                         }
                     }
                 } else {
-                    r14->field08_size = sz;
+                    block->sizeFree = blockSize;
                 }
 
-                r14->field08_25 = 0;
-                r14->field08_heap = heap;
+                block->free = 0;
+                block->heapId = heapId;
 
-                return (void *)((u8 *)r14 + 0xc);
+                return (void *)((u8 *)block + sizeof(HeapBlock));
             }
-            r14 = (r6 != 0) ? r14->field04 : r14->field00;
-        } while (r14 != NULL);
+            block = (searchFwd != 0) ? block->next : block->prev;
+        } while (block != NULL);
     }
 
     return NULL;
 }
 
 // MATCHED 100%
-void func_0201a058(void * param1) {
-    if (param1 == NULL) {
+void heapFree(void * ptr) {
+    if (ptr == NULL) {
         return;
     }
 
-    UnkHeader_0201a058 * header = GET_HEADER(param1);
-    UnkHeader_0201a058 * r5 = header->field00;
-    UnkHeader_0201a058 * r6 = header->field04;
+    HeapBlock * block = GET_HEADER(ptr);
+    HeapBlock * prev = block->prev;
+    HeapBlock * next = block->next;
+    s32 heapId = block->heapId;
 
-    s32 r3 = header->field08_heap;
+    block->free = 1;
 
-    header->field08_25 = 1;
+    s32 slot = heapId / 2;
+    s32 dir = heapId & 1;
 
-    s32 r7 = r3 / 2;
-    s32 r8 = r3 & 1;
+    if (next != NULL && next->free != 0) {
+        mergeBlocks(block, next);
 
-    if (r6 != NULL && r6->field08_25 != 0) {
-        func_0201a180(header, r6);
-
-        if (r8 == 0) {
-            if (data_0205b7f0[r7].field00[1][0] == r6) {
-                data_0205b7f0[r7].field00[1][0] = header;
+        if (dir == 0) {
+            if (heaps[slot].bounds[1][0] == next) {
+                heaps[slot].bounds[1][0] = block;
             }
         }
     }
 
-    if (r5 != NULL && r5->field08_25 != 0) {
-        func_0201a180(r5, header);
+    if (prev != NULL && prev->free != 0) {
+        mergeBlocks(prev, block);
 
-        if (r8 == 0) {
-            if (data_0205b7f0[r7].field00[1][0] == header) {
-                data_0205b7f0[r7].field00[1][0] = r5;
+        if (dir == 0) {
+            if (heaps[slot].bounds[1][0] == block) {
+                heaps[slot].bounds[1][0] = prev;
             }
         } else {
-            if (data_0205b7f0[r7].field00[1][1] == header) {
-                data_0205b7f0[r7].field00[1][1] = header->field04;
+            if (heaps[slot].bounds[1][1] == block) {
+                heaps[slot].bounds[1][1] = block->next;
             }
         }
     }
@@ -234,100 +225,100 @@ void func_0201a058(void * param1) {
 
 // MATCHED 100%
 void * operator new(size_t size, u32 heap, void * ptr, u32 flag) {
-    return func_02019eac(heap, size, ptr, flag);
+    return heapAlloc(heap, size, ptr, flag);
 }
 
 // MATCHED 100%
 void * operator new[](size_t size, u32 heap, void * ptr, u32 flag) {
-    return func_02019eac(heap, size, ptr, flag);
+    return heapAlloc(heap, size, ptr, flag);
 }
 
 // MATCHED 100%
 void operator delete(void * param1) {
-    func_0201a058(param1);
+    heapFree(param1);
 }
 
 // MATCHED 100%
 void operator delete[](void * param1) {
-    func_0201a058(param1);
+    heapFree(param1);
 }
 
 // MATCHED 100%
-void func_0201a180(UnkHeader_0201a058 * param1, UnkHeader_0201a058 * param2) {
-    param1->field08_00 += param2->field08_00 + 0xc;
+void mergeBlocks(HeapBlock * block1, HeapBlock * block2) {
+    block1->size += block2->size + sizeof(HeapBlock);
 
-    UnkHeader_0201a058 * node = param2->field04;
-    param1->field04 = node;
+    HeapBlock * node = block2->next;
+    block1->next = node;
     if (node != NULL) {
-        node->field00 = param1;
+        node->prev = block1;
     }
 }
 
 // MATCHED 100%
-s32 func_0201a1c0(s32 param1, u32 param2, void * param3, u32 param4) {
-    void * addr = func_02019eac(param1, param2 + 0x18, NULL, param4);
-    if (addr == NULL) {
+s32 createHeap(s32 heapId, u32 size, void * ptr, BOOL useFrontier) {
+    void * region = heapAlloc(heapId, size + 2 * sizeof(HeapBlock), NULL, useFrontier);
+    if (region == NULL) {
         return -1;
     }
 
-    UnkGlobal_0205b7f8 * ptr = &data_0205b7f0[4];
-    for (s32 i = 4; i < 32; i++) {
-        if (ptr->field00[0][0] == NULL) {
-            ptr->field00[0][0] = (UnkHeader_0201a058 *)addr;
-            ptr->field00[1][0] = (UnkHeader_0201a058 *)addr;
-            ptr->field00[0][1] = (UnkHeader_0201a058 *)((u32)addr + param2 + 0xc);
-            ptr->field00[1][1] = (UnkHeader_0201a058 *)((u32)addr + param2 + 0xc);
+    Heap * heap = &heaps[4];
+    for (s32 slot = 4; slot < 32; slot++) {
+        if (heap->bounds[0][0] == NULL) {
+            heap->bounds[0][0] = (HeapBlock *)region;
+            heap->bounds[1][0] = (HeapBlock *)region;
+            heap->bounds[0][1] = (HeapBlock *)((u32)region + size + sizeof(HeapBlock));
+            heap->bounds[1][1] = (HeapBlock *)((u32)region + size + sizeof(HeapBlock));
 
-            ptr->field10_00 = param2;
-            ptr->field10_27 = i;
+            heap->size = size;
+            heap->slot = slot;
 
-            func_02019e10(ptr);
+            initHeapBlocks(heap);
 
-            return i*2;
+            return slot*2;
         }
 
-        ptr++;
+        heap++;
     }
 
-    func_0201a058(addr);
+    heapFree(region);
     return -1;
 }
 
 // MATCHED 100%
-void func_0201a258(s32 param1) {
-    func_0201a058(data_0205b7f0[param1 / 2].field00[0][0]);
+void destroyHeap(s32 heapId) {
+    heapFree(heaps[heapId / 2].bounds[0][0]);
 
-    data_0205b7f0[param1 / 2].field00[0][0] = NULL;
-    data_0205b7f0[param1 / 2].field00[0][1] = NULL;
-    data_0205b7f0[param1 / 2].field00[1][0] = NULL;
-    data_0205b7f0[param1 / 2].field00[1][1] = NULL;
+    heaps[heapId / 2].bounds[0][0] = NULL;
+    heaps[heapId / 2].bounds[0][1] = NULL;
+    heaps[heapId / 2].bounds[1][0] = NULL;
+    heaps[heapId / 2].bounds[1][1] = NULL;
 
-    data_0205b7f0[param1 / 2].field10_00 = 0;
+    heaps[heapId / 2].size = 0;
 }
 
 // MATCHED 100%
-void func_0201a2bc(void * param1) {
-    if (param1 == NULL) {
-        param1 = (void *)(((u32)SDK_MAIN_ARENA_LO + 0x1f) & ~0x1f);
+void setMainHeapBase(void * base) {
+    if (base == NULL) {
+        base = (void *)(((u32)SDK_MAIN_ARENA_LO + 0x1f) & ~0x1f);
     }
 
-    func_0201a2e0(0, param1);
+    rebaseHeap(0, base);
 }
 
 // MATCHED 100%
-void func_0201a2e0(u32 param1, void * param2) {
-    u32 r7 = ((u32)param2 + 0x1f) & ~0x1f;
-    UnkHeader_0201a058 * r6 = data_0205b7f0[param1].field00[0][0];
+void rebaseHeap(u32 slot, void * base) {
+    u32 r7 = ((u32)base + 0x1f) & ~0x1f;
+    HeapBlock * r6 = heaps[slot].bounds[0][0];
     
-    UnkHeader_0201a058 r5 = *r6;
+    HeapBlock r5 = *r6;
 
-    data_0205b7f0[param1].field00[0][0] = (UnkHeader_0201a058 *)r7;
-    data_0205b7f0[param1].field00[1][0] = (UnkHeader_0201a058 *)r7;
+    heaps[slot].bounds[0][0] = (HeapBlock *)r7;
+    heaps[slot].bounds[1][0] = (HeapBlock *)r7;
 
-    data_0205b7f0[param1].field10_00 += (u32)r6 - r7;
+    heaps[slot].size += (u32)r6 - r7;
 
-    *data_0205b7f0[param1].field00[0][0] = r5;
+    *heaps[slot].bounds[0][0] = r5;
 
-    data_0205b7f0[param1].field00[0][0]->field08_00 += (u32)r6 - r7;
-    data_0205b7f0[param1].field00[1][1]->field00 = data_0205b7f0[param1].field00[0][0];
+    heaps[slot].bounds[0][0]->size += (u32)r6 - r7;
+    heaps[slot].bounds[1][1]->prev = heaps[slot].bounds[0][0];
 }

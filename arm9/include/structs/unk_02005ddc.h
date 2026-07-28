@@ -3,7 +3,7 @@
 
     #include "types.h"
 
-    #include "structs/unk_0205afa8.h"
+    #include "main/system.h"
 
     typedef struct {
         union {
@@ -19,6 +19,6 @@
             };
         };
         u32 field04;
-        UnkGlobal_0205afa8 field08;
+        InputState field08;
     } UnkStruct_02005ddc;
 #endif
