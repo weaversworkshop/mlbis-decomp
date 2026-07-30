@@ -1690,7 +1690,7 @@ from:0x02094790 kind:load to:0x01ff9440 module:itcm
 from:0x020947b0 kind:load to:0x0209db14 module:overlay(124)
 from:0x020947b4 kind:load to:0x020a2aa8 module:overlay(124)
 from:0x020947b8 kind:load to:0x020a3738 module:overlay(124)
-from:0x020947bc kind:load to:0x02054e10 module:main
+from:0x020947bc kind:load to:0x02054e08 add:0x8 module:main
 from:0x020947c0 kind:load to:0x020a2520 module:overlay(124)
 from:0x020947c4 kind:load to:0x02054e6c module:main
 from:0x020947c8 kind:load to:0x020a24b4 module:overlay(124)

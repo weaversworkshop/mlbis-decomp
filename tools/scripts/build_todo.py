@@ -247,7 +247,7 @@ def data_note(st):
     return note
 
 
-def render_data(entries, status, refs):
+def render_data(entries, status, refs, notes=False):
     """Markdown for every named data symbol in the gap, annotated where homed."""
     by_sec = {}
     for e in entries:
@@ -274,10 +274,19 @@ def render_data(entries, status, refs):
                      "(C++ RTTI, emitted by every TU touching the class, so `[~]`"
                      " not `[x]`: emitting it is not ownership)")
     todo = [e for e in scored if status[e["name"]]["status"] not in DATA_DONE]
-    for e in todo:
-        st = status[e["name"]]
-        who = "COMDAT" if st["comdat"] else st["unit"]
-        lines.append(f"  - `{e['name']}` ({who}): {data_note(st)}")
+    if todo and not notes:
+        lines.append(f"- Needs attention: {len(todo)} object(s) ; per-object reasons "
+                     "with `make progress DATA_NOTES=1`; the `[ ]` rows below mark them")
+    elif todo:
+        lines.append("")
+        lines.append("### Needs attention")
+        lines.append("")
+        lines.append("| Symbol | Owner | Issue |")
+        lines.append("| --- | --- | --- |")
+        for e in todo:
+            st = status[e["name"]]
+            who = "_COMDAT_" if st["comdat"] else st["unit"]
+            lines.append(f"| `{e['name']}` | {who} | {data_note(st)} |")
     lines.append("")
     lines.append("Size is the **extent** (distance to the next symbol), not `sizeof`:"
                  " data symbols carry no size in symbols.txt.")
@@ -320,6 +329,8 @@ def main():
     ap.add_argument("--out-md", help="output .md path (default: <target>_todo.md)")
     ap.add_argument("--sort", default="match", choices=["match", "address", "globals", "lines"])
     ap.add_argument("--desc", action="store_true", help="reverse sort direction")
+    ap.add_argument("--data-notes", action="store_true",
+                    help="list per-object reasons for unmatched data (default: count only)")
     args = ap.parse_args()
 
     asm_path = args.asm or str(ROOT / "asm" / f"_dsd_gap@{args.target}.s")
@@ -358,7 +369,8 @@ def main():
     # Data objects live in the same file: one report, one place to check progress.
     dstatus = parse_data(report)
     dentries = data_catalog.parse_asm(Path(asm_path), data_catalog.parse_symbols())
-    md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs())) + "\n"
+    md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs(),
+                                args.data_notes)) + "\n"
 
     Path(out_md).write_text(md, encoding="utf-8")
     print(f"wrote {out_md} ({len(rows)} functions, {len(dentries)} data symbols)",

@@ -1896,12 +1896,12 @@ from:0x0201f378 kind:arm_call to:0x0201f26c module:main
 from:0x0201f398 kind:load to:0x0205baec add:0x28 module:main
 from:0x0201f5a8 kind:load to:0x0205afa8 module:main
 from:0x0201f5bc kind:arm_call to:0x0201f6cc module:main
-from:0x0201f5c8 kind:load to:0x02054e10 module:main
+from:0x0201f5c8 kind:load to:0x02054e08 add:0x8 module:main
 from:0x0201f5dc kind:arm_call to:0x0201f6cc module:main
 from:0x0201f5e4 kind:arm_call to:0x0201a168 module:main
-from:0x0201f5f0 kind:load to:0x02054e10 module:main
+from:0x0201f5f0 kind:load to:0x02054e08 add:0x8 module:main
 from:0x0201f604 kind:arm_call to:0x0201f6cc module:main
-from:0x0201f610 kind:load to:0x02054e10 module:main
+from:0x0201f610 kind:load to:0x02054e08 add:0x8 module:main
 from:0x0201f6a0 kind:arm_call to:0x02019eac module:main
 from:0x0201f6c8 kind:load to:0x02054e1c module:main
 from:0x0201f6f8 kind:arm_call to:0x0201a058 module:main

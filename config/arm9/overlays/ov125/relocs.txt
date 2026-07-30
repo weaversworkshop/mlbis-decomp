@@ -465,7 +465,7 @@ from:0x0207d194 kind:arm_call to:0x0201ae68 module:main
 from:0x0207d1a8 kind:load to:0x02084488 module:overlay(125)
 from:0x0207d1ac kind:load to:0x02085420 module:overlay(125)
 from:0x0207d1cc kind:load to:0x020800c4 module:overlay(125)
-from:0x0207d1d0 kind:load to:0x02054e10 module:main
+from:0x0207d1d0 kind:load to:0x02054e08 add:0x8 module:main
 from:0x0207d1d4 kind:load to:0x020843e4 module:overlay(125)
 from:0x0207d1d8 kind:load to:0x02054e6c module:main
 from:0x0207d1dc kind:load to:0x02084368 module:overlay(125)

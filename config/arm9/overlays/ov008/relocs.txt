@@ -10,7 +10,7 @@ from:0x02063cf8 kind:arm_call to:0x0201f614 module:main
 from:0x02063d1c kind:arm_call to:0x0201f614 module:main
 from:0x02063d2c kind:load to:0x02064d80 module:overlay(8)
 from:0x02063d30 kind:load to:0x02064e90 module:overlay(8)
-from:0x02063d34 kind:load to:0x02054e10 module:main
+from:0x02063d34 kind:load to:0x02054e08 add:0x8 module:main
 from:0x02063d38 kind:load to:0x02064e5c module:overlay(8)
 from:0x02063d3c kind:load to:0x02064f04 module:overlay(8)
 from:0x02063d40 kind:load to:0x02064e48 module:overlay(8)

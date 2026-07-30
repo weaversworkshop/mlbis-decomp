@@ -141,9 +141,12 @@ diff: all sync-names
 	@python $(SCRIPTS)/asm_smell.py --sweep
 	$(OBJDIFF) -p .
 
+# DATA_NOTES=1 expands the unmatched-data count into per-object reasons.
+TODO_ARGS = $(if $(DATA_NOTES),--data-notes,)
+
 progress: all sync-names
 	@$(MAKE) --no-print-directory delinks
-	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report - $(TODO_ARGS)
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
 progress-py: progress          # deprecated alias
@@ -154,7 +157,7 @@ progress-py: progress          # deprecated alias
 # obj_match, not the arbiter. Panics on CODE-flagged TCM data sections.
 progress-objdiff: all sync-names
 	@$(MAKE) --no-print-directory delinks
-	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report - $(TODO_ARGS)
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
 # Per-unit match summary + unresolved callee names (UNIT=name to narrow).

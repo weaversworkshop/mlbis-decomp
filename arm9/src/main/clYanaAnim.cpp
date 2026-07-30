@@ -10,7 +10,7 @@ extern "C" {
 
 extern s64 func_0204536c(s32, s32);
 
-// --- Variable Definitions --- // (replace with real data later)
+// --- Variable Definitions --- //
 
 u8 animEnded;  // 0x0205bb20
 
