@@ -195,7 +195,7 @@ asm u32 func_0201ed3c() {
 }
 
 // MATCHED 100%
-asm void vec_cross_product(fx32 * outVec, fx32 * vecA, fx32 * vecB) {
+asm void vec_cross_product(VecFx32 * outVec, VecFx32 * vecA, VecFx32 * vecB) {
     stmdb sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
     ldr r3, [r1, #0x4]
     ldr r4, [r2, #0x8]
@@ -251,7 +251,7 @@ asm void vec_cross_product(fx32 * outVec, fx32 * vecA, fx32 * vecB) {
 }
 
 // MATCHED 100%
-asm s32 vector_magnitude(fx32 * vec) {
+asm fx32 vector_magnitude(VecFx32 * vec) {
     stmdb sp!, {r4, lr}
     ldmia r0, {r1, r2, r3}
     smull r0, ip, r1, r1
