@@ -65,7 +65,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -143,13 +143,18 @@ diff: all sync-names
 
 progress: all sync-names
 	@$(MAKE) --no-print-directory delinks
-	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
-# Same table without objdiff-cli (which panics on CODE-flagged data sections and has 4 known false negatives)
-progress-py: all sync-names
+progress-py: progress          # deprecated alias
+
+# Cross-check against third-party objdiff. Functions only, and it loses on every
+# known disagreement (2026-07-29: 3 false near-misses + 2 unpairable duplicate
+# names, all 5 confirmed matched by fn_diff), so this is a second opinion on
+# obj_match, not the arbiter. Panics on CODE-flagged TCM data sections.
+progress-objdiff: all sync-names
 	@$(MAKE) --no-print-directory delinks
-	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
+	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
 # Per-unit match summary + unresolved callee names (UNIT=name to narrow).
@@ -191,7 +196,7 @@ sdk-check: delinks
 CALLGRAPH_FLAGS ?= --connected-only --game-only
 CALLGRAPH_ARGS ?=
 callgraph: all delinks
-	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
+	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
 
 # Per-file overrides: MWCC_OVERRIDE (compiler), EXTRA_CFLAGS (defines).
 $(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS

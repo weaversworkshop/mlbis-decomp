@@ -303,6 +303,13 @@ def sym_addr(name):
     return _SYM_ADDRS.get(name)
 
 
+def next_sym_addr(addr):
+    """Address of the next target symbol after `addr`, or None."""
+    _load_symbols()
+    i = bisect_right(_SYM_SORTED, (addr, chr(0x10ffff)))
+    return _SYM_SORTED[i][0] if i < len(_SYM_SORTED) else None
+
+
 def interior_syms(addr, size):
     """Target symbols landing strictly inside [addr, addr+size).
 
@@ -469,8 +476,18 @@ def run_unit(unit, cache, claimed, verbose):
             status = "over"                     # symbol(s) land inside our object
         elif bsym["size"] == tsym["size"]:
             status = "ok"
+        elif any(tail):
+            status = "short"                    # trailing content, not padding
         else:
-            status = "pad" if not any(tail) else "short"
+            # A zero tail is only PADDING if it is short enough to be the next
+            # object's alignment; a longer run of zeros is undeclared content that
+            # happens to be zero (CLAUDE.md "Homing globals": unexplained trailing
+            # bytes are content). Address alignment is an upper bound on the real
+            # section align, so this deliberately under-reports rather than cry wolf.
+            nxt = next_sym_addr(addr) if addr else None
+            slack = tsym["size"] - bsym["size"]
+            status = ("pad" if nxt is None or slack < min(nxt & -nxt, 32)
+                      else "zeros")
         # A delinked object's data sections carry addr=0 with section-relative
         # symbol values, so the absolute address has to come from symbols.txt.
         objs.append({

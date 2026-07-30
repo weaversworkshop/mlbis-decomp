@@ -30,9 +30,14 @@ GAP_RE = re.compile(r"_dsd_gap@(\w+?)_\d+\.o")
 SYM_RE = re.compile(r"^(\S+)\s+kind:(\S+).*?addr:0x([0-9a-fA-F]+)")
 SIZE_RE = re.compile(r"size=0x([0-9a-fA-F]+)")
 SECTION_LINE = re.compile(r"^\s+\S+\s+start:0x")
+SECTION_RE = re.compile(r"^\s+(\S+)\s+start:0x([0-9a-fA-F]+)\s+end:0x([0-9a-fA-F]+)")
+FILE_ENTRY = re.compile(r"^(\S+\.o):$")
 
-# .o section name -> delinks section
-KINDS = {".text": "code", ".rodata": "rodata", ".data": "data", ".bss": "bss"}
+# .o section name -> the symbols.txt `kind:` it is named by. NOT the delinks.txt
+# section kind: symbols.txt only ever says function/data/bss/label, so .rodata
+# objects are `kind:data` too. Getting this wrong silently disables every
+# next-symbol lookup for that section.
+KINDS = {".text": "function", ".rodata": "data", ".data": "data", ".bss": "bss"}
 
 
 def module_dir(module):
@@ -67,6 +72,26 @@ def next_symbol(index, addr, kind):
         if a > addr and k == kind:
             return a
     return None
+
+
+def read_sections(module):
+    """delinks section name -> (start, end) from the module's section table.
+
+    Needed to clamp next-symbol lookups: symbols.txt does not distinguish .rodata
+    from .data, so the symbol after the last .rodata object can be the first .data
+    one, which would extend a carve straight across the section boundary.
+    """
+    out = {}
+    path = module_dir(module) / "delinks.txt"
+    if not path.exists():
+        return out
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if FILE_ENTRY.match(line):
+            break                     # file entries start; the table is above them
+        m = SECTION_RE.match(line)
+        if m:
+            out[m.group(1)] = (int(m.group(2), 16), int(m.group(3), 16))
+    return out
 
 
 def scan_units():
@@ -136,12 +161,13 @@ def obj_symbols(obj):
     return syms
 
 
-def unit_ranges(rel_source, module, symbols, index, verbose=False):
+def unit_ranges(rel_source, module, symbols, index, sections, wanted,
+                verbose=False):
     """section -> (start, end), or None if nothing placeable."""
     obj = ROOT / "build" / Path(rel_source).with_suffix(".o")
     if not obj.exists():
         return None, ["object not built: %s" % obj.relative_to(ROOT)]
-    ranges, unplaced, last = {}, [], {}
+    ranges, unplaced, placed = {}, [], {}
     shared = linkonce(obj)
     for name, sec, objsize in obj_symbols(obj):
         if sec not in KINDS or name in shared:
@@ -157,24 +183,44 @@ def unit_ranges(rel_source, module, symbols, index, verbose=False):
                   % (Path(rel_source).name, name, objsize, size), file=sys.stderr)
         lo, hi = ranges.get(sec, (addr, addr))
         ranges[sec] = (min(lo, addr), max(hi, addr + size))
-        if addr >= last.get(sec, (-1, 0))[0]:
-            last[sec] = (addr, size)
+        placed.setdefault(sec, []).append((addr, size, name))
 
-    # dsd sizes the last symbol by distance to the next one, so a section must run
-    # to that symbol -- any shortfall is inter-object alignment padding, which belongs
-    # to the preceding file. A shortfall NOT excused by alignment is a real sizing
-    # error (CLAUDE.md "Homing globals"), so report it.
+    who = Path(rel_source).name
     for sec, (lo, hi) in list(ranges.items()):
-        if sec == ".text":       # functions carry a real size=; never extend code
+        # Only audit what we are about to carve; obj_match owns the general data
+        # audit, so warning here about sections this run ignores is just noise.
+        if sec == ".text" or sec not in wanted:
+            continue                # .text: real size=, and dsd validates those
+        kind = KINDS[sec]
+        items = sorted(placed[sec])
+
+        # EVERY object must fit before the next symbol, not just the last one. An
+        # interior overrun leaves `hi` untouched, so checking only the section end
+        # missed it (subOamBuffer overran frameTimer by 0x1c undetected).
+        for addr, size, name in items:
+            nxt = next_symbol(index, addr, kind)
+            if nxt is not None and nxt < addr + size:
+                print("gen_delinks: %s: %s is %#x bytes, %d too many -- ends %#x, "
+                      "next symbol %#x" % (who, name, size, addr + size - nxt,
+                                           addr + size, nxt), file=sys.stderr)
+
+        # dsd sizes the last symbol by distance to the next one, so a section must run
+        # to that symbol -- any shortfall is inter-object alignment padding, which
+        # belongs to the preceding file. A shortfall NOT excused by alignment is a real
+        # sizing error (CLAUDE.md "Homing globals"), so report it.
+        nxt = next_symbol(index, items[-1][0], kind)
+        if nxt is None:
             continue
-        nxt = next_symbol(index, last[sec][0], KINDS[sec])
-        if nxt is None or nxt <= hi:
+        end = sections.get(sec, (0, 0))[1]
+        if end:
+            nxt = min(nxt, end)      # never run a carve past its own section
+        if nxt <= hi:
             continue
         pad = nxt - hi
         if pad >= min(nxt & -nxt, 32):    # padding must fit the next object's align
             print("gen_delinks: %s: %s ends %#x, next symbol %#x -- %d byte "
                   "shortfall not explained by alignment"
-                  % (Path(rel_source).name, sec, hi, nxt, pad), file=sys.stderr)
+                  % (who, sec, hi, nxt, pad), file=sys.stderr)
         ranges[sec] = (lo, nxt)
     return (ranges or None), unplaced
 
@@ -200,7 +246,8 @@ def main():
     all_unplaced = []
     for rel, module in scan_units():
         symbols, index = read_symbols(module)
-        ranges, unplaced = unit_ranges(rel, module, symbols, index, args.verbose)
+        ranges, unplaced = unit_ranges(rel, module, symbols, index,
+                                       read_sections(module), wanted, args.verbose)
         if unplaced:
             all_unplaced.append((rel, unplaced))
         if not ranges:

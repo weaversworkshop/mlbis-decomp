@@ -11,10 +11,10 @@ The goal is C source that compiles byte-for-byte to the retail ROM.
 | `main_7` functions matched | **992 / 1849** |
 | game code | 301 / 1154 (26.1%) |
 | SDK / NitroSystem | 691 / 695 |
-| data objects homed | 65 / 544 (all verified byte-exact, + 24 RTTI COMDAT) |
+| data objects homed | 65 / 544 (58 verified byte-exact, + 24 RTTI COMDAT) |
 | Relink vs ROM | 134 modules byte-exact, main 9 bytes off (35 bytes total) |
 
-`make progress` regenerates the live per-function table (`main_7_todo.md`).
+`make progress` regenerates the live per-function and per-data-object tables (`main_7_todo.md`).
 
 ## Requirements
 

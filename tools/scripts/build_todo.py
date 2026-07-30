@@ -234,6 +234,7 @@ DATA_NOTE = {
     "ok": "",
     "pad": "extent is alignment padding",
     "over": "**interior symbol(s)**",
+    "zeros": "**zero tail too long for alignment**: undeclared trailing content",
     "short": "**ROM tail is non-zero**: undeclared trailing content",
     "diff": "**content differs**",
 }

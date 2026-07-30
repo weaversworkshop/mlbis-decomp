@@ -9,8 +9,8 @@ Task-oriented reference. See [README](../README.md) for setup.
 | `make` | compile all TUs + SDK diff units, regenerate `objdiff.json` |
 | `make tools` | build the pinned `dsd` (no-op once current) |
 | `make diff` | build → sync names → delink → open objdiff GUI |
-| `make progress-py` | function **and** data-object match report → `main_7_todo.md` |
-| `make progress` | same via objdiff-cli, functions only, no data status |
+| `make progress` | function **and** data-object match report → `main_7_todo.md` |
+| `make progress-objdiff` | second opinion via third-party objdiff-cli, functions only |
 | `make link` | relink every module from delinked objects, byte-compare vs ROM |
 | `make sdk` | compile every NitroSDK/NitroSystem `.c` into `build/` |
 | `make sdk-check FUNC=<name>` | authoritative SDK-identity check for one function |
@@ -78,7 +78,9 @@ make sdk-check FUNC=func_02016254 # verify ONE candidate
 |---|---|
 | `tu_diff.py`, `fuzzy_sdk_match.py` | **discovery only**,  relocs masked, false-positives over forked code. Never bulk-map. |
 | `sdk_equiv.py` (`make sdk-check`) | **authoritative** for individual identity. Map only if `[EQUIVALENT]`. |
-| `objdiff` / `obj_match.py` | ground-truth byte match vs ROM. Final arbiter. |
+| `obj_match.py` (`make progress`) | ground-truth byte match vs ROM. Final arbiter. |
+| `fn_diff.py` | per-function tiebreaker, independent instruction path. |
+| `objdiff` GUI, `make progress-objdiff` | second opinion, and the way to read a diff by eye. |
 
 `DIVERGES` is either a real fork or a cascade from an unmapped callee. Resolve leaf-first and
 read `-v` to tell which.
@@ -122,7 +124,8 @@ Size shown is the **extent** (distance to the next symbol), data symbols carry n
 | status | meaning |
 |---|---|
 | (blank note) | bytes and extent both agree |
-| `extent is alignment padding` | extent > `sizeof`, ROM tail is zero: benign |
+| `extent is alignment padding` | extent > `sizeof`, zero tail short enough to be the next object's align: benign |
+| `zero tail too long for alignment` | zero tail alignment cannot explain: undeclared content that happens to be zero |
 | `interior symbol(s)` | a symbol lands inside the object: fake/interior ref, or over-sized declaration |
 | `ROM tail is non-zero` | undeclared trailing content, not padding |
 | `content differs` | real byte mismatch |
@@ -142,7 +145,7 @@ Two ways a symbol ends up misplaced rather than mismatched, both config-only fix
 
 ## Bumping dsd
 
-Edit `rev` in `tools/dsd.pin`, run `make tools`, then re-run `make progress-py` and confirm the
+Edit `rev` in `tools/dsd.pin`, run `make tools`, then re-run `make progress` and confirm the
 match count holds, a new revision can change `dsd dis` output.
 
 Verification is by `tools/.dsd.stamp`, **never `dsd --version`**: `main` reports `0.11.0`, the
