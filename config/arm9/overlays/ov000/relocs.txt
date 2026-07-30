@@ -364,7 +364,7 @@ from:0x02069708 kind:load to:0x02067336 module:overlay(0)
 from:0x0206970c kind:load to:0x02067328 module:overlay(0)
 from:0x02069710 kind:load to:0x02067310 module:overlay(0)
 from:0x02069714 kind:load to:0x0206731c module:overlay(0)
-from:0x02069738 kind:load to:0x02055f44 module:main
+from:0x02069738 kind:load to:0x02055f3c add:0x8 module:main
 from:0x0206973c kind:load to:0x02069744 module:overlay(0)
 from:0x02069740 kind:load to:0x020500b0 module:main
 from:0x02069758 kind:load to:0x02069738 module:overlay(0)

@@ -116,7 +116,7 @@ func_ov022_020d2720 kind:function(arm,size=0x5c) addr:0x020d2720
 func_ov022_020d277c kind:function(arm,size=0xe4) addr:0x020d277c
 func_ov022_020d2860 kind:function(arm,size=0x24) addr:0x020d2860
 func_ov022_020d2884 kind:function(arm,size=0xd8) addr:0x020d2884
-.L_020d288c kind:label(arm) addr:0x020d288c
+.L_020d288c kind:label(arm) addr:0x020d288c local
 func_ov022_020d295c kind:function(arm,size=0x114) addr:0x020d295c
 func_ov022_020d2a70 kind:function(arm,size=0xe8) addr:0x020d2a70
 func_ov022_020d2b58 kind:function(arm,size=0x14) addr:0x020d2b58

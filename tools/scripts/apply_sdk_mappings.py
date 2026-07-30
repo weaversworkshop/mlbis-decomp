@@ -14,8 +14,11 @@ CONFIG_ROOT = ROOT / "config"
 SOURCE_ROOTS = [ROOT / "arm9" / "src", ROOT / "arm9" / "include", ROOT / "lib"]
 SOURCE_EXCLUDES = [ROOT / "lib" / "NitroSDK", ROOT / "lib" / "mw-libraries"]
 
+# `tail` keeps trailing dsd flags (e.g. ` local`) -- the line is rebuilt from these
+# groups, so anything not captured is silently dropped on rename.
 SYMBOL_LINE_RE = re.compile(
-    r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:)(?P<addr>0x[0-9a-fA-F]+)\s*$"
+    r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:)(?P<addr>0x[0-9a-fA-F]+)"
+    r"(?P<tail>.*?)\s*$"
 )
 
 
@@ -80,7 +83,8 @@ def rename_in_symbols(symbols_files, mappings, dry_run, verbose):
                 new_lines.append(raw)
                 continue
             renames[old_name] = new_name
-            new_lines.append(f"{new_name}{m.group('mid')}{m.group('addr')}\n")
+            new_lines.append(
+                f"{new_name}{m.group('mid')}{m.group('addr')}{m.group('tail')}\n")
             if verbose:
                 print(f"  {sf.relative_to(ROOT)}: {old_name} -> {new_name}")
             changed = True

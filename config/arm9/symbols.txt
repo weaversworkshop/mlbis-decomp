@@ -524,15 +524,15 @@ copy_rect_blk128 kind:function(arm,size=0x48) addr:0x0201eee8
 copy_rect_blk64 kind:function(arm,size=0x38) addr:0x0201ef30
 copy_rect_rem kind:function(arm,size=0x5c) addr:0x0201ef68
 copy_rect kind:function(arm,size=0xf8) addr:0x0201efc4
-func_0201f0bc kind:function(arm,size=0x80) addr:0x0201f0bc
-func_0201f13c kind:function(arm,size=0x78) addr:0x0201f13c
+getTexVramAddr kind:function(arm,size=0x80) addr:0x0201f0bc
+getTexPlttVramAddr kind:function(arm,size=0x78) addr:0x0201f13c
 func_0201f1b4 kind:function(arm,size=0x64) addr:0x0201f1b4
-func_0201f218 kind:function(arm,size=0x54) addr:0x0201f218
-func_0201f26c kind:function(arm,size=0xe8) addr:0x0201f26c
-func_0201f354 kind:function(arm,size=0x4c) addr:0x0201f354
-func_0201f3a0 kind:function(arm,size=0x158) addr:0x0201f3a0
-func_0201f4f8 kind:function(arm,size=0x58) addr:0x0201f4f8
-func_0201f550 kind:function(arm,size=0x5c) addr:0x0201f550
+vector_set_length kind:function(arm,size=0x54) addr:0x0201f218
+vector_cosine kind:function(arm,size=0xe8) addr:0x0201f26c
+vector_normal_alignment kind:function(arm,size=0x4c) addr:0x0201f354
+countDigits kind:function(arm,size=0x158) addr:0x0201f3a0
+getResChunk kind:function(arm,size=0x58) addr:0x0201f4f8
+stepMenuCursor kind:function(arm,size=0x5c) addr:0x0201f550
 func_0201f5ac kind:function(arm,size=0x20) addr:0x0201f5ac
 func_0201f5cc kind:function(arm,size=0x28) addr:0x0201f5cc
 func_0201f5f4 kind:function(arm,size=0x20) addr:0x0201f5f4
@@ -967,7 +967,7 @@ NNS_FndFreeByStateToFrmHeap kind:function(arm,size=0x50) addr:0x0202ee58
 NNS_SndInit kind:function(arm,size=0x88) addr:0x0202eea8
 NNS_SndMain kind:function(arm,size=0x30) addr:0x0202ef30
 NNS_SndSetMasterVolume kind:function(arm,size=0xc) addr:0x0202ef60
-BeginSleep kind:function(arm,size=0x38) addr:0x0202ef6c
+BeginSleep kind:function(arm,size=0x38) addr:0x0202ef6c local
 func_0202efa4 kind:function(arm,size=0xc) addr:0x0202efa4
 NNS_SndLockChannel kind:function(arm,size=0x48) addr:0x0202efb0
 NNS_SndUnlockChannel kind:function(arm,size=0x30) addr:0x0202eff8
@@ -1025,7 +1025,7 @@ ForceStopStrm kind:function(arm,size=0x74) addr:0x0202fe2c
 ShutdownStrm kind:function(arm,size=0x30) addr:0x0202fea0
 AlarmCallback kind:function(arm,size=0x10) addr:0x0202fed0
 func_0202fee0 kind:function(arm,size=0xb0) addr:0x0202fee0
-BeginSleep kind:function(arm,size=0x4c) addr:0x0202ff90
+BeginSleep kind:function(arm,size=0x4c) addr:0x0202ff90 local
 EndSleep kind:function(arm,size=0x70) addr:0x0202ffdc
 NNSi_SndCaptureInit kind:function(arm,size=0x18) addr:0x0203004c
 func_02030064 kind:function(arm,size=0x88) addr:0x02030064
@@ -1790,7 +1790,7 @@ func_02045324 kind:function(arm,size=0xc) addr:0x02045324
 func_02045330 kind:function(arm,size=0x3c) addr:0x02045330
 func_0204536c kind:function(arm,size=0x20c) addr:0x0204536c
 func_02045578 kind:function(arm,size=0x1e4) addr:0x02045578
-.L_02045580 kind:label(arm) addr:0x02045580
+.L_02045580 kind:label(arm) addr:0x02045580 local
 func_02045774 kind:function(arm,size=0x544) addr:0x02045774
 func_02045cb8 kind:function(arm,size=0x4) addr:0x02045cb8
 func_02045cbc kind:function(arm,size=0x14) addr:0x02045cbc
@@ -1950,7 +1950,9 @@ data_0204f3e4 kind:data(any) addr:0x0204f3e4
 data_0204f3f4 kind:data(any) addr:0x0204f3f4
 data_0204f3f6 kind:data(any) addr:0x0204f3f6
 data_0204f3f8 kind:data(any) addr:0x0204f3f8
+SNDi_DecibelSquareTable kind:data(any) addr:0x0204f454
 SNDi_DecibelTable kind:data(any) addr:0x0204f554
+PitchTable kind:data(any) addr:0x0204f654
 VolumeTable kind:data(any) addr:0x0204fc54
 fsi_default_command kind:data(any) addr:0x0204ff28
 data_0204ff4c kind:data(any) addr:0x0204ff4c
@@ -1963,8 +1965,6 @@ data_0204ffe0 kind:data(any) addr:0x0204ffe0
 .p__sinit_02047c84 kind:data(word) addr:0x0204fff0
 .p__sinit_02047ca8 kind:data(word) addr:0x0204fff4
 _ZTS6clTask kind:data(any) addr:0x02050000
-data_02050001 kind:data(any) addr:0x02050001
-data_02050005 kind:data(any) addr:0x02050005
 _ZTI6clTask kind:data(any) addr:0x02050008
 data_02050010 kind:data(any) addr:0x02050010
 data_02050012 kind:data(any) addr:0x02050012
@@ -2206,8 +2206,8 @@ data_02055f04 kind:data(any) addr:0x02055f04
 data_02055f10 kind:data(any) addr:0x02055f10
 data_02055f1c kind:data(any) addr:0x02055f1c
 data_02055f34 kind:data(any) addr:0x02055f34
-_ZTVN10__cxxabiv120__si_class_type_infoE kind:data(any) addr:0x02055f44
-_ZTVN10__cxxabiv117__class_type_infoE kind:data(any) addr:0x02055f54
+_ZTVN10__cxxabiv120__si_class_type_infoE kind:data(any) addr:0x02055f3c
+_ZTVN10__cxxabiv117__class_type_infoE kind:data(any) addr:0x02055f4c
 data_02055f5c kind:data(any) addr:0x02055f5c
 data_02055f80 kind:data(any) addr:0x02055f80
 data_02055fa8 kind:data(any) addr:0x02055fa8
@@ -2261,8 +2261,7 @@ fsManager kind:bss addr:0x0205ba8c
 randState kind:bss addr:0x0205bac0
 samplingBufs kind:bss addr:0x0205bac4
 vcountTaskManager kind:bss addr:0x0205bad4
-data_0205baec kind:bss addr:0x0205baec
-data_0205bb14 kind:bss addr:0x0205bb14
+vectorScratch kind:bss addr:0x0205baec
 animEnded kind:bss addr:0x0205bb20
 data_0205bb24 kind:bss addr:0x0205bb24
 data_0205bb48 kind:bss addr:0x0205bb48
@@ -2297,13 +2296,10 @@ data_0205e6cc kind:bss addr:0x0205e6cc
 sPrioList kind:bss addr:0x0205e6d8
 data_0205e6e4 kind:bss addr:0x0205e6e4
 sPlayer kind:bss addr:0x0205eb24
-data_0205eb3c kind:bss addr:0x0205eb3c
-data_0205eb40 kind:bss addr:0x0205eb40
 data_0205efa4 kind:bss addr:0x0205efa4
 sStrmList kind:bss addr:0x0205efa8
 data_0205efb4 kind:bss addr:0x0205efb4
 sStrmChannel kind:bss addr:0x0205eff4
-data_0205eff8 kind:bss addr:0x0205eff8
 data_0205f074 kind:bss addr:0x0205f074
 data_0205f07c kind:bss addr:0x0205f07c
 data_0205f0bc kind:bss addr:0x0205f0bc
@@ -2321,16 +2317,6 @@ data_02060320 kind:bss addr:0x02060320
 data_02060520 kind:bss addr:0x02060520
 GXi_VRamLockId kind:bss addr:0x02060522
 gGXState kind:bss addr:0x02060524
-data_02060526 kind:bss addr:0x02060526
-data_02060528 kind:bss addr:0x02060528
-data_0206052c kind:bss addr:0x0206052c
-data_0206052e kind:bss addr:0x0206052e
-data_02060532 kind:bss addr:0x02060532
-data_02060534 kind:bss addr:0x02060534
-data_02060536 kind:bss addr:0x02060536
-data_02060538 kind:bss addr:0x02060538
-data_0206053a kind:bss addr:0x0206053a
-data_0206053c kind:bss addr:0x0206053c
 data_02060540 kind:bss addr:0x02060540
 data_0206055c kind:bss addr:0x0206055c
 data_0206057c kind:bss addr:0x0206057c
@@ -2342,7 +2328,6 @@ data_020605b4 kind:bss addr:0x020605b4
 data_020605dc kind:bss addr:0x020605dc
 OSi_SystemCallbackInSwitchThread kind:bss addr:0x020605e0
 OSi_ThreadInfo kind:bss addr:0x02060604
-data_02060608 kind:bss addr:0x02060608
 data_02060614 kind:bss addr:0x02060614
 data_020606d4 kind:bss addr:0x020606d4
 data_0206085c kind:bss addr:0x0206085c
@@ -2363,8 +2348,6 @@ sFreeList kind:bss addr:0x020609a0
 sWaitingCommandListQueue kind:bss addr:0x020609c4
 data_02060a00 kind:bss addr:0x02060a00
 sCommandArray kind:bss addr:0x02060c80
-data_020619a0 kind:bss addr:0x020619a0
-data_02062468 kind:bss addr:0x02062468
 sCallbackTable kind:bss addr:0x02062480
 data_020624e0 kind:bss addr:0x020624e0
 data_020624e4 kind:bss addr:0x020624e4
@@ -2396,7 +2379,6 @@ data_02062fa8 kind:bss addr:0x02062fa8
 CTRDGi_Work kind:bss addr:0x02062fac
 data_02062fc0 kind:bss addr:0x02062fc0
 headerBuf kind:bss addr:0x02062fe0
-data_02062fe4 kind:bss addr:0x02062fe4
 data_020630a0 kind:bss addr:0x020630a0
 data_02063188 kind:bss addr:0x02063188
 data_0206318c kind:bss addr:0x0206318c

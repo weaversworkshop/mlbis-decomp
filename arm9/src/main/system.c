@@ -21,7 +21,9 @@ const u16 repeatKeyMasks[10] = {  // 0x0204ac4c
 
 InputState inputState;  // 0x0205afa8
 GXOamAttr oamBuffer[128];  // 0x0205afc4
-GXOamAttr subOamBuffer[128];  // 0x0205b3c4
+
+// ROM gives this only 0x3e4 bytes; retail flush/clear use full HW size 0x400, overrunning 0x1c bytes into frameTimer (dead bytes -- see FrameTimer.oamOverrunPad)
+GXOamAttr subOamBuffer[124];  // 0x0205b3c4
 FrameTimer frameTimer;  // 0x0205b7a8
 
 // --- Function Definitions --- //
@@ -97,14 +99,14 @@ void flushOam(u32 dmaNo) {
     DC_FlushRange(&oamBuffer, sizeof(oamBuffer));
     MI_DmaCopy32(dmaNo, &oamBuffer, HW_OAM, sizeof(oamBuffer));
 
-    DC_FlushRange(&subOamBuffer, sizeof(subOamBuffer));
-    MI_DmaCopy32(dmaNo, &subOamBuffer, HW_DB_OAM, sizeof(subOamBuffer));
+    DC_FlushRange(&subOamBuffer, sizeof(oamBuffer));
+    MI_DmaCopy32(dmaNo, &subOamBuffer, HW_DB_OAM, sizeof(oamBuffer));
 }
 
 // MATCHED 100%
 void clearOam() {
-    MIi_CpuClearFast(0x200, &oamBuffer, sizeof(oamBuffer));
-    MIi_CpuClearFast(0x200, &subOamBuffer, sizeof(subOamBuffer));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &oamBuffer, sizeof(oamBuffer));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &subOamBuffer, sizeof(oamBuffer));
 }
 
 // MATCHED 100%

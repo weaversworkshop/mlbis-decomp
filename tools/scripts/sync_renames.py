@@ -49,8 +49,12 @@ BUILD = ROOT / "build"
 ANCHOR_DIRS = [ROOT / "arm9" / "include", ROOT / "arm9" / "src"]
 OBJDUMP = "arm-none-eabi-objdump"
 
+# `tail` keeps trailing dsd flags (e.g. ` local`): the line is rebuilt from these
+# groups, so an uncaptured suffix would be dropped on rename -- and an anchored
+# pattern would skip the symbol entirely, reporting it as UNPLACED.
 SYMBOL_LINE_RE = re.compile(
-    r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:0x)(?P<addr>[0-9a-fA-F]+)\s*$"
+    r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:0x)(?P<addr>[0-9a-fA-F]+)"
+    r"(?P<tail>.*?)\s*$"
 )
 # A declaration/definition line ending in ';' or '{' with a trailing address
 # anchor. Captures the identifier immediately before the parameter list and
@@ -358,7 +362,8 @@ def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
         sm = SYMBOL_LINE_RE.match(lines[i])
         if sm.group("name") != full:
             eol = "\n" if lines[i].endswith("\n") else ""
-            lines[i] = f"{full}{sm.group('mid')}{sm.group('addr')}{eol}"
+            lines[i] = (f"{full}{sm.group('mid')}{sm.group('addr')}"
+                        f"{sm.group('tail')}{eol}")
             changed.append((addr, sm.group("name"), full))
 
     for addr, old, new in changed:

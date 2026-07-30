@@ -1007,17 +1007,17 @@ from:0x020b7f60 kind:load to:0x02006624 module:main
 from:0x020b7fb4 kind:load to:0x02064f08 module:overlay(8)
 from:0x020b7fb8 kind:load to:0x02064f0c module:overlay(8)
 from:0x020b7fbc kind:load to:0x020198cc module:main
-from:0x020b7fec kind:load to:0x02055f44 module:main
+from:0x020b7fec kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b7ff0 kind:load to:0x020b7fe0 module:overlay(16)
 from:0x020b7ff4 kind:load to:0x02054ea4 module:main
 from:0x020b7ffc kind:load to:0x020b7fec module:overlay(16)
 from:0x020b8000 kind:load to:0x020ad47c module:overlay(16)
 from:0x020b8004 kind:load to:0x020ad4b8 module:overlay(16)
 from:0x020b8008 kind:load to:0x020ad390 module:overlay(16)
-from:0x020b8020 kind:load to:0x02055f44 module:main
+from:0x020b8020 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b8024 kind:load to:0x020b8014 module:overlay(16)
 from:0x020b8028 kind:load to:0x020b802c module:overlay(16)
-from:0x020b802c kind:load to:0x02055f44 module:main
+from:0x020b802c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b8030 kind:load to:0x020b800c module:overlay(16)
 from:0x020b8034 kind:load to:0x02054f2c module:main
 from:0x020b803c kind:load to:0x020b8020 module:overlay(16)
@@ -1056,7 +1056,7 @@ from:0x020b80c8 kind:load to:0x02021e98 module:main
 from:0x020b80cc kind:load to:0x02020940 module:main
 from:0x020b80d0 kind:load to:0x020ad890 module:overlay(16)
 from:0x020b80d4 kind:load to:0x020ad744 module:overlay(16)
-from:0x020b80e4 kind:load to:0x02055f44 module:main
+from:0x020b80e4 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b80e8 kind:load to:0x020b80d8 module:overlay(16)
 from:0x020b80ec kind:load to:0x02054f2c module:main
 from:0x020b80f4 kind:load to:0x0201dcb0 module:main
@@ -1079,10 +1079,10 @@ from:0x020b813c kind:load to:0x020af8c4 module:overlay(16)
 from:0x020b8140 kind:load to:0x020af8b4 module:overlay(16)
 from:0x020b8144 kind:load to:0x02021e98 module:main
 from:0x020b8148 kind:load to:0x02020940 module:main
-from:0x020b8160 kind:load to:0x02055f44 module:main
+from:0x020b8160 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b8164 kind:load to:0x020b8188 module:overlay(16)
 from:0x020b8168 kind:load to:0x020b816c module:overlay(16)
-from:0x020b816c kind:load to:0x02055f44 module:main
+from:0x020b816c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020b8170 kind:load to:0x020b8178 module:overlay(16)
 from:0x020b8174 kind:load to:0x02054e90 module:main
 from:0x020b8198 kind:load to:0x020b86a8 module:overlay(16)

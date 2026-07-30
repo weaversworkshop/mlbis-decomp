@@ -3,7 +3,10 @@ MWCCARM := $(TOOLS_DIR)/mwccarm/2.0/sp1p2/mwccarm.exe
 LICENSE := $(TOOLS_DIR)/mwccarm/license.dat
 SCRIPTS := $(TOOLS_DIR)/scripts
 OBJDIFF := $(TOOLS_DIR)/objdiff.exe
-DSD := $(TOOLS_DIR)/dsd.exe
+# dsd is built from the commit pinned in tools/dsd.pin (`make tools`); a release
+# binary is NOT usable -- see notes/link.md.
+DSD_EXE := $(if $(filter Windows_NT,$(OS)),dsd.exe,dsd)
+DSD := $(TOOLS_DIR)/bin/$(DSD_EXE)
 DSD_CONFIG := config/arm9/config.yaml
 BUILD_DIR := build
 DELINKS_DIR := $(BUILD_DIR)/delinks
@@ -62,7 +65,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: all clean distclean diff objdiff delinks progress progress-py obj-match data-catalog callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -92,8 +95,32 @@ distclean: clean
 sdk-rename:
 	$(SDK_APPLY)
 
+# Relink every module from delinked objects and byte-compare vs the ROM.
+# Carves data as well, then restores delinks.txt (a carve breaks obj_match).
+# See notes/link.md for the remaining 35-byte ARM/Thumb interworking gap.
+LINK_DIR   := $(BUILD_DIR)/link
+MWLDARM    := $(TOOLS_DIR)/mwccarm/2.0/sp2p3/mwldarm.exe
+
+link: all $(DSD)
+	@python $(SCRIPTS)/link_rom.py $(LINK_ARGS)
+
+# Build the pinned dsd if the stamp doesn't match. Cheap no-op once current.
+tools:
+	@python $(SCRIPTS)/setup_tools.py
+
+$(DSD):
+	@python $(SCRIPTS)/setup_tools.py
+
+# delinks.txt file entries are GENERATED from the `// objdiff-target:` scan.
+# Needs compiled .o + a synced symbols.txt, so it runs after sync-names and before
+# dsd delink. Writes only on change (delinks.txt feeds the delink stamp).
+# NOT a prerequisite of diff/progress: carving moves target functions out of the
+# gap, where obj_match can't find them (0/0 matched). Link-only, opt-in.
+delink-config:
+	@python $(SCRIPTS)/gen_delinks.py $(DELINK_ARGS)
+
 delinks: $(DELINKS_DIR)/.stamp
-$(DELINKS_DIR)/.stamp: $(DSD_CONFIG_DEPS) $(SDK_MAPPINGS)
+$(DELINKS_DIR)/.stamp: $(DSD) $(DSD_CONFIG_DEPS) $(SDK_MAPPINGS)
 	$(SDK_APPLY)
 	$(DSD) delink --config-path $(DSD_CONFIG)
 	$(DSD) dis --config-path $(DSD_CONFIG) --asm-path asm
@@ -118,21 +145,16 @@ progress: all sync-names
 	@$(MAKE) --no-print-directory delinks
 	$(OBJDIFF_CLI) report generate -p . -o - | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 	@python $(SCRIPTS)/asm_smell.py --sweep
-	@python $(SCRIPTS)/data_catalog.py
 
 # Same table without objdiff-cli (which panics on CODE-flagged data sections and has 4 known false negatives)
 progress-py: all sync-names
 	@$(MAKE) --no-print-directory delinks
 	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report -
 	@python $(SCRIPTS)/asm_smell.py --sweep
-	@python $(SCRIPTS)/data_catalog.py
 
 # Per-unit match summary + unresolved callee names (UNIT=name to narrow).
 obj-match: delinks
 	@python $(SCRIPTS)/obj_match.py --text $(if $(UNIT),--unit $(UNIT),) $(OBJ_MATCH_ARGS)
-
-data-catalog: delinks
-	python $(SCRIPTS)/data_catalog.py
 
 # Faithfulness audit: cross-boundary branches with no reloc.
 check-relocs: delinks

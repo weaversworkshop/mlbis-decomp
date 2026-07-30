@@ -523,13 +523,13 @@ from:0x0209c1d0 kind:load to:0x02094b8c module:overlay(14)
 from:0x0209c1d4 kind:load to:0x02094ba8 module:overlay(14)
 from:0x0209c1d8 kind:load to:0x02094bc4 module:overlay(14)
 from:0x0209c1dc kind:load to:0x02094be0 module:overlay(14)
-from:0x0209c280 kind:load to:0x02055f44 module:main
+from:0x0209c280 kind:load to:0x02055f3c add:0x8 module:main
 from:0x0209c284 kind:load to:0x0209c2b4 module:overlay(14)
 from:0x0209c288 kind:load to:0x02054e90 module:main
-from:0x0209c28c kind:load to:0x02055f44 module:main
+from:0x0209c28c kind:load to:0x02055f3c add:0x8 module:main
 from:0x0209c290 kind:load to:0x0209c2c4 module:overlay(14)
 from:0x0209c294 kind:load to:0x0209c298 module:overlay(14)
-from:0x0209c298 kind:load to:0x02055f44 module:main
+from:0x0209c298 kind:load to:0x02055f3c add:0x8 module:main
 from:0x0209c29c kind:load to:0x0209c2a4 module:overlay(14)
 from:0x0209c2a0 kind:load to:0x0209c280 module:overlay(14)
 from:0x0209c2dc kind:load to:0x0209c28c module:overlay(14)

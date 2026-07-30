@@ -899,10 +899,10 @@ from:0x020d4c90 kind:load to:0x020db138 module:overlay(49)
 from:0x020d4ca4 kind:arm_call to:0x0209696c module:overlay(14)
 from:0x020d4cac kind:arm_call to:0x02096790 module:overlay(14)
 from:0x020d4cb8 kind:load to:0x020dafa0 module:overlay(49)
-from:0x020daf5c kind:load to:0x02055f44 module:main
+from:0x020daf5c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020daf60 kind:load to:0x020daf74 module:overlay(49)
 from:0x020daf64 kind:load to:0x02054e90 module:main
-from:0x020daf68 kind:load to:0x02055f44 module:main
+from:0x020daf68 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020daf6c kind:load to:0x020daf84 module:overlay(49)
 from:0x020daf70 kind:load to:0x020daf5c module:overlay(49)
 from:0x020daf9c kind:load to:0x020daf68 module:overlay(49)

@@ -214,13 +214,13 @@ from:0x02078154 kind:load to:0x02078bfc module:overlay(132)
 from:0x02078158 kind:load to:0x0207816c module:overlay(132)
 from:0x02078bc0 kind:load to:0x02078f14 module:overlay(132)
 from:0x02078bc4 kind:load to:0x02078d00 module:overlay(132)
-from:0x02078bc8 kind:load to:0x02055f44 module:main
+from:0x02078bc8 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02078bcc kind:load to:0x02078c1c module:overlay(132)
 from:0x02078bd0 kind:load to:0x020500b0 module:main
-from:0x02078bd4 kind:load to:0x02055f44 module:main
+from:0x02078bd4 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02078bd8 kind:load to:0x02078c0c module:overlay(132)
 from:0x02078bdc kind:load to:0x02050008 module:main
-from:0x02078be0 kind:load to:0x02055f44 module:main
+from:0x02078be0 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02078be4 kind:load to:0x02078bec module:overlay(132)
 from:0x02078be8 kind:load to:0x02078bd4 module:overlay(132)
 from:0x02078c34 kind:load to:0x02078bc8 module:overlay(132)

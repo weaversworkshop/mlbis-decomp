@@ -10,6 +10,9 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import data_catalog          # noqa: E402  (symbol inventory, shared not duplicated)
+
 ROOT = Path(__file__).resolve().parents[2]
 SDK_MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
 START_RE = re.compile(r"^\s*(?:arm|thumb)_func_start\s+(\S+)")
@@ -60,7 +63,45 @@ def parse_asm(path):
     return out
 
 
-def parse_report(path):
+def load_report(path):
+    """The report JSON; "-" reads stdin (once -- both tables derive from this)."""
+    if path == "-":
+        return json.load(sys.stdin)
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def parse_data(report):
+    """name -> {unit, status, source_size, extent} for every homed data object.
+
+    Only obj_match emits `objects`; an objdiff report has none, so the data table
+    is simply empty under `make progress`.
+    """
+    out = {}
+    for unit in report.get("units", []):
+        for o in unit.get("objects", []):
+            prev = out.get(o["name"])
+            comdat = o.get("comdat", False)
+            if comdat and prev:
+                # Emitted by every TU touching the class. A real owner always wins;
+                # otherwise just tally how many TUs emit it.
+                if not prev["comdat"]:
+                    continue
+                prev["tus"] += 1
+                continue
+            out[o["name"]] = {
+                "unit": unit["name"],
+                "status": o.get("status"),
+                "source_size": o.get("source_size"),
+                "extent": o.get("size"),
+                "comdat": comdat,
+                "interior": o.get("interior") or [],
+                "tus": 1,
+            }
+    return out
+
+
+def parse_report(report):
     """Return {symbol: {rel_addr: (unit_name, fuzzy_match_percent)}}.
 
     The objdiff report lists each function once per referencing unit and carries a
@@ -69,13 +110,7 @@ def parse_report(path):
     one clobber the other. As before, the first unit at the running-max pct wins, so a
     unique name resolves to exactly the value the old name-only map produced.
 
-    Pass "-" to read from stdin.
     """
-    if path == "-":
-        report = json.load(sys.stdin)
-    else:
-        with open(path, "r", encoding="utf-8") as f:
-            report = json.load(f)
     owned = {}
     for unit in report.get("units", []):
         unit_name = unit["name"]
@@ -191,6 +226,91 @@ def render_md(rows, target, sort_desc):
     return "\n".join(lines) + "\n"
 
 
+# A homed object is "done" when its bytes match and its extent is accounted for.
+# `pad` = extent exceeds sizeof but the ROM tail is zero, i.e. inter-object
+# alignment padding, which belongs to the preceding object. See notes/link.md.
+DATA_DONE = ("ok", "pad")
+DATA_NOTE = {
+    "ok": "",
+    "pad": "extent is alignment padding",
+    "over": "**interior symbol(s)**",
+    "short": "**ROM tail is non-zero**: undeclared trailing content",
+    "diff": "**content differs**",
+}
+
+
+def data_note(st):
+    note = DATA_NOTE.get(st["status"], st["status"])
+    if st["status"] == "over" and st["interior"]:
+        note += ": " + ", ".join("`%s`" % n for n in st["interior"])
+    return note
+
+
+def render_data(entries, status, refs):
+    """Markdown for every named data symbol in the gap, annotated where homed."""
+    by_sec = {}
+    for e in entries:
+        by_sec.setdefault(e["section"], []).append(e)
+
+    total = len(entries)
+    scored = [e for e in entries if e["name"] in status]
+    homed = [e for e in scored if not status[e["name"]]["comdat"]]
+    comdat = [e for e in scored if status[e["name"]]["comdat"]]
+    done = [e for e in homed if status[e["name"]]["status"] in DATA_DONE]
+
+    lines = ["", "## Data objects", ""]
+    if not status:
+        lines.append("_Data status unavailable: this report has no `objects` "
+                     "(objdiff-cli does not emit them). Use `make progress-py`._")
+        lines.append("")
+    lines.append(f"- Homed:   {len(homed)}/{total} data symbols")
+    lines.append(f"- Matched: {len(done)}/{len(homed)} homed "
+                 f"({sum(1 for e in done if status[e['name']]['status'] == 'pad')} "
+                 f"via alignment padding)")
+    cdone = [e for e in comdat if status[e["name"]]["status"] in DATA_DONE]
+    if comdat:
+        lines.append(f"- COMDAT:  {len(cdone)}/{len(comdat)} byte-verified "
+                     "(C++ RTTI, emitted by every TU touching the class, so `[~]`"
+                     " not `[x]`: emitting it is not ownership)")
+    todo = [e for e in scored if status[e["name"]]["status"] not in DATA_DONE]
+    for e in todo:
+        st = status[e["name"]]
+        who = "COMDAT" if st["comdat"] else st["unit"]
+        lines.append(f"  - `{e['name']}` ({who}): {data_note(st)}")
+    lines.append("")
+    lines.append("Size is the **extent** (distance to the next symbol), not `sizeof`:"
+                 " data symbols carry no size in symbols.txt.")
+    lines.append("")
+    for sec in (".data", ".rodata", ".bss"):
+        rows = sorted(by_sec.get(sec, []), key=lambda e: e["addr"])
+        if not rows:
+            continue
+        lines.append(f"### {sec} ({len(rows)} symbols)")
+        lines.append("")
+        lines.append("| | Address | Symbol | Extent | sizeof | Refs | Unit |")
+        lines.append("| - | --- | --- | ---: | ---: | ---: | --- |")
+        for i, e in enumerate(rows):
+            nxt = rows[i + 1]["addr"] if i + 1 < len(rows) else None
+            extent = nxt - e["addr"] if nxt else e["space"]
+            st = status.get(e["name"])
+            check = " "
+            if st and st["status"] in DATA_DONE:
+                check = "~" if st["comdat"] else "x"
+            szof = f"0x{st['source_size']:x}" if st else ""
+            if not st:
+                unit = ""
+            elif st["comdat"]:
+                unit = "_COMDAT x%d_" % st["tus"]
+            else:
+                unit = st["unit"]
+            lines.append(
+                f"| [{check}] | 0x{e['addr']:08x} | `{e['name']}` | "
+                f"{'0x%x' % extent if extent else ''} | {szof} | "
+                f"{refs.get(e['addr'], 0)} | {unit} |")
+        lines.append("")
+    return lines
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("target", help="e.g. main_7 (resolves to asm/_dsd_gap@<target>.s)")
@@ -204,8 +324,9 @@ def main():
     asm_path = args.asm or str(ROOT / "asm" / f"_dsd_gap@{args.target}.s")
     out_md = args.out_md or str(ROOT / f"{args.target}_todo.md")
 
+    report = load_report(args.report)
     asm = parse_asm(asm_path)
-    owned = parse_report(args.report)
+    owned = parse_report(report)
     sdk = load_sdk_mappings()
     base = derive_base_offset(asm, owned)
 
@@ -231,8 +352,16 @@ def main():
 
     direction = "desc" if desc else "asc"
     sort_desc = f"{args.sort} {direction}, address asc tiebreaker"
-    Path(out_md).write_text(render_md(rows, args.target, sort_desc), encoding="utf-8")
-    print(f"wrote {out_md} ({len(rows)} rows)", file=sys.stderr)
+    md = render_md(rows, args.target, sort_desc)
+
+    # Data objects live in the same file: one report, one place to check progress.
+    dstatus = parse_data(report)
+    dentries = data_catalog.parse_asm(Path(asm_path), data_catalog.parse_symbols())
+    md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs())) + "\n"
+
+    Path(out_md).write_text(md, encoding="utf-8")
+    print(f"wrote {out_md} ({len(rows)} functions, {len(dentries)} data symbols)",
+          file=sys.stderr)
 
 
 if __name__ == "__main__":

@@ -60,7 +60,7 @@ typedef struct {
 
 extern InputState inputState;
 extern GXOamAttr oamBuffer[128];
-extern GXOamAttr subOamBuffer[128];
+extern GXOamAttr subOamBuffer[124];
 extern FrameTimer frameTimer;
 
 void initSystem(void);  // 0x02019a18

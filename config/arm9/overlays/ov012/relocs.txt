@@ -1275,7 +1275,7 @@ from:0x02087808 kind:load to:0x02064f08 module:overlay(8)
 from:0x0208780c kind:load to:0x02050144 module:main
 from:0x02087810 kind:load to:0x02064f0c module:overlay(8)
 from:0x02087814 kind:load to:0x02074534 module:overlay(12)
-from:0x02089a60 kind:load to:0x02055f44 module:main
+from:0x02089a60 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02089a64 kind:load to:0x02089a6c module:overlay(12)
 from:0x02089a68 kind:load to:0x0205267c module:main
 from:0x02089a80 kind:load to:0x02089a60 module:overlay(12)

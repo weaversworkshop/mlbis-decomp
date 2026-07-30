@@ -2161,7 +2161,7 @@
       "sdk_name": "OSi_IrqCallback",
       "library": "os",
       "confidence": "certain",
-      "note": "sdk_equiv EQUIVALENT. os_irqTable.c — deliberately NOT an objdiff_unit: its .dtcm section is CODE-flagged but data-only (OS_IRQTable), which panics objdiff-cli arm.rs:191. Named-but-unmatched until objdiff is fixed."
+      "note": "sdk_equiv EQUIVALENT. os_irqTable.c deliberately NOT an objdiff_unit: its .dtcm section is CODE-flagged but data-only (OS_IRQTable), which panics objdiff-cli arm.rs:191. Named-but-unmatched until objdiff is fixed."
     },
     {
       "addr": "0x0203815c",

@@ -1,5 +1,5 @@
 func_ov123_02076080 kind:function(arm,size=0x80) addr:0x02076080
-.L_02076088 kind:label(arm) addr:0x02076088
+.L_02076088 kind:label(arm) addr:0x02076088 local
 func_ov123_02076100 kind:function(arm,size=0x48) addr:0x02076100
 func_ov123_02076148 kind:function(arm,size=0x6c) addr:0x02076148
 func_ov123_020761b4 kind:function(arm,size=0x21c) addr:0x020761b4

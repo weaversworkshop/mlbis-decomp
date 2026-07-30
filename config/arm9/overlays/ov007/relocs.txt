@@ -431,16 +431,16 @@ from:0x02115ef0 kind:load to:0x02111388 module:overlay(7)
 from:0x02115ef8 kind:load to:0x02111288 module:overlay(7)
 from:0x02115f00 kind:load to:0x02110cdc module:overlay(7)
 from:0x02115f08 kind:load to:0x02111094 module:overlay(7)
-from:0x02115f10 kind:load to:0x02055f44 module:main
+from:0x02115f10 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02115f14 kind:load to:0x02115f68 module:overlay(7)
 from:0x02115f18 kind:load to:0x02115f28 module:overlay(7)
-from:0x02115f1c kind:load to:0x02055f44 module:main
+from:0x02115f1c kind:load to:0x02055f3c add:0x8 module:main
 from:0x02115f20 kind:load to:0x02115f54 module:overlay(7)
 from:0x02115f24 kind:load to:0x02054c10 module:main
-from:0x02115f28 kind:load to:0x02055f44 module:main
+from:0x02115f28 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02115f2c kind:load to:0x02115fa4 module:overlay(7)
 from:0x02115f30 kind:load to:0x02050008 module:main
-from:0x02115f34 kind:load to:0x02055f44 module:main
+from:0x02115f34 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02115f38 kind:load to:0x02115f40 module:overlay(7)
 from:0x02115f3c kind:load to:0x02050008 module:main
 from:0x02115f80 kind:load to:0x02115f1c module:overlay(7)
@@ -468,15 +468,15 @@ from:0x02116034 kind:load to:0x02112fc8 module:overlay(7)
 from:0x0211603c kind:load to:0x02112e7c module:overlay(7)
 from:0x02116044 kind:load to:0x021129bc module:overlay(7)
 from:0x0211604c kind:load to:0x0211291c module:overlay(7)
-from:0x02116054 kind:load to:0x02055f54 module:main
+from:0x02116054 kind:load to:0x02055f4c add:0x8 module:main
 from:0x02116058 kind:load to:0x02116090 module:overlay(7)
-from:0x0211605c kind:load to:0x02055f44 module:main
+from:0x0211605c kind:load to:0x02055f3c add:0x8 module:main
 from:0x02116060 kind:load to:0x02116080 module:overlay(7)
 from:0x02116064 kind:load to:0x02116054 module:overlay(7)
-from:0x02116068 kind:load to:0x02055f44 module:main
+from:0x02116068 kind:load to:0x02055f3c add:0x8 module:main
 from:0x0211606c kind:load to:0x021160b4 module:overlay(7)
 from:0x02116070 kind:load to:0x0211605c module:overlay(7)
-from:0x02116074 kind:load to:0x02055f44 module:main
+from:0x02116074 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02116078 kind:load to:0x021160a0 module:overlay(7)
 from:0x0211607c kind:load to:0x0211605c module:overlay(7)
 from:0x021160cc kind:load to:0x0211605c module:overlay(7)

@@ -1,0 +1,14 @@
+# Pinned ds-decomp (dsd) build. Bump rev + run `make tools`.
+#
+# Why a commit and not a release: the newest RELEASE (v0.11.0) still aborts with
+# "No more overlay groups to connect to" on this ROM's 141 overlays. The fixes
+# (fb0d8e48, 83da00d4) are main-only. See notes/link.md.
+#
+# Do NOT switch this to a CI-artifact download: GitHub artifacts expire after 90
+# days and need an authenticated token.
+repo = https://github.com/AetiasHax/ds-decomp
+rev = 529b7563
+crate = ds-decomp-cli
+bin = dsd
+# dsd's own --version still prints 0.11.0 on main, so it CANNOT verify the pin;
+# tools/.dsd.stamp records the rev instead.

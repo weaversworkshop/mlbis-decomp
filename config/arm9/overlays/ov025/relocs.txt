@@ -729,7 +729,7 @@ from:0x020d12d0 kind:load to:0x020d122c module:overlay(25)
 from:0x020d12d4 kind:load to:0x020d1270 module:overlay(25)
 from:0x020d12e4 kind:load to:0x01ff8d18 module:itcm
 from:0x020d12e8 kind:load to:0x020cc9f8 module:overlay(25)
-from:0x020d1350 kind:load to:0x02055f44 module:main
+from:0x020d1350 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020d1354 kind:load to:0x020d135c module:overlay(25)
 from:0x020d1358 kind:load to:0x02054e98 module:main
 from:0x020d1374 kind:load to:0x020d1350 module:overlay(25)

@@ -375,13 +375,13 @@ from:0x020cc5f8 kind:load to:0x020cc698 module:overlay(63)
 from:0x020cc5fc kind:load to:0x020c9cd8 module:overlay(63)
 from:0x020cc600 kind:load to:0x020cc6e4 module:overlay(63)
 from:0x020cc604 kind:load to:0x020cc478 module:overlay(63)
-from:0x020cc620 kind:load to:0x02055f44 module:main
+from:0x020cc620 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cc624 kind:load to:0x020cc644 module:overlay(63)
 from:0x020cc628 kind:load to:0x020cc638 module:overlay(63)
-from:0x020cc62c kind:load to:0x02055f44 module:main
+from:0x020cc62c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cc630 kind:load to:0x020cc674 module:overlay(63)
 from:0x020cc634 kind:load to:0x020cc620 module:overlay(63)
-from:0x020cc638 kind:load to:0x02055f44 module:main
+from:0x020cc638 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cc63c kind:load to:0x020cc654 module:overlay(63)
 from:0x020cc640 kind:load to:0x02054e90 module:main
 from:0x020cc668 kind:load to:0x01ff8d18 module:itcm

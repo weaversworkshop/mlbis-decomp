@@ -374,10 +374,10 @@ from:0x02071df4 kind:arm_call to:0x0204536c module:main
 from:0x02071e10 kind:arm_call to:0x0204536c module:main
 from:0x02071eec kind:load to:0x020725ec module:overlay(130)
 from:0x02071ef0 kind:load to:0x020723d0 module:overlay(130)
-from:0x02071f58 kind:load to:0x02055f44 module:main
+from:0x02071f58 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02071f5c kind:load to:0x020720a8 module:overlay(130)
 from:0x02071f60 kind:load to:0x02050008 module:main
-from:0x02071f88 kind:load to:0x02055f44 module:main
+from:0x02071f88 kind:load to:0x02055f3c add:0x8 module:main
 from:0x02071f8c kind:load to:0x020724c0 module:overlay(130)
 from:0x02071f90 kind:load to:0x02054c10 module:main
 from:0x0207249c kind:load to:0x02071f88 module:overlay(130)

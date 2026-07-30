@@ -76,7 +76,7 @@ func_ov118_020e5808 kind:function(arm,size=0x324) addr:0x020e5808
 func_ov118_020e5b2c kind:function(arm,size=0x98) addr:0x020e5b2c
 func_ov118_020e5bc4 kind:function(arm,size=0x33c) addr:0x020e5bc4
 func_ov118_020e5f00 kind:function(arm,size=0xe8) addr:0x020e5f00
-.L_020e5f08 kind:label(arm) addr:0x020e5f08
+.L_020e5f08 kind:label(arm) addr:0x020e5f08 local
 func_ov118_020e5fe8 kind:function(arm,size=0x24) addr:0x020e5fe8
 func_ov118_020e600c kind:function(arm,size=0x238) addr:0x020e600c
 func_ov118_020e6244 kind:function(arm,size=0x1b8) addr:0x020e6244

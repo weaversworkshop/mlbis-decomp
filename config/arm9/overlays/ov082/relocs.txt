@@ -336,10 +336,10 @@ from:0x020cbb88 kind:load to:0x020cbf78 module:overlay(82)
 from:0x020cbb8c kind:load to:0x020c9b38 module:overlay(82)
 from:0x020cbb90 kind:load to:0x020cbc20 module:overlay(82)
 from:0x020cbb94 kind:load to:0x020cbadc module:overlay(82)
-from:0x020cbba0 kind:load to:0x02055f44 module:main
+from:0x020cbba0 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cbba4 kind:load to:0x020cbbec module:overlay(82)
 from:0x020cbba8 kind:load to:0x020cbbac module:overlay(82)
-from:0x020cbbac kind:load to:0x02055f44 module:main
+from:0x020cbbac kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cbbb0 kind:load to:0x020cbbb8 module:overlay(82)
 from:0x020cbbb4 kind:load to:0x02054e90 module:main
 from:0x020cbbcc kind:load to:0x020cbba0 module:overlay(82)

@@ -47,10 +47,10 @@ from:0x020c95bc kind:load to:0x020951cc module:overlays(14,130)
 from:0x020c95c0 kind:load to:0x020c94e8 module:overlay(57)
 from:0x020c95c4 kind:load to:0x020c9660 module:overlay(57)
 from:0x020c95c8 kind:load to:0x020c9564 module:overlay(57)
-from:0x020c95e0 kind:load to:0x02055f44 module:main
+from:0x020c95e0 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020c95e4 kind:load to:0x020c95f8 module:overlay(57)
 from:0x020c95e8 kind:load to:0x02054e90 module:main
-from:0x020c95ec kind:load to:0x02055f44 module:main
+from:0x020c95ec kind:load to:0x02055f3c add:0x8 module:main
 from:0x020c95f0 kind:load to:0x020c9608 module:overlay(57)
 from:0x020c95f4 kind:load to:0x020c95e0 module:overlay(57)
 from:0x020c9624 kind:load to:0x020c95ec module:overlay(57)

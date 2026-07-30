@@ -2311,16 +2311,16 @@ from:0x020f54c4 kind:load to:0x01ff8d18 module:itcm
 from:0x020f54c8 kind:load to:0x020e16e4 module:overlay(118)
 from:0x020f5570 kind:load to:0x01ff8d18 module:itcm
 from:0x020f5574 kind:load to:0x020e5fe8 module:overlay(118)
-from:0x020f557c kind:load to:0x02055f44 module:main
+from:0x020f557c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020f5580 kind:load to:0x020f55cc module:overlay(118)
 from:0x020f5584 kind:load to:0x02054e90 module:main
-from:0x020f5588 kind:load to:0x02055f44 module:main
+from:0x020f5588 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020f558c kind:load to:0x020f55ac module:overlay(118)
 from:0x020f5590 kind:load to:0x020f5594 module:overlay(118)
-from:0x020f5594 kind:load to:0x02055f44 module:main
+from:0x020f5594 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020f5598 kind:load to:0x020f55bc module:overlay(118)
 from:0x020f559c kind:load to:0x020f557c module:overlay(118)
-from:0x020f55a0 kind:load to:0x02055f44 module:main
+from:0x020f55a0 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020f55a4 kind:load to:0x020f55dc module:overlay(118)
 from:0x020f55a8 kind:load to:0x020f5588 module:overlay(118)
 from:0x020f55f8 kind:load to:0x020d1219 module:overlays(25,31,34,36,110,115)
