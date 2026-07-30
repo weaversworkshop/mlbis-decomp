@@ -1417,7 +1417,7 @@ from:0x02094490 kind:load to:0x02054fcc module:main
 from:0x02094494 kind:load to:0x020551e8 module:main
 from:0x02094498 kind:load to:0x020551fc module:main
 from:0x0209449c kind:load to:0x02055188 module:main
-from:0x020944a0 kind:load to:0x02054e38 module:main
+from:0x020944a0 kind:load to:0x02054e30 add:0x8 module:main
 from:0x020944a8 kind:load to:0x020750d4 module:overlays(3,122,130)
 from:0x020944ac kind:load to:0x02055608 module:main
 from:0x020944b0 kind:load to:0x0205561c module:main

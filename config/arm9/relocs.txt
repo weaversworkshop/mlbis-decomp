@@ -1941,10 +1941,10 @@ from:0x0201fe48 kind:arm_call to:0x01ff8380 module:itcm
 from:0x0201fe50 kind:arm_call to:0x01ff82ac module:itcm
 from:0x0201fe58 kind:arm_call to:0x0203608c module:main
 from:0x0201fe8c kind:arm_call to:0x0201ff80 module:main
-from:0x0201fe98 kind:load to:0x02054e38 module:main
+from:0x0201fe98 kind:load to:0x02054e30 add:0x8 module:main
 from:0x0201feac kind:arm_call to:0x0201ff80 module:main
 from:0x0201feb4 kind:arm_call to:0x0201a168 module:main
-from:0x0201fec0 kind:load to:0x02054e38 module:main
+from:0x0201fec0 kind:load to:0x02054e30 add:0x8 module:main
 from:0x0201ff1c kind:arm_call to:0x02019eac module:main
 from:0x0201ff30 kind:arm_call to:0x0202005c module:main
 from:0x0201ff3c kind:arm_call to:0x0202005c module:main
