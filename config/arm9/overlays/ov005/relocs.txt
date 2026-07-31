@@ -232,7 +232,7 @@ from:0x02111e44 kind:arm_call to:0x01ff8228 module:itcm
 from:0x02111e58 kind:arm_call to:0x01ff8228 module:itcm
 from:0x02111e6c kind:arm_call to:0x01ff8228 module:itcm
 from:0x02111f58 kind:load to:0x0210d090 module:overlay(4)
-from:0x02111f5c kind:load to:0x02054e6c module:main
+from:0x02111f5c kind:load to:0x02054e64 add:0x8 module:main
 from:0x02111f60 kind:load to:0x02054fdc module:main
 from:0x02111f64 kind:load to:0x02054fcc module:main
 from:0x02111f68 kind:load to:0x02055608 module:main
@@ -263,7 +263,7 @@ from:0x02112194 kind:arm_call to:0x01ff8228 module:itcm
 from:0x021121a8 kind:arm_call to:0x01ff8228 module:itcm
 from:0x021121bc kind:arm_call to:0x01ff8228 module:itcm
 from:0x021122d0 kind:load to:0x0210d090 module:overlay(4)
-from:0x021122d4 kind:load to:0x02054e6c module:main
+from:0x021122d4 kind:load to:0x02054e64 add:0x8 module:main
 from:0x021122d8 kind:load to:0x02054fdc module:main
 from:0x021122dc kind:load to:0x02054fcc module:main
 from:0x021122e0 kind:load to:0x02055608 module:main
@@ -324,7 +324,7 @@ from:0x02112898 kind:arm_call to:0x02113ad0 module:overlay(5)
 from:0x021128ac kind:load to:0x02126790 module:overlay(6)
 from:0x021128bc kind:arm_call to:0x02111c70 module:overlay(5)
 from:0x021129e8 kind:load to:0x0210cfcc module:overlay(4)
-from:0x021129ec kind:load to:0x02054e6c module:main
+from:0x021129ec kind:load to:0x02054e64 add:0x8 module:main
 from:0x021129f0 kind:load to:0x02054fdc module:main
 from:0x021129f4 kind:load to:0x02054fcc module:main
 from:0x021129f8 kind:load to:0x020551e8 module:main
@@ -336,7 +336,7 @@ from:0x02112a0c kind:load to:0x02054e30 add:0x8 module:main
 from:0x02112a10 kind:load to:0x02054e08 add:0x8 module:main
 from:0x02112a1c kind:arm_call to:0x02111fc0 module:overlay(5)
 from:0x02112b44 kind:load to:0x0210cfcc module:overlay(4)
-from:0x02112b48 kind:load to:0x02054e6c module:main
+from:0x02112b48 kind:load to:0x02054e64 add:0x8 module:main
 from:0x02112b4c kind:load to:0x02054fdc module:main
 from:0x02112b50 kind:load to:0x02054fcc module:main
 from:0x02112b54 kind:load to:0x020551e8 module:main

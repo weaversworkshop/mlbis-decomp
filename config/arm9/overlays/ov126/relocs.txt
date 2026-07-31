@@ -635,7 +635,7 @@ from:0x020820e4 kind:load to:0x02056370 add:0x96 module:main
 from:0x0208210c kind:load to:0x02087a5c module:overlay(126)
 from:0x02082110 kind:load to:0x02054e08 add:0x8 module:main
 from:0x02082114 kind:load to:0x0208b888 module:overlay(126)
-from:0x02082118 kind:load to:0x02054e6c module:main
+from:0x02082118 kind:load to:0x02054e64 add:0x8 module:main
 from:0x0208211c kind:load to:0x0208b820 module:overlay(126)
 from:0x02082120 kind:load to:0x02054fdc module:main
 from:0x02082124 kind:load to:0x0208b840 module:overlay(126)

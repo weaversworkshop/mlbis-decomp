@@ -1408,7 +1408,7 @@ from:0x02094444 kind:load to:0x01ff9440 module:itcm
 from:0x0209446c kind:load to:0x020a1610 module:overlay(123)
 from:0x02094470 kind:load to:0x02054e08 add:0x8 module:main
 from:0x02094474 kind:load to:0x020a61cc module:overlay(123)
-from:0x02094478 kind:load to:0x02054e6c module:main
+from:0x02094478 kind:load to:0x02054e64 add:0x8 module:main
 from:0x0209447c kind:load to:0x020a60f4 module:overlay(123)
 from:0x02094480 kind:load to:0x02054fdc module:main
 from:0x02094484 kind:load to:0x020a6144 module:overlay(123)

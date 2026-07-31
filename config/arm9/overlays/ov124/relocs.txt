@@ -1692,7 +1692,7 @@ from:0x020947b4 kind:load to:0x020a2aa8 module:overlay(124)
 from:0x020947b8 kind:load to:0x020a3738 module:overlay(124)
 from:0x020947bc kind:load to:0x02054e08 add:0x8 module:main
 from:0x020947c0 kind:load to:0x020a2520 module:overlay(124)
-from:0x020947c4 kind:load to:0x02054e6c module:main
+from:0x020947c4 kind:load to:0x02054e64 add:0x8 module:main
 from:0x020947c8 kind:load to:0x020a24b4 module:overlay(124)
 from:0x020947d0 kind:load to:0x020750e4 module:overlays(3,122,130)
 from:0x020947d4 kind:load to:0x02054fdc module:main

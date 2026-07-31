@@ -53,7 +53,7 @@ from:0x020c9bac kind:arm_call to:0x01ff82ac module:itcm
 from:0x020c9bb8 kind:load to:0x02072010 module:overlays(11,130)
 from:0x020c9bbc kind:load to:0x020c9c84 module:overlay(19)
 from:0x020c9bc0 kind:load to:0x020951cc module:overlays(14,130)
-from:0x020c9bc4 kind:load to:0x02054e6c module:main
+from:0x020c9bc4 kind:load to:0x02054e64 add:0x8 module:main
 from:0x020c9bd8 kind:load to:0x02054fdc module:main
 from:0x020c9bdc kind:load to:0x02070a90 module:overlay(11)
 from:0x020c9be0 kind:load to:0x02054f0c add:0x8 module:main

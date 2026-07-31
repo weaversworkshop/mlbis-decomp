@@ -60,8 +60,16 @@ SYMBOL_LINE_RE = re.compile(
 # anchor. Captures the identifier immediately before the parameter list and
 # an optional explicit X:: qualifier.
 ANCHOR_RE = re.compile(
-    r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?(?P<name>[A-Za-z_]\w*)\s*\([^;{]*\)\s*(?:const\s*)?[;{].*//.*0x(?P<addr>[0-9a-fA-F]+)"
+    r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?"
+    r"(?P<name>operator\s+(?:new|delete)(?:\s*\[\s*\])?|[A-Za-z_]\w*)"
+    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{].*//.*0x(?P<addr>[0-9a-fA-F]+)"
 )
+# Mangled ABI token -> source spelling, for the allocation operators only.
+# Implicit ones (operator=) are compiler-emitted and never anchored.
+# Keyed WITH arity ('operator new/2'): global placement forms are overloaded
+# (heap.h has a 4-param one), so name alone collides the way C1/D0 does.
+OPERATOR_TOKENS = {"nw": "operator new", "na": "operator new[]",
+                   "dl": "operator delete", "da": "operator delete[]"}
 # Ctor/dtor declaration: the function name equals the enclosing (or X::-qualified)
 # class, with an optional '~' for the dtor. One such source decl maps to SEVERAL
 # mangled symbols at distinct addresses (ctor C1/C2, dtor D0/D1/D2), so a single
@@ -125,7 +133,54 @@ def parse_name(sym):
         if not nested:
             break
     scope = parts[-2] if len(parts) >= 2 else ""
-    return scope, parts[-1] if parts else None
+    simple = parts[-1] if parts else None
+    op = OPERATOR_TOKENS.get(simple)
+    if op:
+        n, names = mangled_params(s[1:] if s[:1] == "E" else s)
+        return scope, f"{op}/{n}" + ("/" + ",".join(sorted(names)) if names else "")
+    return scope, simple
+
+
+def norm_name(n):
+    """'operator  new [ ]' -> 'operator new[]'; other names unchanged."""
+    return re.sub(r"\s*\[\s*\]", "[]", re.sub(r"\s+", " ", n))
+
+
+def source_arity(params):
+    """Parameter count of a source parameter list ('' and 'void' -> 0)."""
+    s = params.strip()
+    if not s or s == "void":
+        return 0
+    depth, n = 0, 1
+    for c in s:
+        depth += c in "(<["
+        depth -= c in ")>]"
+        n += c == "," and depth == 0
+    return n
+
+
+def mangled_params(s):
+    """(count, class names) of a mangled parameter-encoding suffix (Itanium
+    subset: builtins, P/R/K prefixes, N-length names, S_ substitutions).
+    mwcc encodes a class param as its literal source name, so the names
+    discriminate same-arity overloads without ever hand-mangling."""
+    i, n, names = 0, 0, set()
+    while i < len(s):
+        while i < len(s) and s[i] in "PRKOCVG":  # prefixes: don't end a param
+            i += 1
+        if i >= len(s):
+            break
+        if s[i] == "S":                          # substitution: S_, S0_, ...
+            i = s.find("_", i) + 1 or len(s)
+        elif s[i].isdigit():                     # N-length source name
+            m = re.match(r"\d+", s[i:])
+            ln, i = int(m.group()), i + m.end()
+            names.add(s[i:i + ln])
+            i += ln
+        else:
+            i += 1                               # single-char builtin
+        n += 1
+    return n, names
 
 
 def qual(scope, name):
@@ -140,7 +195,11 @@ def embedded_addr(simple):
 
 def is_userish(name):
     """A name that SHOULD have been placeable (worth reporting if it isn't)."""
-    return bool(name) and not re.match(r"[CD][0-9]$", name) and "operator" not in name
+    if not name:
+        return False
+    if name.split("/")[0] in OPERATOR_TOKENS.values():  # anchorable -> report
+        return True
+    return not re.match(r"[CD][0-9]$", name) and "operator" not in name
 
 
 def load_anchors(verbose):
@@ -151,6 +210,7 @@ def load_anchors(verbose):
     anchors disagree on the address (skipped). Redundant same-address anchors
     across files are a notice only."""
     raw = {}  # (scope, name) -> list of (addr, "path:line")
+    idents = {}  # operator key -> identifier tokens in its source params
     for d in ANCHOR_DIRS:
         if not d.exists():
             continue
@@ -174,7 +234,12 @@ def load_anchors(verbose):
                     m = ANCHOR_RE.search(line)
                     if m:
                         scope = m.group("scope") or (stack[-1][0] if stack else "")
-                        raw.setdefault((scope, m.group("name")), []).append(
+                        nm = norm_name(m.group("name"))
+                        if nm.startswith("operator "):
+                            nm += f"/{source_arity(m.group('params'))}"
+                            idents.setdefault((scope, nm), set()).update(
+                                re.findall(r"[A-Za-z_]\w*", m.group("params")))
+                        raw.setdefault((scope, nm), []).append(
                             (int(m.group("addr"), 16), loc))
                     elif not stack:
                         # global-scope data anchor (class members must not register)
@@ -204,15 +269,24 @@ def load_anchors(verbose):
         anchors[key] = addrs.pop()
     if verbose:
         print(f"  {len(anchors)} address anchor(s) from source", file=sys.stderr)
-    return anchors, conflicts
+    return anchors, conflicts, idents
 
 
-def resolve_anchor(anchors, by_name, scope, simple):
+def resolve_anchor(anchors, by_name, scope, simple, idents):
     """Exact (scope, name) match, else name-only fallback iff every anchor of
     that name agrees on one address (covers scope-parse misses; never guesses
     between per-class overrides). Ctor/dtor codes (C1/C2/D0..) are generic ABI
     tokens, NOT unique names -- resolve them ONLY by exact (class, code), never
     the fallback (else the lone anchored C1 captures every class's C1)."""
+    if simple.startswith("operator "):
+        # 'operator new/2/clYanaUnitSys': match on name+arity, then require every
+        # class-typed param to appear in the anchor's source param list. Never
+        # falls back by name -- 'operator new' is generic like C1/D0.
+        part = simple.split("/")
+        key = (scope, "/".join(part[:2]))
+        want = set(part[2].split(",")) if len(part) > 2 else set()
+        a = anchors.get(key)
+        return a if a is not None and want <= idents.get(key, set()) else None
     a = anchors.get((scope, simple))
     if a is not None:
         return a
@@ -315,7 +389,7 @@ def load_symbols_lines(path):
     return lines, by_addr, present
 
 
-def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
+def process_module(mod, o_paths, sym_path, anchors, idents, dry_run, verbose):
     """Sync one module's .o symbols into its symbols.txt. Address keying is
     module-local, so overlapping overlay addresses can't collide."""
     syms = dump_symbols(o_paths, verbose)
@@ -337,7 +411,7 @@ def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
     for scope, simple, full, _ in syms:
         addr = embedded_addr(simple)
         if addr is None:
-            addr = resolve_anchor(anchors, by_name, scope, simple)
+            addr = resolve_anchor(anchors, by_name, scope, simple, idents)
         if addr is not None:
             names_at.setdefault(addr, set()).add(full)
     ambiguous = {a for a, ns in names_at.items() if len(ns) > 1}
@@ -349,7 +423,7 @@ def process_module(mod, o_paths, sym_path, anchors, dry_run, verbose):
     for scope, simple, full, is_def in syms:
         addr = embedded_addr(simple)
         if addr is None:
-            addr = resolve_anchor(anchors, by_name, scope, simple)
+            addr = resolve_anchor(anchors, by_name, scope, simple, idents)
         if addr is None:
             if is_def and full not in present and is_userish(simple):
                 unplaced.append(full)
@@ -385,7 +459,7 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args()
 
-    anchors, conflicts = load_anchors(args.verbose)
+    anchors, conflicts, idents = load_anchors(args.verbose)
     modules = load_config_modules()
     by_mod = sources_by_module(args.verbose)
 
@@ -397,7 +471,8 @@ def main():
                   f"-- skipped", file=sys.stderr)
             continue
         n, unplaced, ambiguous = process_module(
-            mod, by_mod[mod], sym_path, anchors, args.dry_run, args.verbose)
+            mod, by_mod[mod], sym_path, anchors, idents, args.dry_run,
+            args.verbose)
         total_changed += n
         total_unplaced += len(unplaced)
         total_ambiguous += len(ambiguous)

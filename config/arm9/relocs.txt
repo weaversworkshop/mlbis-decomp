@@ -1954,12 +1954,12 @@ from:0x0202010c kind:arm_call to:0x0201fe60 module:main
 from:0x02020194 kind:arm_call to:0x0201fe60 module:main
 from:0x020201c8 kind:arm_call to:0x0201ffb0 module:main
 from:0x020202c8 kind:arm_call to:0x02020418 module:main
-from:0x020202d4 kind:load to:0x02054e6c module:main
+from:0x020202d4 kind:load to:0x02054e64 add:0x8 module:main
 from:0x020202e8 kind:arm_call to:0x02020418 module:main
 from:0x020202f0 kind:arm_call to:0x0201a168 module:main
-from:0x020202fc kind:load to:0x02054e6c module:main
+from:0x020202fc kind:load to:0x02054e64 add:0x8 module:main
 from:0x02020310 kind:arm_call to:0x02020418 module:main
-from:0x0202031c kind:load to:0x02054e6c module:main
+from:0x0202031c kind:load to:0x02054e64 add:0x8 module:main
 from:0x02020334 kind:arm_call to:0x020203f0 module:main
 from:0x02020384 kind:arm_call to:0x02019eac module:main
 from:0x020203e8 kind:load to:0x02054e84 module:main
