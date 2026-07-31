@@ -2,8 +2,8 @@ from:0x020c9008 kind:arm_call to:0x02020494 module:main
 from:0x020c9048 kind:arm_call to:0x020c9290 module:overlay(18)
 from:0x020c9058 kind:arm_call to:0x020c9338 module:overlay(18)
 from:0x020c9074 kind:load to:0x02055fe4 module:main
-from:0x020c9078 kind:load to:0x02054eec module:main
-from:0x020c907c kind:load to:0x02054f00 module:main
+from:0x020c9078 kind:load to:0x02054ee4 add:0x8 module:main
+from:0x020c907c kind:load to:0x02054ef8 add:0x8 module:main
 from:0x020c9080 kind:load to:0x020cb424 module:overlay(18)
 from:0x020c909c kind:arm_call to:0x020c9388 module:overlay(18)
 from:0x020c9168 kind:arm_call to:0x020ae400 module:overlay(16)

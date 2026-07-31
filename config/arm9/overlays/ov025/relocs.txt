@@ -718,9 +718,9 @@ from:0x020d1208 kind:load to:0x02064f08 module:overlay(8)
 from:0x020d1268 kind:load to:0x020d1760 module:overlay(25)
 from:0x020d126c kind:load to:0x020d12e0 module:overlay(25)
 from:0x020d12ac kind:arm_call to:0x0204760c module:main
-from:0x020d12b4 kind:load to:0x02054eec module:main
+from:0x020d12b4 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x020d12b8 kind:load to:0x020d176c module:overlay(25)
-from:0x020d12bc kind:load to:0x02054f00 module:main
+from:0x020d12bc kind:load to:0x02054ef8 add:0x8 module:main
 from:0x020d12c0 kind:load to:0x020d1378 module:overlay(25)
 from:0x020d12c4 kind:load to:0x020d1778 module:overlay(25)
 from:0x020d12c8 kind:load to:0x020ceb60 module:overlay(25)

@@ -25,7 +25,5 @@ public:
     void release(void *);  // 0x02020480
 };
 
-void * operator new(size_t, clYanaUnitSys *);  // 0x02020494
-
 #endif
 #endif

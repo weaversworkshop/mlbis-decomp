@@ -14,11 +14,6 @@ extern "C" {
 
 extern clYanaUnitSys * data_027e00e8;  // 0x027e00e8
 
-// --- Function Declarations --- //
-
-void func_020204a4(void *);  // 0x020204a4
-clYanaUnitSys * findOwner(void *);  // 0x020204c8
-
 } // extern "C"
 
 // --- Function Definitions --- //
@@ -97,35 +92,3 @@ void clYanaUnitSys::release(void * block) {
         this->freeList = block;
     }
 }
-
-// MATCHED 100%
-void * operator new(size_t size, clYanaUnitSys * param2) {
-    return param2->acquire();
-}
-
-// MATCHED 100%
-void func_020204a4(void * block) {
-    if (block != NULL) {
-        clYanaUnitSys * owner = findOwner(block);
-        if (owner != NULL) {
-            owner->release(block);
-        }
-    }
-}
-
-// MATCHED 100%
-clYanaUnitSys * findOwner(void * addr) {
-    clYanaUnitSys * sys = data_027e00e8;
-    while (TRUE) {
-        if (sys == NULL) {
-            return NULL;
-        }
-
-        if (sys->buffer <= addr && addr < sys->bufferEnd) {
-            return sys;
-        }
-
-        sys = sys->next;
-    }
-}
-

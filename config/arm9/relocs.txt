@@ -5177,7 +5177,7 @@ from:0x02047c80 kind:load to:0x0200b8a8 module:main
 from:0x02047ca0 kind:load to:0x0205afa4 module:main
 from:0x02047ca4 kind:load to:0x02054bfc module:main
 from:0x02047d0c kind:arm_call to:0x0204760c module:main
-from:0x02047d14 kind:load to:0x02054eec module:main
+from:0x02047d14 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x02047d18 kind:load to:0x0205bb78 module:main
 from:0x02047d1c kind:load to:0x02054f0c add:0x8 module:main
 from:0x02047d20 kind:load to:0x02054f54 module:main

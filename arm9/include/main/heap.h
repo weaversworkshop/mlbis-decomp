@@ -47,8 +47,10 @@ void rebaseHeap(u32, void *);  // 0x0201a2e0
 #ifdef __cplusplus
 }
 
-void * operator new(size_t, u32, void *, u32);
-void * operator new[](size_t, u32, void *, u32);
+void * operator new(size_t, u32, void *, u32);  // 0x0201a138
+void * operator new[](size_t, u32, void *, u32);  // 0x0201a150
+void operator delete(void *);  // 0x0201a168
+void operator delete[](void *);  // 0x0201a174
 
 #endif
 
