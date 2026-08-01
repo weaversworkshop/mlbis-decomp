@@ -168,7 +168,7 @@ from:0x0206b74c kind:arm_call to:0x0201bd54 module:main
 from:0x0206b760 kind:arm_call to:0x0201bd54 module:main
 from:0x0206b768 kind:arm_call to:0x0201a168 module:main
 from:0x0206b77c kind:arm_call to:0x0201bd54 module:main
-from:0x0206b834 kind:load to:0x0205b7a8 module:main
+from:0x0206b834 kind:load to:0x0205afa8 add:0x800 module:main
 from:0x0206b84c kind:arm_call to:0x0206b0f4 module:overlay(3)
 from:0x0206b894 kind:load to:0x020829b0 module:overlay(3)
 from:0x0206b8ac kind:arm_call to:0x0206b0f4 module:overlay(3)

@@ -665,7 +665,7 @@ from:0x02071404 kind:arm_call to:0x0206a404 module:overlay(122)
 from:0x02071420 kind:arm_call to:0x02019b2c module:main
 from:0x02071438 kind:arm_call to:0x02019a2c module:main
 from:0x02071440 kind:arm_call to:0x0201e48c module:main
-from:0x02071450 kind:load to:0x0205b7a8 module:main
+from:0x02071450 kind:load to:0x0205afa8 add:0x800 module:main
 from:0x02071458 kind:load to:0x0205afa8 add:0x14 module:main
 from:0x020714b8 kind:arm_call to:0x02070b94 module:overlay(122)
 from:0x020714ec kind:arm_call to:0x0201a138 module:main

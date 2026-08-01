@@ -19,7 +19,7 @@ typedef struct {
     u8 pad_04[0x18];
 } UnkGlobal_02056504;
 
-// --- Extern Data --- //
+// --- Extern Data Variables --- //
 
 extern UnkGlobal_02056504 data_02056504;
 

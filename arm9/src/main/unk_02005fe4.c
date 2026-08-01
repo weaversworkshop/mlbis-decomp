@@ -13,7 +13,7 @@
 extern void func_02009b90(void);
 extern void func_0200a600(void);
 extern void func_0202eea8(void);
-extern void func_020318f0(u32 param1, NNSSndHeapHandle param2); // DEFERRED : function interleaved with SDK
+extern void NNS_SndArcStrmInit(u32 param1, NNSSndHeapHandle param2); // DEFERRED : function interleaved with SDK
 
 // MATCHED 100%
 void func_02005fe4(BOOL param1, u32 param2, u32 param3, u32 param4) {
@@ -53,7 +53,7 @@ void func_02005fe4(BOOL param1, u32 param2, u32 param3, u32 param4) {
 
     NNS_SndArcPlayerSetup(data_01ff9468.field00);
 
-    func_020318f0(10, data_01ff9468.field00);
+    NNS_SndArcStrmInit(10, data_01ff9468.field00);
 
     NNS_SndArcStrmCreatePrepareThread(&data_01ff9c7c, 17);
 

@@ -36,12 +36,15 @@ SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c) \
                 $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0,*.c) \
                 $(call rwildcard,lib/syscall,*.c)
 
-# Can't compile standalone: os_china.c (China NVRAM); MSL formatted-I/O/alloc/wchar (need <ctime>).
-SDK_SKIP := lib/NitroSDK/libraries/os/src/os_china.c \
-            $(MSL)/MSL_Common/Src/alloc.c $(MSL)/MSL_Common/Src/printf.c \
-            $(MSL)/MSL_Common/Src/scanf.c $(MSL)/MSL_Common/Src/time.c \
-            $(MSL)/MSL_Common/Src/char_io.c $(MSL)/MSL_Common/Src/direct_io.c \
-            $(MSL)/MSL_Common/Src/mbstring.c \
+# DS2.0's MSL tree lacks <ctime>; borrow it from ARM_EABI_Support for these 6 only.
+MSL_CTIME_FB := lib/mw-libraries/ARM_EABI_Support/msl/MSL_C/MSL_Common/Include
+MSL_NEEDS_CTIME := $(MSL)/MSL_Common/Src/printf.c $(MSL)/MSL_Common/Src/scanf.c \
+            $(MSL)/MSL_Common/Src/time.c $(MSL)/MSL_Common/Src/char_io.c \
+            $(MSL)/MSL_Common/Src/direct_io.c $(MSL)/MSL_Common/Src/mbstring.c
+$(MSL_NEEDS_CTIME:%.c=$(BUILD_DIR)/%.o): EXTRA_CFLAGS += -i $(MSL_CTIME_FB)
+
+# Can't compile standalone: alloc.c (needs _MSL_HEAP_* prefix); wchar.
+SDK_SKIP := $(MSL)/MSL_Common/Src/alloc.c \
             $(wildcard $(MSL)/MSL_Common/Src/w*.c) \
             lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_Extras/MSL_Common/Src/extras.c
 # Runtime helpers live in dirs with '(' that break recipe shells; compiled via find in `sdk`.

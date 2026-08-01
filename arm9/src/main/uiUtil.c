@@ -96,20 +96,20 @@ void * getResChunk(YanaRes * res, u32 id, s32 index) {
 
 // MATCHED 100%
 s32 stepMenuCursor(s32 cursor, s32 count, u32 keyPrev, u32 keyNext) {
-    if (inputState.repeat & keyPrev) {
+    if (systemState.inputState.repeat & keyPrev) {
         cursor--;
     }
-    if (inputState.repeat & keyNext) {
+    if (systemState.inputState.repeat & keyNext) {
         cursor++;
     }
 
     if (cursor < 0) {
-        if (inputState.press & keyPrev) {
+        if (systemState.inputState.press & keyPrev) {
             return count-1;
         }
         return 0;
     } else if (count <= cursor) {
-        if (inputState.press & keyNext) {
+        if (systemState.inputState.press & keyNext) {
             return 0;
         }
         return count-1;

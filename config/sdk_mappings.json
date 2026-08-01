@@ -531,6 +531,20 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0202f398",
+      "sdk_name": "NNSi_SndPlayerInit",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x0202f44c",
+      "sdk_name": "NNSi_SndPlayerMain",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x0202f5b0",
       "sdk_name": "NNSi_SndPlayerAllocSeqPlayer",
       "library": "snd",
@@ -591,6 +605,20 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0202f890",
+      "sdk_name": "AllocSeqPlayer",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x0202f8f8",
+      "sdk_name": "ShutdownPlayer",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x0202f97c",
       "sdk_name": "PlayerHeapDisposeCallback",
       "library": "snd",
@@ -613,6 +641,13 @@
       "sdk_name": "NNS_SndStrmFreeChannel",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x0202fb2c",
+      "sdk_name": "NNS_SndStrmSetup",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
     },
     {
       "addr": "0x0202fccc",
@@ -673,6 +708,34 @@
       "sdk_name": "NNSi_SndCaptureInit",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02030064",
+      "sdk_name": "NNSi_SndCaptureMain",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x020300ec",
+      "sdk_name": "NNSi_SndCaptureStop",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x020301dc",
+      "sdk_name": "NNSi_SndCaptureBeginSleep",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x0203023c",
+      "sdk_name": "NNSi_SndCaptureEndSleep",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
     },
     {
       "addr": "0x020302c0",
@@ -972,6 +1035,20 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x020318f0",
+      "sdk_name": "NNS_SndArcStrmInit",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
+      "addr": "0x020319f4",
+      "sdk_name": "NNS_SndArcStrmSetupPlayer",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
       "addr": "0x02031abc",
       "sdk_name": "NNS_SndArcStrmCreatePrepareThread",
       "library": "snd",
@@ -1018,6 +1095,13 @@
       "sdk_name": "NNS_SndArcStrmGetChannelCount",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02031c20",
+      "sdk_name": "NNSi_SndArcStrmMain",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
     },
     {
       "addr": "0x02031d30",
@@ -1084,6 +1168,13 @@
       "sdk_name": "FreeCommandBuffer",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02032430",
+      "sdk_name": "StrmCallback",
+      "library": "nns",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
     },
     {
       "addr": "0x02032568",
@@ -2080,6 +2171,20 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x020379a8",
+      "sdk_name": "GX_LoadBGExtPltt",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x02037a18",
+      "sdk_name": "GX_EndLoadBGExtPltt",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x02037a60",
       "sdk_name": "GX_BeginLoadOBJExtPltt",
       "library": "gx",
@@ -2087,11 +2192,32 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x02037aa8",
+      "sdk_name": "GX_LoadOBJExtPltt",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x02037b14",
+      "sdk_name": "GX_EndLoadOBJExtPltt",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x02037b70",
       "sdk_name": "GXS_LoadBGExtPltt",
       "library": "gx",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037bd4",
+      "sdk_name": "GXS_EndLoadBGExtPltt",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
     },
     {
       "addr": "0x02037c2c",
@@ -2366,6 +2492,13 @@
       "library": "os",
       "header": "nitro/os.h",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02038a70",
+      "sdk_name": "OS_InitThread",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
     },
     {
       "addr": "0x02038bb8",
@@ -2789,6 +2922,13 @@
       "note": "tu_diff content match (SDK_TS sweep 2026-06-30)"
     },
     {
+      "addr": "0x02039fb4",
+      "sdk_name": "OSi_InitVramExclusive",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x02039fe8",
       "sdk_name": "OSi_UnlockVram",
       "library": "os",
@@ -2806,6 +2946,14 @@
       "sdk_name": "OS_Halt",
       "library": "sdk",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x0203a09c",
+      "sdk_name": "MI_DmaFill32",
+      "library": "mi",
+      "header": "nitro/mi.h",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT: bodies, pool, and full call graph match"
     },
     {
       "addr": "0x0203a11c",
@@ -3363,6 +3511,14 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0203c074",
+      "sdk_name": "PXI_Init",
+      "library": "pxi",
+      "header": "nitro/pxi.h",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT after building pxi_init.o (was a cascade blocked by a missing SDK object, not a fork)"
+    },
+    {
       "addr": "0x0203c080",
       "sdk_name": "PXI_InitFifo",
       "library": "pxi",
@@ -3696,6 +3852,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0203decc",
+      "sdk_name": "FSi_InitRom",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
       "addr": "0x0203e014",
       "sdk_name": "FS_SetDefaultDMA",
       "library": "fs",
@@ -3952,6 +4115,14 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02040e8c",
+      "sdk_name": "RTC_Init",
+      "library": "rtc",
+      "header": "nitro/rtc.h",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT after building pxi_init.o (was a cascade blocked by a missing SDK object, not a fork)"
+    },
+    {
       "addr": "0x02040ef8",
       "sdk_name": "RTC_GetTimeAsync",
       "library": "rtc",
@@ -4016,6 +4187,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x020417dc",
+      "sdk_name": "CARDi_InitCommon",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x020418fc",
       "sdk_name": "CARD_CheckEnabled",
       "library": "card",
@@ -4076,6 +4254,28 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02041dc4",
+      "sdk_name": "CARDi_RequestStreamCommandCore",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
+      "addr": "0x02041fb4",
+      "sdk_name": "CARDi_RequestStreamCommand",
+      "library": "sdk",
+      "header": "nitro/card/backup.h",
+      "confidence": "certain",
+      "note": "obj_match 100% vs ROM. backup.c previously annotated it a suspected fork of CARDi_ProgramAndVerifyBackup - disproven."
+    },
+    {
+      "addr": "0x020420b0",
+      "sdk_name": "CARD_IdentifyBackup",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
       "addr": "0x020421f4",
       "sdk_name": "CARD_TryWaitRomAsync",
       "library": "card",
@@ -4107,6 +4307,13 @@
       "library": "card",
       "confidence": "certain",
       "note": "tu_diff content match (SDK_TS sweep 2026-06-30)"
+    },
+    {
+      "addr": "0x02042410",
+      "sdk_name": "CARDi_TryReadCardDma",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
     },
     {
       "addr": "0x0204259c",
@@ -4286,6 +4493,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02043308",
+      "sdk_name": "CTRDGi_InitTaskThread",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
       "addr": "0x020433a8",
       "sdk_name": "CTRDGi_TaskThread",
       "library": "ctrdg",
@@ -4298,6 +4512,20 @@
       "library": "math",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02043560",
+      "sdk_name": "abort",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
+    },
+    {
+      "addr": "0x02043584",
+      "sdk_name": "exit",
+      "library": "sdk",
+      "confidence": "certain",
+      "note": "sdk_equiv over-rejected (rel-vs-abs / duplicate static name); byte-verified vs ROM: all differing words are reloc sites"
     },
     {
       "addr": "0x020436f8",
@@ -5293,6 +5521,31 @@
       "source": "lib/NitroSDK/libraries/mi/src/mi_dma_hblank.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/mi/mi_dma_hblank"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/pxi/src/pxi_init.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/pxi/pxi_init"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_irqTable.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/os_irqTable"
+    },
+    {
+      "source": "lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/Runtime_ARM/(Common_Source)/semihosted_console_io.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/msl/console_io"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/card/src/card_backup.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/card/card_backup"
+    },
+    {
+      "source": "lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_ARM/Src/abort_exit_ARM.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/MSL_ARM/Src/abort_exit_ARM"
     }
   ]
 }

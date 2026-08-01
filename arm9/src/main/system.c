@@ -19,12 +19,7 @@ const u16 repeatKeyMasks[10] = {  // 0x0204ac4c
     PAD_BUTTON_START, PAD_BUTTON_SELECT, PAD_BUTTON_L, PAD_BUTTON_R,
 };
 
-InputState inputState;  // 0x0205afa8
-GXOamAttr oamBuffer[128];  // 0x0205afc4
-
-// ROM gives this only 0x3e4 bytes; retail flush/clear use full HW size 0x400, overrunning 0x1c bytes into frameTimer (dead bytes -- see FrameTimer.oamOverrunPad)
-GXOamAttr subOamBuffer[124];  // 0x0205b3c4
-FrameTimer frameTimer;  // 0x0205b7a8
+SystemState systemState;  // 0x0205afa8
 
 // --- Function Definitions --- //
 
@@ -37,7 +32,7 @@ void initSystem() {
 
 // MATCHED 100%
 void readKeypad() {
-    decodeKeypad(&inputState, PAD_Read());
+    decodeKeypad(&systemState.inputState, PAD_Read());
 }
 
 // MATCHED 100%
@@ -53,10 +48,10 @@ void decodeKeypad(InputState * input, u16 keys) {
         if (held != 0) {
             if ((prevHold & held) == 0) {
                 repeat |= held;
-                input->repeatTimers[i] = input->field08;
+                input->repeatTimers[i] = input->repeatDelay;
             } else if (--input->repeatTimers[i] == 0) {
                     repeat |= held;
-                    input->repeatTimers[i] = input->field09;
+                    input->repeatTimers[i] = input->repeatRate;
             }
         } else {
             input->repeatTimers[i] = 0;
@@ -69,44 +64,44 @@ void decodeKeypad(InputState * input, u16 keys) {
 
 // MATCHED 100%
 void waitVBlankSync() {
-    frameTimer.syncPending = 1;
+    systemState.frameTimer.syncPending = 1;
 
     s32 vcount = reg_GX_VCOUNT;
-    frameTimer.syncVCount = vcount;
+    systemState.frameTimer.syncVCount = vcount;
 
-    if (vcount < frameTimer.lastSyncVCount) {
+    if (vcount < systemState.frameTimer.lastSyncVCount) {
         vcount += HW_LCD_LINES;
     }
 
-    if (frameTimer.frameHold == 0 || frameTimer.framePeak < frameTimer.frameScanlines) {
-        frameTimer.frameHold = frameTimer.frameHoldReload;
-        frameTimer.framePeak = frameTimer.frameScanlines;
+    if (systemState.frameTimer.frameHold == 0 || systemState.frameTimer.framePeak < systemState.frameTimer.frameScanlines) {
+        systemState.frameTimer.frameHold = systemState.frameTimer.frameHoldReload;
+        systemState.frameTimer.framePeak = systemState.frameTimer.frameScanlines;
     } else {
-        frameTimer.frameHold--;
+        systemState.frameTimer.frameHold--;
     }
 
-    frameTimer.frameScanlines = (vcount - frameTimer.lastSyncVCount) + frameTimer.frameSkips * HW_LCD_LINES;
+    systemState.frameTimer.frameScanlines = (vcount - systemState.frameTimer.lastSyncVCount) + systemState.frameTimer.frameSkips * HW_LCD_LINES;
 
     OS_WaitIrq(TRUE, OS_IE_V_BLANK);
 
-    frameTimer.lastSyncVCount = reg_GX_VCOUNT;
-    frameTimer.prevFrameSkips = frameTimer.frameSkips;
-    frameTimer.frameSkips = 0;
+    systemState.frameTimer.lastSyncVCount = reg_GX_VCOUNT;
+    systemState.frameTimer.prevFrameSkips = systemState.frameTimer.frameSkips;
+    systemState.frameTimer.frameSkips = 0;
 }
 
 // MATCHED 100%
 void flushOam(u32 dmaNo) {
-    DC_FlushRange(&oamBuffer, sizeof(oamBuffer));
-    MI_DmaCopy32(dmaNo, &oamBuffer, HW_OAM, sizeof(oamBuffer));
+    DC_FlushRange(&systemState.oamBuffer, sizeof(systemState.oamBuffer));
+    MI_DmaCopy32(dmaNo, &systemState.oamBuffer, HW_OAM, sizeof(systemState.oamBuffer));
 
-    DC_FlushRange(&subOamBuffer, sizeof(oamBuffer));
-    MI_DmaCopy32(dmaNo, &subOamBuffer, HW_DB_OAM, sizeof(oamBuffer));
+    DC_FlushRange(&systemState.subOamBuffer, sizeof(systemState.subOamBuffer));
+    MI_DmaCopy32(dmaNo, &systemState.subOamBuffer, HW_DB_OAM, sizeof(systemState.subOamBuffer));
 }
 
 // MATCHED 100%
 void clearOam() {
-    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &oamBuffer, sizeof(oamBuffer));
-    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &subOamBuffer, sizeof(oamBuffer));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.oamBuffer, sizeof(systemState.oamBuffer));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.subOamBuffer, sizeof(systemState.subOamBuffer));
 }
 
 // MATCHED 100%

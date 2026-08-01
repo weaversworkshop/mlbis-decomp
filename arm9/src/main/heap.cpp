@@ -10,7 +10,7 @@ extern "C" {
 
 #include "main/cpu_mem32.h"
 
-// --- Extern Data --- //
+// --- Extern Data Variables --- //
 
 extern void SDK_MAIN_ARENA_LO(void);
 extern void SDK_IRQ_STACKSIZE(void);

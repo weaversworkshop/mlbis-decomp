@@ -394,7 +394,7 @@ from:0x020d7404 kind:arm_call to:0x02035ef4 module:main
 from:0x020d7414 kind:arm_call to:0x02035480 module:main
 from:0x020d741c kind:arm_call to:0x020354e8 module:main
 from:0x020d7514 kind:arm_call to:0x0201f7ec module:main
-from:0x020d751c kind:load to:0x0205b3c4 module:main
+from:0x020d751c kind:load to:0x0205afa8 add:0x41c module:main
 from:0x020d7524 kind:load to:0x02064f08 module:overlay(8)
 from:0x020d7528 kind:load to:0x02064f0c module:overlay(8)
 from:0x020d752c kind:load to:0x020d7530 module:overlay(120)

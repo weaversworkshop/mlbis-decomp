@@ -52,7 +52,7 @@ from:0x021106b4 kind:load to:0x02055fe4 module:main
 from:0x021106b8 kind:load to:0x02113c20 module:overlay(5)
 from:0x021106c8 kind:arm_call to:0x020c8abc module:overlay(4)
 from:0x02110830 kind:load to:0x02055fe4 module:main
-from:0x02110834 kind:load to:0x0205b7a8 module:main
+from:0x02110834 kind:load to:0x0205afa8 add:0x800 module:main
 from:0x02110838 kind:load to:0x02113c20 module:overlay(5)
 from:0x02110850 kind:arm_call to:0x0201a39c module:main
 from:0x02110864 kind:load to:0x0210ed60 module:overlay(4)

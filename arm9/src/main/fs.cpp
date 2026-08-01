@@ -92,7 +92,7 @@ clFS::~clFS() {
 void clFS::run() {
     bool active = false;
 
-    if (frameTimer.frameSkips == 0) {
+    if (systemState.frameTimer.frameSkips == 0) {
         bool idle = true;
 
         if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
@@ -129,7 +129,7 @@ void clFS::run() {
 
         run = false;
 
-        if (frameTimer.frameSkips == 0) {
+        if (systemState.frameTimer.frameSkips == 0) {
             bool idle = true;
 
             if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
@@ -851,7 +851,7 @@ clDAP::clDAP(u8 priority, u32 param2, u32 param3) : clTask::clTask(priority, par
 // MATCHED 100%
 void clDAP::run() {
     bool active = false;
-    if (frameTimer.frameSkips == 0) {
+    if (systemState.frameTimer.frameSkips == 0) {
         bool idle = true;
 
         if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
@@ -883,7 +883,7 @@ void clDAP::run() {
 
         run = false;
 
-        if (frameTimer.frameSkips == 0) {
+        if (systemState.frameTimer.frameSkips == 0) {
             bool ready = true;
 
             if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {

@@ -6,6 +6,16 @@
 #include <nitro.h>
 
 typedef struct {
+    u16 hold;
+    u16 press;
+    u16 release;
+    u16 repeat;
+    u8 repeatDelay;
+    u8 repeatRate;
+    u8 repeatTimers[10];
+} InputState;
+
+typedef struct {
     u8 x;
     u8 y;
     u8 prevX;
@@ -26,19 +36,7 @@ typedef struct {
 } TouchpadStruct;
 
 typedef struct {
-    u16 hold;
-    u16 press;
-    u16 release;
-    u16 repeat;
-    u8 field08;
-    u8 field09;
-    u8 repeatTimers[10];
-    TouchpadStruct touch;
-} InputState;
-
-typedef struct {
-    u8 oamOverrunPad[0x1c];
-    u16 pad_1c_00 : 8;
+    u16 pad_00_00 : 8;
     u16 syncPending : 1;
     s16 lastSyncVCount;
     u16 syncVCount;
@@ -54,14 +52,21 @@ typedef struct {
     s16 vblankPeak;
     s16 vblankHold;
     s16 vblankHoldReload;
-    u8 pad_3a[0xe];
+    u8 pad_1e[0x2];
+    u32 field20;
+    u32 field24;
+    u32 field28;
 } FrameTimer;
 
+typedef struct {
+    InputState inputState;
+    TouchpadStruct touchpad;
+    GXOamAttr oamBuffer[128];
+    GXOamAttr subOamBuffer[128];
+    FrameTimer frameTimer;
+} SystemState;
 
-extern InputState inputState;
-extern GXOamAttr oamBuffer[128];
-extern GXOamAttr subOamBuffer[124];
-extern FrameTimer frameTimer;
+extern SystemState systemState;
 
 void initSystem(void);  // 0x02019a18
 void readKeypad(void);  // 0x02019a2c

@@ -14,8 +14,8 @@ typedef struct {
     CARDResult result;
     enum BackupStatus status;
     s32 lockId;
-    void (*write)(void *, void *, u32, MIDmaCallback, void *);
-    void (*read)(void *, void *, u32, MIDmaCallback, void *);
+    void (*write)(u32, u32, u32, MIDmaCallback, void *);
+    void (*read)(u32, u32, u32, MIDmaCallback, void *);
 } BackupWork;
 
 // --- Extern Functions --- //
@@ -23,8 +23,6 @@ typedef struct {
 extern s16 func_02038708(void); // OS_GetLockID?
 extern void func_02038770(u16); // OS_ReleaseLockID?
 extern BOOL func_020421e8(void);
-extern void func_02041fb4(void *, void *, u32, MIDmaCallback, void *, BOOL, CARDRequest, int, CARDRequestMode); // FORK of CARDi_ProgramAndVerifyBackup?
-extern void func_020420b0(CARDBackupType);
 
 // --- Variable Definitions --- //
 
@@ -45,17 +43,17 @@ void backupInit(u32 type) {
 
         switch (type) {
             case 0:
-                func_020420b0(CARD_BACKUP_TYPE_EEPROM_4KBITS);
+                CARD_IdentifyBackup(CARD_BACKUP_TYPE_EEPROM_4KBITS);
                 backup.write = &eepromWriteAsync;
                 backup.read = &eepromReadAsync;
                 break;
             case 1:
-                func_020420b0(CARD_BACKUP_TYPE_EEPROM_64KBITS);
+                CARD_IdentifyBackup(CARD_BACKUP_TYPE_EEPROM_64KBITS);
                 backup.write = &eepromWriteAsync;
                 backup.read = &eepromReadAsync;
                 break;
             case 2:
-                func_020420b0(CARD_BACKUP_TYPE_FLASH_2MBITS);
+                CARD_IdentifyBackup(CARD_BACKUP_TYPE_FLASH_2MBITS);
                 backup.write = &flashWriteAsync;
                 backup.read = &flashReadAsync;
         }
@@ -69,32 +67,33 @@ void backupInit(u32 type) {
 }
 
 // MATCHED 100% -- may return bool
-void eepromWriteAsync(void * addr, void * buf, u32 len, MIDmaCallback callback, void * arg) {
-    func_02041fb4(buf, addr, len, callback, arg, TRUE, CARD_REQ_PROGRAM_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
+void eepromWriteAsync(u32 dst, u32 src, u32 len, MIDmaCallback callback, void * arg) {
+    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_PROGRAM_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
+    // CARDi_RequestStreamCommand
 }
 
 // MATCHED 100%
-void eepromReadAsync(void * addr, void * buf, u32 len, MIDmaCallback callback, void * arg) {
-    func_02041fb4(addr, buf, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
+void eepromReadAsync(u32 src, u32 dst, u32 len, MIDmaCallback callback, void * arg) {
+    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
 }
 
 // MATCHED 100%
-void flashWriteAsync(void * addr, void * buf, u32 len, MIDmaCallback callback, void * arg) {
-    func_02041fb4(buf, addr, len, callback, arg, TRUE, CARD_REQ_WRITE_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
+void flashWriteAsync(u32 dst, u32 src, u32 len, MIDmaCallback callback, void * arg) {
+    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_WRITE_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
 }
 
 // MATCHED 100%
-void flashReadAsync(void * addr, void * buf, u32 len, MIDmaCallback callback, void * arg) {
-    func_02041fb4(addr, buf, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
+void flashReadAsync(u32 src, u32 dst, u32 len, MIDmaCallback callback, void * arg) {
+    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
 }
 
 // MATCHED 100%
-BOOL backupRead(void * addr, void * buf, u32 len) {
+BOOL backupRead(u32 src, u32 dst, u32 len) {
     if  (!lockBackup()) {
         return FALSE;
     }
 
-    backup.read(addr, buf, len, &readDone, NULL);
+    backup.read(src, dst, len, &readDone, NULL);
 
     backup.status = BACKUP_BUSY;
 
@@ -115,17 +114,17 @@ void readDone(void * param1) {
 }
 
 // MATCHED 100%
-BOOL backupWrite(void * addr, void * buf, u32 len, BOOL addChecksum) {
+BOOL backupWrite(u32 dst, u32 src, u32 len, BOOL addChecksum) {
     if (!lockBackup()) {
         return FALSE;
     }
 
     if (addChecksum) {
-        u16 *footer = (u16 *)((u8 *)buf + len);
-        footer[-1] = calcChecksum(buf, len);
+        u16 * footer = (u16 *)(src + len);
+        footer[-1] = calcChecksum(src, len);
     }
 
-    backup.write(addr, buf, len, &writeDone, NULL);
+    backup.write(dst, src, len, &writeDone, NULL);
     backup.status = BACKUP_BUSY;
 
     return TRUE;

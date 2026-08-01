@@ -11,27 +11,27 @@
 
 // MATCHED 100%
 void waitFrameSync() {
-    frameTimer.syncPending = 1;
+    systemState.frameTimer.syncPending = 1;
 
     s32 vcount = reg_GX_VCOUNT;
-    frameTimer.syncVCount = vcount;
+    systemState.frameTimer.syncVCount = vcount;
 
-    if (frameTimer.syncVCount < frameTimer.lastSyncVCount) {
+    if (systemState.frameTimer.syncVCount < systemState.frameTimer.lastSyncVCount) {
         vcount += HW_LCD_LINES;
     }
 
-    if (frameTimer.frameHold == 0 || frameTimer.framePeak < frameTimer.frameScanlines) {
-        frameTimer.frameHold = frameTimer.frameHoldReload;
-        frameTimer.framePeak = frameTimer.frameScanlines;
+    if (systemState.frameTimer.frameHold == 0 || systemState.frameTimer.framePeak < systemState.frameTimer.frameScanlines) {
+        systemState.frameTimer.frameHold = systemState.frameTimer.frameHoldReload;
+        systemState.frameTimer.framePeak = systemState.frameTimer.frameScanlines;
     } else {
-        frameTimer.frameHold--;
+        systemState.frameTimer.frameHold--;
     }
 
-    frameTimer.frameScanlines = (vcount - frameTimer.lastSyncVCount) + frameTimer.frameSkips * HW_LCD_LINES;
+    systemState.frameTimer.frameScanlines = (vcount - systemState.frameTimer.lastSyncVCount) + systemState.frameTimer.frameSkips * HW_LCD_LINES;
 
     OS_WaitIrq(TRUE, OS_IE_V_COUNT);
 
-    frameTimer.lastSyncVCount = reg_GX_VCOUNT;
-    frameTimer.prevFrameSkips = frameTimer.frameSkips;
-    frameTimer.frameSkips = 0;
+    systemState.frameTimer.lastSyncVCount = reg_GX_VCOUNT;
+    systemState.frameTimer.prevFrameSkips = systemState.frameTimer.frameSkips;
+    systemState.frameTimer.frameSkips = 0;
 }

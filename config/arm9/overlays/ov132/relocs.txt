@@ -206,7 +206,7 @@ from:0x0207803c kind:arm_call to:0x0206a340 module:overlay(122)
 from:0x02078050 kind:arm_call to:0x0206a404 module:overlay(122)
 from:0x02078058 kind:arm_call to:0x0202d980 module:main
 from:0x02078060 kind:arm_call to:0x0202d9f4 module:main
-from:0x0207809c kind:load to:0x0205b7a8 module:main
+from:0x0207809c kind:load to:0x0205afa8 add:0x800 module:main
 from:0x02078104 kind:arm_call to:0x02070b94 module:overlay(122)
 from:0x02078110 kind:arm_call to:0x0201b0e4 module:main
 from:0x02078144 kind:load to:0x02078148 module:overlay(132)

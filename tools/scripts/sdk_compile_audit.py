@@ -32,7 +32,7 @@ BASE_FLAGS = [
     "-inline", "on", "-sym", "on", "-enum", "int", "-lang=c99",
     "-Cpp_exceptions", "off", "-gccext,on", "-gccinc", "-msgstyle", "gcc",
     "-char", "signed", "-DSDK_ARM9", "-DSDK_FINALROM", "-DSDK_THREAD_INFINITY",
-    "-DSDK_CODE_ARM",
+    "-DSDK_CODE_ARM", "-DSDK_TS",
 ]
 
 SRC_ROOTS = [
@@ -60,6 +60,9 @@ def compile_one(c, extra_includes, stubs):
     incs += ["-i", str(c.parent), "-i", str(c.parent.parent / "include"),
              "-i", str(c.parent.parent.parent / "include"),
              "-i", f"{MSL}/MSL_Common_Embedded/Math/Include"]
+    # DS2.0's MSL tree lacks <ctime>; mirror the Makefile's MSL_CTIME_FB fallback.
+    if rel.as_posix().startswith(f"{MSL}/MSL_Common/Src/"):
+        incs += ["-i", "lib/mw-libraries/ARM_EABI_Support/msl/MSL_C/MSL_Common/Include"]
     for e in extra_includes:
         incs += ["-i", e]
     inc_flags = ["-include", "ansi_prefix.ARM.h"]

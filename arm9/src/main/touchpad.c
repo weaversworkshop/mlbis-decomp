@@ -14,7 +14,7 @@ TPData samplingBufs[2];  // 0x0205bac4
 
 // MATCHED 100%
 BOOL startTouchSampling(s32 frequence) {
-    if (inputState.touch.sampling) {
+    if (systemState.touchpad.sampling) {
         return TRUE;
     }
 
@@ -36,14 +36,14 @@ BOOL startTouchSampling(s32 frequence) {
         return FALSE;
     }
 
-    inputState.touch.sampling = 1;
+    systemState.touchpad.sampling = 1;
 
     return TRUE;
 }
 
 // MATCHED 100%
 BOOL stopTouchSampling() {
-    if (inputState.touch.sampling == 0) {
+    if (systemState.touchpad.sampling == 0) {
         return TRUE;
     }
 
@@ -54,16 +54,16 @@ BOOL stopTouchSampling() {
         return FALSE;
     }
 
-    inputState.touch.sampling = 0;
+    systemState.touchpad.sampling = 0;
 
     return TRUE;
 }
 
 // MATCHED 100%
 BOOL readTouchpad(TouchpadStruct * touchpad) {
-    touchpad->sampling = inputState.touch.sampling;
+    touchpad->sampling = systemState.touchpad.sampling;
 
-    if (inputState.touch.sampling == 0) {
+    if (systemState.touchpad.sampling == 0) {
         return FALSE;
     }
 
