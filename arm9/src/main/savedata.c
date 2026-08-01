@@ -51,7 +51,7 @@ typedef struct {
 
 // --- Extern Functions --- //
 
-extern s32 func_020058bc(u16, void *, void *);
+extern s32 getGameVar(u16, void *, void *);
 
 // --- Variable Definitions --- // (replace with real data later)
 
@@ -83,7 +83,7 @@ BOOL writeSaveBackup(u32 slotIdx) {  // Save into backup slot
 
 // Helper inline function for `commitSave()`
 static inline void snapshotEventFlag(SaveEventFlags * record, u16 id) {
-    if (func_020058bc(id, NULL, NULL) != 0) {
+    if (getGameVar(id, NULL, NULL) != 0) {
         record->eventFlags[EVENT_FLAG_WORD(id)] |=  EVENT_FLAG_BIT(id);
     } else {
         record->eventFlags[EVENT_FLAG_WORD(id)] &= ~EVENT_FLAG_BIT(id);
@@ -92,7 +92,7 @@ static inline void snapshotEventFlag(SaveEventFlags * record, u16 id) {
 
 // MATCHED 100%
 s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
-    u32 slot = data_02055fe4.field4cc_3_4;
+    u32 slot = data_02055fe4.field4cc_3;
     u32 slotBase = 2 * slot;
 
     if ((saveData.header.slotValid & (1 << slotBase)) == 0) {

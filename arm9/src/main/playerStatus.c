@@ -46,7 +46,6 @@ const s8 sGearSlotsBros[8] = { 1, 2, 3, 3, 3, 3 };  // 0x0204ac44
 
 // --- Function Declarations --- //
 
-void initParty(u32);  // 0x02018048
 void setLevel(u8, u8);  // 0x020184a8
 u16 * getNameIdPtr(s32);  // 0x02018538
 ItemInfo * getKeyItemInfo(u32);  // 0x020185d0
@@ -732,7 +731,7 @@ BOOL keyItemFlagSet(u32 keyItemId) {
         return 0;
     }
 
-    u32 val = data_02055fe4.field54[(flag & 0xfff) >> 5] >> (flag & 0x1f);
+    u32 val = data_02055fe4.field054[(flag & 0xfff) >> 5] >> (flag & 0x1f);
     return ((val & 1) != 0);
 }
 

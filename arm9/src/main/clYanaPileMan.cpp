@@ -2,13 +2,13 @@
 
 #include "globals.h"
 
-extern "C" {
-
-#include <nitro.h>
+#include "main/clYanaPileMan.h"
 
 #include "main/heap.h"
 
-#include "main/clYanaPileMan.h"
+extern "C" {
+
+#include <nitro.h>
 
 // --- Function Declarations --- //
 

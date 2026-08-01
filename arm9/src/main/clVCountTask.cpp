@@ -2,13 +2,16 @@
 
 #include "globals.h"
 
-#include <nitro.h>
-
 #include "main/clVCountTask.h"
 
-// --- Extern Functions --- //    
 extern "C" {
+
+#include <nitro.h>
+
+// --- Extern Functions --- //    
+
 extern void func_01ff8a38(void);
+
 }
 // --- Variable Definitions --- //
 

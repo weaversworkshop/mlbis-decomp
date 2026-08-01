@@ -195,21 +195,21 @@ from:0x020058a0 kind:load to:0x02055fe4 add:0x40 module:main
 from:0x020058a4 kind:load to:0x02055fe4 add:0x54 module:main
 from:0x020058a8 kind:load to:0x02055fe4 add:0x5c module:main
 from:0x020058ac kind:load to:0x02055fe4 add:0xe4 module:main
-from:0x020058b0 kind:load to:0x020562c8 module:main
-from:0x020058b4 kind:load to:0x02056360 module:main
-from:0x020058b8 kind:load to:0x020564cc module:main
+from:0x020058b0 kind:load to:0x02055fe4 add:0x2e4 module:main
+from:0x020058b4 kind:load to:0x02055fe4 add:0x37c module:main
+from:0x020058b8 kind:load to:0x02055fe4 add:0x4e8 module:main
 from:0x02005a5c kind:load to:0x02055fe4 add:0xe4 module:main
 from:0x02005a64 kind:load to:0x02055fe4 add:0x54 module:main
 from:0x02005a68 kind:load to:0x02055fe4 add:0x5c module:main
 from:0x02005a6c kind:load to:0x02055fe4 module:main
-from:0x02005a70 kind:load to:0x020562c8 module:main
+from:0x02005a70 kind:load to:0x02055fe4 add:0x2e4 module:main
 from:0x02005a74 kind:load to:0x02055fe4 add:0x40 module:main
 from:0x02005c8c kind:load to:0x02055fe4 add:0xe4 module:main
 from:0x02005c90 kind:load to:0x02055fe4 module:main
 from:0x02005c94 kind:load to:0x02055fe4 add:0x40 module:main
 from:0x02005c98 kind:load to:0x02055fe4 add:0x54 module:main
 from:0x02005c9c kind:load to:0x02055fe4 add:0x5c module:main
-from:0x02005ca0 kind:load to:0x020562c8 module:main
+from:0x02005ca0 kind:load to:0x02055fe4 add:0x2e4 module:main
 from:0x02005cb8 kind:load to:0x020564bc module:main
 from:0x02005cf8 kind:arm_call to:0x02018538 module:main
 from:0x02005d04 kind:arm_call to:0x02005ca4 module:main

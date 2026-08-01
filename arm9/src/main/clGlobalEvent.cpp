@@ -1,10 +1,11 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
-extern "C" {
-
 #include "globals.h"
 
 #include "main/clGlobalEvent.h"
+
+extern "C" {
+
 #include "main/playerStatus.h"
 #include "main/rng.h"
 
@@ -25,10 +26,10 @@ extern UnkGlobal_02056504 data_02056504;
 
 // --- Extern Functions --- //
 
-extern void func_01ff8228(u32 *, u32, u32);
+extern void func_01ff8228(void *, u32, u32);
 
-extern s32 func_020058bc(u16, clGlobalEvent *, EventContext *);
-extern void func_02005a78(u16, s32, clGlobalEvent *, EventContext *);
+extern s32 getGameVar(u16, clGlobalEvent *, EventContext *);
+extern void setGameVar(u16, s32, clGlobalEvent *, EventContext *);
 extern void func_02005da0(UnkGlobal_02056504 *, s32);
 extern s64 func_0204536c(s32, s32);
 
@@ -164,7 +165,7 @@ u32 rewindInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
 
 // MATCHED 100%
 clGlobalEvent::clGlobalEvent() {
-    func_01ff8228(this->vars, 0, 32 * sizeof(u32));
+    func_01ff8228(this->vars, 0, sizeof(this->vars));
 }
 
 // MATCHED 100%
@@ -236,7 +237,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             return 0;
         case POP_TO_VAR:
             ctx->sp--;
-            func_02005a78(inst->destVar, (s32)ctx->stack[ctx->sp], sys, ctx);
+            setGameVar(inst->destVar, (s32)ctx->stack[ctx->sp], sys, ctx);
             return 0;
         case LOOP: {
             u32 sp = ctx->sp;
@@ -301,184 +302,184 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     break;
             }
 
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         }
         case BYTE_GET: {
             u8 * ptr = &ctx->pc[inst->args[0]];
-            func_02005a78(inst->destVar, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, sys, ctx);
+            setGameVar(inst->destVar, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, sys, ctx);
             return 0;
         }
         case MOV:
-            func_02005a78(inst->destVar, inst->args[0], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0], sys, ctx);
             return 0;
         case ADD:
-            func_02005a78(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
             return 0;
         case SUB:
-            func_02005a78(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
             return 0;
         case MUL:
-            func_02005a78(inst->destVar, inst->args[0] * inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] * inst->args[1], sys, ctx);
             return 0;
         case DIV: {
             s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
-            func_02005a78(inst->destVar, (s32)divmod_val, sys, ctx);
+            setGameVar(inst->destVar, (s32)divmod_val, sys, ctx);
             return 0;
         }
         case MOD: {
             s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
-            func_02005a78(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
+            setGameVar(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
             return 0;
         }
         case SHL:
-            func_02005a78(inst->destVar, inst->args[0] << inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] << inst->args[1], sys, ctx);
             return 0;
         case SHR:
-            func_02005a78(inst->destVar, inst->args[0] >> inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] >> inst->args[1], sys, ctx);
             return 0;
         case AND:
-            func_02005a78(inst->destVar, inst->args[0] & inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] & inst->args[1], sys, ctx);
             return 0;
         case OR:
-            func_02005a78(inst->destVar, inst->args[0] | inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] | inst->args[1], sys, ctx);
             return 0;
         case XOR:
-            func_02005a78(inst->destVar, inst->args[0] ^ inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] ^ inst->args[1], sys, ctx);
             return 0;
         case NEG:
-            func_02005a78(inst->destVar, -inst->args[0], sys, ctx);
+            setGameVar(inst->destVar, -inst->args[0], sys, ctx);
             return 0;
         case LNOT:
-            func_02005a78(inst->destVar, (inst->args[0] == 0), sys, ctx);
+            setGameVar(inst->destVar, (inst->args[0] == 0), sys, ctx);
             return 0;
         case BNOT:
-            func_02005a78(inst->destVar, ~inst->args[0], sys, ctx);
+            setGameVar(inst->destVar, ~inst->args[0], sys, ctx);
             return 0;
         case INC:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, val+1, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, val+1, sys, ctx);
             return 0;
         case DEC:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, val-1, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, val-1, sys, ctx);
             return 0;
         case ADD_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, inst->args[0]+val, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, inst->args[0]+val, sys, ctx);
             return 0;
         case SUB_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, val-inst->args[0], sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, val-inst->args[0], sys, ctx);
             return 0;
         case MUL_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, inst->args[0]*val, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, inst->args[0]*val, sys, ctx);
             return 0;
         case DIV_EQ: {
-            val = func_020058bc(inst->destVar, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
             s64 divmod_val = func_0204536c(val, inst->args[0]);
-            func_02005a78(inst->destVar, (s32)divmod_val, sys, ctx);
+            setGameVar(inst->destVar, (s32)divmod_val, sys, ctx);
             return 0;
         }
         case MOD_EQ: {
-            val = func_020058bc(inst->destVar, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
             s64 divmod_val = func_0204536c(val, inst->args[0]);
-            func_02005a78(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
+            setGameVar(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
             return 0;
         }
         case SHL_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, val << inst->args[0], sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, val << inst->args[0], sys, ctx);
             return 0;
         case SHR_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, val >> inst->args[0], sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, val >> inst->args[0], sys, ctx);
             return 0;
         case AND_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, inst->args[0] & val, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] & val, sys, ctx);
             return 0;
         case OR_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, inst->args[0] | val, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] | val, sys, ctx);
             return 0;
         case XOR_EQ:
-            val = func_020058bc(inst->destVar, sys, ctx);
-            func_02005a78(inst->destVar, inst->args[0] ^ val, sys, ctx);
+            val = getGameVar(inst->destVar, sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] ^ val, sys, ctx);
             return 0;
         case SQRT:
             val = FX_Sqrt(inst->args[0] << FX32_SHIFT);
-            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
+            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
         case INVSQRT:
             val = FX_InvSqrt(inst->args[0] << FX32_SHIFT);
-            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
+            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
         case INV:
             val = FX_Inv(inst->args[0] << FX32_SHIFT);
-            func_02005a78(inst->destVar, val / FX32_ONE, sys, ctx);
+            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
             return 0;
         case SIN:
-            func_02005a78(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
+            setGameVar(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
             return 0;
         case COS:
-            func_02005a78(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
+            setGameVar(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
             return 0;
         case ATAN:
-            func_02005a78(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 16), sys, ctx);
+            setGameVar(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 16), sys, ctx);
             return 0;
         case ATAN2:
-            func_02005a78(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 16), sys, ctx);
+            setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 16), sys, ctx);
             return 0;
         case RAND:
             val = rand_range(inst->args[0]);
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case MOV_FX:
-            func_02005a78(inst->destVar, inst->args[0], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0], sys, ctx);
             return 0;
         case FX_TRUNC:
-            func_02005a78(inst->destVar, FX_Whole(inst->args[0]), sys, ctx);
+            setGameVar(inst->destVar, FX_Whole(inst->args[0]), sys, ctx);
             return 0;
         case FX_FLOOR:
-            func_02005a78(inst->destVar, FX_Floor(inst->args[0]), sys, ctx);
+            setGameVar(inst->destVar, FX_Floor(inst->args[0]), sys, ctx);
             return 0;
         case FX_SQRT:
-            func_02005a78(inst->destVar, FX_Sqrt(inst->args[0]), sys, ctx);
+            setGameVar(inst->destVar, FX_Sqrt(inst->args[0]), sys, ctx);
             return 0;
         case FX_INVSQRT:
-            func_02005a78(inst->destVar, FX_InvSqrt(inst->args[0]), sys, ctx);
+            setGameVar(inst->destVar, FX_InvSqrt(inst->args[0]), sys, ctx);
             return 0;
         case FX_INV:
-            func_02005a78(inst->destVar, FX_Inv(inst->args[0]), sys, ctx);
+            setGameVar(inst->destVar, FX_Inv(inst->args[0]), sys, ctx);
             return 0;
         case FX_SIN:
-            func_02005a78(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
+            setGameVar(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
             return 0;
         case FX_COS:
-            func_02005a78(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
+            setGameVar(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
             return 0;
         case FX_ATAN: 
-            func_02005a78(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 4), sys, ctx);
+            setGameVar(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 4), sys, ctx);
             return 0;
         case FX_ADD:
-            func_02005a78(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
             return 0;
         case FX_SUB:
-            func_02005a78(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
+            setGameVar(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
             return 0;
         case FX_MUL:
-            func_02005a78(inst->destVar, FX_MUL(inst->args[0], inst->args[1]), sys, ctx);
+            setGameVar(inst->destVar, FX_MUL(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
         case FX_DIV:
-            func_02005a78(inst->destVar, FX_Div(inst->args[0], inst->args[1]), sys, ctx);
+            setGameVar(inst->destVar, FX_Div(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
         case FX_MOD:
-            func_02005a78(inst->destVar, FX_ModS32(inst->args[0], inst->args[1]), sys, ctx);
+            setGameVar(inst->destVar, FX_ModS32(inst->args[0], inst->args[1]), sys, ctx);
             return 0;
         case FX_ATAN2: 
-            func_02005a78(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
+            setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
             return 0;
         case OP64:
             func_02005da0(&data_02056504, -1);
@@ -486,7 +487,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             return 0;
         case OP65:
             val = addCoins(inst->args[0]);
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case ADD_COINS: {
             u16 old = data_020563e4.field20;
@@ -498,7 +499,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                 data_020563e4.field20 = sum;
             }
 
-            func_02005a78(inst->destVar, data_020563e4.field20 - old, sys, ctx);
+            setGameVar(inst->destVar, data_020563e4.field20 - old, sys, ctx);
             return 0;
         }
         case GET_FLAG:
@@ -508,11 +509,11 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                 val = getItemCount(inst->args[0]);
             }
 
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case OP68:
             val = addItem(inst->args[0], inst->args[1]);
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case ACTOR_GET: {
             PlayerStatus *player = &gParty.party[inst->args[0]];
@@ -606,7 +607,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     break;
             }
 
-            func_02005a78(inst->destVar, val, sys, ctx);
+            setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         }
         case ACTOR_SET: {
@@ -697,7 +698,7 @@ void clGlobalEvent::setCustomVariable(EventContext * ctx, u32 id, s32 value) {}
 
 // MATCHED 100%
 s32 clGlobalEvent::getVar(EventContext * param2, u32 param3) {
-    return func_020058bc(param3, this, param2);
+    return getGameVar(param3, this, param2);
 }
 
 // MATCHED 100%

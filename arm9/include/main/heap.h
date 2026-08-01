@@ -5,6 +5,9 @@
 
 #define DTCM_STACK_RESERVE  0x1000
 
+#define HEAP_MAIN_LO  0
+#define HEAP_MAIN_HI  1
+
 typedef struct HeapBlock {
     struct HeapBlock * prev;
     struct HeapBlock * next;
@@ -47,8 +50,8 @@ void rebaseHeap(u32, void *);  // 0x0201a2e0
 #ifdef __cplusplus
 }
 
-void * operator new(size_t, u32, void *, u32);  // 0x0201a138
-void * operator new[](size_t, u32, void *, u32);  // 0x0201a150
+void * operator new(size_t, u32, void *, BOOL);  // 0x0201a138
+void * operator new[](size_t, u32, void *, BOOL);  // 0x0201a150
 void operator delete(void *);  // 0x0201a168
 void operator delete[](void *);  // 0x0201a174
 

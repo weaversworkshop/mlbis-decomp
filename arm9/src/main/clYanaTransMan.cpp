@@ -2,15 +2,16 @@
 
 #include "globals.h"
 
+#include "main/clYanaTransMan.h"
+
+#include "main/heap.h"
+
 extern "C" {
 
 #include <nitro.h>
 
-#include "main/heap.h"
 #include "main/tile_convert.h"
 #include "main/uiUtil.h"
-
-#include "main/clYanaTransMan.h"
 
 // --- Extern Data Variables --- //
 

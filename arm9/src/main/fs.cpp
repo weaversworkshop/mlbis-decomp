@@ -1,14 +1,15 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
 
-extern "C" {
-
 #include "globals.h"
 
 #include "main/fs.h"
 
+#include "main/heap.h"
+
+extern "C" {
+
 #include <nitro.h>
 
-#include "main/heap.h"
 #include "main/system.h"
 
 // --- Extern Functions --- //
@@ -32,8 +33,6 @@ FSManager fsManager;  // 0x0205ba8c
 u32 fsChunkCount(FSChunkTable *); // 0x0201adbc
 u8 * fsChunkPtr(FSChunkTable *, u32); // 0x0201add4
 u32 fsChunkSize(FSChunkTable *, u32); // 0x0201ade4
-BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
-BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
 BOOL fsInit(u32, void *, u32); // 0x0201b28c
 BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4
 

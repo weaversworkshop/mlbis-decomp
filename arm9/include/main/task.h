@@ -57,13 +57,10 @@ typedef struct {
 
 extern TaskManager taskMgr;
 
+extern "C" {
 #else
 typedef struct clVBlankTask clVBlankTask;
 #endif // __cplusplus
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 void disableAllTasks(void);  // 0x0201a630
 void resetTasks(void);  // 0x0201a67c

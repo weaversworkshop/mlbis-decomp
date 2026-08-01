@@ -2,14 +2,17 @@
 
 #include "globals.h"
 
-#include <nitro.h>
-
 #include "main/btlBoot.h"
+
+#include "main/clGameMain.h"
+#include "main/fs.h"
 #include "main/heap.h"
 
-#include "main/unk_020057ac.h"
+extern "C" {
 
-// --- Extern Data Variables --- //
+#include <nitro.h>
+
+// --- Struct Definitions --- //
 
 #include "structs/unk_020563e4.h"
 
@@ -21,6 +24,12 @@ typedef struct {
 
 extern UnkStruct_ov008_02064f0c * data_ov008_02064f0c;
 
+typedef struct {
+    u8 pad_00[0x1d20];
+} UnkStruct_ov009_02064f30;
+
+// --- Extern Data Variables --- //
+
 FS_EXTERN_OVERLAY(OVY_8);
 FS_EXTERN_OVERLAY(OVY_9);
 FS_EXTERN_OVERLAY(OVY_118);
@@ -31,14 +40,15 @@ FS_EXTERN_OVERLAY(OVY_121);
 // --- Extern Functions --- //
 
 extern u32 func_0201a138(u32, u32, u32, u32);
-extern u32 fsLoadOverlay(FSOverlayID, u32);
 
 extern void func_ov008_0206406c(void);
-extern void func_ov009_02064f30(void);
+extern void func_ov009_02064f30(UnkStruct_ov009_02064f30 *);
 
 // --- Variable Definitions --- //
 
 u32 data_0205af98;  // 0x0205af98
+
+} // extern "C"
 
 // --- Function Definitions --- //
 
@@ -53,7 +63,7 @@ void btlEnter(u32 param1, u32 param2) {
     }
 
     setMainHeapBase(ret);
-    fsLoadOverlay(FS_OVERLAY_ID(OVY_8), 0);
+    fsLoadOverlay(FS_OVERLAY_ID(OVY_8), MI_PROCESSOR_ARM9);
     btlSetup();
 }
 
@@ -131,10 +141,11 @@ void btlSetup() {
         }
     }
 
-    fsLoadOverlay(FS_OVERLAY_ID(OVY_9), 0);
+    fsLoadOverlay(FS_OVERLAY_ID(OVY_9), MI_PROCESSOR_ARM9);
 
-    if (func_0201a138(0x1d20, 0, 0, 0)) {
-        func_ov009_02064f30();
+    UnkStruct_ov009_02064f30 * ptr = new(HEAP_MAIN_LO, NULL, FALSE) UnkStruct_ov009_02064f30;
+    if (ptr != NULL) {
+        func_ov009_02064f30(ptr);
     }
 
     data_ov008_02064f0c->field1cf4 = FS_OVERLAY_ID(OVY_9);
@@ -154,19 +165,19 @@ void btlExit() {
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        u16 hold = data_02055fe0->field2a;
-        func_020057ac(data_02055fe0, 2);
-        data_02055fe0->field2a = hold;
+        u16 hold = gGameMain->prevMode;
+        gGameMain->setMode(2);
+        gGameMain->prevMode = hold;
     } else {
         data_0205af98 = 0;
 
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        if (data_02055fe0->field2a == 5) {
+        if (gGameMain->prevMode == 5) {
             data_020563e4.fieldfc &= ~1;
         }
 
-        func_020057ac(data_02055fe0, data_02055fe0->field2a);
+        gGameMain->setMode(gGameMain->prevMode);
     }
 }

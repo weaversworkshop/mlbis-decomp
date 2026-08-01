@@ -4,11 +4,11 @@
 
 #include "main/yanaCtrl.h"
 
+#include "main/heap.h"
+
 extern "C" {
 
 #include <nitro.h>
-
-#include "main/heap.h"
 
 // --- Extern Data Variables --- //
 

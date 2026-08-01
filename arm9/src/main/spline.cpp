@@ -2,9 +2,9 @@
 
 #include "globals.h"
 
-#include "main/heap.h"
-
 #include "main/spline.h"
+
+#include "main/heap.h"
 
 extern "C" {
 
@@ -45,7 +45,7 @@ void Spline::build(fx32 * xs, fx32 * ys, fx32 * zs, u8 nPoints, fx32 * workBuf) 
     fx32 * buf = workBuf;
 
     if (buf == NULL) {
-        buf = new(this->heapId, (void *)"SplineTempWork", 0) fx32[nPoints * 2];
+        buf = new(this->heapId, (void *)"SplineTempWork", FALSE) fx32[nPoints * 2];
     }
 
     this->xs = xs;

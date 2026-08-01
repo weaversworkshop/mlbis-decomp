@@ -26,6 +26,7 @@ public:
     void enable();  // 0x0201e884
 };
 
+extern "C" {
 #else
 
 typedef struct clVCountTask {
@@ -57,10 +58,6 @@ typedef struct {
 } VCountTaskManager;
 
 extern VCountTaskManager vcountTaskManager;  // 0x0205bad4
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 void disableVCountTasks();  // 0x0201e8b4
 void initVCountTaskMgr();  // 0x0201e90c

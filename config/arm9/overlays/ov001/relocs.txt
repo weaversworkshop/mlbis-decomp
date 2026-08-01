@@ -55,7 +55,7 @@ from:0x02069c6c kind:arm_call to:0x0201e9c8 module:main
 from:0x02069c70 kind:arm_call to:0x02019a2c module:main
 from:0x02069ca0 kind:arm_call to:0x02019a74 module:main
 from:0x02069ccc kind:arm_call to:0x0201a39c module:main
-from:0x02069cf0 kind:load to:0x02050034 module:main
+from:0x02069cf0 kind:load to:0x0205002c add:0x8 module:main
 from:0x02069d08 kind:arm_call to:0x01ff8228 module:itcm
 from:0x02069d10 kind:arm_call to:0x02017758 module:main
 from:0x02069d20 kind:arm_call to:0x0201793c module:main

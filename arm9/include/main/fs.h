@@ -188,11 +188,11 @@ public:
     void pumpJobs();  // 0x0201c5c8
 };
 
+extern "C" {
 #endif // __cplusplus
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
+BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
 
 #ifdef __cplusplus
 } // extern "C"

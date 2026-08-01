@@ -19,6 +19,7 @@ typedef struct EventContext {
     u32 locals[16];
     union {
         u8 * stackTop[17];
+        u32 words[17];
         struct {
             u32  flags;
             u8 * stack[16];

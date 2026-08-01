@@ -75,6 +75,7 @@ typedef struct {
     u8 pad_0d[0x3];
 } ExpCounter;
 
+void initParty(u32);  // 0x02018048
 s32 getItemCount(u16);  // 0x02018824
 s8 addItem(u16, s8);  // 0x02018878
 s32 addCoins(s32);  // 0x02018974

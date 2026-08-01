@@ -4,9 +4,9 @@
 
 #include "main/heap.h"
 
-#include <nitro/os.h>
-
 extern "C" {
+
+#include <nitro/os.h>
 
 #include "main/cpu_mem32.h"
 
@@ -224,12 +224,12 @@ void heapFree(void * ptr) {
 }
 
 // MATCHED 100%
-void * operator new(size_t size, u32 heap, void * ptr, u32 flag) {
+void * operator new(size_t size, u32 heap, void * ptr, BOOL flag) {
     return heapAlloc(heap, size, ptr, flag);
 }
 
 // MATCHED 100%
-void * operator new[](size_t size, u32 heap, void * ptr, u32 flag) {
+void * operator new[](size_t size, u32 heap, void * ptr, BOOL flag) {
     return heapAlloc(heap, size, ptr, flag);
 }
 
