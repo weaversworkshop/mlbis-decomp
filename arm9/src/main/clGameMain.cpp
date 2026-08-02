@@ -123,6 +123,8 @@ extern void func_ov132_020776c8(UnkStruct_ov132_020776c8 *, u32, u32, u32);
 void initGameState(void);  // 0x020057fc
 u32 getGameVar(u32, clGlobalEvent *, EventContext *);  // 0x020058bc
 void setGameVar(u32, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
+u8 * getMessageText(u32, u32);  // 0x02005ca4
+u8 * getItemNameText(s32);  // 0x02005cbc
 
 // --- Variable Definitions --- //
 
@@ -611,5 +613,26 @@ void setGameVar(u32 id, s32 value, clGlobalEvent * sys, EventContext * ctx) {
         case 0x1000:
             ctx->args[idx] = value;
             break;
+    }
+}
+
+// MATCHED 100%
+u8 * getMessageText(u32 bank, u32 idx) {
+    return (u8*)gameState.messageBanks[bank] + gameState.messageBanks[bank][idx];
+}
+
+// MATCHED 100%
+u8 * getItemNameText(s32 id) {
+    switch (id & ID_SPACE_MASK) {
+        case ID_KEYITEM:
+            return getMessageText(0, *getNameIdPtr(id));
+        case ID_ITEM:
+            return getMessageText(1, *getNameIdPtr(id));
+        case ID_BADGE:
+            return getMessageText(2, *getNameIdPtr(id));
+        case ID_GEAR:
+            return getMessageText(3, *getNameIdPtr(id));
+        default:
+            return NULL;
     }
 }

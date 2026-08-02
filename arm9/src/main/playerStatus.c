@@ -46,7 +46,6 @@ const s8 sGearSlotsBros[8] = { 1, 2, 3, 3, 3, 3 };  // 0x0204ac44
 // --- Function Declarations --- //
 
 void setLevel(u8, u8);  // 0x020184a8
-u16 * getNameIdPtr(s32);  // 0x02018538
 ItemInfo * getKeyItemInfo(u32);  // 0x020185d0
 ItemInfo * getItemInfo(u32);  // 0x02018600
 BadgeInfo * getBadgeInfo(u32);  // 0x02018630

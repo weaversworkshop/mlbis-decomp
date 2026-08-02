@@ -27,6 +27,12 @@ extern "C" {
 
 #include "main/playerStatus.h"
 
+#define MSG_BANK_KEYITEM  0
+#define MSG_BANK_ITEM     1
+#define MSG_BANK_BADGE    2
+#define MSG_BANK_GEAR     3
+#define MSG_BANK_COUNT    4
+
 typedef struct {
     u32 field000[16];
     u32 field040[5];
@@ -46,7 +52,7 @@ typedef struct {
     u8 pad_4cf[0x1];
     u32 field4d0;
     u32 field4d4;
-    u32 * field4d8[4];
+    u32 * messageBanks[MSG_BANK_COUNT];
     u16 field4e8[10];
     u16 field4fc;
     u16 field4fe;
