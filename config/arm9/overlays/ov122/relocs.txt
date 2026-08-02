@@ -245,8 +245,8 @@ from:0x0206d4a8 kind:arm_call to:0x0200bbb0 module:main
 from:0x0206d4fc kind:arm_call to:0x01ff8228 module:itcm
 from:0x0206d508 kind:load to:0x02074f54 module:overlay(122)
 from:0x0206d518 kind:arm_call to:0x0201a168 module:main
-from:0x0206d554 kind:load to:0x02056370 add:0xb6 module:main
-from:0x0206d558 kind:load to:0x02056370 add:0x96 module:main
+from:0x0206d554 kind:load to:0x02055fe4 add:0x442 module:main
+from:0x0206d558 kind:load to:0x02055fe4 add:0x422 module:main
 from:0x0206d5bc kind:load to:0x02055fe4 module:main
 from:0x0206d5d4 kind:arm_call to:0x0204536c module:main
 from:0x0206d690 kind:load to:0x02053b37 module:main

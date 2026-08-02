@@ -210,7 +210,7 @@ from:0x02005c94 kind:load to:0x02055fe4 add:0x40 module:main
 from:0x02005c98 kind:load to:0x02055fe4 add:0x54 module:main
 from:0x02005c9c kind:load to:0x02055fe4 add:0x5c module:main
 from:0x02005ca0 kind:load to:0x02055fe4 add:0x2e4 module:main
-from:0x02005cb8 kind:load to:0x020564bc module:main
+from:0x02005cb8 kind:load to:0x02055fe4 add:0x4d8 module:main
 from:0x02005cf8 kind:arm_call to:0x02018538 module:main
 from:0x02005d04 kind:arm_call to:0x02005ca4 module:main
 from:0x02005d0c kind:arm_call to:0x02018538 module:main
@@ -1325,9 +1325,9 @@ from:0x02017580 kind:arm_call to:0x02018ec4 module:main
 from:0x02017588 kind:load to:0x0204ac2c module:main
 from:0x02017590 kind:load to:0x0204b1dc module:main
 from:0x02017594 kind:load to:0x02056504 module:main
-from:0x02017598 kind:load to:0x020563e4 module:main
+from:0x02017598 kind:load to:0x02055fe4 add:0x400 module:main
 from:0x020175a0 kind:load to:0x02055fe4 module:main
-from:0x020175a8 kind:load to:0x02056370 module:main
+from:0x020175a8 kind:load to:0x02055fe4 add:0x38c module:main
 from:0x020175bc kind:arm_call to:0x02018ec4 module:main
 from:0x020175d0 kind:arm_call to:0x02019058 module:main
 from:0x0201762c kind:arm_call to:0x020058bc module:main
@@ -1407,7 +1407,7 @@ from:0x02018398 kind:arm_call to:0x02018878 module:main
 from:0x020183ac kind:arm_call to:0x02018ec4 module:main
 from:0x020183d0 kind:arm_call to:0x02018878 module:main
 from:0x020183dc kind:arm_call to:0x02019058 module:main
-from:0x02018458 kind:load to:0x02056370 module:main
+from:0x02018458 kind:load to:0x02055fe4 add:0x38c module:main
 from:0x0201845c kind:load to:0x020526ec module:main
 from:0x02018460 kind:load to:0x020526d2 module:main
 from:0x02018464 kind:load to:0x020526cc module:main
@@ -1421,7 +1421,7 @@ from:0x02018480 kind:load to:0x020526c4 module:main
 from:0x02018484 kind:load to:0x020526c8 module:main
 from:0x02018488 kind:load to:0x020526e4 module:main
 from:0x0201848c kind:load to:0x02055fe4 module:main
-from:0x02018490 kind:load to:0x020563e4 module:main
+from:0x02018490 kind:load to:0x02055fe4 add:0x400 module:main
 from:0x02018494 kind:load to:0x020526c0 module:main
 from:0x02018498 kind:load to:0x0205af8c module:main
 from:0x0201849c kind:load to:0x0205af88 module:main
@@ -1429,7 +1429,7 @@ from:0x020184a0 kind:load to:0x020526bc module:main
 from:0x020184a4 kind:load to:0x0205af84 module:main
 from:0x020184e0 kind:arm_call to:0x020194f4 module:main
 from:0x02018508 kind:arm_call to:0x020194f4 module:main
-from:0x0201852c kind:load to:0x02056370 module:main
+from:0x0201852c kind:load to:0x02055fe4 add:0x38c module:main
 from:0x02018530 kind:load to:0x0204ac44 module:main
 from:0x02018534 kind:load to:0x0204ac40 module:main
 from:0x020185c0 kind:load to:0x02052a68 module:main
@@ -1442,29 +1442,29 @@ from:0x0201864c kind:load to:0x020526f8 module:main
 from:0x0201866c kind:load to:0x02053b30 module:main
 from:0x02018684 kind:load to:0x02052778 module:main
 from:0x02018694 kind:arm_call to:0x02018670 module:main
-from:0x02018870 kind:load to:0x02056370 add:0x96 module:main
-from:0x02018874 kind:load to:0x02056370 add:0xb6 module:main
-from:0x02018970 kind:load to:0x02056370 module:main
+from:0x02018870 kind:load to:0x02055fe4 add:0x422 module:main
+from:0x02018874 kind:load to:0x02055fe4 add:0x442 module:main
+from:0x02018970 kind:load to:0x02055fe4 add:0x38c module:main
 from:0x020189ac kind:load to:0x02055fe4 module:main
 from:0x02018a28 kind:arm_call to:0x02018650 module:main
 from:0x02018a44 kind:arm_call to:0x02018650 module:main
 from:0x02018be0 kind:arm_call to:0x02018650 module:main
 from:0x02018bfc kind:arm_call to:0x02018650 module:main
-from:0x02018eb8 kind:load to:0x02056370 module:main
+from:0x02018eb8 kind:load to:0x02055fe4 add:0x38c module:main
 from:0x02018ee4 kind:arm_call to:0x02018650 module:main
 from:0x02018f20 kind:arm_call to:0x02018650 module:main
 from:0x02018f98 kind:arm_call to:0x02018650 module:main
 from:0x02018fbc kind:arm_call to:0x020194f4 module:main
 from:0x02018fe4 kind:arm_call to:0x020189b4 module:main
-from:0x02019020 kind:load to:0x02056370 module:main
-from:0x02019050 kind:load to:0x02056370 add:0x28 module:main
+from:0x02019020 kind:load to:0x02055fe4 add:0x38c module:main
+from:0x02019050 kind:load to:0x02055fe4 add:0x3b4 module:main
 from:0x02019054 kind:load to:0x02018ec4 module:main
 from:0x02019080 kind:arm_call to:0x020187dc module:main
-from:0x0201909c kind:load to:0x02056370 add:0x2c module:main
+from:0x0201909c kind:load to:0x02055fe4 add:0x3b8 module:main
 from:0x020190a0 kind:load to:0x02055fe4 module:main
 from:0x020190f0 kind:arm_call to:0x02018650 module:main
-from:0x02019150 kind:load to:0x02056370 module:main
-from:0x02019174 kind:load to:0x02056370 add:0x2c module:main
+from:0x02019150 kind:load to:0x02055fe4 add:0x38c module:main
+from:0x02019174 kind:load to:0x02055fe4 add:0x3b8 module:main
 from:0x0201917c kind:arm_call to:0x020191c0 module:main
 from:0x020191bc kind:load to:0x02055fe4 add:0x54 module:main
 from:0x0201937c kind:arm_call to:0x020195d4 module:main
@@ -1503,9 +1503,9 @@ from:0x02019848 kind:arm_call to:0x0201a2bc module:main
 from:0x02019858 kind:arm_call to:0x0201b180 module:main
 from:0x0201986c kind:arm_call to:0x0201a138 module:main
 from:0x02019878 kind:arm_call to:0x02064f30 module:overlay(9)
-from:0x020198a4 kind:load to:0x020563e4 module:main
+from:0x020198a4 kind:load to:0x02055fe4 add:0x400 module:main
 from:0x020198a8 kind:load to:0x02055fe4 module:main
-from:0x020198ac kind:load to:0x020563e4 add:0x100 module:main
+from:0x020198ac kind:load to:0x02055fe4 add:0x500 module:main
 from:0x020198c8 kind:load to:0x02064f0c module:overlay(8)
 from:0x020198d0 kind:arm_call to:0x0206406c module:overlay(8)
 from:0x02019908 kind:arm_call to:0x02035504 module:main
@@ -1515,11 +1515,11 @@ from:0x02019948 kind:arm_call to:0x02035504 module:main
 from:0x02019954 kind:arm_call to:0x02035504 module:main
 from:0x02019988 kind:arm_call to:0x020057ac module:main
 from:0x02019990 kind:load to:0x01ff9440 module:itcm
-from:0x02019994 kind:load to:0x020563e4 add:0x100 module:main
+from:0x02019994 kind:load to:0x02055fe4 add:0x500 module:main
 from:0x02019998 kind:load to:0x02055fe4 module:main
 from:0x020199a4 kind:load to:0x02055fe0 module:main
 from:0x020199a8 kind:load to:0x0205af98 module:main
-from:0x020199ac kind:load to:0x020563e4 module:main
+from:0x020199ac kind:load to:0x02055fe4 add:0x400 module:main
 from:0x020199c0 kind:arm_call to:0x02020774 module:main
 from:0x020199d4 kind:arm_call to:0x02020774 module:main
 from:0x020199dc kind:arm_call to:0x0201a168 module:main

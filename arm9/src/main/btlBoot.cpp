@@ -14,7 +14,6 @@ extern "C" {
 
 // --- Struct Definitions --- //
 
-#include "structs/unk_020563e4.h"
 
 typedef struct {
     u8 pad_00[0x1cf4];
@@ -69,28 +68,28 @@ void btlEnter(u32 param1, u32 param2) {
 
 // MATCHED 100%
 void btlSetup() {
-    switch ((s16)data_020563e4.fieldfc) {
+    switch ((s16)gameState.field4fc) {
         case 0x3001:
         case 0x3002:
         case 0x3003:
         case 0x3004:
-            data_02055fe4.field504_00 = 1;
+            gameState.field504_00 = 1;
             break;
         case 0x3005:
         case 0x3009:
-            data_02055fe4.field504_00 = 3;
+            gameState.field504_00 = 3;
             break;
         default:
-        if (data_020563e4.field102 != 0) {
-            data_02055fe4.field504_00 = 2;
-        } else if (data_02055fe4.field504_0b != 0) {
-            data_02055fe4.field504_00 = 1;
+        if (gameState.field502 != 0) {
+            gameState.field504_00 = 2;
+        } else if (gameState.field504_0b != 0) {
+            gameState.field504_00 = 1;
         } else {
-            data_02055fe4.field504_00 = 0;
+            gameState.field504_00 = 0;
         }
     }
 
-    switch (data_02055fe4.field504_00) {
+    switch (gameState.field504_00) {
         case 0: {
             FSOverlayInfo info;
             void * ret;
@@ -159,25 +158,25 @@ void btlExit() {
 
     data_01ff9440 = 0;
 
-    data_020563e4.field102 = 0;
+    gameState.field502 = 0;
 
-    if (data_02055fe4.field504_13 == 3) {
+    if (gameState.field504_13 == 3) {
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        u16 hold = gGameMain->prevMode;
-        gGameMain->setMode(2);
-        gGameMain->prevMode = hold;
+        u16 hold = gameMain->prevMode;
+        gameMain->setMode(2);
+        gameMain->prevMode = hold;
     } else {
         data_0205af98 = 0;
 
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        if (gGameMain->prevMode == 5) {
-            data_020563e4.fieldfc &= ~1;
+        if (gameMain->prevMode == 5) {
+            gameState.field4fc &= ~1;
         }
 
-        gGameMain->setMode(gGameMain->prevMode);
+        gameMain->setMode(gameMain->prevMode);
     }
 }

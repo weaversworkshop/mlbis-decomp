@@ -1,8 +1,8 @@
 #ifndef GLOBALS_H
     #define GLOBALS_H
 
-    #include <nitro/os.h>
-    #include <nnsys/snd.h>
+    #include <nitro.h>
+    #include <nnsys.h>
 
     #include "structs/unk_01ff9464.h"
     #include "structs/unk_01ff9468.h"
@@ -17,8 +17,6 @@
     #include "structs/unk_01ff9504.h"
     #include "structs/unk_01ff9538.h"
     #include "structs/unk_01ff9598.h"
-    #include "structs/unk_02055fe4.h"
-    #include "structs/party.h"
     #include "structs/unk_0205f6b0.h"
 
     extern s8 data_01ff9438;
@@ -58,8 +56,5 @@
     extern NNSSndStrmThread data_01ff9c7c;
     extern void * data_02050088;
     extern const char data_02050094[];
-    extern u32 * data_020564bc[];
-    extern GameState data_02055fe4;
-    extern PartyStatus gParty;  // 0x02056370
     extern UnkGlobal_0205f6b0 data_0205f6b0;
 #endif

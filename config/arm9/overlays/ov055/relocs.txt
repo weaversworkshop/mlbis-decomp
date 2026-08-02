@@ -22,7 +22,7 @@ from:0x020cd7b0 kind:load to:0x02055fe4 module:main
 from:0x020cd7bc kind:load to:0x0209c25c module:overlays(14,130)
 from:0x020cd7c0 kind:load to:0x0209c824 module:overlays(4,14,130)
 from:0x020cd7c4 kind:load to:0x02064f08 module:overlay(8)
-from:0x020cd7d0 kind:load to:0x020563e4 module:main
+from:0x020cd7d0 kind:load to:0x02055fe4 add:0x400 module:main
 from:0x020cd7e4 kind:load to:0x02064f0c module:overlay(8)
 from:0x020cd7e8 kind:load to:0x020cd7ec module:overlay(55)
 from:0x020cd808 kind:arm_call to:0x0201f7ec module:main

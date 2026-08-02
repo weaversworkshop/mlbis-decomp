@@ -4,12 +4,12 @@
 
 #include "main/clGlobalEvent.h"
 
+#include "main/clGameMain.h"
+
 extern "C" {
 
-#include "main/playerStatus.h"
 #include "main/rng.h"
 
-#include "structs/unk_020563e4.h"
 
 #include <nitro.h>
 
@@ -490,21 +490,21 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case ADD_COINS: {
-            u16 old = data_020563e4.field20;
+            u16 old = gameState.party.field94;
             u32 sum = old + inst->args[0];
 
             if (sum > 999) {
-                data_020563e4.field20 = 999;
+                gameState.party.field94 = 999;
             } else {
-                data_020563e4.field20 = sum;
+                gameState.party.field94 = sum;
             }
 
-            setGameVar(inst->destVar, data_020563e4.field20 - old, sys, ctx);
+            setGameVar(inst->destVar, gameState.party.field94 - old, sys, ctx);
             return 0;
         }
         case GET_FLAG:
             if ((inst->args[0] & 0x3000) == 0x3000) {
-                val = (data_02055fe4.field4c3 >> (inst->args[0] & 0xfff)) & 1;
+                val = (gameState.party.badgeOwned >> (inst->args[0] & 0xfff)) & 1;
             } else {
                 val = getItemCount(inst->args[0]);
             }
@@ -516,7 +516,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             setGameVar(inst->destVar, val, sys, ctx);
             return 0;
         case ACTOR_GET: {
-            PlayerStatus *player = &gParty.party[inst->args[0]];
+            PlayerStatus *player = &gameState.party.members[inst->args[0]];
             ExpCounter local;
 
             switch (inst->args[1]) {
@@ -613,7 +613,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
         case ACTOR_SET: {
             s32 id = inst->args[0];
             s32 val = inst->args[2];
-            PlayerStatus *player = &gParty.party[id];
+            PlayerStatus *player = &gameState.party.members[id];
             ExpCounter local;
 
             switch (inst->args[1]) {

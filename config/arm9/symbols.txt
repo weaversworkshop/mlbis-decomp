@@ -2212,14 +2212,8 @@ data_02055f80 kind:data(any) addr:0x02055f80
 data_02055fa8 kind:data(any) addr:0x02055fa8
 data_02055fd0 kind:data(any) addr:0x02055fd0
 data_02055fd8 kind:data(any) addr:0x02055fd8
-gGameMain kind:bss addr:0x02055fe0
-data_02055fe4 kind:bss addr:0x02055fe4
-gParty kind:bss addr:0x02056370
-data_02056390 kind:bss addr:0x02056390
-data_02056394 kind:bss addr:0x02056394
-data_020563d0 kind:bss addr:0x020563d0
-data_020563e4 kind:bss addr:0x020563e4
-data_020564bc kind:bss addr:0x020564bc
+gameMain kind:bss addr:0x02055fe0
+gameState kind:bss addr:0x02055fe4
 data_020564f8 kind:bss addr:0x020564f8
 data_02056504 kind:bss addr:0x02056504
 data_02056520 kind:bss addr:0x02056520

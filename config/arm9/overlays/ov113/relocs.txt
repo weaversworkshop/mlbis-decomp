@@ -376,7 +376,7 @@ from:0x020cf3c8 kind:load to:0x020d8d20 module:overlay(113)
 from:0x020cf3d4 kind:load to:0x020d2a9c module:overlay(113)
 from:0x020cf3d8 kind:load to:0x0205afa8 module:main
 from:0x020cf3e0 kind:load to:0x02055fe4 module:main
-from:0x020cf3f0 kind:load to:0x020563e4 add:0x100 module:main
+from:0x020cf3f0 kind:load to:0x02055fe4 add:0x500 module:main
 from:0x020cf400 kind:load to:0x020d8d38 module:overlay(113)
 from:0x020cf408 kind:load to:0x020b8900 module:overlay(16)
 from:0x020cf40c kind:load to:0x020d2854 module:overlay(113)

@@ -448,7 +448,7 @@ from:0x020d0064 kind:load to:0x02064f08 module:overlay(8)
 from:0x020d006c kind:load to:0x020b8900 module:overlay(16)
 from:0x020d0074 kind:load to:0x020d5120 module:overlay(115)
 from:0x020d007c kind:load to:0x02055fe4 module:main
-from:0x020d008c kind:load to:0x020563e4 add:0x100 module:main
+from:0x020d008c kind:load to:0x02055fe4 add:0x500 module:main
 from:0x020d009c kind:load to:0x020d5138 module:overlay(115)
 from:0x020d00a4 kind:load to:0x020cbaa0 module:overlay(115)
 from:0x020d00ac kind:load to:0x020d00b0 module:overlay(115)

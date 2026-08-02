@@ -772,7 +772,7 @@ from:0x020d3260 kind:arm_call to:0x020a0f98 module:overlay(15)
 from:0x020d326c kind:load to:0x02064f08 module:overlay(8)
 from:0x020d3274 kind:load to:0x020d9ce0 module:overlay(107)
 from:0x020d327c kind:load to:0x02055fe4 module:main
-from:0x020d328c kind:load to:0x020563e4 add:0x100 module:main
+from:0x020d328c kind:load to:0x02055fe4 add:0x500 module:main
 from:0x020d329c kind:load to:0x020d9cfc module:overlay(107)
 from:0x020d32a4 kind:load to:0x020b8900 module:overlay(16)
 from:0x020d32a8 kind:load to:0x020d9d24 module:overlay(107)

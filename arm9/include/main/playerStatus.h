@@ -75,6 +75,34 @@ typedef struct {
     u8 pad_0d[0x3];
 } ExpCounter;
 
+typedef struct {
+    u16 chr;
+    u16 stats[14]; // baseHP, baseSp, basePow, baseDef, baseSpeed, baseStache, maxHp, hp, maxSp, sp, pow, def, speed, stache
+    u8 pad_1e[0x2];
+    u32 level : 8;
+    u32 exp : 24;
+    u32 expToNext : 24;
+    u32 gearSlots : 8;
+    u8 gear[3];
+    u8 pad_2b[0x1];
+    u8 badge;
+    u8 pad_2d[0x3];
+} PlayerStatus;
+
+typedef struct {
+    PlayerStatus members[3];
+    u32 coins;
+    u16 field94;
+    s8 itemCount[0x20];
+    s8 gearCount[0x81];
+    u8 badgeOwned;
+    u8 field138;
+    u8 pad_139[0x1];
+    s16 field13a;
+    s16 field13c;
+    u8 pad_13e[0x2];
+} PartyStatus;
+
 void initParty(u32);  // 0x02018048
 s32 getItemCount(u16);  // 0x02018824
 s8 addItem(u16, s8);  // 0x02018878

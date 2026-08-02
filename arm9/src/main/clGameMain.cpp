@@ -14,7 +14,6 @@ extern "C" {
 #include <nitro.h>
 
 #include "main/cpu_mem16.h"
-#include "main/playerStatus.h"
 #include "main/savedata.h"
 
 // --- Struct Definitions --- //
@@ -127,7 +126,8 @@ void setGameVar(u32, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
 
 // --- Variable Definitions --- //
 
-clGameMain * gGameMain;  // 0x02055fe0
+clGameMain * gameMain;  // 0x02055fe0
+GameState gameState;  // 0x02055fe4
 
 } // extern "C"
 
@@ -228,7 +228,7 @@ void clGameMain::run() {
             fsLoadOverlay(FS_OVERLAY_ID(OVY_4), MI_PROCESSOR_ARM9);
             fsLoadOverlay(FS_OVERLAY_ID(OVY_5), MI_PROCESSOR_ARM9);
 
-            if (data_02055fe4.field4cc_2) {
+            if (gameState.field4cc_2) {
                 initGameState();
             }
 
@@ -505,41 +505,41 @@ void clGameMain::setMode(u16 newMode) {
 
 // MATCHED 100%
 void initGameState() {
-    func_01ff8228(data_02055fe4.field000, 0, sizeof(data_02055fe4.field000));
-    func_01ff8228(data_02055fe4.field040, 0, sizeof(data_02055fe4.field040));
-    func_01ff8228(data_02055fe4.field054, 0, sizeof(data_02055fe4.field054));
-    func_01ff8228(data_02055fe4.field05c, 0, sizeof(data_02055fe4.field05c));
-    func_01ff8228(data_02055fe4.field0e4, 0, sizeof(data_02055fe4.field0e4));
-    MI_CpuFill8(data_02055fe4.field2e4, 0, sizeof(data_02055fe4.field2e4));
-    func_01ff8228(data_02055fe4.field37c, 0, sizeof(data_02055fe4.field37c));
-    cpu_fill16(data_02055fe4.field4e8, 0, sizeof(data_02055fe4.field4e8));
+    func_01ff8228(gameState.field000, 0, sizeof(gameState.field000));
+    func_01ff8228(gameState.field040, 0, sizeof(gameState.field040));
+    func_01ff8228(gameState.field054, 0, sizeof(gameState.field054));
+    func_01ff8228(gameState.field05c, 0, sizeof(gameState.field05c));
+    func_01ff8228(gameState.field0e4, 0, sizeof(gameState.field0e4));
+    MI_CpuFill8(gameState.field2e4, 0, sizeof(gameState.field2e4));
+    func_01ff8228(gameState.field37c, 0, sizeof(gameState.field37c));
+    cpu_fill16(gameState.field4e8, 0, sizeof(gameState.field4e8));
 
     initParty(0);
 
-    data_02055fe4.field4ce = 0;
-    data_02055fe4.field4d0 = 0;
+    gameState.field4ce = 0;
+    gameState.field4d0 = 0;
 }
 
 // MATCHED 100%
 u32 getGameVar(u32 id, clGlobalEvent * sys, EventContext * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
-        return BITSET_GET(data_02055fe4.field0e4, idx);
+        return BITSET_GET(gameState.field0e4, idx);
     }
 
     u32 idx = id & ID_INDEX_MASK;
     switch ((u16)(id & ID_SPACE_MASK)) {
         case 0x2000:
-            return BITSET_GET(data_02055fe4.field054, idx);
+            return BITSET_GET(gameState.field054, idx);
         case 0xd000:
-            return BITSET_GET(data_02055fe4.field05c, idx);
+            return BITSET_GET(gameState.field05c, idx);
         case 0x3000:
         case 0x4000:
             return sys->getCustomVariable(ctx, id);
         case 0x5000:
-            return data_02055fe4.field000[idx];
+            return gameState.field000[idx];
         case 0x6000:
-            return data_02055fe4.field2e4[idx];
+            return gameState.field2e4[idx];
         case 0x9000:
             return sys->vars[idx];
         case 0xa000:
@@ -547,7 +547,7 @@ u32 getGameVar(u32 id, clGlobalEvent * sys, EventContext * ctx) {
         case 0xb000:
             return BITSET_GET(ctx->words, idx);
         case 0xc000:
-            return data_02055fe4.field040[idx];
+            return gameState.field040[idx];
         case 0x1000:
             return ctx->args[idx];
         default:
@@ -560,9 +560,9 @@ void setGameVar(u32 id, s32 value, clGlobalEvent * sys, EventContext * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
         if (value != 0) {
-            BITSET_SET(data_02055fe4.field0e4, idx);
+            BITSET_SET(gameState.field0e4, idx);
         } else {
-            BITSET_CLR(data_02055fe4.field0e4, idx);
+            BITSET_CLR(gameState.field0e4, idx);
         }
         return;
     }
@@ -571,26 +571,26 @@ void setGameVar(u32 id, s32 value, clGlobalEvent * sys, EventContext * ctx) {
     switch ((u16)(id & ID_SPACE_MASK)) {
         case 0x2000:
             if (value != 0) {
-                BITSET_SET(data_02055fe4.field054, idx);
+                BITSET_SET(gameState.field054, idx);
             } else {
-                BITSET_CLR(data_02055fe4.field054, idx);
+                BITSET_CLR(gameState.field054, idx);
             }
             break;
         case 0xd000:
             if (value != 0) {
-                BITSET_SET(data_02055fe4.field05c, idx);
+                BITSET_SET(gameState.field05c, idx);
             } else {
-                BITSET_CLR(data_02055fe4.field05c, idx);
+                BITSET_CLR(gameState.field05c, idx);
             }
             break;
         case 0x4000:
             sys->setCustomVariable(ctx, id, value);
             break;
         case 0x5000:
-            data_02055fe4.field000[idx] = value;
+            gameState.field000[idx] = value;
             break;
         case 0x6000:
-            data_02055fe4.field2e4[idx] = value;
+            gameState.field2e4[idx] = value;
             break;
         case 0x9000:
             sys->vars[idx] = value;
@@ -606,7 +606,7 @@ void setGameVar(u32 id, s32 value, clGlobalEvent * sys, EventContext * ctx) {
             }
             break;
         case 0xc000:
-            data_02055fe4.field040[idx] = value;
+            gameState.field040[idx] = value;
             break;
         case 0x1000:
             ctx->args[idx] = value;

@@ -5,8 +5,7 @@
 #include "main/playerStatus.h"
 
 #include "main/backup.h"
-
-#include "structs/unk_020563e4_head.h"
+#include "main/clGameMain.h"
 
 // --- Extern Data Variables --- //
 
@@ -76,11 +75,11 @@ void initParty(u32 preset) {
     u32 slot;
     PlayerStatus * p;
 
-    func_01ff8228(&gParty, 0, sizeof(PartyStatus));
+    func_01ff8228(&gameState.party, 0, sizeof(PartyStatus));
 
     startBadge = 0;
     u16 startGear[4] = { 0, 0, 0, 0 };
-    p = gParty.party;
+    p = gameState.party.members;
 
     for (chr = 0; chr < 3; chr++) {
         LevelStats * lvl = sLevelTable[chr];
@@ -153,20 +152,20 @@ void initParty(u32 preset) {
         p++;
     }
 
-    data_02055fe4.field41c = 0;
+    gameState.party.coins = 0;
 
-    data_020563e4.field20 = 0;
+    gameState.party.field94 = 0;
 
-    data_02055fe4.field422 = data_020526c0[preset];
-    data_02055fe4.field43a = data_0205af8c[preset];
-    data_02055fe4.field423 = data_0205af88[preset];
-    data_02055fe4.field432 = data_020526bc[preset];
-    data_02055fe4.field42d = data_0205af84[preset];
+    gameState.party.itemCount[0] = data_020526c0[preset];
+    gameState.party.itemCount[0x18] = data_0205af8c[preset];
+    gameState.party.itemCount[1] = data_0205af88[preset];
+    gameState.party.itemCount[0x10] = data_020526bc[preset];
+    gameState.party.itemCount[0xb] = data_0205af84[preset];
 }
 
 // MATCHED 100%
 void setLevel(u8 chr, u8 level) {
-    PlayerStatus * p = &gParty.party[chr];
+    PlayerStatus * p = &gameState.party.members[chr];
     p->level = level;
     
     if (chr < 2) {
@@ -338,10 +337,10 @@ s32 getItemCount(u16 id) {
 
     switch ((id & ID_SPACE_MASK)) {
         case ID_ITEM:
-            count = gParty.itemCount[id & ID_INDEX_MASK];
+            count = gameState.party.itemCount[id & ID_INDEX_MASK];
             break;
         case ID_GEAR:
-            count = gParty.gearCount[id & ID_INDEX_MASK];
+            count = gameState.party.gearCount[id & ID_INDEX_MASK];
     }
     return count;
 }
@@ -351,7 +350,7 @@ s8 addItem(u16 id, s8 delta) {
     s8 ret = 0;
     u16 idx = (id & ID_INDEX_MASK);
     
-    PartyStatus * party = &gParty;
+    PartyStatus * party = &gameState.party;
 
     switch ((u16)(id & ID_SPACE_MASK)) {
         case ID_BADGE: {
@@ -408,24 +407,24 @@ s8 addItem(u16 id, s8 delta) {
 
 // MATCHED 100%
 s32 addCoins(s32 delta) {
-    u32 old = data_02055fe4.field41c;
+    u32 old = gameState.party.coins;
     s32 coins = old + delta;
     if (coins < 0) {
-        data_02055fe4.field41c = 0;
+        gameState.party.coins = 0;
     } else {
         if (coins > COIN_MAX) {
-            data_02055fe4.field41c = COIN_MAX;
+            gameState.party.coins = COIN_MAX;
         } else {
-            data_02055fe4.field41c = coins;
+            gameState.party.coins = coins;
         }
     }
 
-    return (data_02055fe4.field41c - old);
+    return (gameState.party.coins - old);
 }
 
 // MATCHED 100%
 void calcStats(PlayerStatus * dst, u32 chr, s16 slot, u16 gearId) {
-    PlayerStatus * src = &gParty.party[chr];
+    PlayerStatus * src = &gameState.party.members[chr];
 
     s32 hp = src->stats[0];
     dst->stats[0] = hp;
@@ -626,7 +625,7 @@ BOOL equipGear(u8 chr, u16 gearId, u8 slot) {
     GearInfo * gear;
     u32 i;
 
-    PlayerStatus * p = &gParty.party[chr];
+    PlayerStatus * p = &gameState.party.members[chr];
 
     gear = getGearInfo(gearId);
 
@@ -674,23 +673,23 @@ BOOL equipGear(u8 chr, u16 gearId, u8 slot) {
 
 // MATCHED 100%
 BOOL refreshStats(u8 chr) {
-    return equipGear(chr, gParty.party[chr].gear[0] | ID_GEAR, 0);
+    return equipGear(chr, gameState.party.members[chr].gear[0] | ID_GEAR, 0);
 }
 
 // MATCHED 100%
 void equipBadge(u8 chr, u16 badgeId) {
-    gParty.party[chr].badge = badgeId & ID_INDEX_MASK;
+    gameState.party.members[chr].badge = badgeId & ID_INDEX_MASK;
 
-    s16 combo = badgeComboIdx(data_02055fe4.field3b8, data_02055fe4.field3e8);
+    s16 combo = badgeComboIdx(gameState.party.members[0].badge, gameState.party.members[1].badge);
     if (combo != -1) {
-        data_02055fe4.field4c4 = combo;
+        gameState.party.field138 = combo;
     }
 }
 
 // MATCHED 100%
 BOOL findGearEffect(u8 chr, u8 effect, u8 * outValue, u8 * outValue2) {
 
-    PlayerStatus * p = &gParty.party[chr];
+    PlayerStatus * p = &gameState.party.members[chr];
     BOOL found = FALSE;
     u8 bestValue = 0;
     u8 bestValue2 = 0;
@@ -721,7 +720,7 @@ BOOL findGearEffect(u8 chr, u8 effect, u8 * outValue, u8 * outValue2) {
 
 // MATCHED 100%
 u16 getEquippedBadge(u8 chr) {
-    return gParty.party[chr].badge | ID_BADGE;
+    return gameState.party.members[chr].badge | ID_BADGE;
 }
 
 // MATCHED 100%
@@ -731,7 +730,7 @@ BOOL keyItemFlagSet(u32 keyItemId) {
         return 0;
     }
 
-    u32 val = data_02055fe4.field054[(flag & 0xfff) >> 5] >> (flag & 0x1f);
+    u32 val = gameState.field054[(flag & 0xfff) >> 5] >> (flag & 0x1f);
     return ((val & 1) != 0);
 }
 

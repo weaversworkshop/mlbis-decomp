@@ -7,6 +7,7 @@
 #include <nitro/math.h>
 
 #include "main/backup.h"
+#include "main/clGameMain.h"
 #include "main/clGlobalEvent.h"
 
 // --- Struct Definitions --- //
@@ -92,7 +93,7 @@ static inline void snapshotEventFlag(SaveEventFlags * record, u16 id) {
 
 // MATCHED 100%
 s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
-    u32 slot = data_02055fe4.field4cc_3;
+    u32 slot = gameState.field4cc_3;
     u32 slotBase = 2 * slot;
 
     if ((saveData.header.slotValid & (1 << slotBase)) == 0) {
@@ -125,7 +126,7 @@ s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
     }
 
     for (s32 i = 0; i < 10; i++) {
-        saveData.saves[copyIdx].field10e[i] = data_02055fe4.field4e8[i];
+        saveData.saves[copyIdx].field10e[i] = gameState.field4e8[i];
     }
 
     SaveEventFlags * record = &saveData.saves[copyIdx].eventFlags;
