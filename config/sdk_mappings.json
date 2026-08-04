@@ -2915,6 +2915,13 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x02039e3c",
+      "sdk_name": "OS_ResetSystem",
+      "library": "os",
+      "confidence": "certain",
+      "note": "byte-identical (insns + pool) after patching os_reset.c to the ROM's revision: IRQ masking before MI_StopDma, and OS_ResetRequestIrqMask(~OS_IE_FIFO_RECV) not 0xffffffff. sdk_equiv still shows .word 0x27e3f80 vs None = the unresolvable link symbol RESET_HW_DTCM_IRQ_STACK_END (SDK_AUTOLOAD_DTCM_START+0x3fc0-HW_SVC_STACK_SIZE)."
+    },
+    {
       "addr": "0x02039f14",
       "sdk_name": "OS_GetOwnerInfo",
       "library": "os",
@@ -4554,6 +4561,14 @@
       "library": "msl",
       "confidence": "certain",
       "note": "tu_diff content match (SDK_TS sweep 2026-06-30)"
+    },
+    {
+      "addr": "0x02045578",
+      "sdk_name": "_u32_div_f",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior unsigned 32-bit divide runtime helper. No source in the tree (the CW ARM runtime ships prebuilt), but mwcc emits the symbol by name for any unsigned `/`: compiling func_02005e44's ramp as (fadeTimer*16)/fadeFrames produced an instruction-identical body whose only delta vs the hand-declared extern was `bl func_02045578` -> `bl _u32_div_f` (2026-08-04). Body agrees: `cmp r1,#0; bxeq lr` div-by-zero guard + `mov r2,#0x1c` normalisation cascade. r0=dividend, r1=divisor, quotient in r0. Signed counterpart would be _s32_div_f at another address. 9 call sites in main.",
+      "header": "runtime"
     },
     {
       "addr": "0x02045cf4",

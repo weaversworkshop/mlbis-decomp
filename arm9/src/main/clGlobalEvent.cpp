@@ -30,7 +30,7 @@ extern void func_01ff8228(void *, u32, u32);
 
 extern s32 getGameVar(u16, clGlobalEvent *, EventContext *);
 extern void setGameVar(u16, s32, clGlobalEvent *, EventContext *);
-extern void func_02005da0(UnkGlobal_02056504 *, s32);
+extern void setSoftResetFade(UnkGlobal_02056504 *, s32);
 extern s64 func_0204536c(s32, s32);
 
 // --- Variable Definitions --- //
@@ -482,7 +482,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
             return 0;
         case OP64:
-            func_02005da0(&data_02056504, -1);
+            setSoftResetFade(&data_02056504, -1);
             data_02056504.field00 |= 2;
             return 0;
         case OP65:
