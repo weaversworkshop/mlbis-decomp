@@ -17,7 +17,12 @@ MODULE-AWARE: each source file's `// objdiff-target: ..._dsd_gap@<mod>_N.o`
 comment assigns it (and its build .o) to a module (main / itcm / dtcm / ovNNN);
 that module's own symbols.txt is the one edited, resolved via config.yaml.
 Placement is keyed by address WITHIN a module, so overlays that share absolute
-addresses never collide (the trap a single global table would hit).
+addresses never collide (the trap a single global table would hit). An address
+its own module doesn't carry falls back to the RESIDENT modules (main + itcm +
+dtcm) -- their ranges are disjoint, so at most one matches. That is what lets a
+main TU name an itcm global it can only ever declare `extern`. Overlays are
+never guessed; an anchor that targets one must name it:  // ov122 0x0206d9b4
+(a main-homed vtable whose overrides are defined in an overlay).
 
 Join is by (CLASS SCOPE, SIMPLE NAME): the last two identifiers of the mangled
 nested-name vs the anchor's enclosing class {...} block (or explicit X::
@@ -104,6 +109,12 @@ DATA_ANCHOR_RE = re.compile(
 )
 # Defined global (non-weak) object symbol in a data-ish section of the .o.
 OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
+# An anchor may name the module that owns the address:  // ov122 0x0206d9b4
+# Needed when a class's vtable is homed in main but an override is DEFINED in an
+# overlay: resolve_module() will never guess an overlay (141 of them share
+# absolute addresses), so the human resolves it and the tool obeys. Keyed by
+# address, which is unique within the named module.
+ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+0x(?P<addr>[0-9a-fA-F]+)")
 # The // objdiff-target: value -> owning module (main_7 -> main, ov001_1 -> ov001).
 OBJTARGET_RE = re.compile(r"^\s*//\s*objdiff-target:\s*(.+?)\s*$")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
@@ -211,6 +222,7 @@ def load_anchors(verbose):
     across files are a notice only."""
     raw = {}  # (scope, name) -> list of (addr, "path:line")
     idents = {}  # operator key -> identifier tokens in its source params
+    mod_by_addr = {}  # addr -> module named by an `// ovNNN 0xADDR` anchor
     for d in ANCHOR_DIRS:
         if not d.exists():
             continue
@@ -220,6 +232,8 @@ def load_anchors(verbose):
                 f.read_text(encoding="utf-8", errors="replace").splitlines(), 1
             ):
                 loc = f"{f.relative_to(ROOT)}:{lineno}"
+                for am in ANCHOR_MOD_RE.finditer(line):
+                    mod_by_addr[int(am.group("addr"), 16)] = am.group("mod")
                 cd = CTORDTOR_DECL_RE.search(line)
                 handled = False
                 if cd:
@@ -268,8 +282,9 @@ def load_anchors(verbose):
                   file=sys.stderr)
         anchors[key] = addrs.pop()
     if verbose:
-        print(f"  {len(anchors)} address anchor(s) from source", file=sys.stderr)
-    return anchors, conflicts, idents
+        print(f"  {len(anchors)} address anchor(s) from source, "
+              f"{len(mod_by_addr)} module-qualified", file=sys.stderr)
+    return anchors, conflicts, idents, mod_by_addr
 
 
 def resolve_anchor(anchors, by_name, scope, simple, idents):
@@ -303,14 +318,21 @@ def resolve_anchor(anchors, by_name, scope, simple, idents):
 
 
 def load_config_modules():
-    """module name -> absolute symbols.txt path, from config.yaml."""
+    """(module name -> symbols.txt path, resident module names).
+
+    Resident = main + autoloads (itcm/dtcm). They are all mapped at once at
+    disjoint absolute addresses, so an address identifies at most one of them
+    -- which is what makes them safe cross-module fallback targets. The 141
+    overlays share absolute addresses, so they never are."""
     d = yaml.safe_load(CONFIG_YAML.read_text(encoding="utf-8"))
     mods = {d["main_module"]["name"]: CONFIG_DIR / d["main_module"]["symbols"]}
+    resident = [d["main_module"]["name"]]
     for a in d.get("autoloads", []):
         mods[a["name"]] = CONFIG_DIR / a["symbols"]
+        resident.append(a["name"])
     for o in d.get("overlays", []):
         mods[o["name"]] = CONFIG_DIR / o["symbols"]
-    return mods
+    return mods, resident
 
 
 def sources_by_module(verbose):
@@ -389,65 +411,136 @@ def load_symbols_lines(path):
     return lines, by_addr, present
 
 
-def process_module(mod, o_paths, sym_path, anchors, idents, dry_run, verbose):
-    """Sync one module's .o symbols into its symbols.txt. Address keying is
-    module-local, so overlapping overlay addresses can't collide."""
+class SymTable:
+    """One module's symbols.txt, loaded once and written once. Shared across
+    modules so a main TU anchoring an itcm address and an itcm TU anchoring
+    the same file both edit one in-memory copy instead of clobbering."""
+
+    def __init__(self, path):
+        self.path = path
+        self.lines, self.by_addr, self.present = load_symbols_lines(path)
+        self.dirty = False
+
+    def rename(self, addr, full):
+        """-> (old, new) if the line changed, else None."""
+        i = self.by_addr[addr]
+        sm = SYMBOL_LINE_RE.match(self.lines[i])
+        old = sm.group("name")
+        if old == full:
+            return None
+        eol = "\n" if self.lines[i].endswith("\n") else ""
+        self.lines[i] = (f"{full}{sm.group('mid')}{sm.group('addr')}"
+                         f"{sm.group('tail')}{eol}")
+        self.present.discard(old)
+        self.present.add(full)
+        self.dirty = True
+        return old, full
+
+    def flush(self):
+        if self.dirty:
+            self.path.write_text("".join(self.lines), encoding="utf-8")
+
+
+def load_tables(modules, mods_needed, tables):
+    """Populate `tables` for the named modules (missing files reported once)."""
+    for m in mods_needed:
+        if m in tables or m not in modules:
+            continue
+        if not modules[m].exists():
+            print(f"  symbols file missing: {modules[m]}", file=sys.stderr)
+            continue
+        tables[m] = SymTable(modules[m])
+    return tables
+
+
+def resolve_module(addr, mod, tables, resident, mod_by_addr=None):
+    """Module whose symbols.txt owns `addr`: an explicit `// ovNNN 0xADDR`
+    anchor wins, then the TU's own module, then the resident modules. Resident
+    address ranges are disjoint, so at most one can match and the choice is
+    never a guess. Returns None if no module carries a symbol at that address
+    -- including when an explicit module was named but has nothing there, which
+    is a wrong anchor and must not silently fall through to a resident."""
+    named = (mod_by_addr or {}).get(addr)
+    if named is not None:
+        return named if named in tables and addr in tables[named].by_addr else None
+    if mod in tables and addr in tables[mod].by_addr:
+        return mod
+    for m in resident:
+        if m != mod and m in tables and addr in tables[m].by_addr:
+            return m
+    return None
+
+
+def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
+                   verbose):
+    """Sync one module's .o symbols into the symbols.txt that owns each address
+    -- its own module, or a resident one (see resolve_module). A main TU
+    referencing an itcm global is the normal case: the itcm object can never be
+    DEFINED from a main unit, so an anchored extern is its only route to a name."""
     syms = dump_symbols(o_paths, verbose)
-    if not syms:
+    if not syms or mod not in tables:
         return 0, [], set()
-    if not sym_path.exists():
-        print(f"  [{mod}] symbols file missing: {sym_path.relative_to(ROOT)}",
-              file=sys.stderr)
-        return 0, [], set()
-    lines, by_addr, present = load_symbols_lines(sym_path)
 
     by_name = defaultdict(set)
     for (_, name), a in anchors.items():
         by_name[name].add(a)
 
-    # multiple distinct .o symbols resolving to one (module-local) address =
-    # ambiguous; refuse to guess, report it.
-    names_at = {}
-    for scope, simple, full, _ in syms:
-        addr = embedded_addr(simple)
-        if addr is None:
-            addr = resolve_anchor(anchors, by_name, scope, simple, idents)
-        if addr is not None:
-            names_at.setdefault(addr, set()).add(full)
-    ambiguous = {a for a, ns in names_at.items() if len(ns) > 1}
-    for a in sorted(ambiguous):
-        print(f"  [{mod}] ambiguous: 0x{a:08x} defined under {len(names_at[a])} "
-              f"names -> skipped: {', '.join(sorted(names_at[a]))}", file=sys.stderr)
-
-    changed, unplaced = [], []
+    # Recover each symbol's address once, then the module that owns it.
+    resolved = []
     for scope, simple, full, is_def in syms:
         addr = embedded_addr(simple)
         if addr is None:
             addr = resolve_anchor(anchors, by_name, scope, simple, idents)
-        if addr is None:
-            if is_def and full not in present and is_userish(simple):
-                unplaced.append(full)
-            continue
-        if addr in ambiguous or addr not in by_addr:
-            if is_def and addr not in by_addr and full not in present and is_userish(simple):
-                unplaced.append(f"{full} (0x{addr:08x} not in {mod})")
-            continue
-        i = by_addr[addr]
-        sm = SYMBOL_LINE_RE.match(lines[i])
-        if sm.group("name") != full:
-            eol = "\n" if lines[i].endswith("\n") else ""
-            lines[i] = (f"{full}{sm.group('mid')}{sm.group('addr')}"
-                        f"{sm.group('tail')}{eol}")
-            changed.append((addr, sm.group("name"), full))
+        tgt = (None if addr is None else
+               resolve_module(addr, mod, tables, resident, mod_by_addr))
+        resolved.append((addr, tgt, scope, simple, full, is_def))
 
-    for addr, old, new in changed:
-        print(f"  [{mod}] 0x{addr:08x}  {old}  ->  {new}")
-    for u in unplaced:
-        print(f"  [{mod}] UNPLACED: {u} -- add a // 0xADDR anchor to its "
-              f"declaration", file=sys.stderr)
+    # multiple distinct .o symbols resolving to one (module, address) =
+    # ambiguous; refuse to guess, report it.
+    names_at = {}
+    for addr, tgt, _, _, full, _ in resolved:
+        if tgt is not None:
+            names_at.setdefault((tgt, addr), set()).add(full)
+    ambiguous = {k for k, ns in names_at.items() if len(ns) > 1}
+    for tgt, a in sorted(ambiguous):
+        print(f"  [{mod}] ambiguous: 0x{a:08x} ({tgt}) defined under "
+              f"{len(names_at[(tgt, a)])} names -> skipped: "
+              f"{', '.join(sorted(names_at[(tgt, a)]))}", file=sys.stderr)
 
-    if changed and not dry_run:
-        sym_path.write_text("".join(lines), encoding="utf-8")
+    def known(full):
+        """Name already correct in some searched module -> nothing to report."""
+        return any(full in tables[m].present
+                   for m in [mod] + resident if m in tables)
+
+    changed, unplaced = [], []
+    for addr, tgt, scope, simple, full, is_def in resolved:
+        if tgt is None:
+            # Two different failures, and only one is worth reporting.
+            #   addr is None + undefined: an extern we were never going to name
+            #     (SDK link symbols like SDK_OVERLAY_*_ID, FX_SinCosTable_).
+            #     Out of scope -- stay quiet, as before.
+            #   addr recovered but no module carries it: the anchor named an
+            #     address nothing owns (typo, or defined in an overlay). The
+            #     rename silently does nothing, so say so even for an extern --
+            #     that silence is the bug this fallback exists to kill.
+            if is_userish(simple) and not known(full) and (is_def or addr is not None):
+                unplaced.append((full, addr))
+            continue
+        if (tgt, addr) in ambiguous:
+            continue
+        r = tables[tgt].rename(addr, full)
+        if r:
+            changed.append((tgt, addr, *r))
+
+    for tgt, addr, old, new in changed:
+        where = "" if tgt == mod else f" -> {tgt}"
+        print(f"  [{mod}]{where} 0x{addr:08x}  {old}  ->  {new}")
+    for full, addr in unplaced:
+        why = ("add a // 0xADDR anchor to its declaration" if addr is None else
+               f"anchored 0x{addr:08x}, which no resident module carries a "
+               f"symbol at -- wrong address, or defined in an overlay")
+        print(f"  [{mod}] UNPLACED: {full} -- {why}", file=sys.stderr)
+
     return len(changed), unplaced, ambiguous
 
 
@@ -459,20 +552,24 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args()
 
-    anchors, conflicts, idents = load_anchors(args.verbose)
-    modules = load_config_modules()
+    anchors, conflicts, idents, mod_by_addr = load_anchors(args.verbose)
+    modules, resident = load_config_modules()
     by_mod = sources_by_module(args.verbose)
+
+    # Residents are always loaded: any module's TU may anchor into them.
+    # Overlays only when an anchor explicitly names one (141 files otherwise).
+    tables = load_tables(modules, resident + sorted(set(mod_by_addr.values())), {})
 
     total_changed = total_unplaced = total_ambiguous = 0
     for mod in sorted(by_mod):
-        sym_path = modules.get(mod)
-        if sym_path is None:
+        if mod not in modules:
             print(f"  WARN: module '{mod}' has source but is not in config.yaml "
                   f"-- skipped", file=sys.stderr)
             continue
+        load_tables(modules, [mod], tables)
         n, unplaced, ambiguous = process_module(
-            mod, by_mod[mod], sym_path, anchors, idents, args.dry_run,
-            args.verbose)
+            mod, by_mod[mod], tables, resident, anchors, idents,
+            mod_by_addr, args.verbose)
         total_changed += n
         total_unplaced += len(unplaced)
         total_ambiguous += len(ambiguous)
@@ -480,6 +577,10 @@ def main():
             print(f"  module {mod}: {len(by_mod[mod])} unit(s), "
                   f"{'would rename' if args.dry_run else 'renamed'} {n}",
                   file=sys.stderr)
+
+    if not args.dry_run:
+        for t in tables.values():
+            t.flush()
 
     verb = "would rename" if args.dry_run else "renamed"
     print(f"sync_renames: {verb} {total_changed}, {total_unplaced} unplaced, "

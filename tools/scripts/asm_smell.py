@@ -102,10 +102,17 @@ def is_conditional(insn):
     }
 
 
+# mwcc homes r0-r3 when a register param is address-taken; sp must then be
+# unwound past the block, so the epilogue pops lr (not pc).
+ARG_HOME = re.compile(r"^push\s+\{r0,\s*r1,\s*r2,\s*r3\}$")
+ADD_SP = re.compile(rf"^add({COND})?\s+sp,\s*sp,\s*#")
+
+
 def classify(insns):
     hard, ctell = [], []
     seen_flag_set = False
     prologue_done = False
+    arg_home = bool(insns) and ARG_HOME.match(insns[0])
     for i, insn in enumerate(insns):
         mnem = insn.split()[0]
         if PUSH.match(insn):
@@ -135,7 +142,8 @@ def classify(insns):
         if POP_LR.match(insn):
             rest = insns[i + 1 : i + 4]
             if any(r.startswith("bx") and r.endswith("lr") for r in rest):
-                hard.append(f"H1 lr-restore + bx lr @insn {i}: {insn}")
+                if not (arg_home and any(ADD_SP.match(r) for r in rest)):
+                    hard.append(f"H1 lr-restore + bx lr @insn {i}: {insn}")
     return hard, ctell
 
 

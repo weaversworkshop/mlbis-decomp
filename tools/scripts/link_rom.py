@@ -9,7 +9,7 @@ The lcf's MEMORY block writes the module binaries itself (paths are relative to 
 
 delinks.txt is ALWAYS restored on exit: carving moves target functions out of the gap,
 where obj_match cannot find them, so leaving a carve in place makes `make progress`
-report 0/0 (see notes/link.md). Differences are reported, not fatal -- pass --strict
+report 0/0. Differences are reported, not fatal -- pass --strict
 to exit non-zero on any.
 """
 import argparse

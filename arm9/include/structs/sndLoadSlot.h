@@ -1,12 +1,12 @@
-#ifndef STRUCTS_UNK_1FF9538_H
-    #define STRUCTS_UNK_1FF9538_H
+#ifndef STRUCTS_SND_LOAD_SLOT_H
+    #define STRUCTS_SND_LOAD_SLOT_H
 
     #include "types.h"
 
     typedef struct {
-        u32 field00;
-        u32 field04;
-        u32 field08_00 : 1;
-        u32 field08_01 : 1;
-    } UnkGlobal_01ff9538;
+        u32 tableSize;
+        u32 userData;
+        u32 inUse : 1;
+        u32 offsetsFixed : 1;
+    } SndLoadSlot;
 #endif

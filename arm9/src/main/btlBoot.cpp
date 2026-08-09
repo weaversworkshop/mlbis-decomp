@@ -14,7 +14,6 @@ extern "C" {
 
 // --- Struct Definitions --- //
 
-
 typedef struct {
     u8 pad_00[0x1cf4];
     s16 field1cf4;
@@ -156,7 +155,7 @@ void btlExit() {
 
     func_ov008_0206406c();
 
-    data_01ff9440 = 0;
+    sndEchoMode = 0;
 
     gameState.field502 = 0;
 

@@ -228,7 +228,7 @@ def render_md(rows, target, sort_desc):
 
 # A homed object is "done" when its bytes match and its extent is accounted for.
 # `pad` = extent exceeds sizeof but the ROM tail is zero, i.e. inter-object
-# alignment padding, which belongs to the preceding object. See notes/link.md.
+# alignment padding, which belongs to the preceding object.
 DATA_DONE = ("ok", "pad")
 DATA_NOTE = {
     "ok": "",

@@ -1,35 +1,41 @@
-#ifndef STRUCTS_UNK_01FF9504_H
-    #define STRUCTS_UNK_01FF9504_H
+#ifndef STRUCTS_SND_LOAD_NODE_H
+    #define STRUCTS_SND_LOAD_NODE_H
 
     #include "types.h"
 
-    typedef struct UnkNode UnkNode;
+    typedef struct SndLoadNode SndLoadNode;
 
-    typedef struct UnkNodeHeader {
-        UnkNode * next;
-        UnkNode * field04;
-    } UnkNodeHeader;
+    typedef struct SndLoadNodeHead {
+        SndLoadNode * next;
+    } SndLoadNodeHead;
 
-    struct UnkNode {
-        UnkNode * next;
-        UnkNode * field04;
-        u32 field08;
-        union {
-            u32 field0c;
-            struct { u16 field0c_lo; u16 field0e; };
-        };
-        u32 field10;
-        void (*field14)(UnkNode *self);
-        void * field18;
-        UnkNode * field1c;
-        u8 field20;
-        u8 field21;
-        u8 field22;
-        u8 field23;
-        u32 field24;
-        u32 field28;
-        u32 field2c;
-        u32 field30;
+    typedef struct SndLoadNodeTail {
+        SndLoadNode * next;
+        SndLoadNode * prev;
+    } SndLoadNodeTail;
+
+    struct SndLoadNode {
+        SndLoadNode * next;
+        void * buffer;
+        u32 fileId;
+        u32 size;
+        u32 offset;
+        void (*onComplete)(SndLoadNode *self);
+        void * userData;
     };
+
+    #ifdef __cplusplus
+    struct SndLoader : SndLoadNode {
+        SndLoadNode * current;
+        u8 busy;
+        u8 slot;
+        u8 heapSel;
+        u8 pad_23[0x1];
+        u32 readSoFar;
+        u32 seqNo;
+        u32 state;
+        u32 arg;
+    };
+    #endif
 
 #endif

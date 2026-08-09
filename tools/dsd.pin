@@ -2,7 +2,7 @@
 #
 # Why a commit and not a release: the newest RELEASE (v0.11.0) still aborts with
 # "No more overlay groups to connect to" on this ROM's 141 overlays. The fixes
-# (fb0d8e48, 83da00d4) are main-only. See notes/link.md.
+# (fb0d8e48, 83da00d4) are main-only.
 #
 # Do NOT switch this to a CI-artifact download: GitHub artifacts expire after 90
 # days and need an authenticated token.

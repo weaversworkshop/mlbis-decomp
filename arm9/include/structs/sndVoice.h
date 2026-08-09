@@ -1,55 +1,57 @@
-#ifndef STRUCTS_UNK_01FF9470_H
-    #define STRUCTS_UNK_01FF9470_H
+#ifndef STRUCTS_SND_VOICE_H
+    #define STRUCTS_SND_VOICE_H
 
     #include "types.h"
 
     #include <nnsys/snd.h>
 
-    typedef struct UnkStruct_01ff9470_00 {
-        struct UnkStruct_01ff9470_00 * field00;
-        struct UnkStruct_01ff9470_00 * field04;
-        struct UnkStruct_01ff9470_00 * field08;
-        struct UnkStruct_01ff9470_00 * field0c;
+    typedef struct SndVoice {
+        struct SndVoice * next;
+        struct SndVoice * prev;
+        struct SndVoice * chainNext;
+        struct SndVoice * chainPrev;
         union {
-            NNSSndHandle field10;
-            NNSSndStrmHandle field10_strm;
+            NNSSndHandle handle;
+            NNSSndStrmHandle strmHandle;
         };
-        struct UnkStruct_01ff9470_00 * field14;
-        u32 field18;
-        s8 field1c;
-        u8 field1d;
-        u16 field1e;
-        u16 field20;
-        u16 field22;
-        u16 field24;
-        u16 field26;
-        u8 pad_28[0x2];
-        u8 field2a;
+        struct SndVoice * owner;
+        u32 id;
+        s8 volume;
+        u8 idx;
+        s16 delay;
+        s16 echoDelay;
+        s16 elapsed;
+        u16 trackCount;
+        s16 x;
+        s16 y;
+        u8 stackIdx;
         u8 pad_2b;
         union {
             u16 field2c;
             struct {
-                u16 field2c_00 : 1;
-                u16 field2c_01 : 8;
-                u16 field2c_09 : 1;
+                u16 inUse : 1;
+                u16 echoIdx : 7;
+                u16 stopOthers : 1;
+                u16 stopped : 1;
                 u16 field2c_10 : 1;
-                u16 field2c_11 : 2;
-                u16 field2c_13 : 1;
-                u16 field2c_14 : 1;
+                u16 streamIdx : 2;
+                u16 forceCenterX : 1;
+                u16 forceCenterY : 1;
                 u16 field2c_15 : 1;
             };
         };
         union {
-            u16 field2e;
+            u16 dualPrio;
             struct {
-                s8 field2e_b;
-                s8 field2f;
+                s8 channelPrio;
+                s8 playerPrio;
             };
         };
-        u8 pad_30[0x4];
-    } UnkStruct_01ff9470_00;
+        s16 duration;
+        u8 pad_32[0x2];
+    } SndVoice;
 
     typedef struct {
-        UnkStruct_01ff9470_00 * field00;
-    } UnkGlobal_01ff9470;
+        SndVoice * head;
+    } SndVoiceList;
 #endif

@@ -1,12 +1,12 @@
-#ifndef STRUCTS_UNK_01FF94B4_H
-    #define STRUCTS_UNK_01FF94B4_H
+#ifndef STRUCTS_SND_FADE_H
+    #define STRUCTS_SND_FADE_H
 
     #include "types.h"
 
     typedef struct {
-        volatile s32 field00;
-        s32 field04;
-        u32 field08;
-        NNSSndSeqMute field0c;
-    } UnkStruct_01ff94b4;
+        fx32 maxVolume;
+        fx32 volume;
+        fx32 step;
+        NNSSndSeqMute state;
+    } SndFade;
 #endif

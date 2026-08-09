@@ -14,9 +14,9 @@ public:
     virtual ~clBtlMoveBase() {}  // D1 0x020199b8 D0 0x020199cc
 
     virtual void fn_10();  // 0x020199b0
-    virtual void onEnd();  // 0x0206db30
-    virtual void start(u16 length);  // 0x0206d9c4
-    virtual void stop();  // 0x0206d9b4
+    virtual void onEnd();  // ov122 0x0206db30  // ??
+    virtual void start(u16 length);  // ov122 0x0206d9c4  // ??
+    virtual void stop();  // ov122 0x0206d9b4  // ??
 };
 
 class clBtlMove : public clBtlMoveBase {

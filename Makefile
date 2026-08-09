@@ -4,7 +4,7 @@ LICENSE := $(TOOLS_DIR)/mwccarm/license.dat
 SCRIPTS := $(TOOLS_DIR)/scripts
 OBJDIFF := $(TOOLS_DIR)/objdiff.exe
 # dsd is built from the commit pinned in tools/dsd.pin (`make tools`); a release
-# binary is NOT usable -- see notes/link.md.
+# binary is NOT usable.
 DSD_EXE := $(if $(filter Windows_NT,$(OS)),dsd.exe,dsd)
 DSD := $(TOOLS_DIR)/bin/$(DSD_EXE)
 DSD_CONFIG := config/arm9/config.yaml
@@ -100,7 +100,6 @@ sdk-rename:
 
 # Relink every module from delinked objects and byte-compare vs the ROM.
 # Carves data as well, then restores delinks.txt (a carve breaks obj_match).
-# See notes/link.md for the remaining 35-byte ARM/Thumb interworking gap.
 LINK_DIR   := $(BUILD_DIR)/link
 MWLDARM    := $(TOOLS_DIR)/mwccarm/2.0/sp2p3/mwldarm.exe
 

@@ -3,14 +3,14 @@
 
     #include "types.h"
 
-    #include "structs/unk_01ff9538.h"
-
     #include <nnsys/snd.h>
 
-    typedef struct UnkStruct_02008e48 {
+    #include "structs/sndLoadSlot.h"
+
+    typedef struct {
         u8 pad_00[0x4];
         SNDWaveArc * field04;
         u8 pad_08[0x10];
-        UnkGlobal_01ff9538 * field18;
+        SndLoadSlot * field18;
     } UnkStruct_02008e48;
 #endif

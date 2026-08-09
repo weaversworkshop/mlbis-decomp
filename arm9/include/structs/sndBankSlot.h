@@ -1,12 +1,14 @@
-#ifndef STRUCTS_UNK_01FF9598_H
-    #define STRUCTS_UNK_01FF9598_H
+#ifndef STRUCTS_SND_BANK_SLOT_H
+    #define STRUCTS_SND_BANK_SLOT_H
 
     #include "types.h"
 
+    #include <nnsys/snd.h>
+
     typedef struct {
-        const NNSSndArcBankInfo * field00;
-        void * field04;
-        u32 field08;
-        u32 field0c;
-  } UnkStruct_01ff9598;
+        const NNSSndArcBankInfo * bankInfo;
+        void * bankData;
+        u32 seqIdx;
+        u32 inUse;
+  } SndBankSlot;
 #endif

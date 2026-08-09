@@ -7,7 +7,7 @@ its own, so ITCM/DTCM/overlay symbols must be supplied as constants).
 
   python tools/scripts/gen_lcf.py --module main -o build/link/main.lcf <objs...>
 
-Exit 0 ok / 1 unresolved symbols / 2 error.  See notes/link.md.
+Exit 0 ok / 1 unresolved symbols / 2 error.
 """
 import argparse
 import os

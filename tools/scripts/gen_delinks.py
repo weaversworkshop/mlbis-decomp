@@ -287,7 +287,7 @@ def main():
                 lines.extend(kept[obj_path])
                 continue
             # Data carving is opt-in only because ANY carve collapses obj_match to 0/0
-            # (targets move out of the gap) -- see notes/link.md. Not correctness.
+            # (targets move out of the gap). Not correctness.
             for sec in wanted:
                 if sec in ranges:
                     lo, hi = ranges[sec]

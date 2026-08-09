@@ -7,7 +7,7 @@ what gets compared -- never the version string.
 
   python tools/scripts/setup_tools.py [--check] [--force]
 
-Exit 0 ok / 1 needs action / 2 error.  See notes/link.md.
+Exit 0 ok / 1 needs action / 2 error.
 """
 import argparse
 import os
