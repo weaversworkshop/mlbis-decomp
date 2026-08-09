@@ -10,7 +10,6 @@
 
 extern "C" {
 
-#include "structs/unk_02008e48.h"
 #include "structs/sndAltVoiceInfo.h"
 
 #include "main/unk_0202f1b4.h"
@@ -135,7 +134,7 @@ void sndApplyVoiceStacking(SndVoice *, u32, s16 *, s8 *);  // 0x020089d0
 BOOL sndReserveChannels(s32, s8, s8);  // 0x02008ae4
 void sndLoadBank(SndLoadNode *);  // 0x02008c6c
 void sndLoadWaveArc(SndLoadNode *);  // 0x02008d5c
-void sndFinishWaveArcLoad(UnkStruct_02008e48 *);  // 0x02008e48
+void sndFinishWaveArcLoad(SndLoadNode *);  // 0x02008e48
 void * sndAllocBankSlot(const NNSSndArcBankInfo *, void *, u32);  // 0x02008f2c
 void sndStartAlt(SndVoice *, s16, s16, s16, s16, s8, s16);  // 0x02008f68
 void sndUpdateFades(void);  // 0x0200907c
@@ -143,8 +142,8 @@ void sndLoadAndStartSeq(u8, s16, BOOL, u32);  // 0x020091e4
 void sndStartSeqOnSlot(u32, u8, BOOL);  // 0x020092e0
 BOOL sndLoadSeqData(NNSSndHeapHandle, u32, SndLoadedData *);  // 0x02009490
 void sndLoadSeqWaves(u32, u8);  // 0x02009668
-void * sndOpenWaveArc(u32, NNSSndHeapHandle, BOOL, BOOL, BOOL, void (*)(UnkStruct_02008e48 *), u32);  // 0x02009714
-void sndFixWaveOffsets(UnkStruct_02008e48 *);  // 0x02009880
+void * sndOpenWaveArc(u32, NNSSndHeapHandle, BOOL, BOOL, BOOL, void (*)(SndLoadNode *), u32);  // 0x02009714
+void sndFixWaveOffsets(SndLoadNode *);  // 0x02009880
 void * sndAllocLoadSlot(u32, u32);  // 0x020098c8
 void sndLoadInstrumentWaves(SNDWaveArc *, SNDBankData *, u32, u16, NNSSndHeapHandle);  // 0x0200990c
 BOOL sndLoadWave(SNDWaveArc *, s32, u32, NNSSndHeapHandle, BOOL);  // 0x020099b4
@@ -1598,12 +1597,12 @@ void sndLoadWaveArc(SndLoadNode * node) {
 }
 
 // MATCHED 100%
-void sndFinishWaveArcLoad(UnkStruct_02008e48 * ctx) {
-    SNDWaveArc * waveArc = ctx->field04;
-    u32 tableSize = ctx->field18->tableSize;
-    u32 seqIdx = ctx->field18->userData;
+void sndFinishWaveArcLoad(SndLoadNode * ctx) {
+    SNDWaveArc * waveArc = (SNDWaveArc *)ctx->buffer;
+    u32 tableSize = ((SndLoadSlot *)ctx->userData)->tableSize;
+    u32 seqIdx = ((SndLoadSlot *)ctx->userData)->userData;
 
-    if (ctx->field18->offsetsFixed == 0) {
+    if (((SndLoadSlot *)ctx->userData)->offsetsFixed == 0) {
         MI_CpuCopy8(waveArc->waveOffset, &waveArc->waveOffset[waveArc->waveCount], tableSize);
         MI_CpuFill8(waveArc->waveOffset, 0, tableSize);
     }
@@ -1880,7 +1879,7 @@ void sndLoadSeqWaves(u32 seqNo, u8 slot) {
 }
 
 // MATCHED 100%
-void * sndOpenWaveArc(u32 fileId, NNSSndHeapHandle heap, BOOL forceReload, BOOL publish, BOOL deferred, void (*onComplete)(UnkStruct_02008e48 *), u32 userData) {
+void * sndOpenWaveArc(u32 fileId, NNSSndHeapHandle heap, BOOL forceReload, BOOL publish, BOOL deferred, void (*onComplete)(SndLoadNode *), u32 userData) {
     SNDWaveArc * waveArc;
     u32 len;
     u32 tableSize;
@@ -1891,9 +1890,9 @@ void * sndOpenWaveArc(u32 fileId, NNSSndHeapHandle heap, BOOL forceReload, BOOL 
             SndLoadSlot * slot = (SndLoadSlot *)sndAllocLoadSlot(waveArc->waveCount * 4, userData);
             slot->offsetsFixed = 1;
 
-            UnkStruct_02008e48 ctx;
-            ctx.field04 = waveArc;
-            ctx.field18 = slot;
+            SndLoadNode ctx;
+            ctx.buffer = waveArc;
+            ctx.userData = slot;
 
             onComplete(&ctx);
         }
@@ -1914,7 +1913,7 @@ void * sndOpenWaveArc(u32 fileId, NNSSndHeapHandle heap, BOOL forceReload, BOOL 
         MI_CpuFill8(waveArc->waveOffset, 0, tableSize);
         DC_StoreRange(waveArc, len);
     } else {
-        sndQueueNode(waveArc, tableSize + sizeof(sndWaveArcHeader), fileId, 0, (void (*)(SndLoadNode *)) onComplete, sndAllocLoadSlot(tableSize, userData));
+        sndQueueNode(waveArc, tableSize + sizeof(sndWaveArcHeader), fileId, 0, onComplete, sndAllocLoadSlot(tableSize, userData));
     }
 
     if (publish != 0) {
@@ -1925,9 +1924,9 @@ void * sndOpenWaveArc(u32 fileId, NNSSndHeapHandle heap, BOOL forceReload, BOOL 
 }
 
 // MATCHED 100%
-void sndFixWaveOffsets(UnkStruct_02008e48 * ctx) {
-    SndLoadSlot * slot = ctx->field18;
-    SNDWaveArc * waveArc = ctx->field04;
+void sndFixWaveOffsets(SndLoadNode * ctx) {
+    SndLoadSlot * slot = (SndLoadSlot *)ctx->userData;
+    SNDWaveArc * waveArc = (SNDWaveArc *)ctx->buffer;
     u32 tableSize = slot->tableSize;
 
     if (slot->offsetsFixed == 0) {
