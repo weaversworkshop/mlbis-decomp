@@ -8,8 +8,8 @@
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(u16 *, u16 *, u32);
-extern void func_01ff8380(u16 *, u16 *, u32);
+extern void func_01ff82ac(void *, void *, u32);
+extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Definitions --- //
 

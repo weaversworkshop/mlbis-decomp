@@ -83,33 +83,27 @@ void sndWaitLoading(void);  // 0x02006368
 u8 sndIsLoading(void);  // 0x02006388
 void sndPlaySeq(u32, u8, u32);  // 0x02006398
 void sndRestartSeq(u32, BOOL);  // 0x0200650c
-void sndRestartSlot(u32, BOOL, BOOL);  // 0x02006594
 void sndStop(u32);  // 0x02006624
 void sndStopSlot(u32, u8);  // 0x02006688
 void sndPauseSlot(BOOL, u32);  // 0x020066e0
 void sndStartFade(u32, s32);  // 0x02006700
-void sndStartFadeSlot(u32, s32, u32);  // 0x0200677c
 u32 sndGetStatus(void);  // 0x02006810
-u32 sndGetSlotStatus(u32);  // 0x02006864
 u32 sndGetSeqNos(void);  // 0x020068ac
 void sndClearSlot(u32);  // 0x020068c4
 void sndSetTempoRatio(u32, s32);  // 0x02006914
 void sndPlayById(u32, s16, s16, s16, s8, s16);  // 0x02006964
-BOOL sndPlayByIdOwned(SndVoice *, u32, s16, s16, s16, s8, s16);  // 0x02006a74
-void sndStopOwned(SndVoice *, u32);  // 0x02006bc0
 void sndStopAllVoices(void);  // 0x02006c34
 u32 sndGetActiveSeqMask(void);  // 0x02006c90
-void sndSetListPosition(SndVoiceList *, s16, s16);  // 0x02006cf8
 void sndHeapLoadState(void);  // 0x02006d68
 void sndLoadSeqArc(u32, u32);  // 0x02006d84
 void sndPlayAlt(s16, s16, s16, s16, s8, s16);  // 0x02006e84
-void sndPlayAltOwned(SndVoice *, s16, s16, s16, s16, s8, s16);  // 0x02006ed0
+void sndPlayAltOwned(SndVoiceList *, s16, s16, s16, s16, s8, s16);  // 0x02006ed0
 void sndLoadPrograms(u16 *, BOOL, u32);  // 0x02006f4c
 void sndStopAlt(s16);  // 0x0200709c
 void sndPlayStreamById(u16, s16, s16, s16, s8);  // 0x02007108
-void sndPlayStreamOwned(SndVoice *, u16, s16, s16, s16, s8);  // 0x0200711c
+void sndPlayStreamOwned(SndVoiceList *, u16, s16, s16, s16, s8);  // 0x0200711c
 void sndStopStreamById(s8, u32);  // 0x02007158
-void sndStopVoiceStream(SndVoice *, u32);  // 0x02007164
+void sndStopVoiceStream(SndVoiceList *, u32);  // 0x02007164
 u8 sndGetStreamState(u32);  // 0x02007190
 s16 sndReadGlobalVar(u32);  // 0x020071c0
 u32 sndCountActiveTracks();  // 0x020071d4
@@ -124,7 +118,7 @@ void sndLinkVoice(SndVoice *);  // 0x02007ab4
 SndVoice * sndFreeVoice(SndVoice *);  // 0x02007b00
 void sndUpdateVoices();  // 0x02007bf0
 void sndScheduleVoice(SndVoice *, u32, s16, u32, s16, s16, u8, u8, u16, s16);  // 0x02007e0c
-BOOL sndStopVoices(SndVoice *, s32, void(*)(SndVoice *, u32), u32);  // 0x02007e8c
+BOOL sndStopVoices(SndVoiceList *, s32, void(*)(SndVoice *, u32), u32);  // 0x02007e8c
 void sndStopVoice(SndVoice *, u32);  // 0x02007f40
 void sndReleaseVoice(SndVoice *, u32);  // 0x02007f60
 void sndUpdateEchoDelays(SndVoice *);  // 0x02007f98  
@@ -531,7 +525,7 @@ void sndPlayById(u32 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
 }
 
 // MATCHED 100%
-BOOL sndPlayByIdOwned(SndVoice * owner, u32 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
+BOOL sndPlayByIdOwned(SndVoiceList * owner, u32 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
     switch (id & SND_ID_TYPE_MASK) {
         case 0:
             sndStopVoices(owner, -1, sndReleaseVoice, 0);
@@ -550,7 +544,7 @@ BOOL sndPlayByIdOwned(SndVoice * owner, u32 id, s16 delay, s16 x, s16 y, s8 volu
             }
 
             voice->owner = owner;
-            owner->next = voice;
+            owner->head = voice;
             break;
         case SND_ID_ALT:
             sndPlayAltOwned(owner, id, delay, x, y, volume, 0);
@@ -563,22 +557,22 @@ BOOL sndPlayByIdOwned(SndVoice * owner, u32 id, s16 delay, s16 x, s16 y, s8 volu
 }
 
 // MATCHED 100%
-void sndStopOwned(SndVoice * owner, u32 fadeFrames) {
-    if (owner->next == NULL) {
+void sndStopOwned(SndVoiceList * owner, u32 fadeFrames) {
+    if (owner->head == NULL) {
         return;
     }
 
-    switch (owner->next->id & SND_ID_TYPE_MASK) {
+    switch (owner->head->id & SND_ID_TYPE_MASK) {
         case SND_ID_STREAM:
             if (owner == NULL) {
-                sndStopStreamById(owner->next->id & SND_ID_MATCH_MASK, fadeFrames);
+                sndStopStreamById(owner->head->id & SND_ID_MATCH_MASK, fadeFrames);
             } else {
                 sndStopVoiceStream(owner, fadeFrames);
             }
             break;
         case 0:
         case SND_ID_ALT:
-            sndStopVoices(owner, owner->next->id, sndStopVoice, fadeFrames);
+            sndStopVoices(owner, owner->head->id, sndStopVoice, fadeFrames);
     }
 }
 
@@ -674,8 +668,8 @@ void sndPlayAlt(s16 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
 }
 
 // MATCHED 100%
-void sndPlayAltOwned(SndVoice * owner, s16 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
-    if (owner->next != NULL) {
+void sndPlayAltOwned(SndVoiceList * owner, s16 id, s16 delay, s16 x, s16 y, s8 volume, s16 duration) {
+    if (owner->head != NULL) {
         sndStopVoices(owner, -1, sndReleaseVoice, 0);
     }
 
@@ -683,7 +677,7 @@ void sndPlayAltOwned(SndVoice * owner, s16 id, s16 delay, s16 x, s16 y, s8 volum
     sndStartAlt(voice, delay, id, x, y, volume, duration);
 
     voice->owner = owner;
-    owner->next = voice;
+    owner->head = voice;
 }
 
 // MATCHED 100%
@@ -745,11 +739,11 @@ void sndPlayStreamById(u16 strmNo, s16 delay, s16 x, s16 y, s8 strmIdx) {
 }
 
 // MATCHED 100%
-void sndPlayStreamOwned(SndVoice * owner, u16 strmNo, s16 delay, s16 x, s16 y, s8 strmIdx) {
+void sndPlayStreamOwned(SndVoiceList * owner, u16 strmNo, s16 delay, s16 x, s16 y, s8 strmIdx) {
     SndVoice * voice = sndPlayStream(strmNo, delay, x, y, strmIdx);
     if (voice != NULL) {
         voice->owner = owner;
-        owner->next = voice;
+        owner->head = voice;
     }
 }
 
@@ -759,9 +753,9 @@ void sndStopStreamById(s8 streamIdx, u32 fadeFrames) {
 }
 
 // MATCHED 100%
-void sndStopVoiceStream(SndVoice * owner, u32 fadeFrames) {
-    if (owner->next != NULL) {
-        sndStopStream(owner->next->streamIdx, fadeFrames);
+void sndStopVoiceStream(SndVoiceList * owner, u32 fadeFrames) {
+    if (owner->head != NULL) {
+        sndStopStream(owner->head->streamIdx, fadeFrames);
     }
 }
 
@@ -992,7 +986,7 @@ void sndInitVoices() {
         voice->chainPrev = NULL;
 
         if (voice->owner != NULL) {
-            voice->owner->next = NULL;
+            voice->owner->head = NULL;
             voice->owner = NULL;
         }
         voice->id = 0;
@@ -1106,7 +1100,7 @@ SndVoice * sndFreeVoice(SndVoice * voice) {
     voice->chainPrev = NULL;
 
     if (voice->owner != NULL) {
-        voice->owner->next = NULL;
+        voice->owner->head = NULL;
         voice->owner = NULL;
     }
 
@@ -1193,7 +1187,7 @@ void sndScheduleVoice(SndVoice * voice, u32 id, s16 delay, u32 volume, s16 x, s1
 }
 
 // MATCHED 100%
-BOOL sndStopVoices(SndVoice * owner, s32 id, void(*fn)(SndVoice *, u32), u32 fadeFrames) {
+BOOL sndStopVoices(SndVoiceList * owner, s32 id, void(*fn)(SndVoice *, u32), u32 fadeFrames) {
     SndVoice * cur = sndVoiceList.head;
 
     if ((id & SND_ID_TYPE_MASK) == SND_ID_STREAM) {
@@ -1264,7 +1258,7 @@ static inline void sndCancelVoice(SndVoice * voice) {
         voice->chainNext = 0;
         voice->chainPrev = 0;
         if (voice->owner != 0) {
-            voice->owner->next = 0;
+            voice->owner->head = 0;
             voice->owner = 0;
         }
         voice->id = 0;

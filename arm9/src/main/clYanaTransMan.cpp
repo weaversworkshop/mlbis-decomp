@@ -20,8 +20,8 @@ extern GXVRamTexPltt data_027e00e4;  // 0x027e00e4
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(u16 *, u16 *, u32);
-extern void func_01ff8380(u16 *, u16 *, u32);
+extern void func_01ff82ac(void *, void *, u32);
+extern void func_01ff8380(void *, void *, u32);
 
 extern void func_0202d10c(u32, u32, YanaRes *, void *, void *, u16, u32, u32, u8); 
 

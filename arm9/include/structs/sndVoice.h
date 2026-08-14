@@ -5,6 +5,8 @@
 
     #include <nnsys/snd.h>
 
+    typedef struct SndVoiceList SndVoiceList;
+
     typedef struct SndVoice {
         struct SndVoice * next;
         struct SndVoice * prev;
@@ -14,7 +16,7 @@
             NNSSndHandle handle;
             NNSSndStrmHandle strmHandle;
         };
-        struct SndVoice * owner;
+        SndVoiceList * owner;
         u32 id;
         s8 volume;
         u8 idx;
@@ -51,7 +53,7 @@
         u8 pad_32[0x2];
     } SndVoice;
 
-    typedef struct {
+    struct SndVoiceList {
         SndVoice * head;
-    } SndVoiceList;
+    };
 #endif
