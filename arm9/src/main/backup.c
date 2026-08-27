@@ -9,11 +9,11 @@
 // --- Struct Definitions --- //
 
 typedef struct {
-    u8 initialized;
+    u8 initialized;  // +0x0
     u8 pad_01[0x3];
-    CARDResult result;
+    CARDResult result;  // +0x4
     enum BackupStatus status;
-    s32 lockId;
+    s32 lockId;  // +0xc
     void (*write)(u32, u32, u32, MIDmaCallback, void *);
     void (*read)(u32, u32, u32, MIDmaCallback, void *);
 } BackupWork;

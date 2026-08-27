@@ -130,7 +130,19 @@ def parse_report(report):
     return owned
 
 
-def derive_base_offset(asm, owned):
+def report_sections(report):
+    """{(function name, rel addr): ELF section name} from the objdiff report."""
+    out = {}
+    for unit in report.get("units", []):
+        for fn in unit.get("functions", []):
+            try:
+                out[(fn["name"], int(fn["address"]))] = fn.get("section")
+            except (KeyError, ValueError, TypeError):
+                pass
+    return out
+
+
+def derive_base_offset(asm, owned, sections=None):
     """Constant offset between asm absolute addresses and report-relative ones.
 
     Voted from every symbol whose name is unique in BOTH sources (unambiguous pairing).
@@ -149,6 +161,11 @@ def derive_base_offset(asm, owned):
             continue
         rel = next(iter(slot))
         if rel is None:
+            continue
+        # Only .text values are module-relative (its delinked section starts at the
+        # module base). A __sinit_* node lives in its own section, so its value is
+        # section-relative and voting with it invents a bogus second base.
+        if sections and sections.get((name, rel), ".text") != ".text":
             continue
         votes[int(recs[0]["address"], 16) - rel] += 1
     if not votes:
@@ -339,8 +356,9 @@ def main():
     report = load_report(args.report)
     asm = parse_asm(asm_path)
     owned = parse_report(report)
+    sections = report_sections(report)
     sdk = load_sdk_mappings()
-    base = derive_base_offset(asm, owned)
+    base = derive_base_offset(asm, owned, sections)
 
     rows = []
     for rec in asm:

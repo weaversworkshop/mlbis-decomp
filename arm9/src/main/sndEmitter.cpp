@@ -11,19 +11,19 @@ extern "C" {
 // --- Struct Definitions --- //
 
 typedef struct {
-    SndEmitterCmd ** cmdTable;
-    SndEmitter * head;
+    SndEmitterCmd ** cmdTable;  // +0x0
+    SndEmitter * head;  // +0x4
 } SndEmitterList;
 
 typedef struct {
-    s32 id;
-    SndEmitter * emitter;
+    s32 id;  // +0x0
+    SndEmitter * emitter;  // +0x4
     union { s16 * xSrc; s32 x; };
     union { s16 * ySrc; s32 y; };
-    s16 mode;
-    u16 repeats : 15;
+    s16 mode;  // +0x10
+    u16 repeats : 15;  // +0x12
     u16 isFixed : 1;
-    u8 slot;
+    u8 slot;  // +0x14
 } SndEmitterRequest;
 
 // --- Extern Data Variables --- //

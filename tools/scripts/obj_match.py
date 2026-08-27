@@ -442,6 +442,10 @@ def run_unit(unit, cache, claimed, verbose):
         fns.append({
             "name": name,
             "address": tsym["value"],
+            # `address` is module-relative only for .text, whose delinked section
+            # starts at the module base. Other sections (e.g. the __sinit_* chain)
+            # carry section-relative values, so consumers must not mix the two.
+            "section": tgt.sections[tsym["shndx"]]["name"],
             "size": tsym["size"],
             "fuzzy_match_percent": pct,
         })

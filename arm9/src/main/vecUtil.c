@@ -8,8 +8,8 @@
 // --- Struct Definitions --- //
 
 typedef struct { 
-    fx32 unused; 
-    VecFx32 sq2, sq1, prod, cross; 
+    fx32 unused;  // +0x0
+    VecFx32 sq2, sq1, prod, cross;  // +0x28
 } VectorScratchData;
 
 // --- Extern Functions --- //

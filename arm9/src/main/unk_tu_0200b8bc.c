@@ -9,7 +9,7 @@
 typedef union {
     u32 field00;
     struct {
-        u32 field00_0 : 4;
+        u32 field00_0 : 4;  // +0x0
         u32 field00_4 : 4;
         u32 : 16;
         u32 field00_24 : 8;
@@ -64,10 +64,10 @@ typedef struct {
 } UnkStruct_0200bce8_20;
 
 typedef struct {
-    UnkStruct_0200bce8_18 struct18;
-    UnkStruct_0200bce8_1C struct1c;
-    UnkStruct_0200bce8_20 struct20;
-    UnkStruct_0200bce8_24 out;
+    UnkStruct_0200bce8_18 struct18;  // +0x0
+    UnkStruct_0200bce8_1C struct1c;  // +0x4
+    UnkStruct_0200bce8_20 struct20;  // +0x8
+    UnkStruct_0200bce8_24 out;  // +0xc
 } UnkStruct_0200bce8;
 
 // --- Extern Data Variables --- //

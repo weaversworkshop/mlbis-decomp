@@ -31,7 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BUILD = ROOT / "build" / "offsets"
 INCLUDE_ROOT = ROOT / "arm9" / "include"
-DEFAULT_DIRS = ["arm9/include/main"]
+DEFAULT_DIRS = ["arm9/include/main", "arm9/src/main"]
 
 AGG_OPEN_RE = re.compile(r"\b(?:class|struct|union)\s+(?P<name>[A-Za-z_]\w*)"
                          r"(?:\s*:[^{;]*)?\s*\{")
@@ -44,6 +44,11 @@ ADDR_CMT_RE = re.compile(r"//.*(?<!\+)\b0x[0-9a-fA-F]{6,8}\b")
 SELF_ENCODING_RE = re.compile(r"^(?:field|pad_|unk_)[0-9a-fA-F]+")
 NOT_A_MEMBER = re.compile(r"^\s*(?:$|//|/\*|\*|#|\}|public:|private:|protected:"
                           r"|typedef\b|using\b|friend\b|static\b|enum\b|virtual\b)")
+# A function BODY opening: `...) {` (optionally const / ctor-init-list). Used to
+# ignore structs declared as function locals. `extern "C" {` and namespaces also
+# open braces at depth 0, so brace depth alone can NOT stand in for this.
+FUNC_OPEN_RE = re.compile(r"\)\s*(?:const\s*)?(?::[^;{]*)?\{\s*$")
+CONTROL_RE = re.compile(r"^\s*(?:if|for|while|switch|else|do|catch)\b")
 
 
 def make_vars():
@@ -100,6 +105,9 @@ def fingerprint(path, opts):
     unrelated .cpp must NOT invalidate it - that's the whole point."""
     h = hashlib.sha1()
     h.update(repr(opts).encode() + "\0".join(FLAGS).encode())
+    # This script's own logic decides what gets probed and how it's parsed, so a
+    # change to it must invalidate every entry.
+    h.update(hashlib.sha1(Path(__file__).read_bytes()).digest())
     try:
         st = CC.stat()
         h.update(f"{st.st_mtime_ns}:{st.st_size}".encode())
@@ -134,7 +142,9 @@ def parse(path):
     """-> (members, bitfields). Brace-tracked. Members of an anonymous
     struct/union are transparent, so they attribute to the enclosing named
     type; `} Name;` names an anonymous aggregate retroactively."""
-    members, bitfields, stack, depth = [], [], [], 0  # stack: [name, depth, is_union]
+    # stack: [name, depth, is_union, ignored]; func_levels: depths of open bodies
+    members, bitfields, stack, depth = [], [], [], 0
+    func_levels = []
     for lineno, line in enumerate(
             path.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
         code = line.split("//")[0]
@@ -142,8 +152,9 @@ def parse(path):
         anon = ANON_OPEN_RE.search(code)
         enclosing = next((e[0] for e in reversed(stack) if e[0]), None)
         in_union = any(e[2] for e in stack)
+        ignored = any(e[3] for e in stack) or bool(func_levels)
 
-        if stack and not agg and not anon and "(" not in code \
+        if stack and not ignored and not agg and not anon and "(" not in code \
                 and not NOT_A_MEMBER.match(line):
             bf = BITFIELD_RE.match(code)
             if bf and not re.search(r"\w\s*::\s*\w", code):
@@ -161,10 +172,13 @@ def parse(path):
                         Member(enclosing, mm.group("name"), lineno, in_union))
 
         if agg or anon:
+            # An aggregate opening at brace depth > 0 with nothing on the stack is
+            # declared INSIDE a function body (`struct { ... } w;` as a local), so
+            # its `} w;` is a variable, not a type: naming it would emit `((w*)0)`.
             stack.append([agg.group("name") if agg else None, depth,
-                          bool(anon and anon.group("kind") == "union")])
+                          bool(anon and anon.group("kind") == "union"), ignored])
         tc = TYPEDEF_CLOSE_RE.match(code)
-        if tc and stack and stack[-1][0] is None:
+        if tc and stack and stack[-1][0] is None and not stack[-1][3]:
             for mem in members:
                 if mem.type_name is None:
                     mem.type_name = tc.group("name")
@@ -172,9 +186,14 @@ def parse(path):
                 if bf[0] is None:
                     bf[0] = tc.group("name")
             stack[-1][0] = tc.group("name")
+        if not agg and not anon and FUNC_OPEN_RE.search(code) \
+                and not CONTROL_RE.match(code):
+            func_levels.append(depth)
         depth += code.count("{") - code.count("}")
         while stack and depth <= stack[-1][1]:
             stack.pop()
+        while func_levels and depth <= func_levels[-1]:
+            func_levels.pop()
     return [m for m in members if m.type_name], bitfields
 
 
@@ -233,7 +252,10 @@ def compile_src(text, stem, suffix, verbose=False):
 
 
 def tu_for(path):
-    """The game TU that includes this header, if any."""
+    """The game TU that includes this header, if any. A source file IS its own
+    TU: a struct declared inside a .c/.cpp is unreachable any other way."""
+    if path.suffix in (".c", ".cpp"):
+        return path
     needle = f'"main/{path.name}"'
     for src in sorted((ROOT / "arm9/src").rglob("*.c")) +             sorted((ROOT / "arm9/src").rglob("*.cpp")):
         for line in src.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -292,7 +314,11 @@ def prelude_for(path):
 
 
 def probe(path, members, verbose=False, prelude=None):
-    """Compile a probe TU for these members; fill .offset. -> ok?"""
+    """Compile a probe TU for these members; fill .offset. -> ok?
+    Headers only: a .c/.cpp can't be #included, so a source file's own structs
+    are reached through probe_via_tu instead."""
+    if path.suffix != ".h":
+        return False
     BUILD.mkdir(parents=True, exist_ok=True)
     rel = path.resolve().relative_to(INCLUDE_ROOT).as_posix()
     src = BUILD / (path.stem + "_probe.cpp")
@@ -353,9 +379,11 @@ def dwarf_offsets(path, types, prelude=None, verbose=False):
     bitfield's storage unit. A type is only emitted if something references it,
     hence the pointer variables."""
     decls = "\n".join(f"{t} * _ty{i};" for i, t in enumerate(sorted(types)))
-    rel = path.resolve().relative_to(INCLUDE_ROOT).as_posix()
     head = "\n".join(prelude or []) + ("\n" if prelude else "")
-    attempts = [(f'{head}#include "{rel}"\n{decls}\n', ".cpp")]
+    attempts = []
+    if path.suffix == ".h":
+        rel = path.resolve().relative_to(INCLUDE_ROOT).as_posix()
+        attempts.append((f'{head}#include "{rel}"\n{decls}\n', ".cpp"))
     tu = tu_for(path)
     if tu is not None:
         attempts.append((tu.read_text(encoding="utf-8", errors="replace")
@@ -369,42 +397,65 @@ def dwarf_offsets(path, types, prelude=None, verbose=False):
         return {}
     d = subprocess.run([READELF, "--debug-dump=info", str(obj)], cwd=ROOT,
                        capture_output=True, text=True)
-    out, stack, mode, off, name = {}, [], None, None, None
+    return parse_dwarf(d.stdout)
 
-    def flush():
-        owner = next((n for _, n in reversed(stack) if n), None)
-        if mode == "member" and owner and off is not None and name:
-            out.setdefault((owner, name), off)
 
-    for line in d.stdout.splitlines():
-        tag = re.match(r"\s*<(\d+)><[0-9a-f]+>:.*\((DW_TAG_\w+)\)", line)
-        if tag:
-            flush()
-            depth, kind = int(tag.group(1)), tag.group(2)
-            off = name = None
-            while stack and stack[-1][0] >= depth:
-                stack.pop()
-            if kind in ("DW_TAG_structure_type", "DW_TAG_class_type",
-                        "DW_TAG_union_type"):
-                # anonymous aggregates stay None so members attribute to the
-                # nearest NAMED enclosing type (mwcc's anon struct/union in a
-                # union carries no DW_AT_name)
-                stack.append([depth, None])
-                mode = "type"
-            else:
-                mode = "member" if kind == "DW_TAG_member" else None
-            continue
-        m = re.search(r"DW_AT_data_member_location.*?DW_OP_const4u:\s*(\d+)", line)
+AGG_TAGS = ("DW_TAG_structure_type", "DW_TAG_class_type", "DW_TAG_union_type")
+DIE_RE = re.compile(r"\s*<(\d+)><([0-9a-f]+)>:.*\((DW_TAG_\w+)\)")
+AT_NAME_RE = re.compile(r"DW_AT_name\s*:\s*(\S+)")
+AT_LOC_RE = re.compile(r"DW_AT_data_member_location.*?DW_OP_const4u:\s*(\d+)")
+AT_TYPE_RE = re.compile(r"DW_AT_type\s*:\s*<0x([0-9a-f]+)>")
+
+
+def parse_dwarf(text):
+    """{(type, member): byte offset} from `readelf --debug-dump=info`.
+
+    Two passes, because a C `typedef struct {...} T;` emits an ANONYMOUS
+    structure DIE whose name lives on a separate DW_TAG_typedef pointing at it.
+    (C++ names the struct directly, which is why headers worked and .c files
+    silently produced nothing.) Members attribute to the nearest enclosing
+    aggregate that resolves to a name, so anonymous struct/union members still
+    land on their outer type."""
+    dies = []                       # (depth, offset, tag, attrs)
+    for line in text.splitlines():
+        m = DIE_RE.match(line)
         if m:
-            off = int(m.group(1))
+            dies.append((int(m.group(1)), int(m.group(2), 16), m.group(3), {}))
             continue
-        m = re.search(r"DW_AT_name\s*:\s*(\S+)", line)
+        if not dies:
+            continue
+        attrs = dies[-1][3]
+        m = AT_LOC_RE.search(line)
         if m:
-            if mode == "type" and stack:
-                stack[-1][1] = m.group(1)
-            elif mode == "member":
-                name = m.group(1)
-    flush()
+            attrs["loc"] = int(m.group(1))
+            continue
+        m = AT_TYPE_RE.search(line)
+        if m:
+            attrs["type"] = int(m.group(1), 16)
+            continue
+        m = AT_NAME_RE.search(line)
+        if m:
+            attrs.setdefault("name", m.group(1))
+
+    # typedef name -> the DIE it aliases; first wins (matches source order)
+    alias = {}
+    for _d, _o, tag, at in dies:
+        if tag == "DW_TAG_typedef" and "name" in at and "type" in at:
+            alias.setdefault(at["type"], at["name"])
+    agg_name = {off: (at.get("name") or alias.get(off))
+                for _d, off, tag, at in dies if tag in AGG_TAGS}
+
+    out, stack = {}, []             # stack: [(depth, die offset)]
+    for depth, off, tag, at in dies:
+        while stack and stack[-1][0] >= depth:
+            stack.pop()
+        if tag in AGG_TAGS:
+            stack.append((depth, off))
+        elif tag == "DW_TAG_member" and "name" in at and "loc" in at:
+            owner = next((agg_name.get(o) for _dd, o in reversed(stack)
+                          if agg_name.get(o)), None)
+            if owner:
+                out.setdefault((owner, at["name"]), at["loc"])
     return out
 
 
@@ -492,7 +543,11 @@ def main():
     targets = []
     for p in (a.paths or DEFAULT_DIRS):
         p = Path(p) if Path(p).is_absolute() else ROOT / p
-        targets += sorted(p.rglob("*.h")) if p.is_dir() else [p]
+        if p.is_dir():
+            for pat in ("*.h", "*.c", "*.cpp"):
+                targets += sorted(p.rglob(pat))
+        else:
+            targets.append(p)
 
     probed = pending = 0
     failed, bitfields, head_lines = [], [], set()
