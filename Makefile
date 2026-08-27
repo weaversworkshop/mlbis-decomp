@@ -3,6 +3,9 @@ MWCCARM := $(TOOLS_DIR)/mwccarm/2.0/sp1p2/mwccarm.exe
 LICENSE := $(TOOLS_DIR)/mwccarm/license.dat
 SCRIPTS := $(TOOLS_DIR)/scripts
 OBJDIFF := $(TOOLS_DIR)/objdiff.exe
+# objdiff logs every GPU adapter at INFO. Passed via a target-specific `export` on
+# `diff` (not inline) so the echoed recipe is just the exe; OBJDIFF_LOG=info restores it.
+OBJDIFF_LOG ?= error
 # dsd is built from the commit pinned in tools/dsd.pin (`make tools`); a release
 # binary is NOT usable.
 DSD_EXE := $(if $(filter Windows_NT,$(OS)),dsd.exe,dsd)
@@ -25,12 +28,15 @@ export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
 # -DSDK_TS: BIS's SDK target (overlay-digest + mmap sizes). See memory/project_sdk_drift.
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -nowraplines -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
 # rwildcard (recursive $(wildcard)) walked ~2.4k lib files on EVERY make invocation
 # and cost ~0.5s of the 0.8s parse. One `find` per tree does the same job ~4x faster;
 # lists verified identical, entry for entry (2026-08-26).
-rfind = $(shell find $(1) -name '$(2)' 2>/dev/null)
+# NEVER call bare `find`: on Windows PATH it resolves to system32's text-search
+# find.exe (empty output, no error), which silently empties these lists.
+FIND := $(if $(wildcard /usr/bin/find),/usr/bin/find,find)
+rfind = $(shell $(FIND) $(1) -name '$(2)' 2>/dev/null)
 # ONE walk of lib/, partitioned with $(filter); four separate finds cost four spawns.
 LIB_ALL_C    := $(call rfind,lib,*.c)
 LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(LIB_ALL_C))
@@ -59,13 +65,13 @@ SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 # Safe because "source" appears only inside objdiff_units (123 keys, 123 units).
 SDK_DIFF_FILES := $(shell sed -n 's/.*"source"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json)
 
-SRC_ALL   := $(shell find arm9/src \( -name '*.c' -o -name '*.cpp' \) 2>/dev/null)
+SRC_ALL   := $(shell $(FIND) arm9/src \( -name '*.c' -o -name '*.cpp' \) 2>/dev/null)
 C_FILES   := $(filter %.c,$(SRC_ALL)) $(LIB_C_FILES) $(SDK_DIFF_FILES)
 CXX_FILES := $(filter %.cpp,$(SRC_ALL))
 OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CXX_FILES:%.cpp=$(BUILD_DIR)/%.o)
 SDK_OBJ_FILES := $(SDK_C_FILES:%.c=$(BUILD_DIR)/%.o)
 
-DSD_CONFIG_DEPS := $(shell find config -mindepth 1 2>/dev/null)
+DSD_CONFIG_DEPS := $(shell $(FIND) config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
 
 TARGET ?= main_7
@@ -74,9 +80,24 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
+.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
 
-all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
+# A failing compile under -j printed its diagnostics, then make kept echoing the
+# in-flight jobs after it. Defer the failure: record it, let the others finish, and
+# report from this recipe so the errors are the LAST thing on screen. Direct
+# single-object builds are unaffected (DEFER_ERRORS is target-specific to `all`).
+all: DEFER_ERRORS := 1
+all: compile-ok objdiff.json
+
+# Gate: every object is a prerequisite, so this runs only once they have all been
+# attempted. Deferred failures land in <obj>.o.err -- report them and fail here, which
+# stops objdiff.json (an order-only dependent) from running on a broken build. PHONY on
+# purpose: a stamp file is skipped on an incremental break, because a failed compile
+# writes nothing and the stale object's mtime never moves.
+compile-ok: $(FX_CONST_H) $(OBJ_FILES)
+	@e=`$(FIND) $(BUILD_DIR) -name '*.o.err' -size +0 2>/dev/null`; \
+	if [ -n "$$e" ]; then echo; echo "----- !! ERRORS !! -----"; \
+	  for f in $$e; do $(SHOWERR) $$f | $(ERRLAST); done; exit 1; fi
 
 # Generated per object by DEPFLAGS. `-include` so a first build (no .d yet) is fine.
 -include $(OBJ_FILES:.o=.d)
@@ -99,7 +120,7 @@ sdk: $(FX_CONST_H)
 	    o="$(BUILD_DIR)/$${c%.c}.o"; mkdir -p "$$(dirname "$$o")"; \
 	    $(MWCCARM) $(MWC_FLAGS) -i $(MSL)/MSL_Common_Embedded/Math/Include -c -o "$$o" "$$c" 2>> $(BUILD_DIR)/sdk_build.log || true; \
 	  done; \
-	  ok=$$(find $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | wc -l); \
+	  ok=$$($(FIND) $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | wc -l); \
 	  fail=$$(grep -c "Error 1" $(BUILD_DIR)/sdk_build.log 2>/dev/null || echo 0); \
 	  echo "SDK build: $$ok objects compiled, $$fail failed. Log: $(BUILD_DIR)/sdk_build.log"
 
@@ -145,13 +166,17 @@ $(DELINKS_DIR)/.stamp: $(DSD) $(DSD_CONFIG_DEPS) $(SDK_MAPPINGS)
 	@touch $@
 
 objdiff: objdiff.json
-objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py
+objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py | compile-ok
 	python $(SCRIPTS)/gen_objdiff.py > $@
 
 # sync-names harvests mwcc's mangled names from the compiled game .o into
 # symbols.txt (edits it), so delinks must run AFTER via recursive make.
 sync-names: all
 	$(SYNC_NAMES) $(SYNC_ARGS)
+
+# Diagnostics from the last failed build (each failing object keeps a .err).
+errors:
+	@$(FIND) $(BUILD_DIR) -name '*.o.err' -size +0 -exec $(SHOWERR) {} \; 2>/dev/null; true
 
 # `// +0xNN` member offsets. `offsets` = check (exit 1 if stale); offsets-apply
 # rewrites the headers and runs inside diff/progress, like sync-names. Comment-only
@@ -163,6 +188,7 @@ offsets:
 offsets-apply:
 	@python $(SCRIPTS)/struct_offsets.py --apply $(OFFSET_ARGS)
 
+diff: export RUST_LOG := $(OBJDIFF_LOG)
 diff: all sync-names
 	@$(MAKE) --no-print-directory offsets-apply
 	@$(MAKE) --no-print-directory delinks
@@ -220,7 +246,7 @@ FUNC ?=
 SDK_EQUIV_ARGS ?=
 sdk-check: delinks
 	@test -n "$(FUNC)" || { echo 'usage: make sdk-check FUNC="func_xxxx [func_yyyy ...]" [SDK_EQUIV_ARGS=-v]'; exit 2; }
-	@test -n "$$(find $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | head -1)" || { echo "No SDK objects in $(BUILD_DIR)/lib -- run 'make sdk' first."; exit 2; }
+	@test -n "$$($(FIND) $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | head -1)" || { echo "No SDK objects in $(BUILD_DIR)/lib -- run 'make sdk' first."; exit 2; }
 	@python $(SCRIPTS)/sdk_equiv.py $(FUNC) --gap-o $(GAP_O) $(SDK_EQUIV_ARGS)
 
 # Mermaid call graph (game-only by default). Scope via CALLGRAPH_ARGS, e.g.
@@ -253,16 +279,36 @@ EXTRA_CFLAGS  ?=
 DEPFLAGS := -gccdep -MD
 FIXDEP    = @python $(SCRIPTS)/fix_deps.py $(@:.o=.d)
 
+# Echo just the source path (the 600-char command echo buried diagnostics under -j),
+# then mwcc's output - it already names file and line, so no prefix. mwcc writes
+# `a\\b\\c.c:12:` while make's $< is posix, so SHOWERR normalises the slashes (same
+# reason fix_deps.py rewrites its depfiles). A failing object keeps its raw
+# diagnostics in <obj>.o.err for `make errors`; V=1 restores the raw command echo.
+# Game TUs only - lib/* logs via `make sdk`.
+V ?= 0
+CC_BIN = $(or $(MWCC_OVERRIDE),$(MWCCARM))
+SHOWERR = sed 's|\\|/|g'
+# hold back `file:line:` lines and re-emit them at the end, so the last thing on
+# screen is the diagnostic and not mwcc's trailer.
+ERRLAST = awk '/^[ 	]*$$/{next} /:[0-9]+:/{d[++n]=$$0;next} {print} END{for(i=1;i<=n;i++)print d[i]}'
+ifeq ($(V),1)
+CC_RUN = $(1)
+else
+CC_RUN = @echo "$<"; if ! $(1) > $@.err 2>&1; then \
+	  test -n "$(DEFER_ERRORS)" && exit 0; $(SHOWERR) $@.err; exit 1; \
+	fi; if [ -s $@.err ]; then $(SHOWERR) $@.err; fi; rm -f $@.err
+endif
+
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(call CC_RUN,$(CC_BIN) $(MWC_FLAGS) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<)
 	$(FIXDEP)
 
 # C++ TUs: same flags, language swapped to C++.
 MWC_FLAGS_CXX := $(subst -lang=c99,-lang=c++,$(MWC_FLAGS))
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS_CXX) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(call CC_RUN,$(CC_BIN) $(MWC_FLAGS_CXX) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<)
 	$(FIXDEP)
 
 $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c

@@ -231,6 +231,16 @@ def read_probe(obj, count):
     return [int.from_bytes(raw[i * 4:i * 4 + 4], "little") for i in range(count)]
 
 
+def sweep_probes():
+    """Probe TUs/objects are read in-process; only cache.json outlives the run."""
+    for f in BUILD.glob("*"):
+        if f.name != CACHE.name and f.is_file():
+            try:
+                f.unlink()
+            except OSError:
+                pass
+
+
 def compile_src(text, stem, suffix, verbose=False):
     """Write and compile a generated TU. -> object Path, or None."""
     BUILD.mkdir(parents=True, exist_ok=True)
@@ -537,6 +547,8 @@ def main():
                     help="ignore build/offsets/cache.json and re-probe everything")
     ap.add_argument("--no-bitfields", action="store_true",
                     help="skip bitfield-run heads (DWARF-sourced)")
+    ap.add_argument("--keep-probes", action="store_true",
+                    help="keep generated probe TUs (implied by -v)")
     ap.add_argument("-v", "--verbose", action="store_true")
     a = ap.parse_args()
 
@@ -640,6 +652,8 @@ def main():
             CACHE.write_text(json.dumps(new_cache), encoding="utf-8")
         except OSError:
             pass
+    if not (a.verbose or a.keep_probes or failed):
+        sweep_probes()
     for path in failed:
         print(f"PROBE FAILED {path.relative_to(ROOT).as_posix()} (rerun with -v)")
     if a.verbose:

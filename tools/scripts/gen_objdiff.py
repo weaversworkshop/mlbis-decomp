@@ -8,15 +8,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILD_DIR = "build"
-SCAN_DIRS = [ROOT / "arm9" / "src", ROOT / "lib"]
-SCAN_EXCLUDES = [ROOT / "lib" / "NitroSDK", ROOT / "lib" / "mw-libraries"]
+# arm9/src ONLY: lib/* units come from sdk_mappings.json objdiff_units. Scanning
+# lib/ as well duplicated every lib/syscall unit (it is registered both ways).
+SCAN_DIRS = [ROOT / "arm9" / "src"]
 MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
 
 TARGET_RE = re.compile(r"^\s*//\s*objdiff-target:\s*(.+?)\s*$")
 
 
 def scan_for_comment_targets():
-    units = []
+    units, skipped = [], []
     for root in SCAN_DIRS:
         if not root.exists():
             continue
@@ -24,8 +25,6 @@ def scan_for_comment_targets():
             p for ext in ("*.c", "*.cpp") for p in root.rglob(ext)
         )
         for path in paths:
-            if any(ex in path.parents for ex in SCAN_EXCLUDES):
-                continue
             target = None
             with open(path, "r", encoding="utf-8", errors="replace") as f:
                 for line in f:
@@ -36,18 +35,18 @@ def scan_for_comment_targets():
             rel = path.relative_to(ROOT).as_posix()
             ext_len = len(path.suffix)  # ".c" or ".cpp"
             if target is None:
-                print(f"gen_objdiff: skipping {rel} (no '// objdiff-target:' comment)",
-                      file=sys.stderr)
+                skipped.append(rel)
                 continue
-            if rel.startswith("lib/"):
-                name = "sdk/" + rel[len("lib/"):-ext_len]
-            else:
-                name = rel[len("arm9/src/"):-ext_len]
+            name = rel[len("arm9/src/"):-ext_len]
             units.append({
                 "name": name,
                 "target_path": target,
                 "base_path": f"{BUILD_DIR}/{rel[:-ext_len]}.o",
             })
+    # A game TU without the comment is a real mistake: it silently never gets diffed.
+    for rel in skipped:
+        print(f"gen_objdiff: {rel} has no '// objdiff-target:' comment "
+              f"-- it will NOT be diffed", file=sys.stderr)
     return units
 
 
