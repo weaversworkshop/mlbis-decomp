@@ -68,7 +68,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit
+.PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
 
@@ -138,7 +138,18 @@ objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py
 sync-names: all
 	$(SYNC_NAMES) $(SYNC_ARGS)
 
+# `// +0xNN` member offsets. `offsets` = check (exit 1 if stale); offsets-apply
+# rewrites the headers and runs inside diff/progress, like sync-names. Comment-only
+# edits, so a write costs a recompile of the dependents on the NEXT build; idempotent,
+# so steady state writes nothing. OFFSET_ARGS passes flags (e.g. --all, --no-bitfields).
+offsets:
+	python $(SCRIPTS)/struct_offsets.py $(OFFSET_ARGS)
+
+offsets-apply:
+	@python $(SCRIPTS)/struct_offsets.py --apply $(OFFSET_ARGS)
+
 diff: all sync-names
+	@$(MAKE) --no-print-directory offsets-apply
 	@$(MAKE) --no-print-directory delinks
 	@python $(SCRIPTS)/asm_smell.py --sweep
 	$(OBJDIFF) -p .
@@ -147,6 +158,7 @@ diff: all sync-names
 TODO_ARGS = $(if $(DATA_NOTES),--data-notes,)
 
 progress: all sync-names
+	@$(MAKE) --no-print-directory offsets-apply
 	@$(MAKE) --no-print-directory delinks
 	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report - $(TODO_ARGS)
 	@python $(SCRIPTS)/asm_smell.py --sweep

@@ -10,8 +10,8 @@
 class clGameMain : public clTask {
 public:
     u8 pad_18[0x10];
-    u16 mode;
-    u16 prevMode;
+    u16 mode;  // +0x28
+    u16 prevMode;  // +0x2a
 
     clGameMain();
     virtual ~clGameMain() {};  // D1 0x020057cc D0 0x020057e0
@@ -42,8 +42,8 @@ typedef struct {
     u8 field2e4[152];
     u8 field37c[2][7];
     u8 pad_38a[0x2];
-    PartyStatus party;
-    u8 : 2;
+    PartyStatus party;  // +0x38c
+    u8 : 2;  // +0x4cc
     u8 field4cc_2 : 1;
     u8 field4cc_3 : 2; // current save slot (0/1) ?? 
     u8 : 3;
@@ -52,7 +52,7 @@ typedef struct {
     u8 pad_4cf[0x1];
     u32 field4d0;
     u32 field4d4;
-    u32 * messageBanks[MSG_BANK_COUNT];
+    u32 * messageBanks[MSG_BANK_COUNT];  // +0x4d8
     u16 field4e8[10];
     u16 field4fc;
     u16 field4fe;
@@ -60,12 +60,12 @@ typedef struct {
     u16 field502;
     union {
         struct {
-            u32 field504_00 : 2;
+            u32 field504_00 : 2;  // +0x504
             u32 field504_02 : 11;
             u32 field504_13 : 2;
         };
         struct {
-            u32 field504_0b : 1;
+            u32 field504_0b : 1;  // +0x504
             u32 field504_1b : 1;
         };
     };

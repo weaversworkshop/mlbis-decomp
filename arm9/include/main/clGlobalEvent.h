@@ -6,27 +6,27 @@
 #ifdef __cplusplus
 
 typedef struct {
-    u8 argInfo;
-    u8 argTypes[0xf];
+    u8 argInfo;  // +0x0
+    u8 argTypes[0xf];  // +0x1
 } EventOpInfo;
 
 #define EV_ARG_COUNT(x) ((x) & 0x7f)
 #define EV_HAS_DEST(x)  ((x) & 0x80)
 
 typedef struct EventContext {
-    u8 * pc;
-    u32 args[8];
-    u32 locals[16];
+    u8 * pc;  // +0x0
+    u32 args[8];  // +0x4
+    u32 locals[16];  // +0x24
     union {
-        u8 * stackTop[17];
-        u32 words[17];
+        u8 * stackTop[17];  // +0x64
+        u32 words[17];  // +0x64
         struct {
-            u32  flags;
-            u8 * stack[16];
+            u32  flags;  // +0x64
+            u8 * stack[16];  // +0x68
         };
     };
-    u16 sp;
-    u16 waitFrames;
+    u16 sp;  // +0xa8
+    u16 waitFrames;  // +0xaa
 } EventContext;
 
 enum Opcode {
@@ -62,16 +62,16 @@ enum Opcode {
 };
 
 typedef struct EventInstruction {
-    u16 opcode;
-    u16 destVar;
-    u32 varArgMask;
-    s32 args[24];
+    u16 opcode;  // +0x0
+    u16 destVar;  // +0x2
+    u32 varArgMask;  // +0x4
+    s32 args[24];  // +0x8
 } EventInstruction;
 
 class clScriptSystem {
 public:
-    EventOpInfo * opInfo;
-    u32 vars[32];
+    EventOpInfo * opInfo;  // +0x4
+    u32 vars[32];  // +0x8
 
     clScriptSystem();  // 0x02015ebc
     virtual ~clScriptSystem();  // D1 0x02015ee8 D0 0x02015eec D2 0x02015f00

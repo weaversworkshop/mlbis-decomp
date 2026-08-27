@@ -67,7 +67,7 @@ SYMBOL_LINE_RE = re.compile(
 ANCHOR_RE = re.compile(
     r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?"
     r"(?P<name>operator\s+(?:new|delete)(?:\s*\[\s*\])?|[A-Za-z_]\w*)"
-    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{].*//.*0x(?P<addr>[0-9a-fA-F]+)"
+    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{].*//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)"
 )
 # Mangled ABI token -> source spelling, for the allocation operators only.
 # Implicit ones (operator=) are compiler-emitted and never anchored.
@@ -105,7 +105,7 @@ DATA_ADDR_RE = re.compile(r"^data_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
 # the function ANCHOR_RE didn't match the line.
 DATA_ANCHOR_RE = re.compile(
     r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*(?:=\s*\{|(?:=[^;]*)?;)"
-    r".*//.*0x(?P<addr>[0-9a-fA-F]+)"
+    r".*//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)"
 )
 # Defined global (non-weak) object symbol in a data-ish section of the .o.
 OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
@@ -114,7 +114,7 @@ OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\
 # overlay: resolve_module() will never guess an overlay (141 of them share
 # absolute addresses), so the human resolves it and the tool obeys. Keyed by
 # address, which is unique within the named module.
-ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+0x(?P<addr>[0-9a-fA-F]+)")
+ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 # The // objdiff-target: value -> owning module (main_7 -> main, ov001_1 -> ov001).
 OBJTARGET_RE = re.compile(r"^\s*//\s*objdiff-target:\s*(.+?)\s*$")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")

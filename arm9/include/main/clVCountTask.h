@@ -7,13 +7,13 @@
 
 class clVCountTask {
 public:
-    u32 arg;
-    clVCountTask * prev;
-    clVCountTask * next;
-    s32 priority;
+    u32 arg;  // +0x4
+    clVCountTask * prev;  // +0x8
+    clVCountTask * next;  // +0xc
+    s32 priority;  // +0x10
     u8 field14;
-    u8 id;
-    u8 enabled : 1;
+    u8 id;  // +0x15
+    u8 enabled : 1;  // +0x16
     u8 pending : 1;
     u8 : 6;
     u8 pad_17[0x1];
@@ -32,13 +32,13 @@ extern "C" {
 typedef struct clVCountTask {
 public:
     void * vtable;
-    u32 arg;
-    clVCountTask * prev;
-    clVCountTask * next;
-    s32 priority;
+    u32 arg;  // +0x4
+    clVCountTask * prev;  // +0x8
+    clVCountTask * next;  // +0xc
+    s32 priority;  // +0x10
     u8 field14;
-    u8 id;
-    u8 enabled : 1;
+    u8 id;  // +0x15
+    u8 enabled : 1;  // +0x16
     u8 pending : 1;
     u8 : 6;
     u8 pad_17[0x1];
@@ -48,13 +48,13 @@ public:
 #endif // __cplusplus
 
 typedef struct {
-    u8 count;
+    u8 count;  // +0x0
     u8 pad_01[0x3];
-    clVCountTask * prev;
-    clVCountTask * next;
+    clVCountTask * prev;  // +0x4
+    clVCountTask * next;  // +0x8
     u32 field0c;
     u8 pad_10[0x4];
-    clVCountTask * cursor;
+    clVCountTask * cursor;  // +0x14
 } VCountTaskManager;
 
 extern VCountTaskManager vcountTaskManager;  // 0x0205bad4
