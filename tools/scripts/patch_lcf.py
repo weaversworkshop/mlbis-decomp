@@ -2,7 +2,7 @@
 """Inject SDK link-time constants into a dsd-generated linker script.
 
 `dsd lcf` emits placement + overlay IDs but not the NitroSDK symbols whose
-ADDRESS is the value (see CLAUDE.md "Near-match decision tree").  Undefined,
+ADDRESS is the value.  Undefined,
 mwldarm silently resolves them to 0, leaving zeroed pointers in .rodata.
 
   python tools/scripts/patch_lcf.py build/arm9.lcf

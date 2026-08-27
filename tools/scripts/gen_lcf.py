@@ -26,8 +26,7 @@ SYM_RE = re.compile(r"^(\S+)\s+kind:\S*?(?:function|bss|data|rodata)\S*?\s+.*?ad
                     re.IGNORECASE)
 ADDR_RE = re.compile(r"^(\S+)\s+.*\baddr:0x([0-9a-fA-F]+)")
 
-# Linker-defined SDK symbols: the symbol's ADDRESS is the value (see CLAUDE.md
-# "Near-match decision tree" -- address-as-value link symbols).
+# Linker-defined SDK symbols: the symbol's ADDRESS is the value.
 LINK_SYMS = {
     "SDK_MAIN_ARENA_LO": 0x021277C0,
     "SDK_AUTOLOAD_ITCM_END": 0x01FFA580,

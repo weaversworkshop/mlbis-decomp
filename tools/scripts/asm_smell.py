@@ -12,8 +12,7 @@ Hard tells (any one => ASM, mwcc cannot emit it):
   H6  computed pc dispatch into non-branch rows (mwcc tables are all `b`)
 
 Compiler tells (evidence of C) are counted and reported.
-Exit: 0 = looks C, 1 = ASM (hard tell), 2 = error. Verdict is advisory --
-see CLAUDE.md "ASM vs C" rules for the soft tells that need human eyes.
+Exit: 0 = looks C, 1 = ASM (hard tell), 2 = error. Verdict is advisory.
 
 SCOPE: hard tells prove "not compiled by OUR mwcc config". In game-code TUs
 that means handwritten asm. In SDK/MSL/vendor-lib regions it can instead mean
@@ -28,6 +27,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = ROOT / "arm9" / "src"
 OBJDUMP = "arm-none-eabi-objdump"
 SYM_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
 INSN_RE = re.compile(r"^\s*[0-9a-f]+:\s*[0-9a-f]{4,8}\s+(\S.*)$")
@@ -147,6 +147,9 @@ def classify(insns):
     return hard, ctell
 
 
+ASM_DEF_RE = re.compile(r"^\s*(?:static\s+)?asm\s+[\w:*&\s]*?\b(\w+)\s*\(")
+
+
 def matched_symbols(todo=ROOT / "main_7_todo.md"):
     done = set()
     if todo.is_file():
@@ -157,16 +160,46 @@ def matched_symbols(todo=ROOT / "main_7_todo.md"):
     return done
 
 
+def transcribed_symbols():
+    """Functions already written as `asm void f(...)` in the tree.
+
+    The warning's whole advice is "transcribe this as asm" -- once that's done it
+    is noise, and it fires anyway whenever main_7_todo.md is stale (only `make
+    progress` regenerates it, so `make diff` reads whatever the last run left)."""
+    out = set()
+    for src in list(SRC_ROOT.rglob("*.c")) + list(SRC_ROOT.rglob("*.cpp")):
+        for line in src.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = ASM_DEF_RE.match(line)
+            if m:
+                out.add(m.group(1))
+    return out
+
+
+def todo_is_stale(todo=ROOT / "main_7_todo.md"):
+    """main_7_todo.md older than the newest compiled object => its [x] marks
+    predate the current build, so 'unmatched' can't be trusted."""
+    if not todo.is_file():
+        return True
+    objs = list((ROOT / "build/arm9/src").rglob("*.o"))
+    if not objs:
+        return False
+    return todo.stat().st_mtime < max(o.stat().st_mtime for o in objs)
+
+
 def compiled_symbols():
     """Function symbols defined in compiled game TUs (= what objdiff pairs)."""
     syms = set()
-    for o in (ROOT / "build/arm9/src").rglob("*.o"):
-        r = subprocess.run(["arm-none-eabi-nm", "--defined-only", str(o)],
-                           capture_output=True, text=True)
-        for line in r.stdout.splitlines():
-            parts = line.split()
-            if len(parts) == 3 and parts[1] in ("T", "t"):
-                syms.add(parts[2])
+    objs = sorted((ROOT / "build/arm9/src").rglob("*.o"))
+    if not objs:
+        return syms
+    # ONE nm over every object instead of a spawn each. Its per-file header lines
+    # ("foo.o:") split to 1 part, so the len==3 filter drops them already.
+    r = subprocess.run(["arm-none-eabi-nm", "--defined-only", *map(str, objs)],
+                       capture_output=True, text=True)
+    for line in r.stdout.splitlines():
+        parts = line.split()
+        if len(parts) == 3 and parts[1] in ("T", "t"):
+            syms.add(parts[2])
     return syms
 
 
@@ -174,7 +207,7 @@ def sweep(lines):
     """Warn about unmatched-but-compiled gap functions with hard asm tells.
     Scope = symbols in build/arm9/src .o files (active TUs), not the whole gap.
     Always exit 0."""
-    done = matched_symbols()
+    done = matched_symbols() | transcribed_symbols()
     active = compiled_symbols()
     flagged = []
     syms = [m.group(1) for l in lines if (m := SYM_RE.match(l))
@@ -195,7 +228,7 @@ def sweep(lines):
                         kinds.append(k)
                 flagged.append((s, "; ".join(kinds)))
     if flagged:
-        def quarantined(s):  # graphics lib, see CLAUDE.md
+        def quarantined(s):
             m = re.match(r"func_(0201d[0-9a-f]{3})$", s)
             return m and 0x0201d0bc <= int(m.group(1), 16) < 0x0201de08
         q = sum(1 for s, _ in flagged if quarantined(s))
@@ -203,13 +236,16 @@ def sweep(lines):
         game = [(s, h) for s, h in flagged if s.startswith("func_") or s.islower()]
         vendor = len(flagged) - len(game)
         print(f"ASM-SMELL WARNING: {len(flagged)} unmatched functions have hard "
-              f"asm tells -- do NOT decomp these as C (see CLAUDE.md 'ASM vs C'):")
+              f"asm tells -- do NOT decomp these as C:")
         for s, h in game:
             print(f"  {s:28s} {h}  (transcribe as asm)")
         if vendor:
             print(f"  (+{vendor} SDK/vendor-named -- route via sdk pipeline)")
         if q:
             print(f"  (+{q} in quarantined graphics lib -- do not touch)")
+        if todo_is_stale():
+            print("  NOTE: main_7_todo.md predates the current build (only `make "
+                  "progress` regenerates it) -- some of these may already match.")
     sys.exit(0)
 
 

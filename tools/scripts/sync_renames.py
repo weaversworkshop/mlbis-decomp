@@ -228,10 +228,11 @@ def load_anchors(verbose):
             continue
         for f in sorted(d.rglob("*.h")) + sorted(d.rglob("*.cpp")) + sorted(d.rglob("*.c")):
             depth, stack = 0, []  # stack: (class name, depth at its open)
+            frel = f.relative_to(ROOT)     # hoisted: was recomputed per LINE (21k calls)
             for lineno, line in enumerate(
                 f.read_text(encoding="utf-8", errors="replace").splitlines(), 1
             ):
-                loc = f"{f.relative_to(ROOT)}:{lineno}"
+                loc = f"{frel}:{lineno}"
                 for am in ANCHOR_MOD_RE.finditer(line):
                     mod_by_addr[int(am.group("addr"), 16)] = am.group("mod")
                 cd = CTORDTOR_DECL_RE.search(line)
@@ -368,17 +369,22 @@ def dump_symbols(o_paths, verbose):
     (declared method with callers, body not yet decompiled) carry the same
     ground-truth mangling the call relocs use, so they sync too."""
     defined, undef = {}, {}
+    present = []
     for o in o_paths:
-        if not o.exists():
-            if verbose:
-                print(f"  (not built yet, skipped: {o.relative_to(ROOT)})",
-                      file=sys.stderr)
-            continue
+        if o.exists():
+            present.append(o)
+        elif verbose:
+            print(f"  (not built yet, skipped: {o.relative_to(ROOT)})",
+                  file=sys.stderr)
+    if present:
+        # ONE objdump over every object, not one spawn each: `defined`/`undef` are
+        # module-wide dicts, so per-file attribution was never used anyway.
         try:
-            txt = subprocess.run([OBJDUMP, "-t", str(o)], capture_output=True,
-                                 text=True, check=True).stdout
+            txt = subprocess.run([OBJDUMP, "-t", *map(str, present)],
+                                 capture_output=True, text=True,
+                                 check=True).stdout
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
-            sys.exit(f"objdump failed on {o}: {e}")
+            sys.exit(f"objdump failed: {e}")
         for line in txt.splitlines():
             dm = OBJ_DATA_SYM_RE.match(line)
             if dm and re.match(r"_ZT[VIS]", line.split()[-1]):

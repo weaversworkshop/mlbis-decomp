@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-shot: add `  // 0xADDR` anchor comments to function DECLARATIONS across
 game source/headers, so sync_renames can auto-place any function after a
-rename/param edit (see CLAUDE.md "C++ mangled-name sync").
+rename/param edit.
 
 Anchors go on the DECLARATION (the `;`-terminated declarator), NOT the
 definition: class-body method decls and exported-function decls in

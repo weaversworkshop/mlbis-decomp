@@ -207,7 +207,7 @@ def unit_ranges(rel_source, module, symbols, index, sections, wanted,
         # dsd sizes the last symbol by distance to the next one, so a section must run
         # to that symbol -- any shortfall is inter-object alignment padding, which
         # belongs to the preceding file. A shortfall NOT excused by alignment is a real
-        # sizing error (CLAUDE.md "Homing globals"), so report it.
+        # sizing error.
         nxt = next_symbol(index, items[-1][0], kind)
         if nxt is None:
             continue

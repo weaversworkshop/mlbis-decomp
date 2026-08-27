@@ -27,14 +27,17 @@ export LM_LICENSE_FILE := $(abspath $(LICENSE))
 # -DSDK_TS: BIS's SDK target (overlay-digest + mmap sizes). See memory/project_sdk_drift.
 MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
-rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(call rwildcard,lib,*.c))
+# rwildcard (recursive $(wildcard)) walked ~2.4k lib files on EVERY make invocation
+# and cost ~0.5s of the 0.8s parse. One `find` per tree does the same job ~4x faster;
+# lists verified identical, entry for entry (2026-08-26).
+rfind = $(shell find $(1) -name '$(2)' 2>/dev/null)
+# ONE walk of lib/, partitioned with $(filter); four separate finds cost four spawns.
+LIB_ALL_C    := $(call rfind,lib,*.c)
+LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(LIB_ALL_C))
 # Whole library surface (NitroSDK + NitroSystem + DS2.0 MSL) for tu_diff content-match.
 MSL := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C
-SDK_C_FILES  := $(call rwildcard,lib/NitroSDK/libraries,*.c) \
-                $(call rwildcard,lib/NitroSystem,*.c) \
-                $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0,*.c) \
-                $(call rwildcard,lib/syscall,*.c)
+SDK_C_FILES  := $(filter lib/NitroSDK/libraries/% lib/NitroSystem/% \
+                         lib/mw-libraries/ARM_EABI_Support_DS2.0/% lib/syscall/%,$(LIB_ALL_C))
 
 # DS2.0's MSL tree lacks <ctime>; borrow it from ARM_EABI_Support for these 6 only.
 MSL_CTIME_FB := lib/mw-libraries/ARM_EABI_Support/msl/MSL_C/MSL_Common/Include
@@ -48,18 +51,21 @@ SDK_SKIP := $(MSL)/MSL_Common/Src/alloc.c \
             $(wildcard $(MSL)/MSL_Common/Src/w*.c) \
             lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_Extras/MSL_Common/Src/extras.c
 # Runtime helpers live in dirs with '(' that break recipe shells; compiled via find in `sdk`.
-SDK_RUNTIME  := $(call rwildcard,lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime,*.c)
+SDK_RUNTIME  := $(filter lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/%,$(LIB_ALL_C))
 SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 
 # objdiff units (synced with objdiff_units in sdk_mappings.json).
-SDK_DIFF_FILES := $(shell python -c "import json; print(' '.join(u['source'] for u in json.load(open('config/sdk_mappings.json')).get('objdiff_units', [])))")
+# sed, not python: saves a ~100ms interpreter spawn on EVERY make invocation.
+# Safe because "source" appears only inside objdiff_units (123 keys, 123 units).
+SDK_DIFF_FILES := $(shell sed -n 's/.*"source"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json)
 
-C_FILES   := $(call rwildcard,arm9/src,*.c) $(LIB_C_FILES) $(SDK_DIFF_FILES)
-CXX_FILES := $(call rwildcard,arm9/src,*.cpp)
+SRC_ALL   := $(shell find arm9/src \( -name '*.c' -o -name '*.cpp' \) 2>/dev/null)
+C_FILES   := $(filter %.c,$(SRC_ALL)) $(LIB_C_FILES) $(SDK_DIFF_FILES)
+CXX_FILES := $(filter %.cpp,$(SRC_ALL))
 OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CXX_FILES:%.cpp=$(BUILD_DIR)/%.o)
 SDK_OBJ_FILES := $(SDK_C_FILES:%.c=$(BUILD_DIR)/%.o)
 
-DSD_CONFIG_DEPS := $(call rwildcard,config,*)
+DSD_CONFIG_DEPS := $(shell find config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
 
 TARGET ?= main_7
@@ -71,6 +77,15 @@ SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 .PHONY: tools link delink-config all clean distclean diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
 
 all: $(FX_CONST_H) $(OBJ_FILES) objdiff.json
+
+# Generated per object by DEPFLAGS. `-include` so a first build (no .d yet) is fine.
+-include $(OBJ_FILES:.o=.d)
+
+# Compilation is embarrassingly parallel and the output is byte-identical to a
+# serial build (verified 2026-08-26). Pipeline recipes stay sequential: their steps
+# are recipe LINES, and sync-names/offsets-apply mutate shared files.
+JOBS ?= $(or $(NUMBER_OF_PROCESSORS),$(shell nproc 2>/dev/null),4)
+MAKEFLAGS += -j$(JOBS)
 
 $(FX_CONST_H): $(FX_CONST_GEN) $(FX_CONST_CSV)
 	@mkdir -p $(@D)
@@ -228,15 +243,27 @@ $(BUILD_DIR)/arm9/src/main/clGlobalEvent.o: EXTRA_CFLAGS := -RTTI on
 MWCC_OVERRIDE ?=
 EXTRA_CFLAGS  ?=
 
+# Header deps: mwcc writes a .d next to the .o, in Windows syntax make can't read
+# (backslash separators, bare drive letters), so fix_deps.py rewrites it in place.
+# Without this, editing a header rebuilds NOTHING and obj_match scores stale objects.
+# -MD, NOT -MMD: mwcc counts every header found via an `-i` search path as a
+# "system" header, so -MMD lists ~14 deps and omits arm9/include/main entirely
+# (verified 2026-08-26: 14 deps vs 352, no clGameMain.h). SDK headers as extra
+# prerequisites are harmless - they only change when the submodule does.
+DEPFLAGS := -gccdep -MD
+FIXDEP    = @python $(SCRIPTS)/fix_deps.py $(@:.o=.d)
+
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(@D)
-	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(FIXDEP)
 
 # C++ TUs: same flags, language swapped to C++.
 MWC_FLAGS_CXX := $(subst -lang=c99,-lang=c++,$(MWC_FLAGS))
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS_CXX) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS_CXX) $(DEPFLAGS) $(EXTRA_CFLAGS) -c -o $@ $<
+	$(FIXDEP)
 
 $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c
 	@mkdir -p $(@D)

@@ -72,6 +72,8 @@ class Elf:
         self.symbols = self._read_symbols()
         self.relocs = self._read_relocs()
         self._sec_syms = None
+        self._funcs = None
+        self._data_objs = None
         self._map_syms = None
 
     def _cstr(self, off):
@@ -170,8 +172,11 @@ class Elf:
         return name, addr - value
 
     def functions(self):
-        """name -> [symbol]; a name can repeat (two distinct SDK `BeginSleep`s)."""
-        out = {}
+        """name -> [symbol]; a name can repeat (two distinct SDK `BeginSleep`s).
+        Memoized: the shared target ELF is asked once per unit (180x)."""
+        if self._funcs is not None:
+            return self._funcs
+        out = self._funcs = {}
         for sym in self.symbols:
             if sym["type"] != STT_FUNC or not sym["name"] or not sym["size"]:
                 continue
@@ -191,8 +196,12 @@ class Elf:
         class and deduplicated at link, so defining it is NOT ownership (memory
         reference_mwcc_comdat_binding). Reported with comdat=True: the bytes are
         still worth checking, the owning-unit attribution is not.
+
+        Memoized like functions(), for the same reason.
         """
-        out = {}
+        if self._data_objs is not None:
+            return self._data_objs
+        out = self._data_objs = {}
         for sym in self.symbols:
             if sym["type"] != STT_OBJECT or not sym["name"] or not sym["size"]:
                 continue
@@ -416,7 +425,11 @@ def run_unit(unit, cache, claimed, verbose):
             if verbose:
                 print(f"  skip {unit['name']}: missing {p}", file=sys.stderr)
             return None
-    tgt = cache.setdefault(tgt_path, Elf(ROOT / tgt_path))
+    # NOT setdefault: its default arg is evaluated eagerly, so every unit re-parsed
+    # the (shared, large) target ELF and discarded it -- 180 parses instead of 1.
+    tgt = cache.get(tgt_path)
+    if tgt is None:
+        tgt = cache[tgt_path] = Elf(ROOT / tgt_path)
     base = Elf(ROOT / base_path)
     tfuncs = tgt.functions()
     fns, missing, gaps = [], [], set()
@@ -485,8 +498,7 @@ def run_unit(unit, cache, claimed, verbose):
         else:
             # A zero tail is only PADDING if it is short enough to be the next
             # object's alignment; a longer run of zeros is undeclared content that
-            # happens to be zero (CLAUDE.md "Homing globals": unexplained trailing
-            # bytes are content). Address alignment is an upper bound on the real
+            # happens to be zero. Address alignment is an upper bound on the real
             # section align, so this deliberately under-reports rather than cry wolf.
             nxt = next_sym_addr(addr) if addr else None
             slack = tsym["size"] - bsym["size"]
