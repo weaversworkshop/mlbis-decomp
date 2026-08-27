@@ -9,16 +9,16 @@
 #define HEAP_MAIN_HI  1
 
 typedef struct HeapBlock {
-    struct HeapBlock * prev;
-    struct HeapBlock * next;
+    struct HeapBlock * prev;  // +0x0
+    struct HeapBlock * next;  // +0x4
     union {
         struct {
-            u32 size : 25;
+            u32 size : 25;  // +0x8
             u32 free : 1;
             u32 heapId : 6;
         };
         struct {
-            u32 sizeFree : 26;
+            u32 sizeFree : 26;  // +0x8
         };
     };
 } HeapBlock;
@@ -26,8 +26,8 @@ typedef struct HeapBlock {
 #define GET_HEADER(ptr) ((HeapBlock*)((u8*)ptr - 0xc))
 
 typedef struct {
-    HeapBlock * bounds[2][2];
-    u32 size : 27;
+    HeapBlock * bounds[2][2];  // +0x0
+    u32 size : 27;  // +0x10
     u32 slot : 5;
 } Heap;
 

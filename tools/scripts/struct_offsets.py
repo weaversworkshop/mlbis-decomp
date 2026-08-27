@@ -20,6 +20,8 @@ no bit numbering. `--no-bitfields` turns it off.
 Skipped by design: self-encoding fieldNN/pad_NN names (--all includes them).
 """
 import argparse
+import hashlib
+import json
 import os
 import re
 import subprocess
@@ -67,6 +69,57 @@ CC = ROOT / VARS.get("TOOLS_DIR", "tools") / "mwccarm/2.0/sp2p3/mwccarm.exe"
 LICENSE = ROOT / VARS.get("LICENSE", "tools/mwccarm/license.dat")
 OBJDUMP = "arm-none-eabi-objdump"
 READELF = "arm-none-eabi-readelf"
+
+
+CACHE = BUILD / "cache.json"
+INCLUDE_RE = re.compile(r'^\s*#\s*include\s+"([^"]+)"')
+
+
+def local_includes(path, seen=None):
+    """Transitive closure of QUOTED includes resolvable inside arm9/include.
+    SDK/system headers are excluded: they don't change, and hashing them every
+    run would cost more than the compile we're trying to skip."""
+    seen = seen if seen is not None else set()
+    if path in seen or not path.exists():
+        return seen
+    seen.add(path)
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        m = INCLUDE_RE.match(line)
+        if not m:
+            continue
+        for cand in (INCLUDE_ROOT / m.group(1), path.parent / m.group(1)):
+            if cand.exists():
+                local_includes(cand, seen)
+                break
+    return seen
+
+
+def fingerprint(path, opts):
+    """Content key for one header: itself, every local header it pulls in, the
+    TU used for the whole-TU fallback, the compiler, and the flags. Editing an
+    unrelated .cpp must NOT invalidate it - that's the whole point."""
+    h = hashlib.sha1()
+    h.update(repr(opts).encode() + "\0".join(FLAGS).encode())
+    try:
+        st = CC.stat()
+        h.update(f"{st.st_mtime_ns}:{st.st_size}".encode())
+    except OSError:
+        pass
+    files = local_includes(path)
+    tu = tu_for(path)
+    if tu:
+        files = files | {tu}
+    for f in sorted(files):
+        h.update(f.name.encode())
+        h.update(hashlib.sha1(f.read_bytes()).digest())
+    return h.hexdigest()
+
+
+def load_cache():
+    try:
+        return json.loads(CACHE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
 class Member:
@@ -429,6 +482,8 @@ def main():
     ap.add_argument("--apply", action="store_true", help="rewrite files in place")
     ap.add_argument("--all", action="store_true",
                     help="also annotate fieldNN/pad_NN (self-encoding) members")
+    ap.add_argument("--no-cache", action="store_true",
+                    help="ignore build/offsets/cache.json and re-probe everything")
     ap.add_argument("--no-bitfields", action="store_true",
                     help="skip bitfield-run heads (DWARF-sourced)")
     ap.add_argument("-v", "--verbose", action="store_true")
@@ -441,11 +496,39 @@ def main():
 
     probed = pending = 0
     failed, bitfields, head_lines = [], [], set()
+    opts = (a.all, a.no_bitfields)
+    cache = {} if a.no_cache else load_cache()
+    new_cache, hits = {}, 0
     for path in targets:
         members, bfs = parse(path)
         if not a.all:
             members = [m for m in members if not SELF_ENCODING_RE.match(m.name)]
         if not members:
+            continue
+        rel = path.relative_to(ROOT).as_posix()
+        fp = fingerprint(path, opts)
+        hit = cache.get(rel)
+        if hit and hit.get("fp") == fp:
+            # Every compile for this header is skipped; the offsets are a pure
+            # function of the inputs the fingerprint covers.
+            new_cache[rel] = hit
+            hits += 1
+            probed += hit["probed"]
+            bitfields += [b for b in bfs]
+            head_lines |= set(hit["heads"])
+            cached = []
+            for ln, off, name in hit["ann"]:
+                m = Member(None, name, ln)
+                m.offset = off
+                cached.append(m)
+            lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+            new, notes = render(lines, cached)
+            if notes:
+                for lineno, kind, text in notes:
+                    print(f"  {kind:5} {rel}:{lineno}  {text}")
+                pending += sum(1 for _, k, _ in notes if k in ("add", "stale"))
+                if a.apply:
+                    path.write_text("\n".join(new) + "\n", encoding="utf-8")
             continue
         pre = None
         if not probe(path, members, False):
@@ -457,7 +540,9 @@ def main():
                 failed.append(path)
                 continue
         bitfields += bfs
-        probed += len(members)
+        n_probed = len(members)          # BEFORE bitfield heads are merged in
+        probed += n_probed
+        file_heads = set()
         for warn in sanity(members):
             print(f"  WARN  {path.relative_to(ROOT).as_posix()}  {warn}")
         if bfs and not a.no_bitfields:
@@ -473,23 +558,41 @@ def main():
                       f"DWARF disagrees with probe; bitfields skipped")
             heads = [h for h in bitfield_heads(bfs, dw, members)
                      if h.type_name not in drift]
-            head_lines |= {h.lineno for h in heads}
+            file_heads = {h.lineno for h in heads}
+            head_lines |= file_heads
             members = members + heads
+        new_cache[rel] = {
+            "fp": fp, "probed": n_probed, "heads": sorted(file_heads),
+            "ann": [[m.lineno, m.offset, m.name] for m in members
+                    if m.offset is not None],
+        }
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         new, notes = render(lines, members)
         if notes:
-            rel = path.relative_to(ROOT).as_posix()
             for lineno, kind, text in notes:
                 print(f"  {kind:5} {rel}:{lineno}  {text}")
             pending += sum(1 for _, k, _ in notes if k in ("add", "stale"))
             if a.apply:
                 path.write_text("\n".join(new) + "\n", encoding="utf-8")
+    # A write changes the file, hence its fingerprint: drop the entries we just
+    # rewrote so the next run re-probes them instead of trusting a stale key.
+    if a.apply and pending:
+        new_cache = {k: v for k, v in new_cache.items()
+                     if fingerprint(ROOT / k, opts) == v["fp"]}
+    if not a.no_cache and targets:
+        try:
+            BUILD.mkdir(parents=True, exist_ok=True)
+            CACHE.write_text(json.dumps(new_cache), encoding="utf-8")
+        except OSError:
+            pass
     for path in failed:
         print(f"PROBE FAILED {path.relative_to(ROOT).as_posix()} (rerun with -v)")
     if a.verbose:
         for t, n, ln in bitfields:
             if ln not in head_lines:
                 print(f"  bitfield {t}::{n} line {ln} (in-run, no comment)")
+    if hits:
+        print(f"  ({hits} unchanged headers served from cache)")
     print(f"{probed} members probed, {pending} "
           f"{'rewritten' if a.apply else 'need annotation'}; "
           f"{len(bitfields)} bitfields in {len(head_lines)} runs")

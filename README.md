@@ -90,6 +90,26 @@ main_7_todo.md               generated progress report
 - `"project.h"` vs `<system.h>`.
 - `asm` is a CodeWarrior keyword: raw ARM body, no prologue/epilogue.
 
+### `IDE_PARSE`: hiding `asm` bodies from IntelliSense
+
+An `asm void f() { ... }` body is raw ARM, not parseable C++, so editors flag every line of it. Wrap the definition in a guard:
+
+```c
+#ifndef IDE_PARSE
+asm void func_02011320(register void * src, register void * dst, register s32 stride) {
+    stmdb sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
+    ...
+}
+#endif
+```
+
+Keep the function's prototype **outside** the guard (in the `extern "C"` block with the other
+declarations) so callers still resolve; the editor then sees a normal declared-but-undefined
+function and stays quiet. Adjacent asm functions can share one guard.
+
+`IDE_PARSE` is defined **only** in your editor config. For VS Code, add it to `defines` in `.vscode/c_cpp_properties.json`. Also make sure that `defines` matches
+`MWC_FLAGS` (`SDK_ARM9 SDK_FINALROM SDK_THREAD_INFINITY SDK_CODE_ARM SDK_TS`) or IntelliSense will walk different `#if` branches through the NitroSDK headers than the compiler does.
+
 ## Acknowledgements
 
 [AetiasHax/ds-decomp](https://github.com/AetiasHax/ds-decomp) ·

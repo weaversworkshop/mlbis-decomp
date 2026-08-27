@@ -9,18 +9,18 @@
 
 class Spline {
 public:
-    u8 bufCount;
-    u8 nPoints;
-    u8 heapId;
+    u8 bufCount;  // +0x0
+    u8 nPoints;  // +0x1
+    u8 heapId;  // +0x2
     u8 pad_03[0x1];
-    fx32 totalLength;
-    fx32 * xs;
-    fx32 * ys;
-    fx32 * zs;
-    fx32 * knots;
-    fx32 * coefsX;
-    fx32 * coefsY;
-    fx32 * coefsZ;
+    fx32 totalLength;  // +0x4
+    fx32 * xs;  // +0x8
+    fx32 * ys;  // +0xc
+    fx32 * zs;  // +0x10
+    fx32 * knots;  // +0x14
+    fx32 * coefsX;  // +0x18
+    fx32 * coefsY;  // +0x1c
+    fx32 * coefsZ;  // +0x20
 
     Spline();  // C1 0x0201de08
     ~Spline();  // D1 0x0201de40

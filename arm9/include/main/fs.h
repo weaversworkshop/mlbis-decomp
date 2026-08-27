@@ -21,8 +21,8 @@
 #define DPP_COPYING     3
 
 typedef struct {
-    u32 tailOffset;
-    u32 offsets[1];
+    u32 tailOffset;  // +0x0
+    u32 offsets[1];  // +0x4
     // u16 tails[]     trailing dynamic sized u16 array
 } FSChunkTable;
 
@@ -30,74 +30,74 @@ typedef struct {
 #define CHUNK_TAIL(t, i)    ((u16 *)((u8 *)(t) + (t)->tailOffset))[(i)]
 
 typedef struct {
-    u8 dmaNo;
+    u8 dmaNo;  // +0x0
     u8 pad_01[0x3];
-    void * table;
+    void * table;  // +0x4
     u8 pad_08[0x2c];
 } FSManager;
 
 extern FSManager fsManager;
 
 typedef struct FSFileReq {
-    FSFileReq * next;
+    FSFileReq * next;  // +0x0
     void (*fn)(FSFileReq *, bool);
-    u32 arg;
-    u8 * dst;
-    u8 * buf;
-    u32 bufSize;
-    s32 remaining;
-    s32 readSize;
-    u32 offset;
-    u16 slot;
-    u16 chunkIdx;
-    u16 state;
-    u16 streamState;
+    u32 arg;  // +0x8
+    u8 * dst;  // +0xc
+    u8 * buf;  // +0x10
+    u32 bufSize;  // +0x14
+    s32 remaining;  // +0x18
+    s32 readSize;  // +0x1c
+    u32 offset;  // +0x20
+    u16 slot;  // +0x24
+    u16 chunkIdx;  // +0x26
+    u16 state;  // +0x28
+    u16 streamState;  // +0x2a
 } FSFileReq;
 
 struct FSFileReqEx : FSFileReq {
-    void * dstBase;
-    void * dstCur;
-    u32 totalSize;
-    u16 recordsLeft;
+    void * dstBase;  // +0x2c
+    void * dstCur;  // +0x30
+    u32 totalSize;  // +0x34
+    u16 recordsLeft;  // +0x38
 };
 
 typedef struct FSTableReq {
-    FSTableReq * next;
+    FSTableReq * next;  // +0x0
     void (*fn)(FSTableReq *, bool);
-    u32 arg;
-    u32 * dst;
-    u32 remaining;
-    u32 readSize;
-    u32 offset;
-    u16 slot;
-    u16 state;
+    u32 arg;  // +0x8
+    u32 * dst;  // +0xc
+    u32 remaining;  // +0x10
+    u32 readSize;  // +0x14
+    u32 offset;  // +0x18
+    u16 slot;  // +0x1c
+    u16 state;  // +0x1e
 } FSTableReq;
 
 class clFS : public clTask {
 public:
     u8 pad_18[0x10];
-    FSFile ovyFile;
-    FSOverlayInfo ovyInfo;
-    u8 * ovyDst;
-    u32 ovyRemaining;
-    u32 ovyReadSize;
-    u16 ovyState;
+    FSFile ovyFile;  // +0x28
+    FSOverlayInfo ovyInfo;  // +0x70
+    u8 * ovyDst;  // +0x9c
+    u32 ovyRemaining;  // +0xa0
+    u32 ovyReadSize;  // +0xa4
+    u16 ovyState;  // +0xa8
     u8 pad_aa[0x2];
-    FSFileReq * reqHead;
-    FSFileReq * reqTail;
-    FSFile * files;
-    const char ** paths;
-    FSChunkTable ** tables;
-    u32 vcountBusyStart;
-    u16 stallReset;
-    u16 stallLimit;
-    u16 stallCount;
-    u8 numSlots : 7;
+    FSFileReq * reqHead;  // +0xac
+    FSFileReq * reqTail;  // +0xb0
+    FSFile * files;  // +0xb4
+    const char ** paths;  // +0xb8
+    FSChunkTable ** tables;  // +0xbc
+    u32 vcountBusyStart;  // +0xc0
+    u16 stallReset;  // +0xc4
+    u16 stallLimit;  // +0xc6
+    u16 stallCount;  // +0xc8
+    u8 numSlots : 7;  // +0xca
     u8 inCallback : 1;
     u8 pad_cb[0x1];
-    FSTableReq * tableReqs;     // size [numSlots]
-    FSTableReq * tableReqHead;
-    FSTableReq * tableReqTail;
+    FSTableReq * tableReqs;  // +0xcc  size [numSlots]
+    FSTableReq * tableReqHead;  // +0xd0
+    FSTableReq * tableReqTail;  // +0xd4
 
     clFS(u8, u32, u16, u32, u32);  // C2 0x0201a9e0
     virtual ~clFS();  // D1 0x0201ab4c D0 0x0201ab94 D2 0x0201abe4
@@ -127,12 +127,12 @@ public:
 class clDPP : public clFS {
 public:
     void (*copyFn)(u8 **, void **);
-    u8 buffer[0xb20];
-    u8 * alignedBuf;
+    u8 buffer[0xb20];  // +0xdc
+    u8 * alignedBuf;  // +0xbfc
     u8 * cursor;    // +0xc00
-    u16 page;
+    u16 page;  // +0xc04
     u8 pad_c06[0x2];
-    u32 remaining;
+    u32 remaining;  // +0xc08
 
     clDPP(u8, u32, u16, u32, u32);  // C2 0x0201c66c
     virtual ~clDPP() {};  // D1 0x0201c6bc D0 0x0201c6d0 D2 0x0201c6ec
@@ -150,11 +150,11 @@ typedef u32 (clFS::*ChunkSizeFn)(u32, u32);
 
 class clFSEx : public clDPP {
 public:
-    ChunkSizeFn * sizeFns;
-    FSFileReqEx * reqPool;
-    FSFileReqEx * freeList;
-    void * reqPoolEnd;
-    u32 externTable[2];
+    ChunkSizeFn * sizeFns;  // +0xc0c
+    FSFileReqEx * reqPool;  // +0xc10
+    FSFileReqEx * freeList;  // +0xc14
+    void * reqPoolEnd;  // +0xc18
+    u32 externTable[2];  // +0xc1c
     
     clFSEx(u8, u32, u16, u16, u32, u32);  // C2 0x0201ba2c C1 0x0201bb14
     virtual ~clFSEx();  // D1 0x0201bbfc D0 0x0201bca4 D2 0x0201bd54
@@ -171,12 +171,12 @@ public:
 class clDAP : public clTask {
 public:
     u8 pad_18[0x10];
-    FSFileReqEx * head;
-    FSFileReqEx * tail;
-    u32 vcountBusyStart;
-    u16 stallReset;
-    u16 stallLimit;
-    u16 stallCount;
+    FSFileReqEx * head;  // +0x28
+    FSFileReqEx * tail;  // +0x2c
+    u32 vcountBusyStart;  // +0x30
+    u16 stallReset;  // +0x34
+    u16 stallLimit;  // +0x36
+    u16 stallCount;  // +0x38
     
     clDAP(u8, u32, u32);  // C1 0x0201c360
     virtual ~clDAP() {};  // D1 0x0201c3a8 D0 0x0201c3bc

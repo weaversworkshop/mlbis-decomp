@@ -12,6 +12,7 @@ extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Definitions --- //
+#ifndef IDE_PARSE
 
 // MATCHED 100%
 asm void copy_rect_blk128(void * src, void * dst, s32 rows, s32 srcStride, s32 dstStride) {
@@ -154,3 +155,5 @@ asm void copy_rect(void * src, void * dst, s32 rows, s32 width, s32 srcStride, s
     add sp, sp, #0x8
     ldmia sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
 }
+
+#endif

@@ -9,9 +9,9 @@ typedef struct YanaTransEntry YanaTransEntry;
 typedef void (*YanaTransFn)(YanaTransEntry *);
 
 struct YanaTransEntry {
-    YanaTransFn fn;
-    void * src;
-    void * dst;
+    YanaTransFn fn;  // +0x0
+    void * src;  // +0x4
+    void * dst;  // +0x8
     union {
         struct { 
             u32 size;
@@ -39,11 +39,11 @@ struct YanaTransEntry {
 
 class clYanaTransMan {
 public:
-    YanaTransEntry * entries;
-    u16 head;
-    u16 tail;
-    u16 capacity;
-    vu16 texMode : 1;
+    YanaTransEntry * entries;  // +0x4
+    u16 head;  // +0x8
+    u16 tail;  // +0xa
+    u16 capacity;  // +0xc
+    vu16 texMode : 1;  // +0xe
     vu16 ownsBuffer : 1;
     vu16 locked : 1;
     vu16 flushBlocked : 1;

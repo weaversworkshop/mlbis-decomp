@@ -8,39 +8,39 @@
 #define SND_ID_NO_DUP   0x2000
 
 typedef struct {
-    s32 id;
-    s16 arg;
-    s16 volume;
-    s16 duration;
-    s16 life;
+    s32 id;  // +0x0
+    s16 arg;  // +0x4
+    s16 volume;  // +0x6
+    s16 duration;  // +0x8
+    s16 life;  // +0xa
 } SndEmitterCmd;
 
 
 class SndEmitter {
 public:
-    SndEmitter * next;
-    SndEmitter * prev;
+    SndEmitter * next;  // +0x0
+    SndEmitter * prev;  // +0x4
     void (*tick)(SndEmitter *);
-    SndVoiceList voices[8];
-    s16 * xSrc;
-    s16 * ySrc;
-    u32 id;
-    s16 x;
-    s16 y;
-    s16 timer;
-    s16 period;
-    s16 repeats;
-    s8 volume;
+    SndVoiceList voices[8];  // +0xc
+    s16 * xSrc;  // +0x2c
+    s16 * ySrc;  // +0x30
+    u32 id;  // +0x34
+    s16 x;  // +0x38
+    s16 y;  // +0x3a
+    s16 timer;  // +0x3c
+    s16 period;  // +0x3e
+    s16 repeats;  // +0x40
+    s8 volume;  // +0x42
     union {
         u8 field43;
         struct {
-            u8 noPosUpdate : 1;
+            u8 noPosUpdate : 1;  // +0x43
             u8 noStopOnEnd : 1;
             u8 voiceIdx : 3;
         };
     };
-    u8 step;
-    s16 repeatCount;
+    u8 step;  // +0x44
+    s16 repeatCount;  // +0x46
 
     SndEmitter();  // C2 0x0200a424 C1 0x0200a444
 
@@ -59,7 +59,7 @@ public:
 
 class SndEmitterSlot : public SndEmitter {
 public:
-    u8 slot;
+    u8 slot;  // +0x48
 
     // Implicit ctor // C1 0x0200b8a8
 };

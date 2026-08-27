@@ -7,6 +7,7 @@
 #include "main/vecmath.h"
 
 // --- Function Definitions --- //
+#ifndef IDE_PARSE
 
 // MATCHED 100%
 asm s32 idiv(register s32 dividend, register s32 divisor) {
@@ -312,3 +313,5 @@ asm s32 mul_div(s32 a, s32 b, s32 c) {
     mov r0, #0x0
     bx lr
 }
+
+#endif

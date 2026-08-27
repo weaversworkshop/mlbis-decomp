@@ -8,15 +8,15 @@ typedef struct {
 } YanaResHeader;
 
 typedef struct {
-    u8 kind;
-    u8 id;
+    u8 kind;  // +0x0
+    u8 id;  // +0x1
     u8 pad_02[0x2];
-    u32 offset;
+    u32 offset;  // +0x4
 } YanaResEntry;
 
 typedef struct {
-    YanaResHeader header;
-    YanaResEntry entries[1];
+    YanaResHeader header;  // +0x0
+    YanaResEntry entries[1];  // +0x14
 } YanaRes;
 
 #define RES_ENTRY(res, i) ((YanaResEntry *)((u8 *)(res) + ((i) * sizeof(YanaResEntry) + sizeof(YanaResHeader))))

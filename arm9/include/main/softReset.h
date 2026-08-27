@@ -8,15 +8,15 @@
 #define MASTER_BRIGHT_MAX 16
 
 typedef struct {
-    u32 inhibit : 1;
+    u32 inhibit : 1;  // +0x0
     u32 pending : 1;
     u32 active : 1;
     u32 fadeFrames : 8;
     u32 defaultFadeFrames : 8;
     u32 fadeTimer : 8;
     u32 : 5;
-    u32 resetParam;
-    InputState input;
+    u32 resetParam;  // +0x4
+    InputState input;  // +0x8
 } SoftResetState;
 
 extern SoftResetState softResetState;  // 0x02056504

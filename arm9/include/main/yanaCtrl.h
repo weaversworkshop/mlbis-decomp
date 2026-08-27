@@ -9,8 +9,8 @@
 
 class inYanaUnit {
 public:
-    inYanaUnit * next;
-    inYanaUnit * prev;
+    inYanaUnit * next;  // +0x4
+    inYanaUnit * prev;  // +0x8
 
     virtual ~inYanaUnit() {}
     virtual void func_0202066c() = 0;

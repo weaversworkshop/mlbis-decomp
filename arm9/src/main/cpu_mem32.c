@@ -2,6 +2,8 @@
 
 #include "main/cpu_mem32.h"
 
+#ifndef IDE_PARSE
+
 // Duplicate of NitroSDK's MIi_CpuClear32.
 asm void cpu_clear32(register u32 data, register void *destp, register u32 size)
 {
@@ -36,3 +38,5 @@ asm void cpu_copy32(register const void *srcp, register void *destp, register u3
     blt @30
     bx lr
 }
+
+#endif

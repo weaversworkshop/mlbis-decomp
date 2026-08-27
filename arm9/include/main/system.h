@@ -6,23 +6,23 @@
 #include <nitro.h>
 
 typedef struct {
-    u16 hold;
-    u16 press;
-    u16 release;
-    u16 repeat;
-    u8 repeatDelay;
-    u8 repeatRate;
-    u8 repeatTimers[10];
+    u16 hold;  // +0x0
+    u16 press;  // +0x2
+    u16 release;  // +0x4
+    u16 repeat;  // +0x6
+    u8 repeatDelay;  // +0x8
+    u8 repeatRate;  // +0x9
+    u8 repeatTimers[10];  // +0xa
 } InputState;
 
 typedef struct {
-    u8 x;
-    u8 y;
-    u8 prevX;
-    u8 prevY;
+    u8 x;  // +0x0
+    u8 y;  // +0x1
+    u8 prevX;  // +0x2
+    u8 prevY;  // +0x3
     union {
         struct {
-            u8 active : 1;
+            u8 active : 1;  // +0x4
             u8 hold : 1;
             u8 trigger : 1;
             u8 press : 1;
@@ -30,28 +30,28 @@ typedef struct {
             u8 sampling : 1;
             u8 : 2;
         };
-        u8 flags;
+        u8 flags;  // +0x4
     };
     u8 pad_05[0x3];
 } TouchpadStruct;
 
 typedef struct {
-    u16 pad_00_00 : 8;
+    u16 pad_00_00 : 8;  // +0x0
     u16 syncPending : 1;
-    s16 lastSyncVCount;
-    u16 syncVCount;
-    s16 frameScanlines;
-    s16 prevFrameSkips;
-    s16 frameSkips;
-    s16 vblankStartVCount;
-    s16 vblankEndVCount;
-    s16 vblankScanlines;
-    s16 framePeak;
-    s16 frameHold;
-    s16 frameHoldReload;
-    s16 vblankPeak;
-    s16 vblankHold;
-    s16 vblankHoldReload;
+    s16 lastSyncVCount;  // +0x2
+    u16 syncVCount;  // +0x4
+    s16 frameScanlines;  // +0x6
+    s16 prevFrameSkips;  // +0x8
+    s16 frameSkips;  // +0xa
+    s16 vblankStartVCount;  // +0xc
+    s16 vblankEndVCount;  // +0xe
+    s16 vblankScanlines;  // +0x10
+    s16 framePeak;  // +0x12
+    s16 frameHold;  // +0x14
+    s16 frameHoldReload;  // +0x16
+    s16 vblankPeak;  // +0x18
+    s16 vblankHold;  // +0x1a
+    s16 vblankHoldReload;  // +0x1c
     u8 pad_1e[0x2];
     u32 field20;
     u32 field24;
@@ -59,11 +59,11 @@ typedef struct {
 } FrameTimer;
 
 typedef struct {
-    InputState inputState;
-    TouchpadStruct touchpad;
-    GXOamAttr oamBuffer[128];
-    GXOamAttr subOamBuffer[128];
-    FrameTimer frameTimer;
+    InputState inputState;  // +0x0
+    TouchpadStruct touchpad;  // +0x14
+    GXOamAttr oamBuffer[128];  // +0x1c
+    GXOamAttr subOamBuffer[128];  // +0x41c
+    FrameTimer frameTimer;  // +0x81c
 } SystemState;
 
 extern SystemState systemState;

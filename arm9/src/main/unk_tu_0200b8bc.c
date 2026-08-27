@@ -17,119 +17,6 @@ typedef union {
 } UnkStruct_0200cb30;
 
 
-
-typedef struct {
-    u32 field00;
-    u32 field04;
-    u32 field08[1];
-} UnkStruct_0200b8bc_10;
-
-#define WORD_10(p, i)   ((&(p)->field00)[(i)])
-#define PTR_10(p, off)  (&(&(p)->field00)[(off) / 4])
-
-
-typedef struct {
-    union {
-        u32 field24;
-        struct {
-            u32 field24_0 : 8;
-            u32 field24_8 : 10;
-            u32 field24_18 : 10;
-            u32 : 4;
-        };
-    };
-    union {
-        u32 field28;
-        struct {
-            u32 field28_0 : 16;
-            u32 field28_16 : 16;
-        };
-    };
-} UnkStruct_0200b8bc_24;
-
-typedef struct UnkStruct_0200b8bc UnkStruct_0200b8bc;
-
-typedef struct {
-    s8 field00;
-    u8 field01;
-    u32 (* field04)(void *, UnkStruct_0200b8bc *, u32);
-    void * field08;
-} UnkStruct_0200b8bc_2C;
-
-struct UnkStruct_0200b8bc {
-    u32 field00;
-    u8 * field04;
-    union {
-        u32 field08;
-        struct {
-            u32 field08_0 : 10;
-            u32 field08_10 : 10;
-            u32 field08_20 : 4;
-            u32 field08_24 : 4;
-            u32 field08_28 : 4;
-        };
-    };
-    union {
-        u32 field0c;
-        struct {
-            u32 field0c_0 : 4;
-            u32 field0c_4 : 5;
-            u32 field0c_9 : 7;
-            u32 field0c_16 : 7;
-            u32 : 9;
-        };
-    };
-    UnkStruct_0200b8bc_10 ** field10;
-    union {
-        u32 field14;
-        struct {
-            u32 field14_0 : 2;
-            u32 field14_2 : 8;
-            u32 field14_10 : 2;
-            u32 : 20;
-        };
-        struct {
-            u32 field14_0a : 1;
-            u32 field14_0b : 1;
-            u32 : 30;
-        };
-    };
-    union {
-        u32 field18;
-        struct {
-            u32 field18_0 : 16;
-            u32 field18_16 : 1;
-            u32 field18_17 : 2;
-            u32 field18_19 : 3;
-            u32 field18_22 : 10;
-        };
-    };
-    union {
-        u32 field1c;
-        struct {
-            u32 field1c_0 : 8;
-            u32 field1c_8 : 2;
-            u32 field1c_10 : 1;
-            u32 field1c_11 : 6;
-            u32 field1c_17 : 4;
-            u32 field1c_21 : 1;
-            u32 field1c_22 : 10;
-        };
-    };
-    union {
-        u32 field20;
-        struct {
-            u32 field20_0 : 10;
-            u32 field20_10 : 10;
-            u32 field20_20 : 6;
-            u32 field20_26 : 6;
-        };
-    };
-    UnkStruct_0200b8bc_24 unkStruct24;
-    UnkStruct_0200b8bc_2C * field2c;
-};
-
-
 typedef struct {
     u8 field00;
     u8 pad_01[0x3];
@@ -198,10 +85,8 @@ extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Declarations --- //
 
-void func_0200b8bc(UnkStruct_0200b8bc *, u32, u32, const char *, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, u32);  // 0x0200b8bc
 void func_0200b9f4(UnkStruct_0200b8bc *);  // 0x0200b9f4
 void func_0200baf0(UnkStruct_0200baf0 *, u32, u32, u32, u32);  // 0x0200baf0
-void func_0200bb1c(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_24 *);  // 0x0200bb1c
 u16 func_0200bbb0(UnkStruct_0200b8bc *);  // 0x0200bbb0
 u16 func_0200bc48(UnkStruct_0200b8bc *);  // 0x0200bc48
 void func_0200bce8(u8 *, UnkStruct_0200b8bc *, u32, u32);  // 0x0200bce8
@@ -216,7 +101,7 @@ void func_0200d63c(u32 *, s32, u16, s32, u16, u32 *, u8, u8);  // 0x0200d63c
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_0200b8bc(UnkStruct_0200b8bc * param1, u32 param2, u32 param3, const char * param4, u8 param5, u8 param6, u8 param7, u8 param8, u8 param9, u8 param10, u8 param11, u8 param12, u8 param13, u8 param14, u32 param15) {
+void func_0200b8bc(UnkStruct_0200b8bc * param1, u32 param2, u32 param3, const char * param4, u8 param5, u8 param6, u8 param7, u8 param8, u8 param9, u8 param10, u8 param11, u8 param12, u8 param13, u8 param14, UnkStruct_0200b8bc_2c * param15) {
     param1->field10 = param2;
     param1->field00 = param3;
     param1->field04 = param4;
@@ -595,7 +480,7 @@ u32 func_0200c4b8(UnkStruct_0200b8bc * param1, UnkStruct_0200bce8_24 * param2, u
 
         param2->field00h = 0xff00;
     } else if (cmd < 0x20) {
-        UnkStruct_0200b8bc_2C * rec;
+        UnkStruct_0200b8bc_2c * rec;
 
         if (param1->field2c == NULL) {
             return ret;

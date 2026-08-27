@@ -5,6 +5,7 @@
 #include "main/tile_convert.h"
 
 // --- Function Definitions --- //
+#ifndef IDE_PARSE
 
 // MATCHED 100%
 asm void LinearToTiles4bpp(register u32 * src, register u32 * dst, register u32 lineBytes, register u32 lineCount) {
@@ -155,3 +156,5 @@ asm void TilesToLinear8bpp(register u32 * src, register u32 * dst, register u32 
     ldmia sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
     bx lr
 }
+
+#endif

@@ -7,12 +7,12 @@
 
 class clYanaAnim {
 public:
-    s32 pos : 23;
+    s32 pos : 23;  // +0x4
     u32 unk04_23 : 1;
     u32 needsRewind : 1;
     u32 loopsRemaining : 7;
-    s16 speed;
-    u16 length : 14;
+    s16 speed;  // +0x8
+    u16 length : 14;  // +0xa
     u16 atEnd : 1;
     u16 stopped : 1;
 
