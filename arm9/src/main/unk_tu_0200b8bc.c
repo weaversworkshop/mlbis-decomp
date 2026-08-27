@@ -16,15 +16,6 @@ typedef union {
     };
 } UnkStruct_0200cb30;
 
-
-typedef struct {
-    u8 field00;
-    u8 pad_01[0x3];
-    u32 field04;
-    u32 field08;
-} UnkStruct_0200baf0;
-
-
 typedef struct {
     union {
         u32 field00;
@@ -86,12 +77,11 @@ extern void func_01ff8380(void *, void *, u32);
 // --- Function Declarations --- //
 
 void func_0200b9f4(UnkStruct_0200b8bc *);  // 0x0200b9f4
-void func_0200baf0(UnkStruct_0200baf0 *, u32, u32, u32, u32);  // 0x0200baf0
 u16 func_0200bbb0(UnkStruct_0200b8bc *);  // 0x0200bbb0
 u16 func_0200bc48(UnkStruct_0200b8bc *);  // 0x0200bc48
 void func_0200bce8(u8 *, UnkStruct_0200b8bc *, u32, u32);  // 0x0200bce8
 s16 func_0200c330(u16, u16, u8, u8, u32, u32, u32 *, u8, BOOL, u8);  // 0x0200c330
-u32 func_0200c4b8(UnkStruct_0200b8bc *, UnkStruct_0200bce8_24 *, u32);  // 0x0200c4b8
+u32 func_0200c4b8(UnkStruct_0200b8bc *, UnkStruct_0200bce8_24 *, BOOL);  // 0x0200c4b8
 
 void func_0200cb30(u32 *, u16, u16, u16, u32 *, u8, u8);  // 0x0200cb30
 void func_0200ce04(u32 *, s32, u16, u16, u32 *, u8, u8);  // 0x0200ce04
@@ -101,7 +91,7 @@ void func_0200d63c(u32 *, s32, u16, s32, u16, u32 *, u8, u8);  // 0x0200d63c
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void func_0200b8bc(UnkStruct_0200b8bc * param1, u32 param2, u32 param3, const char * param4, u8 param5, u8 param6, u8 param7, u8 param8, u8 param9, u8 param10, u8 param11, u8 param12, u8 param13, u8 param14, UnkStruct_0200b8bc_2c * param15) {
+void func_0200b8bc(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_10 ** param2, u32 param3, const char * param4, u8 param5, u8 param6, u8 param7, u8 param8, u8 param9, u8 param10, u8 param11, u8 param12, u8 param13, u8 param14, UnkStruct_0200b8bc_2c * param15) {
     param1->field10 = param2;
     param1->field00 = param3;
     param1->field04 = param4;
@@ -150,7 +140,7 @@ void func_0200b9f4(UnkStruct_0200b8bc * param1) {
 }
 
 // MATCHED 100%
-void func_0200baf0(UnkStruct_0200baf0 * param1, u32 param2, u32 param3, u32 param4, u32 param5) {
+void func_0200baf0(UnkStruct_0200b8bc_2c * param1, u32 param2, u8 param3, UnkCallback_0200b8bc_2c param4, void * param5) {
     u16 idx = param2-1;
     param1[idx].field00 = param3;
     param1[idx].field04 = param4;
@@ -449,7 +439,7 @@ s16 func_0200c330(u16 param1, u16 param2, u8 param3, u8 param4, u32 param5, u32 
 }
 
 // MATCHED 100%
-u32 func_0200c4b8(UnkStruct_0200b8bc * param1, UnkStruct_0200bce8_24 * param2, u32 param3) {
+u32 func_0200c4b8(UnkStruct_0200b8bc * param1, UnkStruct_0200bce8_24 * param2, BOOL param3) {
     u8 cmd = param1->field04[1];
     u32 ret = 0;
 
@@ -499,12 +489,12 @@ u32 func_0200c4b8(UnkStruct_0200b8bc * param1, UnkStruct_0200bce8_24 * param2, u
             ret = rec->field00;
         }
 
-        if (param3 == 0) {
+        if (!param3) {
             param2->field00h = (cmd & 31) | 0xff00;
             param2->field04 = param1->field04 + 2;
         }
     } else if (cmd < 0x30) {
-        if (param3 == 0) {
+        if (!param3) {
             param1->field0c_0 = (cmd & 15) + param1->field08_28;
 
             if (param1->field0c_0 > 14) {

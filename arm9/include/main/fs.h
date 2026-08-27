@@ -102,8 +102,8 @@ public:
     clFS(u8, u32, u16, u32, u32);  // C2 0x0201a9e0
     virtual ~clFS();  // D1 0x0201ab4c D0 0x0201ab94 D2 0x0201abe4
 
-    virtual void run();  // 0x0201ac2c
-    void shutdown();  // 0x0201ada4
+    virtual void run(void);  // 0x0201ac2c
+    void shutdown(void);  // 0x0201ada4
     u32 getTableSize(s16, const char *, BOOL);  // 0x0201adf8
     FSChunkTable * releaseSlot(u32);  // 0x0201ae68
     void waitTableLoad(u32);  // 0x0201aecc
@@ -112,16 +112,16 @@ public:
     FSFileReq * setupReq(FSFileReq *, u32, u8 *, u32, s16); // 0x0201af54
     void clFS::waitReq(FSFileReq *);  // 0x0201af78
     void clFS::cancelReq(FSFileReq *);  // 0x0201b01c
-    void waitAll();  // 0x0201b0e4
+    void waitAll(void);  // 0x0201b0e4
     BOOL beginOverlayLoad(FSOverlayID, MIProcessor);  // 0x0201b198
-    u32 startOverlay();  // 0x0201b250
+    u32 startOverlay(void);  // 0x0201b250
     bool openSlot(u16, const char *);  // 0x0201b330
-    void closeAllFiles();  // 0x0201b390
+    void closeAllFiles(void);  // 0x0201b390
     virtual bool queueTableLoad(u32, FSChunkTable *, u32, u32, void (*)(FSTableReq *, bool), u32, u32);  // 0x0201b420
-    virtual bool pumpTableLoads();  // 0x0201b4b4
+    virtual bool pumpTableLoads(void);  // 0x0201b4b4
     virtual bool queueRead(FSFileReq *, u32, s32, void (*)(FSFileReq *, bool), u32, u32);  // 0x0201b668
-    virtual bool pumpReads();  // 0x0201b724
-    virtual bool pumpOverlay();  // 0x0201b910
+    virtual bool pumpReads(void);  // 0x0201b724
+    virtual bool pumpOverlay(void);  // 0x0201b910
 };
 
 class clDPP : public clFS {
@@ -142,7 +142,7 @@ public:
     void cancelStream(FSFileReq *);  // 0x0201c890
     virtual bool queueRead(FSFileReq *, u32, s32, void (*)(FSFileReq *, bool), u32, u32);  // 0x0201c8a4
     void readSync(FSFileReqEx *, u32);  // 0x0201c8d8
-    virtual bool pumpReads();  // 0x0201c9ac
+    virtual bool pumpReads(void);  // 0x0201c9ac
     void selectCopyFn(FSFileReqEx *);  // 0x0201ced8
 };
 
@@ -162,10 +162,10 @@ public:
     bool openArchive(s16, const char *, void (*)(FSTableReq *, bool), u32, BOOL, u32, u32, u32);  // 0x0201bdfc
     void setArchive(s16, const char *, FSChunkTable *, BOOL);  // 0x0201bf34
     u8 * readChunk(s16, u32, u32, u8 *, s32 *, void (*)(FSFileReq *, bool), u32, u32, u32, u32);  // 0x0201c044
-    void cancelAll();  // 0x0201c194
+    void cancelAll(void);  // 0x0201c194
     u8 * readChunkStream(s16, u32, u8 *, u32, u8 *, s32 *, void (*)(FSFileReq *, bool), u32, s32, u32);  // 0x0201c1f8
-    virtual bool pumpReads();  // 0x0201c2f4
-    FSFileReqEx * allocReq();  // 0x0201c344
+    virtual bool pumpReads(void);  // 0x0201c2f4
+    FSFileReqEx * allocReq(void);  // 0x0201c344
 };
 
 class clDAP : public clTask {
@@ -181,11 +181,11 @@ public:
     clDAP(u8, u32, u32);  // C1 0x0201c360
     virtual ~clDAP() {};  // D1 0x0201c3a8 D0 0x0201c3bc
 
-    virtual void run();  // 0x0201c3d8
+    virtual void run(void);  // 0x0201c3d8
     u32 beginJob(FSFileReqEx *);  // 0x0201c4f4
     void queueJob(FSFileReqEx *, u32 *);  // 0x0201c534
     void waitJob(FSFileReq *);  // 0x0201c574
-    void pumpJobs();  // 0x0201c5c8
+    void pumpJobs(void);  // 0x0201c5c8
 };
 
 extern "C" {

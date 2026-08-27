@@ -26,7 +26,7 @@ public:
     ~Spline();  // D1 0x0201de40
 
     void build(fx32 * xs, fx32 * ys, fx32 * zs, u8 nPoints, fx32 * workBuf); // 0x0201de64
-    fx32 getTotalLength();  // 0x0201e068
+    fx32 getTotalLength(void);  // 0x0201e068
     void evalPoint(fx32 t, fx32& outX, fx32& outY, fx32& outZ);  // 0x0201e070
     void setBuffer(u8 count, fx32 * buf);  // 0x0201e0ec
 };

@@ -38,6 +38,7 @@ void sndPlaySeqNoStop(u32, u8, u32);  // 0x02006464
 void sndRestartSlot(u32, BOOL, BOOL);  // 0x02006594
 void sndStartFadeSlot(u32, s32, u32);  // 0x0200677c
 u32 sndGetSlotStatus(u32);  // 0x02006864
+void sndPlayById(u32, s16, s16, s16, s8, s16);  // 0x02006964
 BOOL sndPlayByIdOwned(SndVoiceList *, u32, s16, s16, s16, s8, s16);  // 0x02006a74
 void sndStopOwned(SndVoiceList *, u32);  // 0x02006bc0
 void sndSetListPosition(SndVoiceList *, s16, s16);  // 0x02006cf8

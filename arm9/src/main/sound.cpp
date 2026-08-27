@@ -91,7 +91,6 @@ u32 sndGetStatus(void);  // 0x02006810
 u32 sndGetSeqNos(void);  // 0x020068ac
 void sndClearSlot(u32);  // 0x020068c4
 void sndSetTempoRatio(u32, s32);  // 0x02006914
-void sndPlayById(u32, s16, s16, s16, s8, s16);  // 0x02006964
 void sndStopAllVoices(void);  // 0x02006c34
 u32 sndGetActiveSeqMask(void);  // 0x02006c90
 void sndHeapLoadState(void);  // 0x02006d68
@@ -106,7 +105,7 @@ void sndStopStreamById(s8, u32);  // 0x02007158
 void sndStopVoiceStream(SndVoiceList *, u32);  // 0x02007164
 u8 sndGetStreamState(u32);  // 0x02007190
 s16 sndReadGlobalVar(u32);  // 0x020071c0
-u32 sndCountActiveTracks();  // 0x020071d4
+u32 sndCountActiveTracks(void);  // 0x020071d4
 SndVoice * sndPlayStream(u16, s16, s16, s16, s8);  // 0x02007244
 SndVoice * sndFindStream(u32);  // 0x02007344
 void sndStopStream(s8, u32);  // 0x02007398
@@ -116,7 +115,7 @@ void sndInitVoices(void);  // 0x02007900
 SndVoice * sndAllocVoice(SndVoice *);  // 0x020079bc
 void sndLinkVoice(SndVoice *);  // 0x02007ab4
 SndVoice * sndFreeVoice(SndVoice *);  // 0x02007b00
-void sndUpdateVoices();  // 0x02007bf0
+void sndUpdateVoices(void);  // 0x02007bf0
 void sndScheduleVoice(SndVoice *, u32, s16, u32, s16, s16, u8, u8, u16, s16);  // 0x02007e0c
 BOOL sndStopVoices(SndVoiceList *, s32, void(*)(SndVoice *, u32), u32);  // 0x02007e8c
 void sndStopVoice(SndVoice *, u32);  // 0x02007f40
@@ -145,7 +144,7 @@ void * sndHeapAlloc(NNSSndHeapHandle, u32, NNSSndHeapDisposeCallback, void *, u3
 void sndInitNodeList(void);  // 0x02009ab8
 void sndQueueNode(void *, u32, u32, u32, void (*)(SndLoadNode *), void *);  // 0x02009ad8
 void sndBeginLoad(u8, u32, u8, u32, u8);  // 0x02009b10
-void sndInitRequests();  // 0x02009b90
+void sndInitRequests(void);  // 0x02009b90
 void sndQueueRequest(SndRequest *);  // 0x02009bcc
 void sndRunNextRequest(void);  // 0x02009c24
 void sndUpdateLoader(void);  // 0x02009cc4
@@ -157,7 +156,7 @@ void sndDisposeBank(void *, u32, u32, u32);  // 0x0200a024
 void sndDisposeWaveArcOnly(void *, u32, u32, u32);  // 0x0200a054
 void sndDisposeWaveData(void *, u32, u32, u32);  // 0x0200a074
 void sndClearFileAddress(void *, u32, u32);  // 0x0200a0c8
-BOOL sndReadDriverInfo();  // 0x0200a11c
+BOOL sndReadDriverInfo(void);  // 0x0200a11c
 u32 sndCountPlayerTracks(NNSSndHandle * );  // 0x0200a20c
 BOOL sndGetDefaultPrio(u32, s8 *, s8 *);  // 0x0200a2b0
 BOOL sndGetStreamPrio(u32, s8 *);  // 0x0200a334

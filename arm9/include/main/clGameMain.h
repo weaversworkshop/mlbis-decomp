@@ -15,7 +15,7 @@ public:
 
     clGameMain();
     virtual ~clGameMain() {};  // D1 0x020057cc D0 0x020057e0
-    virtual void run();  // 0x02004ce8
+    virtual void run(void);  // 0x02004ce8
 
     void setMode(u16);  // 0x020057ac
 };
@@ -60,8 +60,8 @@ typedef struct {
     u16 field502;
     union {
         struct {
-            u32 field504_00 : 2;  // +0x504
-            u32 field504_02 : 11;
+            u32 field504_0 : 2;  // +0x504
+            u32 field504_2 : 11;
             u32 field504_13 : 2;
         };
         struct {

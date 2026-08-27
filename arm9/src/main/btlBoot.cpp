@@ -72,23 +72,23 @@ void btlSetup() {
         case 0x3002:
         case 0x3003:
         case 0x3004:
-            gameState.field504_00 = 1;
+            gameState.field504_0 = 1;
             break;
         case 0x3005:
         case 0x3009:
-            gameState.field504_00 = 3;
+            gameState.field504_0 = 3;
             break;
         default:
         if (gameState.field502 != 0) {
-            gameState.field504_00 = 2;
+            gameState.field504_0 = 2;
         } else if (gameState.field504_0b != 0) {
-            gameState.field504_00 = 1;
+            gameState.field504_0 = 1;
         } else {
-            gameState.field504_00 = 0;
+            gameState.field504_0 = 0;
         }
     }
 
-    switch (gameState.field504_00) {
+    switch (gameState.field504_0) {
         case 0: {
             FSOverlayInfo info;
             void * ret;

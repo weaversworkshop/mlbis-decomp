@@ -121,7 +121,7 @@ BOOL backupWrite(u32 dst, u32 src, u32 len, BOOL addChecksum) {
 
     if (addChecksum) {
         u16 * footer = (u16 *)(src + len);
-        footer[-1] = calcChecksum(src, len);
+        footer[-1] = calcChecksum((void *)src, len);
     }
 
     backup.write(dst, src, len, &writeDone, NULL);

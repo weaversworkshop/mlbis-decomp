@@ -33,11 +33,12 @@ typedef struct {
     };
 } UnkStruct_0200b8bc_24;
 
+typedef u32 (* UnkCallback_0200b8bc_2c)(void *, UnkStruct_0200b8bc *, BOOL);
 
 typedef struct {
     s8 field00;
     u8 field01;
-    u32 (* field04)(void *, UnkStruct_0200b8bc *, u32);
+    UnkCallback_0200b8bc_2c field04;
     void * field08;
 } UnkStruct_0200b8bc_2c;
 
@@ -114,8 +115,15 @@ struct UnkStruct_0200b8bc {
     UnkStruct_0200b8bc_2c * field2c;
 };
 
+typedef struct {
+    u8 field00;
+    u8 pad_01[0x3];
+    u32 field04;
+    u32 field08;
+} UnkStruct_0200baf0;
 
-void func_0200b8bc(UnkStruct_0200b8bc *, u32, u32, const char *, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, UnkStruct_0200b8bc_2c *);  // 0x0200b8bc
+void func_0200b8bc(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_10 **, u32, const char *, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, UnkStruct_0200b8bc_2c *);  // 0x0200b8bc
+void func_0200baf0(UnkStruct_0200b8bc_2c *, u32, u8, UnkCallback_0200b8bc_2c, void *);  // 0x0200baf0
 void func_0200bb1c(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_24 *);  // 0x0200bb1c
 
 #endif

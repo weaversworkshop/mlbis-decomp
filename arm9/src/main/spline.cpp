@@ -10,8 +10,8 @@ extern "C" {
 
 // --- Function Declarations --- //
 
-void solveSplineCoeffs(s32 nPoints, s32 * values, fx32 * knots, fx32 * dknots, fx32 * coeffs, fx32 * slopes);  // 0x0201e11c
-fx32 evalSplineAxis(fx32 t, u8 nPoints, fx32 * values, fx32 * knots, fx32 * coefs);  // 0x0201e294
+void solveSplineCoeffs(s32, s32 *, fx32 *, fx32 *, fx32 *, fx32 *);  // 0x0201e11c
+fx32 evalSplineAxis(fx32, u8, fx32 *, fx32 *, fx32 *);  // 0x0201e294
 
 } // extern "C"
 

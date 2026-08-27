@@ -7,6 +7,6 @@
 #include <nnsys/snd.h>
 
 // MATCHED 100%
-void func_02031be4(NNSSndStrmHandle *handle) {
+void func_02031be4(NNSSndStrmHandle * handle) {
     handle->player = NULL;
 }

@@ -52,8 +52,8 @@ public:
     virtual ~clYanaTransMan();  // D1 0x0201f5ac D0 0x0201f5cc D2 0x0201f5f4
 
     void init(u32, u16, YanaTransEntry *, s32);  // 0x0201f614
-    void destroy();  // 0x0201f6cc
-    void flush();  // 0x0201f708
+    void destroy(void);  // 0x0201f6cc
+    void flush(void);  // 0x0201f708
     void post(void (*)(YanaTransEntry *));  // 0x0201f7ec
     void post1(void (*)(YanaTransEntry *), void *);  // 0x0201f810
     void post2(void (*)(YanaTransEntry *), void *, void *);  // 0x0201f838
@@ -66,8 +66,8 @@ public:
     void postLinearToTiles4bpp(void *, void *, u16, u16, u16, u16);  // 0x0201fa24
     void postResChunk(void *, void *, u32, u16);  // 0x0201fa74
     void postObjExtPltt(void *, void *, u32, u32);  // 0x0201fac8
-    YanaTransEntry * beginEntry();  // 0x0201fb20
-    void endEntry();  // 0x0201fb58
+    YanaTransEntry * beginEntry(void);  // 0x0201fb20
+    void endEntry(void);  // 0x0201fb58
 
     virtual void submit(YanaTransEntry *);  // 0x0201fb68
 };

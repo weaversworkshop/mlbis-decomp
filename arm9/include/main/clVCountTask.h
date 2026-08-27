@@ -22,8 +22,8 @@ public:
     clVCountTask(s32 priority, u8 id, u32 param3, u32 arg);  // C1 0x0201e5ec
     virtual ~clVCountTask();  // D1 0x0201e700 D0 0x0201e76c D2 0x0201e7ec
 
-    void disable();  // 0x0201e858
-    void enable();  // 0x0201e884
+    void disable(void);  // 0x0201e858
+    void enable(void);  // 0x0201e884
 };
 
 extern "C" {
@@ -59,8 +59,8 @@ typedef struct {
 
 extern VCountTaskManager vcountTaskManager;  // 0x0205bad4
 
-void disableVCountTasks();  // 0x0201e8b4
-void initVCountTaskMgr();  // 0x0201e90c
+void disableVCountTasks(void);  // 0x0201e8b4
+void initVCountTaskMgr(void);  // 0x0201e90c
 void deleteVCountTask(clVCountTask * task);  // 0x0201e98c
 
 #ifdef __cplusplus

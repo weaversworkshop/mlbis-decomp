@@ -10,7 +10,7 @@
 #define TP_SAMPLING_FREQ_DEFAULT 1
 
 BOOL startTouchSampling(s32);  // 0x0201e380
-BOOL stopTouchSampling();  // 0x0201e434
+BOOL stopTouchSampling(void);  // 0x0201e434
 BOOL readTouchpad(TouchpadStruct *);  // 0x0201e48c
 
 #endif

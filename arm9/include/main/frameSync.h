@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void waitFrameSync();  // 0x0201e9c8
+void waitFrameSync(void);  // 0x0201e9c8
 
 #endif

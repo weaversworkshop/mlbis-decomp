@@ -27,11 +27,11 @@ public:
     virtual ~clYanaPileMan();  // D1 0x0201fe7c D0 0x0201fe9c
 
     void init(u32, u32, YanaPileEntry *, s32);  // 0x0201fec4
-    void freeBuffer();  // 0x0201ff80
+    void freeBuffer(void);  // 0x0201ff80
     YanaPileEntry * pushBlock(u32, u32, u32);  // 0x0201ffb0
     void resetPile(u32);  // 0x0202005c
     YanaPileEntry * acquire(u32, u32, u32);  // 0x02020088
-    void sweep();  // 0x020201f0
+    void sweep(void);  // 0x020201f0
 };
 
 #endif
