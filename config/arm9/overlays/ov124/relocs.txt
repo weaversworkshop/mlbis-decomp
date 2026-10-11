@@ -2607,7 +2607,6 @@ from:0x020a2cb0 kind:load to:0x0209c048 module:overlay(124)
 from:0x020a2cb4 kind:load to:0x0209c0ac module:overlay(124)
 from:0x020a2cb8 kind:load to:0x0209c20c module:overlay(124)
 from:0x020a2cbc kind:load to:0x0209c384 module:overlay(124)
-from:0x020a3170 kind:load to:0x02050102 module:main
 from:0x020a3864 kind:load to:0x02055f4c add:0x8 module:main
 from:0x020a3868 kind:load to:0x020a388c module:overlay(124)
 from:0x020a386c kind:load to:0x02055f3c add:0x8 module:main

@@ -2,16 +2,20 @@
 
 In-progress matching decompilation of **Mario & Luigi: Bowser's Inside Story** (Nintendo DS, 2009).
 
-The goal is C source that compiles byte-for-byte to the retail ROM.
+The goal is C/C++ source that compiles byte-for-byte to the retail ROM.
+
+## AI Disclosure
+
+This project uses NO AI for any actual decompilation work. All C/C++ functions are hand-authored by humans. Only some python tooling is AI-assisted, but still stress tested and verified by humans.
 
 ## Status
 
 | | |
 |---|---|
-| `main_7` functions matched | **992 / 1849** |
-| game code | 301 / 1154 (26.1%) |
-| SDK / NitroSystem | 691 / 695 |
-| data objects homed | 65 / 544 (58 verified byte-exact, + 24 RTTI COMDAT) |
+| `main_7` functions matched | **1251 / 1849** |
+| game code | 516 / 1112 (46.4%) |
+| SDK / NitroSystem | 735 / 737 |
+| data objects homed | 77 / 520 (70 verified byte-exact, + 38 RTTI COMDAT) |
 | Relink vs ROM | 134 modules byte-exact, main 9 bytes off (35 bytes total) |
 
 `make progress` regenerates the live per-function and per-data-object tables (`main_7_todo.md`).

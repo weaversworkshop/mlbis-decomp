@@ -4,7 +4,13 @@
 #include "types.h"
 
 typedef struct {
-    u8 pad_00[0x14];
+    u8 field00;
+    u8 field01;
+    u16 field02;
+    u32 field04;
+    u32 field08;
+    u32 field0c;
+    u32 field10;
 } YanaResHeader;
 
 typedef struct {
@@ -19,6 +25,7 @@ typedef struct {
     YanaResEntry entries[1];  // +0x14
 } YanaRes;
 
+#define RES_PTR(res, off) ((u8 *)(res) + (off))
 #define RES_ENTRY(res, i) ((YanaResEntry *)((u8 *)(res) + ((i) * sizeof(YanaResEntry) + sizeof(YanaResHeader))))
 
 u32 countDigits(s32);  // 0x0201f3a0

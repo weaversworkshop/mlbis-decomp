@@ -77,7 +77,6 @@ extern void func_01ff8380(void *, void *, u32);
 // --- Function Declarations --- //
 
 void func_0200b9f4(UnkStruct_0200b8bc *);  // 0x0200b9f4
-u16 func_0200bbb0(UnkStruct_0200b8bc *);  // 0x0200bbb0
 u16 func_0200bc48(UnkStruct_0200b8bc *);  // 0x0200bc48
 void func_0200bce8(u8 *, UnkStruct_0200b8bc *, u32, u32);  // 0x0200bce8
 s16 func_0200c330(u16, u16, u8, u8, u32, u32, u32 *, u8, BOOL, u8);  // 0x0200c330

@@ -273,4 +273,3 @@ from:0x02078cf0 kind:load to:0x02072784 module:overlays(11,122,130)
 from:0x02078cf4 kind:load to:0x020727d4 module:overlays(11,122,130)
 from:0x02078cf8 kind:load to:0x02072800 module:overlays(11,122,130)
 from:0x02078cfc kind:load to:0x02072850 module:overlays(11,122,130)
-from:0x020793c4 kind:load to:0x02050102 module:main

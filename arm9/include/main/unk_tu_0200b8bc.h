@@ -125,5 +125,6 @@ typedef struct {
 void func_0200b8bc(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_10 **, u32, const char *, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, UnkStruct_0200b8bc_2c *);  // 0x0200b8bc
 void func_0200baf0(UnkStruct_0200b8bc_2c *, u32, u8, UnkCallback_0200b8bc_2c, void *);  // 0x0200baf0
 void func_0200bb1c(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_24 *);  // 0x0200bb1c
+u16 func_0200bbb0(UnkStruct_0200b8bc *);  // 0x0200bbb0
 
 #endif

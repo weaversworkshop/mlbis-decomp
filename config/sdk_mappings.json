@@ -217,18 +217,6 @@
       "confidence": "certain"
     },
     {
-      "addr": "0x0202bc5c",
-      "sdk_name": "NNS_G2dGetRendererPaletteTbl",
-      "library": "g2d",
-      "confidence": "certain"
-    },
-    {
-      "addr": "0x0202e0c8",
-      "sdk_name": "NNS_G2dSetRendererPaletteTbl",
-      "library": "g2d",
-      "confidence": "certain"
-    },
-    {
       "addr": "0x0202e92c",
       "sdk_name": "NNS_FndInitList",
       "library": "fnd",
@@ -1920,6 +1908,38 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02036598",
+      "sdk_name": "G2_GetBG0ScrPtr",
+      "library": "gx",
+      "header": "nitro/gx/g2.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x020365cc",
+      "sdk_name": "G2S_GetBG0ScrPtr",
+      "library": "gx",
+      "header": "nitro/gx/g2.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x020365ec",
+      "sdk_name": "G2_GetBG1ScrPtr",
+      "library": "gx",
+      "header": "nitro/gx/g2.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x02036620",
+      "sdk_name": "G2S_GetBG1ScrPtr",
+      "library": "gx",
+      "header": "nitro/gx/g2.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
       "addr": "0x02036640",
       "sdk_name": "G2_GetBG2ScrPtr",
       "library": "gx",
@@ -2116,6 +2136,38 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x02037308",
+      "sdk_name": "GX_LoadBG0Scr",
+      "library": "gx",
+      "header": "nitro/gx/gx_load.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x02037368",
+      "sdk_name": "GXS_LoadBG0Scr",
+      "library": "gx",
+      "header": "nitro/gx/gx_load.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x020373c8",
+      "sdk_name": "GX_LoadBG1Scr",
+      "library": "gx",
+      "header": "nitro/gx/gx_load.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
+      "addr": "0x02037428",
+      "sdk_name": "GXS_LoadBG1Scr",
+      "library": "gx",
+      "header": "nitro/gx/gx_load.h",
+      "confidence": "certain",
+      "note": "Verified [EQUIVALENT] by sdk_equiv 2026-08-26, uniquely: every other Load*Scr / Get*ScrPtr candidate DIVERGES. Found via the clMesWin BG dispatch switch (func_02012b2c main-engine / func_02012ba8 sub-engine, arms 0-3 = BG0-BG3). ROM order matches gx_load2d.c source order exactly; whole Load*Scr family is a uniform 0x60."
+    },
+    {
       "addr": "0x02037488",
       "sdk_name": "GX_LoadBG2Scr",
       "library": "gx",
@@ -2206,6 +2258,13 @@
       "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
     },
     {
+      "addr": "0x02037b58",
+      "sdk_name": "GXS_BeginLoadBGExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT; fills the Begin slot of the Begin/Load/End triplet, ROM order == gx_load2d.c source order"
+    },
+    {
       "addr": "0x02037b70",
       "sdk_name": "GXS_LoadBGExtPltt",
       "library": "gx",
@@ -2218,6 +2277,13 @@
       "library": "sdk",
       "confidence": "certain",
       "note": "sdk_equiv EQUIVALENT + independently byte-verified vs ROM (all differing words are reloc sites)"
+    },
+    {
+      "addr": "0x02037c14",
+      "sdk_name": "GXS_BeginLoadOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "sdk_equiv EQUIVALENT; fills the Begin slot of the Begin/Load/End triplet, ROM order == gx_load2d.c source order"
     },
     {
       "addr": "0x02037c2c",
@@ -5186,11 +5252,6 @@
       "source": "lib/NitroSystem/libraries/snd/src/resource_mgr.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "nns/snd/resource_mgr"
-    },
-    {
-      "source": "lib/NitroSystem/libraries/g2d/src/g2d_Renderer.c",
-      "target": "build/delinks/_dsd_gap@main_7.o",
-      "name": "nns/g2d/g2d_Renderer"
     },
     {
       "source": "lib/NitroSystem/libraries/fnd/src/heapcommon.c",

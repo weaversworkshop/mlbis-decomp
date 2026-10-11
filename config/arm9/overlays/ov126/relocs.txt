@@ -1116,7 +1116,6 @@ from:0x0208b974 kind:load to:0x02072784 module:overlays(11,122,130)
 from:0x0208b978 kind:load to:0x020727d4 module:overlays(11,122,130)
 from:0x0208b97c kind:load to:0x02072800 module:overlays(11,122,130)
 from:0x0208b980 kind:load to:0x02072850 module:overlays(11,122,130)
-from:0x0208c048 kind:load to:0x02050102 module:main
 from:0x0208c69c kind:load to:0x02055f4c add:0x8 module:main
 from:0x0208c6a0 kind:load to:0x0208c70c module:overlay(126)
 from:0x0208c6a4 kind:load to:0x02055f3c add:0x8 module:main
