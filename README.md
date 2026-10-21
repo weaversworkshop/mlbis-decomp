@@ -12,8 +12,8 @@ This project uses NO AI for any actual decompilation work. All C/C++ functions a
 
 | | |
 |---|---|
-| `main_7` functions matched | **1251 / 1849** |
-| game code | 516 / 1112 (46.4%) |
+| `main_7` functions matched | **1293 / 1849** |
+| game code | 552/1105 matched (49.95%) |
 | SDK / NitroSystem | 735 / 737 |
 | data objects homed | 77 / 520 (70 verified byte-exact, + 38 RTTI COMDAT) |
 | Relink vs ROM | 134 modules byte-exact, main 9 bytes off (35 bytes total) |

@@ -74,7 +74,14 @@ typedef struct {
     s32 voice;  // +0x1c
     s16 voiceX;  // +0x20
     u8 pad_22[0x2];
-    u32 field24;
+    union {
+        u32 field24;
+        struct {
+            u32 field24_0 : 7;  // +0x24
+            u32 field24_7 : 1;
+            u32 : 24;
+        };
+    };
 } MesWinParams;
 
 typedef struct {
