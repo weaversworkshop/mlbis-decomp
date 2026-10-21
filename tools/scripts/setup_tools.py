@@ -1,26 +1,16 @@
 #!/usr/bin/env python3
-"""Build the pinned `dsd` from source, or confirm the existing one is current.
-
-The pin lives in tools/dsd.pin.  dsd's --version does not track `main` (it still
-prints 0.11.0), so the built revision is recorded in tools/.dsd.stamp and that is
-what gets compared -- never the version string.
-
-  python tools/scripts/setup_tools.py [--check] [--force]
-
-Exit 0 ok / 1 needs action / 2 error.
-"""
 import argparse
 import os
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+from common import ROOT
+
 TOOLS = ROOT / "tools"
 PIN = TOOLS / "dsd.pin"
 STAMP = TOOLS / ".dsd.stamp"
-MIN_RUST = (1, 85)   # ds-decomp is edition 2024
+MIN_RUST = (1, 85)
 
 RUST_HELP = """dsd must be built from source and cargo was not found.
 
@@ -48,15 +38,11 @@ def read_pin():
 
 
 def binary(pin):
-    name = pin["bin"] + (".exe" if os.name == "nt" else "")
-    return TOOLS / "bin" / name
+    return TOOLS / "bin" / (pin["bin"] + (".exe" if os.name == "nt" else ""))
 
 
-def current(pin):
-    """Is the installed binary built from the pinned rev?"""
-    if not binary(pin).exists() or not STAMP.exists():
-        return False
-    return STAMP.read_text(encoding="utf-8").strip() == pin["rev"]
+def stamped_rev():
+    return STAMP.read_text(encoding="utf-8").strip() if STAMP.exists() else None
 
 
 def rust_version():
@@ -78,11 +64,11 @@ def main():
     pin = read_pin()
     short = pin["rev"][:8]
 
-    if current(pin) and not args.force:
+    have = stamped_rev()
+    if binary(pin).exists() and have == pin["rev"] and not args.force:
         print("dsd: OK %s (cached)" % short)
         return 0
-    have = STAMP.read_text(encoding="utf-8").strip()[:8] if STAMP.exists() else "none"
-    print("dsd: stamp mismatch (have %s, want %s)" % (have, short))
+    print("dsd: stamp mismatch (have %s, want %s)" % (have[:8] if have is not None else "none", short))
     if args.check:
         print("     run `make tools`")
         return 1
@@ -107,7 +93,7 @@ def main():
               binary(pin).relative_to(ROOT), file=sys.stderr)
         return 1
 
-    # Stamp only after the binary is in place, so a half-failed build never looks current.
+    # Stamp last, so a half-failed build never looks current.
     STAMP.write_text(pin["rev"] + "\n", encoding="utf-8", newline="\n")
     shutil.rmtree(TOOLS / ".crates.toml", ignore_errors=True)
     print("dsd: OK %s" % short)

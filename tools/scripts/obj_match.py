@@ -1,51 +1,31 @@
 #!/usr/bin/env python3
-"""Reloc-aware match report: compiled .o vs delinked target, per objdiff unit.
-
-Byte-exact where it counts: instruction words are compared with relocated fields
-masked, and each reloc is compared as (kind, symbol, addend) after resolving
-section-relative relocs and unrelocated cross-function branches to a symbol.
-100.00% therefore means "identical after linking", the same claim objdiff makes.
-
-Emits an objdiff-report-compatible JSON so build_todo.py consumes it unchanged.
-Usage: obj_match.py [--config objdiff.json] [--out -|FILE] [--unit NAME] [-v]
-       obj_match.py --text            # human-readable summary
-Exit 0 always (a report is not a verdict); 2 on setup error.
-"""
 import argparse
 import difflib
 import json
-import re
 import struct
 import sys
 from bisect import bisect_right
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+import common
+from common import ROOT, read_symbols
 
 SHT_SYMTAB, SHT_REL, SHT_RELA, SHT_NOBITS = 2, 9, 4, 8
 STT_OBJECT, STT_FUNC, STT_SECTION = 1, 2, 3
-STB_COMDAT = 13          # mwcc's COMDAT/linkonce binding (STB_LOPROC)
+STB_COMDAT = 13
 DATA_SECTIONS = (".rodata", ".data", ".bss")
-# R_ARM_PC24 / _PLT32 / _CALL / _JUMP24 all encode a 24-bit word displacement.
-SYMBOLS_TXT = ROOT / "config" / "arm9" / "symbols.txt"
 MAPPING_SYMS = ("$a", "$t", "$d")
 CALL_RELOCS = {1, 27, 28, 29}
 ABS32_RELOCS = {2}
 REL32_RELOCS = {3}
+BRANCH_MASK = ~0xFFFFFF & 0xFFFFFFFF
 
 
 def die(msg):
-    print(f"obj_match: {msg}", file=sys.stderr)
-    sys.exit(2)
+    common.die(f"obj_match: {msg}")
 
 
 class Elf:
-    """Minimal ELF32-LE reader (sections, symbols, relocs).
-
-    objdump text can't disambiguate mwcc's many same-named `.text` sections --
-    one per function, all at offset 0 -- so we read section indices directly.
-    """
-
     def __init__(self, path):
         self.path = Path(path)
         try:
@@ -58,9 +38,8 @@ class Elf:
         e_shentsize, e_shnum, e_shstrndx = struct.unpack_from("<HHH", self.buf, 0x2e)
         self.sections = []
         for i in range(e_shnum):
-            off = e_shoff + i * e_shentsize
             (name, typ, flags, addr, sh_off, size, link, info, align,
-             entsize) = struct.unpack_from("<10I", self.buf, off)
+             entsize) = struct.unpack_from("<10I", self.buf, e_shoff + i * e_shentsize)
             self.sections.append({
                 "idx": i, "name_off": name, "type": typ, "flags": flags,
                 "addr": addr, "offset": sh_off, "size": size, "link": link,
@@ -77,8 +56,7 @@ class Elf:
         self._map_syms = None
 
     def _cstr(self, off):
-        end = self.buf.index(b"\0", off)
-        return self.buf[off:end].decode("utf-8", "replace")
+        return self.buf[off:self.buf.index(b"\0", off)].decode("utf-8", "replace")
 
     def data(self, shndx):
         s = self.sections[shndx]
@@ -92,9 +70,7 @@ class Elf:
             if s["type"] != SHT_SYMTAB:
                 continue
             strtab = self.sections[s["link"]]
-            n = s["size"] // 16
-            for i in range(n):
-                off = s["offset"] + i * 16
+            for off in range(s["offset"], s["offset"] + (s["size"] // 16) * 16, 16):
                 name, value, size, info, other, shndx = struct.unpack_from(
                     "<IIIBBH", self.buf, off)
                 out.append({
@@ -112,21 +88,19 @@ class Elf:
             if s["type"] not in (SHT_REL, SHT_RELA):
                 continue
             rela = s["type"] == SHT_RELA
-            step = 12 if rela else 8
             tgt = out.setdefault(s["info"], {})
-            for off in range(s["offset"], s["offset"] + s["size"], step):
+            for off in range(s["offset"], s["offset"] + s["size"], 12 if rela else 8):
                 if rela:
                     r_off, r_info, r_add = struct.unpack_from("<IIi", self.buf, off)
                 else:
                     r_off, r_info = struct.unpack_from("<II", self.buf, off)
                     r_add = None
                 sym_i, rtype = r_info >> 8, r_info & 0xff
-                sym = syms[sym_i] if sym_i < len(syms) else {"name": "", "type": 0}
-                tgt[r_off] = (rtype, sym["name"], sym_i, r_add)
+                name = syms[sym_i]["name"] if sym_i < len(syms) else ""
+                tgt[r_off] = (rtype, name, sym_i, r_add)
         return out
 
     def section_symbols(self, shndx):
-        """Sorted [(value, name, size)] of the addressable symbols in a section."""
         if self._sec_syms is None:
             self._sec_syms = {}
             for sym in self.symbols:
@@ -141,11 +115,7 @@ class Elf:
         return self._sec_syms.get(shndx, [])
 
     def isa_at(self, shndx, addr):
-        """'a' (ARM), 't' (Thumb) or 'd' (data-in-code) per ELF mapping symbols.
-
-        Without this, a literal-pool constant whose bits happen to look like a
-        branch gets symbolized as a call (rand's 0x2a01b0f7 multiplier did).
-        """
+        """'a'/'t'/'d' from mapping symbols, so pool words never decode as branches."""
         if self._map_syms is None:
             self._map_syms = {}
             for sym in self.symbols:
@@ -161,10 +131,7 @@ class Elf:
         return lst[i][1] if i >= 0 else "a"
 
     def resolve(self, shndx, addr):
-        """Address in a section -> ('sym', delta), or (None, addr) if unclaimed."""
         lst = self.section_symbols(shndx)
-        if not lst:
-            return None, addr
         i = bisect_right(lst, (addr, "￿", 0)) - 1
         if i < 0:
             return None, addr
@@ -172,47 +139,31 @@ class Elf:
         return name, addr - value
 
     def functions(self):
-        """name -> [symbol]; a name can repeat (two distinct SDK `BeginSleep`s).
-        Memoized: the shared target ELF is asked once per unit (180x)."""
-        if self._funcs is not None:
-            return self._funcs
-        out = self._funcs = {}
-        for sym in self.symbols:
-            if sym["type"] != STT_FUNC or not sym["name"] or not sym["size"]:
-                continue
-            if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
-                continue
-            out.setdefault(sym["name"], []).append(sym)
-        return out
+        """name -> [symbol]; names can repeat (two SDK `BeginSleep`s)."""
+        if self._funcs is None:
+            self._funcs = {}
+            for sym in self.symbols:
+                if sym["type"] != STT_FUNC or not sym["name"] or not sym["size"]:
+                    continue
+                if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
+                    continue
+                self._funcs.setdefault(sym["name"], []).append(sym)
+        return self._funcs
 
     def data_objects(self):
-        """name -> (section_class, symbol, comdat) for .rodata/.data/.bss objects.
-
-        .bss is NOBITS, so data() hands back zeros on both sides and the token
-        compare degenerates to a size check -- which is the only thing a delinked
-        .bss symbol can prove (see memory reference_delink_symbol_extent).
-
-        mwcc COMDAT (bind 13) is C++ RTTI emitted in every TU that touches the
-        class and deduplicated at link, so defining it is NOT ownership (memory
-        reference_mwcc_comdat_binding). Reported with comdat=True: the bytes are
-        still worth checking, the owning-unit attribution is not.
-
-        Memoized like functions(), for the same reason.
-        """
-        if self._data_objs is not None:
-            return self._data_objs
-        out = self._data_objs = {}
-        for sym in self.symbols:
-            if sym["type"] != STT_OBJECT or not sym["name"] or not sym["size"]:
-                continue
-            if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
-                continue
-            sec = self.sections[sym["shndx"]]["name"]
-            cls = next((c for c in DATA_SECTIONS if sec.startswith(c)), None)
-            if cls and sym["name"] not in out:
-                out[sym["name"]] = (cls, sym, sym["bind"] == STB_COMDAT)
-        return out
-
+        """name -> (section_class, symbol, comdat)."""
+        if self._data_objs is None:
+            self._data_objs = {}
+            for sym in self.symbols:
+                if sym["type"] != STT_OBJECT or not sym["name"] or not sym["size"]:
+                    continue
+                if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
+                    continue
+                sec = self.sections[sym["shndx"]]["name"]
+                cls = next((c for c in DATA_SECTIONS if sec.startswith(c)), None)
+                if cls and sym["name"] not in self._data_objs:
+                    self._data_objs[sym["name"]] = (cls, sym, sym["bind"] == STB_COMDAT)
+        return self._data_objs
 
 
 def norm_kind(rtype):
@@ -230,18 +181,7 @@ def sign24(x):
 
 
 def tokenize(elf, sym, is_code=True):
-    """Instruction stream of one function as comparable tokens.
-
-    is_code=False for data objects: fixed 4-byte stride and no branch
-    symbolization, so a data word that happens to look like `b` isn't rewritten.
-
-    Each token is (masked_word, reloc_key). Relocated bits are masked out of the
-    word and carried in the key instead, so an unresolved `bl 0` in a compiled .o
-    compares equal to the target's linked branch when both name the same symbol.
-    Unrelocated branches leaving the function are resolved through the section
-    symbol map, so a delinked object that encodes the call as a plain offset
-    still compares symbolically.
-    """
+    """[(masked_word, reloc_key)]; relocated bits move from the word into the key."""
     shndx, base, size = sym["shndx"], sym["value"], sym["size"]
     data = elf.data(shndx)[base:base + size]
     rel = elf.relocs.get(shndx, {})
@@ -255,37 +195,30 @@ def tokenize(elf, sym, is_code=True):
         if r:
             rtype, sname, sym_i, addend = r
             kind = norm_kind(rtype)
-            if addend is None:  # REL: implicit addend lives in the field
+            if addend is None:
                 if kind == "call":
                     addend = sign24(word & 0xFFFFFF) * 4 + 8
-                    word &= ~0xFFFFFF & 0xFFFFFFFF
+                    word &= BRANCH_MASK
                 else:
                     addend = word
                     word = 0
             else:
-                word &= ~0xFFFFFF & 0xFFFFFFFF if kind == "call" else 0
+                word &= BRANCH_MASK if kind == "call" else 0
             rsym = elf.symbols[sym_i] if sym_i < len(elf.symbols) else None
             if rsym is not None and rsym["type"] == STT_SECTION:
-                # `.text+0x40` on one side vs a named symbol on the other:
-                # resolve to whatever symbol actually owns that address.
                 named, delta = elf.resolve(rsym["shndx"], addend)
                 if named:
                     sname, addend = named, delta
-            # An undefined symbol is a cross-TU reference: this object pair
-            # cannot prove the two names denote the same address, so the name is
-            # reported as a naming gap rather than scored as a byte difference.
             extern = rsym is not None and rsym["shndx"] == 0
             key = (kind, sname, addend, extern)
         elif (is_code and stride == 4 and (word & 0x0E000000) == 0x0A000000
               and elf.isa_at(shndx, pos) == "a"):
-            # B/BL with no reloc: symbolize it if it leaves this function.
-            imm = sign24(word & 0xFFFFFF) * 4
-            tgt = pos + 8 + imm
+            tgt = pos + 8 + sign24(word & 0xFFFFFF) * 4
             if not (base <= tgt < base + size):
                 named, delta = elf.resolve(shndx, tgt)
                 if named:
                     key = ("call", named, delta, False)
-                    word &= ~0xFFFFFF & 0xFFFFFFFF
+                    word &= BRANCH_MASK
         toks.append((word, key))
     return toks
 
@@ -299,36 +232,30 @@ def _load_symbols():
     if _SYM_ADDRS is not None:
         return
     _SYM_ADDRS = {}
-    if SYMBOLS_TXT.exists():
-        pat = re.compile(r"^(\S+)\s+kind:\S+.*\baddr:0x([0-9a-fA-F]+)", re.M)
-        for m in pat.finditer(SYMBOLS_TXT.read_text(encoding="utf-8")):
-            _SYM_ADDRS.setdefault(m.group(1), int(m.group(2), 16))
+    if common.SYMBOLS.exists():
+        for sym in read_symbols():
+            _SYM_ADDRS.setdefault(sym.name, sym.addr)
     _SYM_SORTED = sorted((a, n) for n, a in _SYM_ADDRS.items())
 
 
 def sym_addr(name):
-    """Absolute address of a target symbol, from symbols.txt (cached)."""
     _load_symbols()
     return _SYM_ADDRS.get(name)
 
 
-def next_sym_addr(addr):
-    """Address of the next target symbol after `addr`, or None."""
+def _sym_index_after(addr):
     _load_symbols()
-    i = bisect_right(_SYM_SORTED, (addr, chr(0x10ffff)))
+    return bisect_right(_SYM_SORTED, (addr, chr(0x10ffff)))
+
+
+def next_sym_addr(addr):
+    i = _sym_index_after(addr)
     return _SYM_SORTED[i][0] if i < len(_SYM_SORTED) else None
 
 
 def interior_syms(addr, size):
-    """Target symbols landing strictly inside [addr, addr+size).
-
-    Scans the WHOLE object, not just the next symbol: mwldarm tail-merges string
-    literals, so an interior ref can sit anywhere (ov017 loads 0x02050001 and
-    0x02050005, both inside _ZTS6clTask). Each one wants `add:` re-anchoring to
-    the container rather than a symbol of its own.
-    """
-    _load_symbols()
-    i = bisect_right(_SYM_SORTED, (addr, chr(0x10ffff)))
+    """Every target symbol strictly inside [addr, addr+size): mwldarm tail-merges strings."""
+    i = _sym_index_after(addr)
     out = []
     while i < len(_SYM_SORTED) and _SYM_SORTED[i][0] < addr + size:
         out.append(_SYM_SORTED[i][1])
@@ -337,15 +264,8 @@ def interior_syms(addr, size):
 
 
 def const_vs_symbol(word, key):
-    """Is a plain word equal to the address the other side's reloc names?
-
-    Proves the two encode the same linked value: a fake delink symbol at the
-    referenced address (`data_027e0021` vs the literal 0x027e0021), a pool word
-    pointing into its own function (`OSi_DisplayExContext+80`), or an
-    address-as-value link symbol (SDK_IRQ_STACKSIZE really is 0x800).
-    Returns True (proved equal), False (proved different), or None (unknown).
-    """
-    if key[0] not in ("abs32",):
+    """True/False if a plain word provably equals/differs from an abs32 reloc's target; None if unknown."""
+    if key[0] != "abs32":
         return None
     addr = sym_addr(key[1])
     if addr is None:
@@ -354,25 +274,13 @@ def const_vs_symbol(word, key):
 
 
 def pair_canon(x, y):
-    """Canonical (token_a, token_b, gap) for one aligned position.
-
-    When the two sides name a reloc target differently, neither object can prove
-    whether the names denote the same address: our source says `sCurrent` or
-    `_ZTV5clDPP+8`, the delink invents `data_0205f670` at the referenced address.
-    Symbol and addend are then dropped from BOTH sides and the pair is reported
-    as a naming gap instead of scored as a byte difference -- the surrounding
-    instruction encoding is still compared exactly. Same name on both sides =>
-    the addend IS compared.
-    """
+    """(token_a, token_b, naming_gap) for one aligned position."""
     kx = x[1] if x is not None else None
     ky = y[1] if y is not None else None
     if kx and ky:
         if kx[1] == ky[1]:
             return (x[0], kx[0], kx[2], kx[1]), (y[0], ky[0], ky[2], ky[1]), None
         return (x[0], kx[0]), (y[0], ky[0]), (kx[1], ky[1])
-    # One side relocated, the other a plain word: equal iff the word is the
-    # address that reloc resolves to. Proved via symbols.txt where possible,
-    # tolerated-and-reported when the name is unknown to it.
     if kx and ky is None and y is not None and x[0] == 0:
         proved = const_vs_symbol(y[0], kx)
         if proved is not None:
@@ -387,7 +295,7 @@ def pair_canon(x, y):
 
 
 def compare(a, b):
-    """(percent, [(target_name, source_name)]) for one function pair."""
+    """(percent, [(target_name, source_name)])"""
     ca, cb, gaps = [], [], []
     for i in range(max(len(a), len(b))):
         x = a[i] if i < len(a) else None
@@ -404,7 +312,6 @@ def compare(a, b):
     if not ca or not cb:
         return 0.0, gaps
     ratio = difflib.SequenceMatcher(None, ca, cb, autojunk=False).ratio()
-    # Never round a real difference up to a matching-looking 100.00%.
     return min(ratio * 100.0, 99.99), gaps
 
 
@@ -418,6 +325,23 @@ def load_config(path):
     return cfg.get("units", [])
 
 
+def data_status(tgt, tsym, bsym, pct, addr, inside):
+    if pct != 100.0:
+        return "diff"
+    if inside:
+        return "over"
+    if bsym["size"] == tsym["size"]:
+        return "ok"
+    tail = tgt.data(tsym["shndx"])[tsym["value"] + bsym["size"]:
+                                   tsym["value"] + tsym["size"]]
+    if any(tail):
+        return "short"
+    # zero tail counts as padding only if it fits the next object's alignment
+    nxt = next_sym_addr(addr) if addr else None
+    slack = tsym["size"] - bsym["size"]
+    return "pad" if nxt is None or slack < min(nxt & -nxt, 32) else "zeros"
+
+
 def run_unit(unit, cache, claimed, verbose):
     tgt_path, base_path = unit["target_path"], unit["base_path"]
     for p in (tgt_path, base_path):
@@ -425,8 +349,7 @@ def run_unit(unit, cache, claimed, verbose):
             if verbose:
                 print(f"  skip {unit['name']}: missing {p}", file=sys.stderr)
             return None
-    # NOT setdefault: its default arg is evaluated eagerly, so every unit re-parsed
-    # the (shared, large) target ELF and discarded it -- 180 parses instead of 1.
+    # not setdefault: it would parse the shared target ELF once per unit
     tgt = cache.get(tgt_path)
     if tgt is None:
         tgt = cache[tgt_path] = Elf(ROOT / tgt_path)
@@ -441,11 +364,8 @@ def run_unit(unit, cache, claimed, verbose):
             missing.append(name)
             continue
         btoks = tokenize(base, sym)
-        # Duplicate target names (the two SDK `BeginSleep`s): take the best pair,
-        # but never one another unit already matched exactly -- letting two units
-        # claim the same target symbol invents a 100% for the second one.
-        free = [c for c in cands
-                if (tgt_path, c["value"]) not in claimed] or cands
+        # duplicate target names: never pair with one another unit already matched
+        free = [c for c in cands if (tgt_path, c["value"]) not in claimed] or cands
         tsym, pct, fn_gaps = max(
             ((c,) + compare(tokenize(tgt, c), btoks) for c in free),
             key=lambda r: r[1])
@@ -455,64 +375,35 @@ def run_unit(unit, cache, claimed, verbose):
         fns.append({
             "name": name,
             "address": tsym["value"],
-            # `address` is module-relative only for .text, whose delinked section
-            # starts at the module base. Other sections (e.g. the __sinit_* chain)
-            # carry section-relative values, so consumers must not mix the two.
             "section": tgt.sections[tsym["shndx"]]["name"],
             "size": tsym["size"],
             "fuzzy_match_percent": pct,
         })
-    # Data objects. Homed only -- an `extern` declaration is UND, so it never
-    # appears here and the object stays attributed to whoever defines it.
     tdata = tgt.data_objects()
     objs, missing_data = [], []
     for name, (cls, bsym, comdat) in sorted(base.data_objects().items(),
                                             key=lambda kv: kv[1][1]["value"]):
         hit = tdata.get(name)
         if hit is None:
-            if not comdat:                # COMDAT absence is expected, not a gap
-                missing_data.append(name)     # kept out of `missing` (functions)
+            if not comdat:
+                missing_data.append(name)
             continue
         tcls, tsym, _ = hit
-        # A delinked data symbol's "size" is only the distance to the next symbol
-        # (no size= exists), so it is an EXTENT, not sizeof. Score content over the
-        # common prefix and classify the size difference separately, otherwise
-        # inter-object alignment padding reads as a content mismatch.
+        # target size is an extent (distance to next symbol): score the common prefix
         ttoks = tokenize(tgt, tsym, is_code=False)
         btoks = tokenize(base, bsym, is_code=False)
         k = min(len(ttoks), len(btoks))
         pct, obj_gaps = compare(ttoks[:k], btoks[:k])
         gaps.update(obj_gaps)
-        tail = tgt.data(tsym["shndx"])[tsym["value"] + bsym["size"]:
-                                       tsym["value"] + tsym["size"]]
         addr = sym_addr(name)
         inside = interior_syms(addr, bsym["size"]) if addr else []
-        if pct != 100.0:
-            status = "diff"                     # real content difference
-        elif inside:
-            status = "over"                     # symbol(s) land inside our object
-        elif bsym["size"] == tsym["size"]:
-            status = "ok"
-        elif any(tail):
-            status = "short"                    # trailing content, not padding
-        else:
-            # A zero tail is only PADDING if it is short enough to be the next
-            # object's alignment; a longer run of zeros is undeclared content that
-            # happens to be zero. Address alignment is an upper bound on the real
-            # section align, so this deliberately under-reports rather than cry wolf.
-            nxt = next_sym_addr(addr) if addr else None
-            slack = tsym["size"] - bsym["size"]
-            status = ("pad" if nxt is None or slack < min(nxt & -nxt, 32)
-                      else "zeros")
-        # A delinked object's data sections carry addr=0 with section-relative
-        # symbol values, so the absolute address has to come from symbols.txt.
         objs.append({
             "name": name,
             "address": addr or tsym["value"],
             "size": tsym["size"],
             "source_size": bsym["size"],
             "section": tcls,
-            "status": status,
+            "status": data_status(tgt, tsym, bsym, pct, addr, inside),
             "comdat": comdat,
             "interior": inside,
             "fuzzy_match_percent": pct,
@@ -550,19 +441,14 @@ def main():
         out_units.append({"name": res["name"], "functions": res["functions"],
                           "objects": res["objects"]})
 
-    # Two units can compile a same-named static function while the target has
-    # only one: drop the loser's phantom row rather than report a 3% "match".
-    exact = {(u["name"], f["address"]) for u in out_units
-             for f in u["functions"] if f["fuzzy_match_percent"] == 100.0}
-    exact_addrs = {addr for _u, addr in exact}
+    # a same-named static compiled by two units: drop the loser's phantom row
+    exact_addrs = {f["address"] for u in out_units for f in u["functions"]
+                   if f["fuzzy_match_percent"] == 100.0}
     for u in out_units:
-        u["functions"] = [
-            f for f in u["functions"]
-            if f["fuzzy_match_percent"] == 100.0
-            or f["address"] not in exact_addrs
-        ]
+        u["functions"] = [f for f in u["functions"]
+                          if f["fuzzy_match_percent"] == 100.0
+                          or f["address"] not in exact_addrs]
 
-    report = {"units": out_units}
     if args.text:
         for u in out_units:
             done = sum(1 for f in u["functions"] if f["fuzzy_match_percent"] == 100.0)
@@ -572,7 +458,7 @@ def main():
                 f"{f['name']} {f['fuzzy_match_percent']:.2f}%"
                 for f in u["functions"] if f["fuzzy_match_percent"] < 100.0))
     else:
-        text = json.dumps(report, indent=1)
+        text = json.dumps({"units": out_units}, indent=1)
         if args.out == "-":
             sys.stdout.write(text)
         else:
@@ -583,15 +469,12 @@ def main():
                if f["fuzzy_match_percent"] == 100.0)
     print(f"obj_match: {done}/{total} functions matched in {len(out_units)} units",
           file=sys.stderr)
-    for name, miss in missing_any:
-        if args.verbose:
+    if args.verbose:
+        for name, miss in missing_any:
             print(f"  {name}: not in target: {', '.join(miss)}", file=sys.stderr)
-    if missing_any and not args.verbose:
+    elif missing_any:
         print(f"  ({len(missing_any)} units have compiled functions absent from the "
               f"target; -v to list)", file=sys.stderr)
-    # Cross-TU references (calls, and data relocs such as vtable slots) where our
-    # source and symbols.txt disagree on the name: bytes match, but the tree would
-    # not link. Candidates for a rename.
     npairs = len({p for _u, g in gaps_any for p in g})
     if gaps_any:
         print(f"  ({npairs} unresolved symbol names across {len(gaps_any)} units"

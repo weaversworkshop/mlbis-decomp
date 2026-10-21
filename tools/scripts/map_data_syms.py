@@ -1,24 +1,11 @@
 #!/usr/bin/env python3
-"""Discover NitroSDK data-global names by aligning matched funcs' literal pools
-(ROM data_xxxx vs SDK sPlayer/etc.); emits addend-0 1:1 renames only.
-Flag: --apply (write them to config/sdk_mappings.json)."""
 import argparse
 import json
 import re
-import sys
 from collections import defaultdict
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import tu_diff as t  # noqa: E402
-
-ROOT = Path(__file__).resolve().parents[2]
-GAP = ROOT / "build" / "delinks" / "_dsd_gap@main_7.o"
-MAPPINGS = ROOT / "config" / "sdk_mappings.json"
-
-
-def src_to_obj(src):
-    return ROOT / "build" / (src[:-2] + ".o")
+import tu_diff as t
+from common import BUILD, GAP_O, SDK_MAPPINGS as MAPPINGS, load_json
 
 
 def main():
@@ -26,39 +13,32 @@ def main():
     ap.add_argument("--apply", action="store_true")
     args = ap.parse_args()
 
-    gap = t.load_funcs(str(GAP))
-    cfg = json.loads(MAPPINGS.read_text(encoding="utf-8"))
+    gap = t.load_funcs(str(GAP_O))
+    cfg = load_json(MAPPINGS)
     mapped_names = {m["sdk_name"] for m in cfg["mappings"]}
 
-    # data_xxxx -> {sdk_name: count}, and reverse for conflict detection
     votes = defaultdict(lambda: defaultdict(int))
     skipped_addend = set()
     for u in cfg.get("objdiff_units", []):
-        o = src_to_obj(u["source"])
+        o = BUILD / (u["source"][:-2] + ".o")
         if not o.exists():
             continue
-        sdk = t.load_funcs(str(o))
-        for name, (key, refs) in sdk.items():
+        for name, (_key, refs) in t.load_funcs(str(o)).items():
             if name not in gap:
                 continue
             grefs = gap[name][1]
             if len(refs) != len(grefs):
                 continue
             for (sk, sv), (gk, gv) in zip(refs, grefs):
-                if sk != "rel" or gk != "rel":
-                    continue
-                if not gv.startswith("data_"):
-                    continue
-                if sv.startswith("."):  # .bss/.text section refs
+                if sk != "rel" or gk != "rel" or not gv.startswith("data_") or sv.startswith("."):
                     continue
                 if "+" in sv:
                     skipped_addend.add((gv, sv))
                     continue
-                if not re.match(r"^[A-Za-z_]\w*$", sv):  # @8974 anon labels
+                if not re.match(r"^[A-Za-z_]\w*$", sv):
                     continue
                 votes[gv][sv] += 1
 
-    # resolve: each data_xxxx -> single name; each name -> single data_xxxx
     data_to_name = {}
     conflicts = {}
     for d, names in votes.items():

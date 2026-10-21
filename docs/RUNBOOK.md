@@ -76,7 +76,7 @@ make sdk-check FUNC=func_02016254 # verify ONE candidate
 
 | Tool | Authority |
 |---|---|
-| `tu_diff.py`, `fuzzy_sdk_match.py` | **discovery only**,  relocs masked, false-positives over forked code. Never bulk-map. |
+| `tu_diff.py` (incl. `--fuzzy`) | **discovery only**,  relocs masked, false-positives over forked code. Never bulk-map. |
 | `sdk_equiv.py` (`make sdk-check`) | **authoritative** for individual identity. Map only if `[EQUIVALENT]`. |
 | `obj_match.py` (`make progress`) | ground-truth byte match vs ROM. Final arbiter. |
 | `fn_diff.py` | per-function tiebreaker, independent instruction path. |
@@ -140,8 +140,8 @@ Two ways a symbol ends up misplaced rather than mismatched, both config-only fix
 
 | symptom | cause | fix |
 |---|---|---|
-| symbol inside a larger object | dsd names every referenced address, so an interior pool word or a tail-merged string literal becomes its own symbol | `merge_data_syms.py CONTAINER FAKE...` |
-| whole object reads as `content differs` | every reference is interior, so dsd placed the symbol N bytes late (a vtable is always referenced as `&vtable[2]`) | `rebase_data_sym.py NAME REAL_START` |
+| symbol inside a larger object | dsd names every referenced address, so an interior pool word or a tail-merged string literal becomes its own symbol | `data_syms.py merge CONTAINER FAKE...` |
+| whole object reads as `content differs` | every reference is interior, so dsd placed the symbol N bytes late (a vtable is always referenced as `&vtable[2]`) | `data_syms.py rebase NAME REAL_START` |
 
 ## Bumping dsd
 

@@ -1,17 +1,4 @@
 #!/usr/bin/env python3
-"""Register-coloring rank diff for mwcc reg-rotation residues.
-
-Rebuilds webs (def-use live ranges) and their interference from a function's
-final asm, then infers the order mwcc's select phase must have colored them in
-(pop order; each web takes the lowest free colour, claiming a new callee-saved
-register only when no volatile/claimed one is free -- mwcc Coloring.c, see
-notes/rank_diff.md). Diffs the forced "A colored before B" facts of the target
-against the compiled build.
-
-Usage:
-  rank_diff.py <symbol> [--mine PATH] [--target PATH] [-v]
-  rank_diff.py --validate [--limit N]   # model check over all matched functions
-"""
 import argparse
 import re
 import subprocess
@@ -19,10 +6,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import fn_diff
+import fn_diff  # noqa: E402
+from common import BUILD, GAP_O, OBJDUMP  # noqa: E402
 
-ROOT = fn_diff.ROOT
-OBJDUMP = fn_diff.OBJDUMP
 LINE_RE = re.compile(r"^\s*([0-9a-f]+):\s*([0-9a-f]{8})\s+(\S+)\s*(.*)$")
 REGN = {**{f"r{i}": i for i in range(16)}, "sl": 10, "fp": 11, "ip": 12, "sp": 13, "lr": 14, "pc": 15}
 RNAME = {i: n for n, i in REGN.items() if n[0] != "r" or i < 10}
@@ -167,9 +153,8 @@ class Insn:
 
 
 def disasm(path, symbol):
-    r = subprocess.run([OBJDUMP, "-d", str(path)], capture_output=True, text=True)
     out, active = [], False
-    for line in r.stdout.splitlines():
+    for line in fn_diff.objdump(path):
         m = fn_diff.SYM_RE.match(line)
         if m:
             if m.group(1) == symbol:
@@ -232,8 +217,7 @@ class Func:
         self._webs()
 
     def _call_args(self):
-        """Arg regs of each call: r0..r(k-1). r is an arg if written in the call's block, or if its
-        reaching def is otherwise never read (mwcc computes no dead values)."""
+        # r is an arg if written in the call's block, or its reaching def is otherwise never read
         calls = [i for i, x in enumerate(self.ins) if x.kind == "call"]
         for i in calls:
             self.ins[i].defs = [0, 1, 2, 3, 12, 14]
@@ -316,7 +300,6 @@ class Func:
                 for d in ds[1:]:
                     union(ds[0], d)
         self.find = find
-        # liveness per reg (backward)
         live_in = [set() for _ in range(n)]
         live_out = [set() for _ in range(n)]
         changed = True
@@ -377,7 +360,7 @@ class Func:
             for b in live0:
                 if a and b and a != b and a in webs and b in webs:
                     inter[a].add(b)
-        # post-RA scheduling reorders within a block: webs present in the same block may have overlapped
+        # post-RA scheduling: webs sharing a block may have overlapped
         leaders = {0} | {s for i, ss in enumerate(self.succ) for s in ss if len(self.pred[s]) != 1 or self.ins[self.pred[s][0]].kind != "op" or len(ss) > 1}
         leaders |= {i + 1 for i, x in enumerate(self.ins) if x.kind != "op"}
         blk, b = [], -1
@@ -430,7 +413,6 @@ def ok(f, w, colored, claimed):
 
 
 def find_order(f, budget=200000):
-    """DFS for a pop order reproducing every colour. None if none found within budget."""
     nodes = [w for w in f.webs if not f.webs[w]["pre"]]
     steps = [0]
 
@@ -454,7 +436,7 @@ def find_order(f, budget=200000):
 
 
 def forced(f):
-    """u -> v edges: u must be colored before v (sole neighbour holding a lower volatile colour)."""
+    """(u, v): u must be colored before v"""
     edges = set()
     for v, info in f.webs.items():
         if info["pre"]:
@@ -474,21 +456,27 @@ def load(path, symbol):
     return Func(disasm(path, symbol))
 
 
+def pair(t, m):
+    tk = {t.key(w): w for w in t.webs}
+    mk = {m.key(w): w for w in m.webs}
+    return tk, mk, set(tk) & set(mk)
+
+
+def forced_keys(f):
+    return {(f.key(a), f.key(b)) for a, b in forced(f)}
+
+
 _TCACHE = {}
 
 
 def flips(sym, mine_path, target_path):
-    """(rank flips, webs colored differently) -- a search objective. Target model is cached."""
     tkey = (str(target_path), sym, Path(target_path).stat().st_mtime)
     if tkey not in _TCACHE:
         _TCACHE[tkey] = load(target_path, sym)
     t, m = _TCACHE[tkey], load(mine_path, sym)
-    tk = {t.key(w): w for w in t.webs}
-    mk = {m.key(w): w for w in m.webs}
-    common = set(tk) & set(mk)
+    tk, mk, common = pair(t, m)
     nd = sum(t.webs[tk[k]]["reg"] != m.webs[mk[k]]["reg"] for k in common) + len(set(tk) ^ set(mk))
-    tkey = {(t.key(a), t.key(b)) for a, b in forced(t)}
-    mkey = {(m.key(a), m.key(b)) for a, b in forced(m)}
+    tkey, mkey = forced_keys(t), forced_keys(m)
     return sum((b, a) in mkey for a, b in tkey), nd
 
 
@@ -506,7 +494,7 @@ def _shape(f):
 
 
 def objective(sym, mine_path, target_path):
-    """(flips, webs differing, order_intact): order = reg- and slot-blind instruction stream equal."""
+    """(flips, webs differing, reg/slot-blind stream equal); used by the permuter scorer"""
     fl, nd = flips(sym, mine_path, target_path)
     t = _TCACHE[(str(target_path), sym, Path(target_path).stat().st_mtime)]
     return fl, nd, _shape(t) == _shape(load(mine_path, sym))
@@ -514,9 +502,7 @@ def objective(sym, mine_path, target_path):
 
 def report(sym, mine_path, target_path, verbose):
     t, m = load(target_path, sym), load(mine_path, sym)
-    tk = {t.key(w): w for w in t.webs}
-    mk = {m.key(w): w for w in m.webs}
-    common = set(tk) & set(mk)
+    tk, mk, common = pair(t, m)
     print(f"webs: target {len(t.webs)}, mine {len(m.webs)}, paired {len(common)}")
     diffs = [k for k in common if t.webs[tk[k]]["reg"] != m.webs[mk[k]]["reg"]]
     print(f"\n{len(diffs)} webs colored differently (target -> mine):")
@@ -527,13 +513,11 @@ def report(sym, mine_path, target_path, verbose):
         o = find_order(f)
         print(f"\n{side}: model {'REPRODUCES' if o else 'cannot reproduce'} its coloring"
               + (f" (pop order of {len(o)} webs found)" if o is not None else ""))
-    te, me = forced(t), forced(m)
-    tkey = {(t.key(a), t.key(b)) for a, b in te}
-    mkey = {(m.key(a), m.key(b)) for a, b in me}
-    flips = [(a, b) for a, b in tkey if (b, a) in mkey]
+    tkey, mkey = forced_keys(t), forced_keys(m)
+    fl = [(a, b) for a, b in tkey if (b, a) in mkey]
     only_t = [(a, b) for a, b in tkey - mkey if (b, a) not in mkey and a in common and b in common]
-    print(f"\nRANK FLIPS (target forces A before B, mine forces B before A): {len(flips)}")
-    for a, b in sorted(flips, key=lambda e: (t.desc(tk[e[0]]), t.desc(tk[e[1]]))):
+    print(f"\nRANK FLIPS (target forces A before B, mine forces B before A): {len(fl)}")
+    for a, b in sorted(fl, key=lambda e: (t.desc(tk[e[0]]), t.desc(tk[e[1]]))):
         print(f"  A {RNAME[t.webs[tk[a]]['reg']]:>3}/{RNAME[m.webs[mk[a]]['reg']]:<3} {t.desc(tk[a])}")
         print(f"  B {RNAME[t.webs[tk[b]]['reg']]:>3}/{RNAME[m.webs[mk[b]]['reg']]:<3} {t.desc(tk[b])}\n")
     if verbose:
@@ -543,9 +527,8 @@ def report(sym, mine_path, target_path, verbose):
 
 
 def validate(limit):
-    target = ROOT / "build/delinks/_dsd_gap@main_7.o"
-    tgt_dump = fn_diff.objdump(target)
-    objs = sorted((ROOT / "build/arm9/src").rglob("*.o"))
+    tgt_dump = fn_diff.objdump(GAP_O)
+    objs = sorted((BUILD / "arm9/src").rglob("*.o"))
     import asm_smell
     asm_defs = asm_smell.transcribed_symbols()
     tot = good = unsup = asm = 0
@@ -589,7 +572,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("symbol", nargs="?")
     ap.add_argument("--mine")
-    ap.add_argument("--target", default=str(ROOT / "build/delinks/_dsd_gap@main_7.o"))
+    ap.add_argument("--target", default=str(GAP_O))
     ap.add_argument("--validate", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("-v", action="store_true")

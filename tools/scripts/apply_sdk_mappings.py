@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
-"""Apply config/sdk_mappings.json renames (func_XXXX -> sdk_name) across all
-symbols.txt and arm9/src + lib sources. Idempotent; a `make delinks` prereq.
-Flags: --dry-run, -v/--verbose."""
 import argparse
-import json
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
+from common import INCLUDE, ROOT, SRC, sdk_mappings
+
 CONFIG_ROOT = ROOT / "config"
-SOURCE_ROOTS = [ROOT / "arm9" / "src", ROOT / "arm9" / "include", ROOT / "lib"]
+SOURCE_ROOTS = [SRC, INCLUDE, ROOT / "lib"]
 SOURCE_EXCLUDES = [ROOT / "lib" / "NitroSDK", ROOT / "lib" / "mw-libraries"]
 
-# `tail` keeps trailing dsd flags (e.g. ` local`) -- the line is rebuilt from these
-# groups, so anything not captured is silently dropped on rename.
 SYMBOL_LINE_RE = re.compile(
     r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:)(?P<addr>0x[0-9a-fA-F]+)"
     r"(?P<tail>.*?)\s*$"
@@ -23,10 +17,8 @@ SYMBOL_LINE_RE = re.compile(
 
 
 def load_mappings():
-    with open(MAPPING_FILE, "r", encoding="utf-8") as f:
-        data = json.load(f)
     by_addr = {}
-    for entry in data.get("mappings", []):
+    for entry in sdk_mappings():
         addr = entry["addr"].lower()
         if addr in by_addr:
             sys.exit(f"sdk_mappings.json: duplicate addr {addr}")
@@ -34,16 +26,12 @@ def load_mappings():
     return by_addr
 
 
-def find_symbols_files():
-    return sorted(CONFIG_ROOT.rglob("symbols.txt"))
-
-
 def find_source_files():
     out = []
     for root in SOURCE_ROOTS:
         if not root.exists():
             continue
-        for ext in ("*.c", "*.h"):
+        for ext in ("*.c", "*.cpp", "*.h"):
             for path in root.rglob(ext):
                 if any(ex in path.parents for ex in SOURCE_EXCLUDES):
                     continue
@@ -122,13 +110,13 @@ def rename_in_sources(source_files, renames, dry_run, verbose):
 
 
 def main():
-    ap = argparse.ArgumentParser(description=__doc__)
+    ap = argparse.ArgumentParser(description="Apply config/sdk_mappings.json renames to symbols.txt and sources.")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--verbose", "-v", action="store_true")
     args = ap.parse_args()
 
     mappings = load_mappings()
-    symbols_files = find_symbols_files()
+    symbols_files = sorted(CONFIG_ROOT.rglob("symbols.txt"))
     source_files = find_source_files()
 
     renames, unmatched = rename_in_symbols(symbols_files, mappings, args.dry_run, args.verbose)

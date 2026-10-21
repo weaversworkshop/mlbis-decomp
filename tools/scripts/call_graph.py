@@ -1,34 +1,23 @@
 #!/usr/bin/env python3
-"""Vertical Mermaid call graph for a delinked target: touched funcs (have an
-objdiff match %) + one frontier layer of their untouched callees = what to do
-next. Color = match %; shape = game/SDK/leaf/frontier.
-Usage: call_graph.py <target> --report <json> [-o F] [--root FUNC] [--depth N]
-       [--all] [--undone] [--leaves]."""
 import argparse
-import json
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-SDK_MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
+from build_todo import asm_functions, first_addr, parse_report
+from common import ROOT, load_json, sdk_mappings
 
-START_RE = re.compile(r"^\s*(?:arm|thumb)_func_start\s+(\S+)")
-END_RE = re.compile(r"^\s*(?:arm|thumb)_func_end\s+(\S+)")
-ADDR_RE = re.compile(r"^\s*\S+:\s*;\s*(0x[0-9a-fA-F]+)")
-# bl + optional condition (NOT blt/ble/bls which are b<cond> branches)
 BL_RE = re.compile(r"^\s*bl(?:eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al)?\s+(\S+)")
 BLX_RE = re.compile(r"^\s*blx\s+(\S+)")
-B_RE = re.compile(r"^\s*b\s+(\S+)")           # unconditional tail-call branch
-WORD_RE = re.compile(r"^\s*(?:[.\w]+:\s*)?\.word\s+(\S+)\s*$")  # optional local-label prefix (literal pools)
+B_RE = re.compile(r"^\s*b\s+(\S+)")
+WORD_RE = re.compile(r"^\s*(?:[.\w]+:\s*)?\.word\s+(\S+)\s*$")
 
-# match% -> (mermaid classDef name, fill color)
 CLASSES = [
-    ("done", "#64dd17"),   # 100   lime green
-    ("near", "#9ccc65"),   # <100  yellow-green
-    ("mid",  "#fdd835"),   # <60   yellow
-    ("low",  "#e53935"),   # <=25  red
-    ("none", "#bdbdbd"),   # 0     gray
+    ("done", "#64dd17"),
+    ("near", "#9ccc65"),
+    ("mid",  "#fdd835"),
+    ("low",  "#e53935"),
+    ("none", "#bdbdbd"),
 ]
 
 
@@ -37,71 +26,41 @@ def pct_class(pct):
         return "none"
     if pct >= 100:
         return "done"
-    if pct < 25 or pct == 25:
+    if pct <= 25:
         return "low"
     if pct < 60:
         return "mid"
     return "near"
 
 
-def load_sdk_addrs():
-    if not SDK_MAPPING_FILE.exists():
-        return set()
-    data = json.loads(SDK_MAPPING_FILE.read_text(encoding="utf-8"))
-    return {e["addr"].lower() for e in data.get("mappings", [])}
+def call_targets(body):
+    out = set()
+    for ln in body:
+        cm = BL_RE.match(ln) or BLX_RE.match(ln) or B_RE.match(ln)
+        if cm:
+            out.add(cm.group(1))
+        wm = WORD_RE.match(ln)
+        if wm:
+            out.add(wm.group(1))
+    return out
 
 
 def parse_asm(path):
-    funcs = {}            # name -> {"address": str, "targets": set[str]}
-    lines = Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
-    cur = None
-    for ln in lines:
-        m = START_RE.match(ln)
-        if m:
-            cur = m.group(1)
-            funcs[cur] = {"address": "", "targets": set()}
-            continue
-        if END_RE.match(ln):
-            cur = None
-            continue
-        if cur is None:
-            continue
-        info = funcs[cur]
-        if not info["address"]:
-            am = ADDR_RE.match(ln)
-            if am:
-                info["address"] = am.group(1)
-        for rx in (BL_RE, BLX_RE, B_RE):
-            cm = rx.match(ln)
-            if cm:
-                info["targets"].add(cm.group(1))
-                break
-        wm = WORD_RE.match(ln)
-        if wm:
-            info["targets"].add(wm.group(1))
-    return funcs
+    return {name: {"address": first_addr(body), "targets": call_targets(body)}
+            for name, body in asm_functions(path)}
 
 
-def parse_report(path):
-    report = json.load(sys.stdin) if path == "-" else json.loads(Path(path).read_text(encoding="utf-8"))
-    out = {}
-    for unit in report.get("units", []):
-        for fn in unit.get("functions", []):
-            pct = fn.get("fuzzy_match_percent")
-            if pct is None:
-                continue
-            n = fn["name"]
-            if n not in out or pct > out[n]:
-                out[n] = pct
-    return out
+def best_pcts(report):
+    return {name: max(pct for _unit, pct in slot.values())
+            for name, slot in parse_report(report).items()}
 
 
 def node_text(nid, name, is_sdk, is_leaf, is_frontier, is_caller=False):
     label = f'"{name}"'
-    if is_caller:                         # untouched caller: inbound next target
-        return f"{nid}[\\{label}\\]"      # reverse parallelogram
-    if is_frontier:                       # untouched callee: next target
-        return f"{nid}[/{label}/]"        # parallelogram
+    if is_caller:
+        return f"{nid}[\\{label}\\]"
+    if is_frontier:
+        return f"{nid}[/{label}/]"
     if is_sdk and is_leaf:
         return f"{nid}(({label}))"
     if is_sdk:
@@ -119,7 +78,7 @@ def main():
     ap.add_argument("--out", "-o", help="output .mmd (default: <target>_callgraph.mmd)")
     ap.add_argument("--root", help="only graph the subtree reachable from this function")
     ap.add_argument("--depth", type=int, default=0, help="max depth for --root (0 = unlimited)")
-    ap.add_argument("--undone", action="store_true", help="hide functions already at 100%")
+    ap.add_argument("--undone", action="store_true", help="hide functions already at 100%%")
     ap.add_argument("--leaves", action="store_true", help="only leaf nodes and their direct callers")
     ap.add_argument("--all", action="store_true",
                     help="include EVERY function (touched + all untouched), fully expanded")
@@ -139,10 +98,9 @@ def main():
     out_path = args.out or str(ROOT / f"{args.target}_callgraph.mmd")
 
     funcs = parse_asm(asm_path)
-    pcts = parse_report(args.report)
-    sdk_addrs = load_sdk_addrs()
+    pcts = best_pcts(load_json(args.report))
+    sdk_addrs = {e["addr"].lower() for e in sdk_mappings()}
 
-    # "touched" = has a match % (a game .c file or a mapped SDK function).
     touched = {n for n in funcs if n in pcts}
     sdk_nodes = {n for n in funcs if funcs[n]["address"].lower() in sdk_addrs}
     caller_frontier = set()
@@ -151,49 +109,37 @@ def main():
     elif args.touched_only:
         nodes, frontier_nodes = set(touched), set()
     else:
-        # DEFAULT: touched functions + ONE layer of the untouched functions they call
-        # (the "frontier" = what to go after next). Frontier nodes are NOT expanded, so
-        # the graph shows where each trail leads but stops there.
         frontier_nodes = {t for n in touched for t in funcs[n]["targets"]
                           if t in funcs and t not in touched}
         nodes = touched | frontier_nodes
 
-    # --callers: inbound mirror of the callee frontier. Untouched functions that call into
-    # a touched node -- "what becomes tractable now that this is understood". Terminal like
-    # the callee frontier (not expanded). A node that is ALSO a callee frontier keeps its
-    # callee identity (downstream is the primary meaning); only pure callers get caller style.
     if args.callers and not args.all:
+        # a node in both frontiers keeps callee style
         caller_frontier = {c for c in funcs if c not in touched
                            and any(t in touched for t in funcs[c]["targets"])}
         caller_frontier -= frontier_nodes
         frontier_nodes |= caller_frontier
         nodes |= caller_frontier
 
-    # frontier nodes are terminal: only touched nodes (or every node, with --all) emit edges
     expanders = nodes if args.all else (nodes - frontier_nodes)
     edges = set()
     out_adj = {n: set() for n in nodes}
     in_adj = {n: set() for n in nodes}
+
+    def add_edges(src, allowed):
+        for t in funcs[src]["targets"]:
+            if t in allowed and t != src:
+                edges.add((src, t))
+                out_adj[src].add(t)
+                in_adj[t].add(src)
+
     for name in expanders:
-        for t in funcs[name]["targets"]:
-            if t in nodes and t != name:
-                edges.add((name, t))
-                out_adj[name].add(t)
-                in_adj[t].add(name)
-
-    # caller frontier is terminal (not in expanders), so emit only its single inbound edge
-    # into the touched node that pulled it in -- not its other (off-graph) calls.
+        add_edges(name, nodes)
     for c in caller_frontier:
-        for t in funcs[c]["targets"]:
-            if t in touched and t != c:
-                edges.add((c, t))
-                out_adj[c].add(t)
-                in_adj[t].add(c)
+        add_edges(c, touched)
 
-    # a leaf is a non-frontier node that calls nothing else in the graph
     leaves = {n for n in nodes if n not in frontier_nodes and not out_adj[n]}
 
-    # ---- scope selection ----
     keep = set(nodes)
     if args.root:
         if args.root not in nodes:
@@ -203,7 +149,7 @@ def main():
             keep |= frontier
             frontier = {t for n in frontier for t in out_adj[n]} - keep
             d += 1
-        if args.callers:                       # also pull in the root's direct callers
+        if args.callers:
             keep |= {c for c in in_adj[args.root] if c in nodes}
     if args.leaves:
         keep &= (leaves | {c for lf in leaves for c in in_adj[lf]})
@@ -215,22 +161,16 @@ def main():
     keep_edges = [(a, b) for (a, b) in edges if a in keep and b in keep]
 
     if args.connected_only:
-        linked = {n for e in keep_edges for n in e}
-        keep &= linked
-        keep_edges = [(a, b) for (a, b) in keep_edges if a in keep and b in keep]
+        keep &= {n for e in keep_edges for n in e}
 
-    # recompute leaves against the FINAL graph: a node whose edges were all
-    # filtered out (e.g. game func that only called now-dropped SDK nodes) is a leaf
-    kept_out = {n: set() for n in keep}
-    for a, b in keep_edges:
-        kept_out[a].add(b)
-    leaves = {n for n in keep if n not in frontier_nodes and not kept_out[n]}
+    # recompute: filtering can strip a node's last edge
+    has_out = {a for a, _ in keep_edges}
+    leaves = {n for n in keep if n not in frontier_nodes and n not in has_out}
 
     if len(keep) > args.max_nodes:
         print(f"WARNING: {len(keep)} nodes (> --max-nodes {args.max_nodes}); "
               f"consider --root/--undone/--leaves to scope it down.", file=sys.stderr)
 
-    # ---- emit mermaid ----
     nid = {n: "n%d" % i for i, n in enumerate(sorted(keep))}
     by_class = {c: [] for c, _ in CLASSES}
     by_class["frontier"] = []
@@ -246,8 +186,7 @@ def main():
         is_caller = n in caller_frontier
         is_front = n in frontier_nodes and not is_caller
         is_sdk = funcs[n]["address"].lower() in sdk_addrs
-        is_leaf = n in leaves
-        L.append("  " + node_text(nid[n], n, is_sdk, is_leaf, is_front, is_caller))
+        L.append("  " + node_text(nid[n], n, is_sdk, n in leaves, is_front, is_caller))
         if is_caller:
             by_class["caller"].append(nid[n])
         elif is_front:
@@ -256,9 +195,9 @@ def main():
             by_class[pct_class(pcts.get(n))].append(nid[n])
     for a, b in sorted(keep_edges):
         L.append(f"  {nid[a]} --> {nid[b]}")
-    for cname in [c for c, _ in CLASSES] + ["frontier", "caller"]:
-        if by_class[cname]:
-            L.append(f"  class {','.join(by_class[cname])} {cname}")
+    for cname, ids in by_class.items():
+        if ids:
+            L.append(f"  class {','.join(ids)} {cname}")
 
     Path(out_path).write_text("\n".join(L) + "\n", encoding="utf-8")
     n_leaf = len(keep & leaves)

@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
-"""Find SDK funcs still named func_XXXX by normalized-disassembly content match
-(masks branch/call targets + relocated operands; keeps pool consts + ISA).
-Usage: tu_diff.py [SDK.o [TARGET.o]] | --all [--new] [--low] [--min N].
-Run `make sdk` first so build/lib/**/*.o exist."""
 import argparse
-import json
+import difflib
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-OBJDUMP = "arm-none-eabi-objdump"
-GAP_DEFAULT = ROOT / "build" / "delinks" / "_dsd_gap@main_7.o"
-SYMBOLS = ROOT / "config" / "arm9" / "symbols.txt"
-MAPPINGS = ROOT / "config" / "sdk_mappings.json"
+from common import BUILD, OBJDUMP, ROOT, SDK_MAPPINGS as MAPPINGS, SYMBOLS, read_symbols, sdk_mappings
+from common import GAP_O as GAP_DEFAULT
 
 FUNC_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:$")
 SECTION_RE = re.compile(r"^Disassembly of section (.+):$")
@@ -25,21 +18,22 @@ BRANCH_RE = re.compile(
     r"^(b|bl|bx|blx|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble"
     r"|bhs|blo|bal)(\.w)?$"
 )
+POOL_REF_RE = re.compile(r"\[pc, #-?\d+\]\s*@\s*([0-9a-fA-F]+)\b")
+
+
+def sdk_objects():
+    return sorted((BUILD / "lib").rglob("*.o"))
 
 
 def disasm(objfile):
-    """Return ordered list of (name, start_addr, end_addr, insns).
-
-    Each insn is (addr, text, has_reloc). Relocations are attached to the
-    immediately preceding instruction positionally -- per-function sections in
-    a relocatable .o restart at address 0, so an address-keyed map collides.
-    """
+    """[(name, section, start, end, [(addr, raw, text, reloc)])]. Sections are
+    counted, not named: per-function sections all restart at address 0."""
     out = subprocess.run(
         [OBJDUMP, "-dr", str(objfile)], capture_output=True, text=True
     ).stdout
     funcs = []
     cur = None
-    section = 0  # per-function sections all named ".text" -> count instances
+    section = 0
     for line in out.splitlines():
         if SECTION_RE.match(line):
             section += 1
@@ -47,48 +41,34 @@ def disasm(objfile):
         m = FUNC_RE.match(line)
         if m:
             name = m.group(1)
-            if name.startswith(".L") or name.startswith("$") or name.startswith(".word"):
-                continue  # local label, keep accumulating in current function
+            if name.startswith((".L", "$", ".word")):
+                continue
             cur = {"name": name, "section": section, "start": None, "insns": []}
             funcs.append(cur)
             continue
         m = RELOC_RE.match(line)
         if m and cur is not None and cur["insns"]:
-            reloc_off = int(m.group(1), 16)
             a, b, t, _ = cur["insns"][-1]
-            # Only attach if the reloc is FOR this instruction (offset matches).
-            # A reloc past the last insn belongs to a trailing literal-pool word
-            # that objdump collapsed to '...' (zero-filled + reloc'd in the .o);
-            # blindly attaching it to the final pop/ldmia was turning EXACT SDK
-            # matches into phantom 1-insn near-matches (the `pop <R>` artifact).
-            if reloc_off == a:
+            # a reloc past the last insn belongs to a pool word objdump collapsed to '...'
+            if int(m.group(1), 16) == a:
                 cur["insns"][-1] = (a, b, t, m.group(2))
             continue
         m = INSN_RE.match(line)
         if m and cur is not None:
             addr = int(m.group(1), 16)
-            raw = m.group(2).replace(" ", "")
-            text = m.group(3)
             if cur["start"] is None:
                 cur["start"] = addr
-            cur["insns"].append((addr, raw, text, None))
+            cur["insns"].append((addr, m.group(2).replace(" ", ""), m.group(3), None))
             continue
-        m = DATA_RE.match(line)  # bare pool word (one tab, no mnemonic column)
+        m = DATA_RE.match(line)
         if m and cur is not None:
             cur["insns"].append((int(m.group(1), 16), m.group(2), ".word", None))
-    result = []
-    for f in funcs:
-        if not f["insns"]:
-            continue
-        end = f["insns"][-1][0] + 4
-        result.append((f["name"], f["section"], f["start"], end, f["insns"]))
-    return result
+    return [(f["name"], f["section"], f["start"], f["insns"][-1][0] + 4, f["insns"])
+            for f in funcs if f["insns"]]
 
 
 def build_word_map(funcs):
-    """(section, addr) -> ('abs', value) | ('rel', symbol) for every word, read
-    from the raw-bytes column (the gap renders pool data as bare hex, not
-    `.word`). Keyed by section because per-function sections restart at addr 0."""
+    """(section, addr) -> ('abs', value) | ('rel', symbol)."""
     wm = {}
     for _name, section, _start, _end, insns in funcs:
         for addr, raw, _text, reloc in insns:
@@ -99,23 +79,16 @@ def build_word_map(funcs):
     return wm
 
 
-POOL_REF_RE = re.compile(r"\[pc, #-?\d+\]\s*@\s*([0-9a-fA-F]+)\b")
-
-
 def pool_refs(insns, section, word_map):
-    """Ordered list of pool constants this function loads via [pc, #N],
-    resolved by the objdump '@ <addr>' annotation -> robust to pool placement."""
     refs = []
-    for addr, raw, text, reloc in insns:
+    for _addr, _raw, text, _reloc in insns:
         m = POOL_REF_RE.search(text)
         if m:
             refs.append(word_map.get((section, int(m.group(1), 16)), ("abs", None)))
     return refs
 
 
-def normalize(name, start, end, insns):
-    # Record instruction set so a Thumb function can't match an ARM one with the
-    # same mnemonic skeleton (objdiff caught OS_Init: SDK Thumb vs ROM ARM).
+def normalize(start, end, insns):
     isa = "thumb" if any(
         len(raw) == 4 and not t.strip().startswith(".") for _a, raw, t, _r in insns
     ) else "arm"
@@ -128,21 +101,12 @@ def normalize(name, start, end, insns):
             continue
         mn = parts[0]
         ops = parts[1] if len(parts) > 1 else ""
-        if mn == ".word" or mn.startswith(".byte") or mn.startswith(".short"):
-            continue  # literal pool / data
+        if mn == ".word" or mn.startswith((".byte", ".short")):
+            continue
         if BRANCH_RE.match(mn):
-            # external call (resolved address outside fn, OR R_ARM_PC24 reloc)
-            # and local branch (relative offset) must normalize identically
-            # whether or not the .o has resolved the target.
             m = re.match(r"^([0-9a-f]+)\b", ops)
-            if has_reloc:
-                norm.append(f"{mn} <C>")
-            elif m:
-                tgt = int(m.group(1), 16)
-                if start <= tgt < end:
-                    norm.append(f"{mn} {tgt - addr:+d}")
-                else:
-                    norm.append(f"{mn} <C>")
+            if not has_reloc and m and start <= int(m.group(1), 16) < end:
+                norm.append(f"{mn} {int(m.group(1), 16) - addr:+d}")
             else:
                 norm.append(f"{mn} <C>")
             continue
@@ -159,17 +123,14 @@ def load_funcs(objfile):
     wmap = build_word_map(funcs)
     out = {}
     for name, section, start, end, insns in funcs:
-        key = normalize(name, start, end, insns)
+        key = normalize(start, end, insns)
         if key:
             out[name] = (key, pool_refs(insns, section, wmap))
     return out
 
 
 def verify_pool(sdk_c, gap_c):
-    """Strict literal-pool check. When both sides load a plain constant, the
-    values must be identical (catches same-shape funcs that read a different
-    MMIO reg / mask). Symbol refs (either side relocated) can't be byte-compared
-    -- accept them; the exact instruction match already constrains the rest."""
+    """Plain constants must be equal; symbol refs can't be byte-compared, so accept them."""
     if len(sdk_c) != len(gap_c):
         return False, f"pool count {len(sdk_c)}!={len(gap_c)}"
     nconst = nref = 0
@@ -184,20 +145,13 @@ def verify_pool(sdk_c, gap_c):
 
 
 def load_symbol_addrs():
-    addrs = {}
-    if SYMBOLS.exists():
-        for line in SYMBOLS.read_text(encoding="utf-8").splitlines():
-            m = re.match(r"(\S+)\s+kind:function.*addr:0x([0-9a-fA-F]+)", line)
-            if m:
-                addrs[m.group(1)] = int(m.group(2), 16)
-    return addrs
+    if not SYMBOLS.exists():
+        return {}
+    return {s.name: s.addr for s in read_symbols() if s.kind == "function"}
 
 
 def load_mapped_addrs():
-    if not MAPPINGS.exists():
-        return set()
-    d = json.loads(MAPPINGS.read_text(encoding="utf-8"))
-    return {int(m["addr"], 16) for m in d.get("mappings", [])}
+    return {int(m["addr"], 16) for m in sdk_mappings()}
 
 
 def match_object(sdk_o, gap_funcs, gap_index, sym_addrs, mapped, only_new, min_insns):
@@ -225,24 +179,72 @@ def match_object(sdk_o, gap_funcs, gap_index, sym_addrs, mapped, only_new, min_i
     return rows, len(sdk_funcs)
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("sdk_o", nargs="?", help="compiled SDK .o")
-    ap.add_argument("target_o", nargs="?", default=None)
-    ap.add_argument("--gap-o", dest="gap_o", default=None,
-                    help="gap/target .o to sweep (default _dsd_gap@main_7.o); "
-                         "e.g. build/delinks/_dsd_gap@itcm_1.o")
-    ap.add_argument("--all", action="store_true", help="all built SDK .o vs gap")
-    ap.add_argument("--new", action="store_true", help="only unmapped/func_ hits")
-    ap.add_argument("--min", type=int, default=8,
-                    help="min insns for a high-confidence match (default 8)")
-    ap.add_argument("--low", action="store_true",
-                    help="also show low-confidence (short/ambiguous) matches")
-    args = ap.parse_args()
+def insn_len(key):
+    return sum(1 for k in key if not k.startswith(".isa"))
 
-    # gap target precedence: --gap-o, then positional target_o, then default main_7.
-    target_o = args.gap_o or args.target_o or str(GAP_DEFAULT)
 
+def fuzzy(args, target_o):
+    sys.stderr.write("loading SDK objects...\n")
+    sdk = {}
+    for o in sdk_objects():
+        try:
+            for name, (key, _refs) in load_funcs(o).items():
+                sdk.setdefault(name, (key, o))
+        except Exception:
+            continue
+    by_len = {}
+    for name, (key, src) in sdk.items():
+        by_len.setdefault(insn_len(key), []).append((name, key, src))
+    sys.stderr.write(f"  {len(sdk)} SDK functions indexed\n")
+
+    gap = load_funcs(Path(target_o))
+    sdk_keyset = {k for k, _ in sdk.values()}
+
+    results = []
+    for gname, (gkey, _refs) in gap.items():
+        if not gname.startswith("func_"):
+            continue
+        gl = insn_len(gkey)
+        if gl < args.min or gkey in sdk_keyset:
+            continue
+        lo, hi = int(gl * (1 - args.lentol)), int(gl * (1 + args.lentol)) + 1
+        best = None
+        for L in range(lo, hi + 1):
+            for sname, skey, src in by_len.get(L, []):
+                sm = difflib.SequenceMatcher(None, gkey, skey)
+                if sm.real_quick_ratio() < args.sim or sm.quick_ratio() < args.sim:
+                    continue
+                r = sm.ratio()
+                if args.sim <= r < 1.0 and (best is None or r > best[0]):
+                    ndiff = (len(gkey) + len(skey)) - 2 * sum(
+                        b.size for b in sm.get_matching_blocks())
+                    best = (r, sname, src, ndiff, skey)
+        if best:
+            results.append((best[0], gname, gl, best[1], best[3], best[2], gkey, best[4]))
+    results.sort(reverse=True)
+
+    if args.show:
+        for sim, gname, gl, sname, ndiff, src, gkey, skey in results:
+            if gname == args.show:
+                print(f"# {gname} ~ {sname}  sim={sim*100:.1f}%  diffs={ndiff}")
+                for line in difflib.unified_diff(
+                    [k for k in gkey if not k.startswith('.isa')],
+                    [k for k in skey if not k.startswith('.isa')],
+                    fromfile=gname, tofile=sname, lineterm=""):
+                    print(line)
+                return
+        print(f"{args.show}: no near-match candidate found")
+        return
+
+    print(f"\n=== FUZZY SDK NEAR-MATCHES (sim >= {args.sim}, >= {args.min} insns) ===")
+    print(f"{len(results)} unmapped gap funcs have a close-but-not-exact SDK candidate\n")
+    print(f"{'sim':>6} {'diffs':>5}  {'gap func':<18} {'~ SDK candidate':<28} insns  source")
+    for sim, gname, gl, sname, ndiff, src, _gk, _sk in results:
+        lib = str(src).split("/lib/")[-1].split("/src/")[0].split("/")[-1]
+        print(f"{sim*100:5.1f}% {ndiff:5d}  {gname:<18} {sname:<28} {gl:>4}   {lib}")
+
+
+def exact(args, ap, target_o):
     gap_funcs = load_funcs(target_o)
     gap_index = {}
     for tname, (key, _consts) in gap_funcs.items():
@@ -252,7 +254,7 @@ def main():
     mapped = load_mapped_addrs()
 
     if args.all:
-        sdk_os = sorted((ROOT / "build" / "lib").rglob("*.o"))
+        sdk_os = sdk_objects()
     else:
         if not args.sdk_o:
             ap.error("provide an SDK .o or use --all")
@@ -297,6 +299,37 @@ def main():
               f"literal constant differs -- NOT the same function)")
     print(f"\nNEW unmapped candidates: {total_new_hi} high-confidence"
           f", {total_new_lo} low-confidence.")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("sdk_o", nargs="?", help="compiled SDK .o")
+    ap.add_argument("target_o", nargs="?", default=None)
+    ap.add_argument("--gap-o", dest="gap_o", default=None,
+                    help="gap/target .o to sweep (default _dsd_gap@main_7.o); "
+                         "e.g. build/delinks/_dsd_gap@itcm_1.o")
+    ap.add_argument("--all", action="store_true", help="all built SDK .o vs gap")
+    ap.add_argument("--new", action="store_true", help="only unmapped/func_ hits")
+    ap.add_argument("--min", type=int, default=None,
+                    help="min insns for a high-confidence match (default 8; --fuzzy: 12)")
+    ap.add_argument("--low", action="store_true",
+                    help="also show low-confidence (short/ambiguous) matches")
+    ap.add_argument("--fuzzy", action="store_true",
+                    help="near-match scan: unmapped gap funcs vs closest SDK skeleton")
+    ap.add_argument("--sim", type=float, default=0.85,
+                    help="--fuzzy: min similarity (default 0.85; exact=1.0 excluded)")
+    ap.add_argument("--lentol", type=float, default=0.20,
+                    help="--fuzzy: only compare funcs within this relative length delta")
+    ap.add_argument("--show", help="--fuzzy: full skeleton diff for one gap func vs its best candidate")
+    args = ap.parse_args()
+    if args.min is None:
+        args.min = 12 if args.fuzzy else 8
+
+    target_o = args.gap_o or args.target_o or str(GAP_DEFAULT)
+    if args.fuzzy:
+        fuzzy(args, target_o)
+    else:
+        exact(args, ap, target_o)
 
 
 if __name__ == "__main__":

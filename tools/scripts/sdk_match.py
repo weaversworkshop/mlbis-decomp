@@ -1,51 +1,53 @@
 #!/usr/bin/env python3
-"""Byte+size-match every compiled SDK function against unmapped ROM func_XXXX
-and propose mappings (unambiguous only; skips byte-identical-sibling collisions).
-Flags: --apply (write sdk_mappings.json + units), --json, --min-insns N.
-Loop with `make delinks` until 0 proposals; then run sdk_disambiguate.py."""
 import argparse
 import bisect
 import json
 import re
 import subprocess
-import sys
+from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-OBJDUMP = "C:/msys64/ucrt64/bin/arm-none-eabi-objdump.exe"
-ROM_O = ROOT / "build" / "delinks" / "_dsd_gap@main_7.o"
-SDK_O_ROOTS = [ROOT / "build" / "lib" / "NitroSDK", ROOT / "build" / "lib" / "NitroSystem"]
-SYMBOLS = ROOT / "config" / "arm9" / "symbols.txt"
+from common import BUILD, OBJDUMP, ROOT, SYMBOLS, die, load_json, read_symbols
+from common import GAP_O as ROM_O, SDK_MAPPINGS as CFG_PATH
+
+SDK_O_ROOTS = [BUILD / "lib" / "NitroSDK", BUILD / "lib" / "NitroSystem"]
 
 HDR = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
 INSN = re.compile(r"^\s+([0-9a-f]+):\s+[0-9a-f ]+?\t(.*)$")
-# robust line for the delinked ROM: addr, hex encoding, then text -- catches data
-# lines like `....`/`.word` that objdump renders space-separated (no tab).
+# also catches data lines objdump renders space-separated (no tab)
 ROM_LINE = re.compile(r"^\s+([0-9a-f]+):\s+[0-9a-f]{2,8}(?: [0-9a-f]{2,8})*\s+(.+?)\s*$")
+RELOC = re.compile(r"^\s+([0-9a-f]+):\s+R_ARM_\S+\s+(\S+)")
+ADDEND = re.compile(r"^(.*?)([+-]0x[0-9a-f]+)$")
+FUNC_NAME = re.compile(r"func_[0-9a-f]+")
+SYM_TEXT = re.compile(r"([0-9a-f]+)\s+\S+\s+F\s+\.text\s+([0-9a-f]+)\s+(\S+)\s*$")
+
+
+def objdump(flag, obj):
+    try:
+        return subprocess.run([OBJDUMP, flag, str(obj)], capture_output=True, text=True).stdout
+    except Exception:
+        return None
 
 
 def normalize(body):
-    """body: list of raw 'mnemonic operands' strings -> normalized tuple."""
     out = []
     for t in body:
         t = re.sub(r"\s+;.*$", "", t)
         t = re.sub(r"\s+@.*$", "", t)
-        t = re.sub(r"<[^>]*>", "<t>", t)        # call/branch targets (symbol)
-        t = re.sub(r"\b[0-9a-f]+ <t>", "<t>", t)  # strip the b/bl target ADDRESS too
+        t = re.sub(r"<[^>]*>", "<t>", t)
+        t = re.sub(r"\b[0-9a-f]+ <t>", "<t>", t)
         t = re.sub(r"\[pc, #-?\w+\]", "[pc]", t)
         t = re.sub(r"\[pc, #-?\w+\]!", "[pc]", t)
-        if (t.startswith(".word") or t.startswith(".short") or t.startswith(".byte")
-                or t.startswith("....")):
-            t = ".word"                          # literal-pool entry (reloc or const)
+        if t.startswith((".word", ".short", ".byte", "....")):
+            t = ".word"
         out.append(t.strip())
     return tuple(out)
 
 
 def disasm_funcs(obj):
-    """obj path -> {func_name: (normalized_tuple, n_insns)}; uses one objdump call."""
-    try:
-        txt = subprocess.run([OBJDUMP, "-d", str(obj)], capture_output=True, text=True).stdout
-    except Exception:
+    """{func: (normalized, n_insns)}"""
+    txt = objdump("-d", obj)
+    if txt is None:
         return {}
     funcs, cur, body = {}, None, []
     for ln in txt.splitlines():
@@ -64,18 +66,13 @@ def disasm_funcs(obj):
 
 
 def disasm_rom(rom_o):
-    """Disassemble the delinked ROM, bucketing instructions into functions by each
-    function's [addr, addr+size) range from the object's OWN symbol table -- so internal
-    data-symbol labels (literal pools) do NOT truncate a function the way splitting on
-    `<label>:` does. Uses the .o's address space (consistent between -t and -d)."""
-    try:
-        tt = subprocess.run([OBJDUMP, "-t", str(rom_o)], capture_output=True, text=True).stdout
-        dd = subprocess.run([OBJDUMP, "-d", str(rom_o)], capture_output=True, text=True).stdout
-    except Exception:
+    """Buckets by symbol-table [addr, addr+size) so pool labels don't truncate a function."""
+    tt, dd = objdump("-t", rom_o), objdump("-d", rom_o)
+    if tt is None or dd is None:
         return {}
     ranges = []
     for ln in tt.splitlines():
-        m = re.match(r"([0-9a-f]+)\s+\S+\s+F\s+\.text\s+([0-9a-f]+)\s+(\S+)\s*$", ln)
+        m = SYM_TEXT.match(ln)
         if m:
             a, sz = int(m.group(1), 16), int(m.group(2), 16)
             ranges.append((a, a + sz, m.group(3)))
@@ -94,85 +91,93 @@ def disasm_rom(rom_o):
 
 
 def func_sizes(obj):
-    """obj path -> {func_name: byte_size} from the symbol table (exact)."""
-    try:
-        txt = subprocess.run([OBJDUMP, "-t", str(obj)], capture_output=True, text=True).stdout
-    except Exception:
+    txt = objdump("-t", obj)
+    if txt is None:
         return {}
     out = {}
     for ln in txt.splitlines():
-        m = re.match(r"[0-9a-f]+\s+\S+\s+F\s+\.text\s+([0-9a-f]+)\s+(\S+)\s*$", ln)
+        m = SYM_TEXT.match(ln)
         if m:
-            out[m.group(2)] = int(m.group(1), 16)
+            out[m.group(3)] = int(m.group(2), 16)
     return out
 
 
 def load_symbols():
-    """func name -> (int addr, int size); plus set of already-mapped (named) addrs."""
+    """(addr_of, size_of, addrs of already-named functions)"""
     addr_of, size_of, mapped_named = {}, {}, set()
-    for ln in SYMBOLS.read_text(encoding="utf-8", errors="replace").splitlines():
-        m = re.match(r"(\S+)\s+kind:function\([^)]*size=0x([0-9a-fA-F]+)\)\s+addr:(0x[0-9a-fA-F]+)", ln)
-        if not m:
+    for s in read_symbols():
+        if s.kind != "function" or s.size is None:
             continue
-        name, size, addr = m.group(1), int(m.group(2), 16), int(m.group(3), 16)
-        addr_of[name] = addr
-        size_of[name] = size
-        if not re.fullmatch(r"func_[0-9a-f]+", name):
-            mapped_named.add(addr)
+        addr_of[s.name] = s.addr
+        size_of[s.name] = s.size
+        if not FUNC_NAME.fullmatch(s.name):
+            mapped_named.add(s.addr)
     return addr_of, size_of, mapped_named
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--min-insns", type=int, default=3,
-                    help="ignore functions smaller than this unless part of a >=2 contiguous run")
-    ap.add_argument("--json", action="store_true", help="emit sdk_mappings.json entries")
-    ap.add_argument("--apply", action="store_true",
-                    help="merge clean proposals (mappings + units) into config/sdk_mappings.json")
-    args = ap.parse_args()
-
-    if not ROM_O.exists():
-        sys.exit(f"missing {ROM_O} (run `make delinks`)")
-
-    addr_of, size_of, mapped = load_symbols()
-    rom = disasm_rom(ROM_O)
-    # index ROM unmapped func_<addr> by normalized body -> [names]
-    rom_index = {}
-    for name, (body, n) in rom.items():
-        if not re.fullmatch(r"func_[0-9a-f]+", name):
-            continue
-        if addr_of.get(name) in mapped:
-            continue
-        rom_index.setdefault(body, []).append(name)
-
-    sdk_objs = []
+def sdk_objects():
+    """[(obj, source .c path as make spells it)]"""
+    objs = []
     for r in SDK_O_ROOTS:
-        sdk_objs += sorted(r.rglob("*.o")) if r.exists() else []
+        objs += sorted(r.rglob("*.o")) if r.exists() else []
+    return [(o, o.relative_to(BUILD).as_posix().replace(".o", ".c")) for o in objs]
 
-    # per source file: list of (sdk_func, rom_func, addr, n_insns, ambiguous)
+
+def lib_of(s):
+    return s.split("/libraries/")[1].split("/")[0] if "/libraries/" in s else "sdk"
+
+
+def unit_of(s):
+    return ("nns" if "NitroSystem" in s else "sdk") + "/" + lib_of(s) + "/" + Path(s).stem
+
+
+def apply_proposals(rows):
+    """rows: [(addr_int, sdk_name, src)] in insertion order -> (mappings added, units added)"""
+    cfg = load_json(CFG_PATH)
+    have_a = {e["addr"].lower() for e in cfg["mappings"]}
+    have_s = {u["source"] for u in cfg["objdiff_units"]}
+    nm = nu = 0
+    for a, name, src in rows:
+        ha = f"0x{a:08x}"
+        if ha.lower() not in have_a:
+            cfg["mappings"].append({"addr": ha, "sdk_name": name,
+                                    "library": lib_of(src), "confidence": "certain"})
+            have_a.add(ha.lower()); nm += 1
+        if src not in have_s:
+            cfg["objdiff_units"].append({"source": src,
+                                         "target": "build/delinks/_dsd_gap@main_7.o",
+                                         "name": unit_of(src)})
+            have_s.add(src); nu += 1
+    CFG_PATH.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
+    return nm, nu
+
+
+def match(args):
+    addr_of, size_of, mapped = load_symbols()
+    rom_index = {}
+    for name, (body, n) in disasm_rom(ROM_O).items():
+        if FUNC_NAME.fullmatch(name) and addr_of.get(name) not in mapped:
+            rom_index.setdefault(body, []).append(name)
+
     by_src = {}
-    for o in sdk_objs:
-        src = o.relative_to(ROOT / "build").as_posix().replace(".o", ".c")  # forward slashes for make
+    for o, src in sdk_objects():
         sizes = func_sizes(o)
         for sname, (body, n) in disasm_funcs(o).items():
             if n == 0:
                 continue
-            cands = rom_index.get(body, [])
-            # require EXACT byte-size equality too (rejects shape-only matches, e.g. OS_Init)
-            cands = [rf for rf in cands if sizes.get(sname) == size_of.get(rf)]
+            # exact byte size too: rejects shape-only matches (OS_Init)
+            cands = [rf for rf in rom_index.get(body, []) if sizes.get(sname) == size_of.get(rf)]
             if len(cands) == 1:
-                rf = cands[0]
-                by_src.setdefault(src, []).append((sname, rf, addr_of[rf], n, False))
+                by_src.setdefault(src, []).append((sname, cands[0], addr_of[cands[0]], n, False))
             elif len(cands) > 1:
                 by_src.setdefault(src, []).append((sname, None, None, n, True))
 
-    proposals = []  # (addr, sdk_name, src)
+    proposals = []
     print("=== SDK functions found in ROM (proposed mappings) ===\n")
     for src in sorted(by_src):
-        rows = [r for r in by_src[src] if r[1]]   # resolved only
+        rows = sorted((r for r in by_src[src] if r[1]), key=lambda r: r[2])
         if not rows:
             continue
-        rows.sort(key=lambda r: r[2])
         span = f"0x{rows[0][2]:08x}..0x{rows[-1][2]:08x}"
         contig = len(rows) >= 2
         amb = sum(1 for r in by_src[src] if r[4])
@@ -184,8 +189,6 @@ def main():
             print(f"      0x{a:08x}  {rf:18} -> {sname}{flag}")
             if ok:
                 proposals.append((a, sname, src))
-    # never propose the same ROM address twice (cross-file collision -> ambiguous)
-    from collections import Counter
     ac = Counter(p[0] for p in proposals)
     collisions = sorted({a for a, c in ac.items() if c > 1})
     proposals = [p for p in proposals if ac[p[0]] == 1]
@@ -194,10 +197,6 @@ def main():
               f"{[hex(a) for a in collisions]}")
     print(f"  TOTAL clean proposals: {len(proposals)} mappings across {len(by_src)} files")
 
-    lib_of = lambda s: s.split("/libraries/")[1].split("/")[0] if "/libraries/" in s else "sdk"
-    unit_of = lambda s: (("nns" if "NitroSystem" in s else "sdk") + "/" + lib_of(s)
-                         + "/" + Path(s).stem)
-
     if args.json:
         print("\n=== JSON (review, then merge into config/sdk_mappings.json) ===")
         for a, name, src in sorted(proposals):
@@ -205,24 +204,140 @@ def main():
                   f'"library": "{lib_of(src)}", "confidence": "certain" }},')
 
     if args.apply:
-        cfg_path = ROOT / "config" / "sdk_mappings.json"
-        cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
-        have_a = {e["addr"].lower() for e in cfg["mappings"]}
-        have_s = {u["source"] for u in cfg["objdiff_units"]}
-        nm = nu = 0
-        for a, name, src in sorted(proposals):
-            ha = f"0x{a:08x}"
-            if ha.lower() not in have_a:
-                cfg["mappings"].append({"addr": ha, "sdk_name": name,
-                                        "library": lib_of(src), "confidence": "certain"})
-                have_a.add(ha.lower()); nm += 1
-            if src not in have_s:
-                cfg["objdiff_units"].append({"source": src,
-                                             "target": "build/delinks/_dsd_gap@main_7.o",
-                                             "name": unit_of(src)})
-                have_s.add(src); nu += 1
-        cfg_path.write_text(json.dumps(cfg, indent=2) + "\n", encoding="utf-8")
-        print(f"\n  APPLIED: +{nm} mappings, +{nu} units -> {cfg_path.relative_to(ROOT)}")
+        nm, nu = apply_proposals(sorted(proposals))
+        print(f"\n  APPLIED: +{nm} mappings, +{nu} units -> {CFG_PATH.relative_to(ROOT)}")
+
+
+def sym_addr(sym, addr_of):
+    m = re.fullmatch(r"(?:data|func)_([0-9a-f]+)", sym)
+    if m:
+        return int(m.group(1), 16)
+    return addr_of.get(sym)
+
+
+def disasm_reloc(obj):
+    """{func: {'body': instructions-only normalized, 'relocs': [(sym, addend)]}}"""
+    txt = objdump("-dr", obj)
+    if txt is None:
+        return {}
+    funcs, cur, body, relocs = {}, None, [], []
+    for ln in txt.splitlines():
+        h = HDR.match(ln)
+        if h:
+            name = h.group(1)
+            if name.startswith((".L", "data_")) or "+" in name:
+                continue
+            if cur:
+                funcs[cur] = {"body": normalize(body), "relocs": relocs}
+            cur, body, relocs = name, [], []
+            continue
+        if cur is None:
+            continue
+        s = ROM_LINE.match(ln)
+        if s:
+            t = s.group(2).strip()
+            if normalize([t])[0] != ".word":
+                body.append(t)
+            continue
+        r = RELOC.match(ln)
+        if r:
+            sym, add = r.group(2), 0
+            m = ADDEND.match(sym)
+            if m:
+                sym, add = m.group(1), int(m.group(2), 16)
+            relocs.append((sym, add))
+    if cur:
+        funcs[cur] = {"body": normalize(body), "relocs": relocs}
+    return funcs
+
+
+def disambiguate(args):
+    syms = read_symbols()
+    addr_of = {s.name: s.addr for s in syms}
+    mapped_named = {s.name for s in syms
+                    if FUNC_NAME.fullmatch(s.name) is None and not s.name.startswith("data_")}
+
+    rom = disasm_reloc(ROM_O)
+    sdk = {}
+    for o, src in sdk_objects():
+        for name, info in disasm_reloc(o).items():
+            if info["body"]:
+                sdk[name] = {**info, "src": src}
+
+    # base(S) = ROM target of the twin reloc - SDK addend, voted across already-mapped funcs
+    votes = defaultdict(lambda: defaultdict(int))
+    for name, info in sdk.items():
+        if name not in mapped_named or name not in rom:
+            continue
+        sr, rr = info["relocs"], rom[name]["relocs"]
+        if len(sr) != len(rr):
+            continue
+        for (ssym, sadd), (rsym, radd) in zip(sr, rr):
+            ta = sym_addr(rsym, addr_of)
+            if ta is not None:
+                votes[ssym][(ta + radd) - sadd] += 1
+    base_rom = {sym: max(v.items(), key=lambda kv: kv[1])[0] for sym, v in votes.items()}
+
+    by_body = defaultdict(list)
+    for name, info in sdk.items():
+        by_body[info["body"]].append(name)
+
+    def reloc_match(sr, rr):
+        if len(sr) != len(rr):
+            return False
+        for (ssym, sadd), (rsym, radd) in zip(sr, rr):
+            if rsym == ssym:
+                if radd != sadd:
+                    return False
+                continue
+            ta = sym_addr(rsym, addr_of)
+            if not (ssym in base_rom and ta is not None and base_rom[ssym] + sadd == ta + radd):
+                return False
+        return True
+
+    proposals = []
+    for rf, info in rom.items():
+        if not FUNC_NAME.fullmatch(rf):
+            continue
+        cands = by_body.get(info["body"], [])
+        if len(cands) < 2:
+            continue
+        hits = sorted({s for s in cands if reloc_match(sdk[s]["relocs"], info["relocs"])})
+        if len(hits) == 1:
+            proposals.append((rf, hits[0], sdk[hits[0]]["src"]))
+
+    ac = Counter(p[0] for p in proposals)
+    proposals = [p for p in proposals if ac[p[0]] == 1]
+    nc = Counter(p[1] for p in proposals)
+    proposals = [p for p in proposals if nc[p[1]] == 1]
+
+    print(f"=== reloc-aware disambiguation: {len(proposals)} proposals "
+          f"({len(base_rom)} base symbols resolved) ===")
+    for rf, name, src in sorted(proposals):
+        print(f"  {rf}  -> {name}   [{Path(src).stem}]")
+
+    if args.apply and proposals:
+        nm, nu = apply_proposals([(addr_of[rf], n, s) for rf, n, s in sorted(proposals)])
+        print(f"\n  APPLIED: +{nm} mappings, +{nu} units")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--min-insns", type=int, default=3,
+                    help="ignore functions smaller than this unless part of a >=2 contiguous run")
+    ap.add_argument("--json", action="store_true", help="emit sdk_mappings.json entries")
+    ap.add_argument("--apply", action="store_true",
+                    help="merge clean proposals (mappings + units) into config/sdk_mappings.json")
+    ap.add_argument("--disambiguate", action="store_true",
+                    help="map byte-identical SDK siblings by their distinguishing reloc addend")
+    args = ap.parse_args()
+
+    if not ROM_O.exists():
+        die(f"missing {ROM_O} (run `make delinks`)", 1)
+    if args.disambiguate:
+        disambiguate(args)
+    else:
+        match(args)
 
 
 if __name__ == "__main__":

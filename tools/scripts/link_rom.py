@@ -1,39 +1,23 @@
 #!/usr/bin/env python3
-"""Relink every module from delinked objects and byte-compare against the ROM.
-
-  python tools/scripts/link_rom.py [-v] [--keep-carve]
-
-Pipeline: gen_delinks --with-data -> dsd delink -> dsd lcf -> patch_lcf -> mwldarm.
-The lcf's MEMORY block writes the module binaries itself (paths are relative to the
--o ELF's directory, hence build/link/build/).
-
-delinks.txt is ALWAYS restored on exit: carving moves target functions out of the gap,
-where obj_match cannot find them, so leaving a carve in place makes `make progress`
-report 0/0. Differences are reported, not fatal -- pass --strict
-to exit non-zero on any.
-"""
 import argparse
 import os
 import re
-import shutil
 import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+from common import BUILD, CONFIG, ROOT
+from patch_lcf import patch as patch_lcf
+
 SCRIPTS = ROOT / "tools" / "scripts"
-CFG = ROOT / "config" / "arm9" / "config.yaml"
-DELINKS_TXT = ROOT / "config" / "arm9" / "delinks.txt"
-STAMP = ROOT / "build" / "delinks" / ".stamp"
-BUILD = ROOT / "build"
+CFG = CONFIG / "config.yaml"
+DELINKS_TXT = CONFIG / "delinks.txt"
+STAMP = BUILD / "delinks" / ".stamp"
 LINK = BUILD / "link"
 LCF = BUILD / "arm9.lcf"
 OBJECTS = BUILD / "objects.txt"
 DSD = ROOT / "tools" / "bin" / ("dsd.exe" if os.name == "nt" else "dsd")
 MWLDARM = ROOT / "tools" / "mwccarm" / "2.0" / "sp2p3" / "mwldarm.exe"
 LICENSE = ROOT / "tools" / "mwccarm" / "license.dat"
-
-# Linked binary basename -> extracted reference.
 EXTRACT = ROOT / "extract"
 OV_RE = re.compile(r"^arm9_(ov\d+)$")
 
@@ -58,7 +42,7 @@ def run(cmd, what, env=None, quiet=True):
     return r.stdout + r.stderr
 
 
-def compare(verbose):
+def compare():
     rows, total, exact = [], 0, 0
     classes = {}
     for f in sorted((LINK / "build").glob("*.bin")):
@@ -70,13 +54,13 @@ def compare(verbose):
         if len(a) != len(b):
             rows.append((f.stem, "size %d vs %d" % (len(a), len(b))))
             continue
-        diff = [(i, x, y) for i, (x, y) in enumerate(zip(a, b)) if x != y]
+        diff = [(x, y) for x, y in zip(a, b) if x != y]
         total += len(diff)
         if diff:
             rows.append((f.stem, "%d bytes" % len(diff)))
-            for _, x, y in diff:
-                classes["0x%02x->0x%02x" % (x, y)] = \
-                    classes.get("0x%02x->0x%02x" % (x, y), 0) + 1
+            for x, y in diff:
+                k = "0x%02x->0x%02x" % (x, y)
+                classes[k] = classes.get(k, 0) + 1
         else:
             exact += 1
     return rows, total, exact, classes
@@ -101,8 +85,9 @@ def main():
             "gen_delinks", quiet=not args.verbose)
         run([DSD, "delink", "-c", CFG], "dsd delink")
         run([DSD, "lcf", "-c", CFG], "dsd lcf")
-        run([sys.executable, SCRIPTS / "patch_lcf.py", LCF], "patch_lcf",
-            quiet=not args.verbose)
+        msg = patch_lcf(LCF)
+        if args.verbose:
+            print(msg)
 
         # mwldarm resolves the MEMORY block's output paths relative to the ELF dir.
         (LINK / "build").mkdir(parents=True, exist_ok=True)
@@ -112,13 +97,14 @@ def main():
         if args.verbose:
             sys.stdout.write(log)
 
-        rows, total, exact, classes = compare(args.verbose)
+        rows, total, exact, classes = compare()
     finally:
         if args.keep_carve:
             print("link_rom: carve LEFT IN PLACE -- `make progress` will report 0/0")
         else:
+            # A carve moves targets out of the gap, so obj_match would report 0/0.
             DELINKS_TXT.write_bytes(saved)
-            STAMP.unlink(missing_ok=True)   # force an uncarved re-delink next time
+            STAMP.unlink(missing_ok=True)
 
     noref = [n for n, r in rows if r is None]
     bad = [(n, r) for n, r in rows if r]

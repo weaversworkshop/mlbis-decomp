@@ -1,38 +1,15 @@
 #!/usr/bin/env python3
-"""Classify a delinked target function as handwritten ASM vs compiled C.
-
-Usage: asm_smell.py <symbol> [<symbol>...] [--target PATH]
-
-Hard tells (any one => ASM, mwcc cannot emit it):
-  H1  restores lr from stack then `bx lr` (mwcc always pops to pc)
-  H2  frame push after the prologue (push/pop around an individual call)
-  H3  conditional ldm/stm (multi-reg transfer under a condition code)
-  H4  conditional instruction before any flag-setter (uses caller's flags)
-  H5  swp/mrs/msr/mcr/mrc
-  H6  computed pc dispatch into non-branch rows (mwcc tables are all `b`)
-
-Compiler tells (evidence of C) are counted and reported.
-Exit: 0 = looks C, 1 = ASM (hard tell), 2 = error. Verdict is advisory.
-
-SCOPE: hard tells prove "not compiled by OUR mwcc config". In game-code TUs
-that means handwritten asm. In SDK/MSL/vendor-lib regions it can instead mean
-vendor-built C with a different frame convention (e.g. FS_OpenFileFast ends
-`pop {r4,lr}; add sp,#16; bx lr` -- older CW, sub-sp-before-push frames).
-Route those through the SDK pipeline, not transcription.
-"""
 import argparse
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-SRC_ROOT = ROOT / "arm9" / "src"
-OBJDUMP = "arm-none-eabi-objdump"
-SYM_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
+from common import BUILD, GAP_O, NM, ROOT, game_sources
+from fn_diff import SYM_RE, objdump
+
 INSN_RE = re.compile(r"^\s*[0-9a-f]+:\s*[0-9a-f]{4,8}\s+(\S.*)$")
 COND = "eq|ne|cs|cc|mi|pl|vs|vc|hi|ls|ge|lt|gt|le"
-# mnemonic root + optional cond + optional size/order suffix, both orders
 LDMSTM_COND = re.compile(rf"^(ldm|stm)(({COND})(ia|ib|da|db)?|(ia|ib|da|db)({COND}))\b")
 POP_LR = re.compile(r"^(pop|ldm\w*\s+sp!,)\s*.*\blr\b")
 PUSH = re.compile(r"^(push|stmdb\s+sp!|stmfd\s+sp!)")
@@ -44,21 +21,20 @@ FLAG_SET = re.compile(
 CONDITIONAL = re.compile(
     rf"^([a-z]{{2,6}}?)({COND})(s|ia|ib|da|db|b|h|sb|sh)?\s"
 )
-UNCOND_ROOTS = {"b", "bl", "bx", "blx"}  # bare branches: 'b' + cond handled below
+UNCOND_ROOTS = {"b", "bl", "bx", "blx"}
+COND_ROOTS = {
+    "add", "adc", "sub", "sbc", "rsb", "rsc", "and", "orr", "eor", "bic",
+    "mov", "mvn", "cmp", "cmn", "tst", "teq", "mul", "mla", "ldr", "str",
+    "ldm", "stm", "lsl", "lsr", "asr", "ror", "smull", "smlal", "umull",
+    "umlal", "clz", "ldrb", "strb", "ldrh", "strh", "ldrsb", "ldrsh",
+    "push", "pop",
+}
 SYSTEM = re.compile(r"^(swp|mrs|msr|mcr|mrc)\b")
 C_TELLS = {
     "pop_pc": re.compile(r"^(pop|ldm\w*\s+sp!,)\s*.*\bpc\b"),
     "pad_push": re.compile(r"^(push|stmdb\s+sp!,)\s*\{r3,"),
     "switch_table": re.compile(r"^addls\s+pc,\s*pc,"),
 }
-
-
-def objdump(path):
-    r = subprocess.run([OBJDUMP, "-d", str(path)], capture_output=True, text=True)
-    if r.returncode != 0:
-        print(f"error: objdump failed: {r.stderr.strip()}", file=sys.stderr)
-        sys.exit(2)
-    return r.stdout.splitlines()
 
 
 def extract(lines, symbol):
@@ -82,28 +58,15 @@ def extract(lines, symbol):
 
 def is_conditional(insn):
     mnem = insn.split()[0]
-    if mnem in UNCOND_ROOTS or mnem.startswith(".") :
+    if mnem in UNCOND_ROOTS or mnem.startswith("."):
         return False
-    # bare conditional branch (beq, bxls, blne...)
-    m = re.match(rf"^(b|bl|bx|blx)({COND})$", mnem)
-    if m:
+    if re.match(rf"^(b|bl|bx|blx)({COND})$", mnem):
         return True
     m = CONDITIONAL.match(insn)
-    if not m:
-        return False
-    root = m.group(1)
-    # avoid false hits: e.g. 'smi'..., real roots that end like a cond
-    return root in {
-        "add", "adc", "sub", "sbc", "rsb", "rsc", "and", "orr", "eor", "bic",
-        "mov", "mvn", "cmp", "cmn", "tst", "teq", "mul", "mla", "ldr", "str",
-        "ldm", "stm", "lsl", "lsr", "asr", "ror", "smull", "smlal", "umull",
-        "umlal", "clz", "ldrb", "strb", "ldrh", "strh", "ldrsb", "ldrsh",
-        "push", "pop",
-    }
+    return bool(m) and m.group(1) in COND_ROOTS
 
 
-# mwcc homes r0-r3 when a register param is address-taken; sp must then be
-# unwound past the block, so the epilogue pops lr (not pc).
+# address-taken reg param: mwcc homes r0-r3, so the epilogue pops lr then `add sp`
 ARG_HOME = re.compile(r"^push\s+\{r0,\s*r1,\s*r2,\s*r3\}$")
 ADD_SP = re.compile(rf"^add({COND})?\s+sp,\s*sp,\s*#")
 
@@ -114,13 +77,11 @@ def classify(insns):
     prologue_done = False
     arg_home = bool(insns) and ARG_HOME.match(insns[0])
     for i, insn in enumerate(insns):
-        mnem = insn.split()[0]
         if PUSH.match(insn):
-            if prologue_done and i > 0:
+            if prologue_done:
                 hard.append(f"H2 mid-function push @insn {i}: {insn}")
-        elif not insn.startswith("sub\tsp") and not insn.startswith("sub sp"):
-            if i > 0 or not PUSH.match(insn):
-                prologue_done = True
+        elif not insn.startswith(("sub\tsp", "sub sp")):
+            prologue_done = True
         if LDMSTM_COND.match(insn) and "{" in insn and "," in insn.split("{")[-1]:
             hard.append(f"H3 conditional block transfer @insn {i}: {insn}")
         if SYSTEM.match(insn):
@@ -132,13 +93,12 @@ def classify(insns):
         for name, rx in C_TELLS.items():
             if rx.match(insn):
                 ctell.append(f"{name} @insn {i}")
-        # H6: computed pc dispatch; mwcc follows with `b default` + all-b rows
+        # mwcc switch tables are `b default` + all-b rows
         if re.match(rf"^add({COND})?\s+pc,\s*pc,", insn):
             rows = insns[i + 1 : i + 6]
             nb = sum(1 for r in rows if r.split()[0] == "b")
             if nb < len(rows) - 1:
                 hard.append(f"H6 pc-dispatch into computation @insn {i}: {insn}")
-        # H1: lr restored from stack, later bx lr
         if POP_LR.match(insn):
             rest = insns[i + 1 : i + 4]
             if any(r.startswith("bx") and r.endswith("lr") for r in rest):
@@ -161,13 +121,8 @@ def matched_symbols(todo=ROOT / "main_7_todo.md"):
 
 
 def transcribed_symbols():
-    """Functions already written as `asm void f(...)` in the tree.
-
-    The warning's whole advice is "transcribe this as asm" -- once that's done it
-    is noise, and it fires anyway whenever main_7_todo.md is stale (only `make
-    progress` regenerates it, so `make diff` reads whatever the last run left)."""
     out = set()
-    for src in list(SRC_ROOT.rglob("*.c")) + list(SRC_ROOT.rglob("*.cpp")):
+    for src in game_sources():
         for line in src.read_text(encoding="utf-8", errors="replace").splitlines():
             m = ASM_DEF_RE.match(line)
             if m:
@@ -176,25 +131,20 @@ def transcribed_symbols():
 
 
 def todo_is_stale(todo=ROOT / "main_7_todo.md"):
-    """main_7_todo.md older than the newest compiled object => its [x] marks
-    predate the current build, so 'unmatched' can't be trusted."""
     if not todo.is_file():
         return True
-    objs = list((ROOT / "build/arm9/src").rglob("*.o"))
+    objs = list((BUILD / "arm9/src").rglob("*.o"))
     if not objs:
         return False
     return todo.stat().st_mtime < max(o.stat().st_mtime for o in objs)
 
 
 def compiled_symbols():
-    """Function symbols defined in compiled game TUs (= what objdiff pairs)."""
     syms = set()
-    objs = sorted((ROOT / "build/arm9/src").rglob("*.o"))
+    objs = sorted((BUILD / "arm9/src").rglob("*.o"))
     if not objs:
         return syms
-    # ONE nm over every object instead of a spawn each. Its per-file header lines
-    # ("foo.o:") split to 1 part, so the len==3 filter drops them already.
-    r = subprocess.run(["arm-none-eabi-nm", "--defined-only", *map(str, objs)],
+    r = subprocess.run([NM, "--defined-only", *map(str, objs)],
                        capture_output=True, text=True)
     for line in r.stdout.splitlines():
         parts = line.split()
@@ -204,9 +154,6 @@ def compiled_symbols():
 
 
 def sweep(lines):
-    """Warn about unmatched-but-compiled gap functions with hard asm tells.
-    Scope = symbols in build/arm9/src .o files (active TUs), not the whole gap.
-    Always exit 0."""
     done = matched_symbols() | transcribed_symbols()
     active = compiled_symbols()
     flagged = []
@@ -221,7 +168,7 @@ def sweep(lines):
         if insns:
             hard, _ = classify(insns)
             if hard:
-                kinds = []  # distinct smells, first-hit order, descriptions kept
+                kinds = []
                 for h in hard:
                     k = h.split(" @")[0]
                     if k not in kinds:
@@ -252,7 +199,7 @@ def sweep(lines):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("symbols", nargs="*")
-    ap.add_argument("--target", default=str(ROOT / "build/delinks/_dsd_gap@main_7.o"))
+    ap.add_argument("--target", default=str(GAP_O))
     ap.add_argument("--sweep", action="store_true",
                     help="scan all unmatched gap functions, warn on hard tells")
     args = ap.parse_args()

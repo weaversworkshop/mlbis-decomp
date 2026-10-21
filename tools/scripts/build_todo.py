@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
-"""Markdown progress/TODO table for a delinked target: merges asm/<target>.s
-(addr, line count, #data_* refs) with an objdiff report (unit + match %).
-Usage: build_todo.py <target> --report <json|-> [--asm DIR] [--out-md F]
-       [--sort match|address|globals|lines] [--desc].  Prefer `make progress`."""
 import argparse
-import json
 import re
 import sys
 from collections import Counter
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import data_catalog          # noqa: E402  (symbol inventory, shared not duplicated)
+import data_catalog
+from common import ROOT, load_json, sdk_mappings
 
-ROOT = Path(__file__).resolve().parents[2]
-SDK_MAPPING_FILE = ROOT / "config" / "sdk_mappings.json"
 START_RE = re.compile(r"^\s*(?:arm|thumb)_func_start\s+(\S+)")
 END_RE = re.compile(r"^\s*(?:arm|thumb)_func_end\s+(\S+)")
 ADDR_RE = re.compile(r"^\s*\S+:\s*;\s*(0x[0-9a-fA-F]+)")
@@ -22,69 +15,49 @@ DATA_RE = re.compile(r"\bdata_[0-9a-fA-F]+\b")
 
 
 def load_sdk_mappings():
-    if not SDK_MAPPING_FILE.exists():
-        return {}
-    with open(SDK_MAPPING_FILE, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return {e["addr"].lower(): e.get("library", "?") for e in data.get("mappings", [])}
+    return {e["addr"].lower(): e.get("library", "?") for e in sdk_mappings()}
 
 
-def parse_asm(path):
-    # A list, not a name-keyed dict: distinct functions can share a symbol name
-    # (e.g. the two SDK `BeginSleep`s) and must both survive. Addresses are unique.
+def asm_functions(path):
+    """[(name, body_lines)] in file order; names can repeat (two SDK `BeginSleep`s)."""
+    lines = Path(path).read_text(encoding="utf-8", errors="replace").splitlines()
     out = []
-    with open(path, "r", encoding="utf-8", errors="replace") as f:
-        lines = f.readlines()
     i = 0
     while i < len(lines):
         m = START_RE.match(lines[i])
         if not m:
             i += 1
             continue
-        symbol = m.group(1)
-        body_start = i + 1
-        j = body_start
-        addr = ""
+        j = i + 1
         while j < len(lines) and not END_RE.match(lines[j]):
-            if not addr:
-                am = ADDR_RE.match(lines[j])
-                if am:
-                    addr = am.group(1)
             j += 1
-        body = lines[body_start:j]
-        globals_used = {gm.group(0) for ln in body for gm in DATA_RE.finditer(ln)}
-        out.append({
-            "symbol": symbol,
-            "address": addr,
-            "lines": len(body),
-            "globals": len(globals_used),
-        })
+        out.append((m.group(1), lines[i + 1:j]))
         i = j + 1
     return out
 
 
-def load_report(path):
-    """The report JSON; "-" reads stdin (once -- both tables derive from this)."""
-    if path == "-":
-        return json.load(sys.stdin)
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def first_addr(body):
+    return next((m.group(1) for m in map(ADDR_RE.match, body) if m), "")
+
+
+def parse_asm(path):
+    return [{
+        "symbol": name,
+        "address": first_addr(body),
+        "lines": len(body),
+        "globals": len({gm.group(0) for ln in body for gm in DATA_RE.finditer(ln)}),
+    } for name, body in asm_functions(path)]
 
 
 def parse_data(report):
-    """name -> {unit, status, source_size, extent} for every homed data object.
-
-    Only obj_match emits `objects`; an objdiff report has none, so the data table
-    is simply empty under `make progress`.
-    """
+    """name -> status dict for every homed data object (obj_match reports only)."""
     out = {}
     for unit in report.get("units", []):
         for o in unit.get("objects", []):
             prev = out.get(o["name"])
             comdat = o.get("comdat", False)
             if comdat and prev:
-                # Emitted by every TU touching the class. A real owner always wins;
-                # otherwise just tally how many TUs emit it.
+                # a real owner wins; otherwise tally the emitting TUs
                 if not prev["comdat"]:
                     continue
                 prev["tus"] += 1
@@ -102,15 +75,7 @@ def parse_data(report):
 
 
 def parse_report(report):
-    """Return {symbol: {rel_addr: (unit_name, fuzzy_match_percent)}}.
-
-    The objdiff report lists each function once per referencing unit and carries a
-    per-function module-relative `address`. Keying by (name, address) keeps functions
-    that share a symbol name distinct (e.g. the two `BeginSleep`s) instead of letting
-    one clobber the other. As before, the first unit at the running-max pct wins, so a
-    unique name resolves to exactly the value the old name-only map produced.
-
-    """
+    """{symbol: {rel_addr: (unit, pct)}}; first unit at the max pct wins."""
     owned = {}
     for unit in report.get("units", []):
         unit_name = unit["name"]
@@ -131,7 +96,6 @@ def parse_report(report):
 
 
 def report_sections(report):
-    """{(function name, rel addr): ELF section name} from the objdiff report."""
     out = {}
     for unit in report.get("units", []):
         for fn in unit.get("functions", []):
@@ -143,12 +107,7 @@ def report_sections(report):
 
 
 def derive_base_offset(asm, owned, sections=None):
-    """Constant offset between asm absolute addresses and report-relative ones.
-
-    Voted from every symbol whose name is unique in BOTH sources (unambiguous pairing).
-    Returns None if no such pair exists. If pairs disagree (should never happen for a
-    clean gap) we warn and take the dominant vote rather than silently mis-keying.
-    """
+    """asm-absolute minus report-relative address, voted over names unique in both."""
     asm_by_name = {}
     for rec in asm:
         asm_by_name.setdefault(rec["symbol"], []).append(rec)
@@ -162,9 +121,7 @@ def derive_base_offset(asm, owned, sections=None):
         rel = next(iter(slot))
         if rel is None:
             continue
-        # Only .text values are module-relative (its delinked section starts at the
-        # module base). A __sinit_* node lives in its own section, so its value is
-        # section-relative and voting with it invents a bogus second base.
+        # only .text addresses are module-relative (__sinit_* nodes are section-relative)
         if sections and sections.get((name, rel), ".text") != ".text":
             continue
         votes[int(recs[0]["address"], 16) - rel] += 1
@@ -177,43 +134,33 @@ def derive_base_offset(asm, owned, sections=None):
 
 
 def lookup_owned(rec, owned, base):
-    """(unit, pct) for one asm function, disambiguating duplicate names by address."""
     slot = owned.get(rec["symbol"])
     if not slot:
         return (None, None)
-    if len(slot) == 1:                       # unique name: identical to the old map
+    if len(slot) == 1:
         return next(iter(slot.values()))
-    if base is not None and rec["address"]:  # duplicate name: pick by absolute address
+    if base is not None and rec["address"]:
         rel = int(rec["address"], 16) - base
         if rel in slot:
             return slot[rel]
-    return max(slot.values(), key=lambda uv: uv[1])  # last-resort: best pct
+    return max(slot.values(), key=lambda uv: uv[1])
 
 
 def sort_key(row, key, desc):
-    pct = row["match"] if row["match"] is not None else -1.0
     addr = int(row["address"], 16) if row["address"] else 0
-    if key == "match":
-        primary = pct
-    elif key == "address":
-        primary = addr
-    elif key == "globals":
-        primary = row["globals"]
-    elif key == "lines":
-        primary = row["lines"]
-    else:
-        raise SystemExit(f"unknown sort key: {key}")
-    if desc:
-        return (-primary if isinstance(primary, (int, float)) else primary, addr)
-    return (primary, addr)
+    primary = {
+        "match": row["match"] if row["match"] is not None else -1.0,
+        "address": addr,
+        "globals": row["globals"],
+        "lines": row["lines"],
+    }[key]
+    return (-primary if desc else primary, addr)
 
 
 def render_md(rows, target, sort_desc):
     total = len(rows)
     done = sum(1 for r in rows if r["match"] == 100.0)
-    # "in progress" = started-but-unmatched GAME functions only (SDK near-misses
-    # like SND_FlushCommand / NNS_SndPlayerSetTrackMuteEx are tracked under the
-    # SDK line, not as outstanding work).
+    # "in progress" counts game functions only; SDK near-misses sit on the SDK line
     started = sum(1 for r in rows if r["match"] is not None and r["match"] < 100.0 and not r["sdk"])
 
     sdk_total = sum(1 for r in rows if r["sdk"])
@@ -243,9 +190,6 @@ def render_md(rows, target, sort_desc):
     return "\n".join(lines) + "\n"
 
 
-# A homed object is "done" when its bytes match and its extent is accounted for.
-# `pad` = extent exceeds sizeof but the ROM tail is zero, i.e. inter-object
-# alignment padding, which belongs to the preceding object.
 DATA_DONE = ("ok", "pad")
 DATA_NOTE = {
     "ok": "",
@@ -265,7 +209,6 @@ def data_note(st):
 
 
 def render_data(entries, status, refs, notes=False):
-    """Markdown for every named data symbol in the gap, annotated where homed."""
     by_sec = {}
     for e in entries:
         by_sec.setdefault(e["section"], []).append(e)
@@ -353,7 +296,7 @@ def main():
     asm_path = args.asm or str(ROOT / "asm" / f"_dsd_gap@{args.target}.s")
     out_md = args.out_md or str(ROOT / f"{args.target}_todo.md")
 
-    report = load_report(args.report)
+    report = load_json(args.report)
     asm = parse_asm(asm_path)
     owned = parse_report(report)
     sections = report_sections(report)
@@ -373,18 +316,13 @@ def main():
             "sdk": sdk.get(rec["address"].lower(), None),
         })
 
-    # Default behavior: match desc, address asc. Other keys: asc by default, --desc flips.
-    if args.sort == "match":
-        desc = not args.desc  # default desc for match
-    else:
-        desc = args.desc
+    desc = args.desc != (args.sort == "match")
     rows.sort(key=lambda r: sort_key(r, args.sort, desc))
 
     direction = "desc" if desc else "asc"
     sort_desc = f"{args.sort} {direction}, address asc tiebreaker"
     md = render_md(rows, args.target, sort_desc)
 
-    # Data objects live in the same file: one report, one place to check progress.
     dstatus = parse_data(report)
     dentries = data_catalog.parse_asm(Path(asm_path), data_catalog.parse_symbols())
     md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs(),
