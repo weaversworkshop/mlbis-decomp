@@ -114,6 +114,11 @@ extern void func_ov130_0206db80(UnkStruct_ov130_0206db80 *, u32, u32);
 extern void func_ov131_02069d60(UnkStruct_ov131_02069d60 *);
 extern void func_ov132_020776c8(UnkStruct_ov132_020776c8 *, u32, u32, u32);
 
+// --- Variable Definitions --- //
+
+clGameMain * gameMain;  // 0x02055fe0
+GameState gameState;  // 0x02055fe4
+
 // --- Function Declarations --- //
 
 #define BITSET_GET(ptr,idx) (((ptr)[idx >> 5] >> ((idx) & 0x1f)) & 1)
@@ -125,11 +130,6 @@ u32 getGameVar(u32, clGlobalEvent *, EventContext *);  // 0x020058bc
 void setGameVar(u32, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
 u8 * getMessageText(u32, u32);  // 0x02005ca4
 u8 * getItemNameText(s32);  // 0x02005cbc
-
-// --- Variable Definitions --- //
-
-clGameMain * gameMain;  // 0x02055fe0
-GameState gameState;  // 0x02055fe4
 
 } // extern "C"
 

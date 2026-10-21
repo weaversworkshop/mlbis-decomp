@@ -38,7 +38,7 @@ extern s8 data_0205af8c[];
 
 extern void func_01ff8228(void *, u32, u32);
 
-// --- Variable Definitions --- // (replace with real data later)
+// --- Variable Definitions --- //
 
 const s8 sGearSlotsBowser[4] = { 1, 2, 3, 3 };  // 0x0204ac40
 const s8 sGearSlotsBros[8] = { 1, 2, 3, 3, 3, 3 };  // 0x0204ac44

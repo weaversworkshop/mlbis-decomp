@@ -31,7 +31,6 @@ extern void func_01ff8228(void *, u32, u32);
 extern s32 getGameVar(u16, clGlobalEvent *, EventContext *);
 extern void setGameVar(u16, s32, clGlobalEvent *, EventContext *);
 extern void setSoftResetFade(UnkGlobal_02056504 *, s32);
-extern s64 func_0204536c(s32, s32);
 
 // --- Variable Definitions --- //
 
@@ -322,16 +321,12 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
         case MUL:
             setGameVar(inst->destVar, inst->args[0] * inst->args[1], sys, ctx);
             return 0;
-        case DIV: {
-            s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
-            setGameVar(inst->destVar, (s32)divmod_val, sys, ctx);
+        case DIV:
+            setGameVar(inst->destVar, inst->args[0] / inst->args[1], sys, ctx);
             return 0;
-        }
-        case MOD: {
-            s64 divmod_val = func_0204536c(inst->args[0], inst->args[1]);
-            setGameVar(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
+        case MOD:
+            setGameVar(inst->destVar, inst->args[0] % inst->args[1], sys, ctx);
             return 0;
-        }
         case SHL:
             setGameVar(inst->destVar, inst->args[0] << inst->args[1], sys, ctx);
             return 0;
@@ -376,18 +371,14 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             val = getGameVar(inst->destVar, sys, ctx);
             setGameVar(inst->destVar, inst->args[0]*val, sys, ctx);
             return 0;
-        case DIV_EQ: {
+        case DIV_EQ:
             val = getGameVar(inst->destVar, sys, ctx);
-            s64 divmod_val = func_0204536c(val, inst->args[0]);
-            setGameVar(inst->destVar, (s32)divmod_val, sys, ctx);
+            setGameVar(inst->destVar, val / inst->args[0], sys, ctx);
             return 0;
-        }
-        case MOD_EQ: {
+        case MOD_EQ:
             val = getGameVar(inst->destVar, sys, ctx);
-            s64 divmod_val = func_0204536c(val, inst->args[0]);
-            setGameVar(inst->destVar, (s32)(divmod_val >> 32), sys, ctx);
+            setGameVar(inst->destVar, val % inst->args[0], sys, ctx);
             return 0;
-        }
         case SHL_EQ:
             val = getGameVar(inst->destVar, sys, ctx);
             setGameVar(inst->destVar, val << inst->args[0], sys, ctx);

@@ -4,10 +4,6 @@
 
 #include "main/rng.h"
 
-// --- Extern Functions --- //
-
-extern s64 func_0204536c(s32, s32);
-
 // --- Variable Definitions --- //
 
 u32 randState;  // 0x0205bac0
@@ -36,5 +32,5 @@ u32 rand() {
 
 // MATCHED 100%
 u16 rand_range(s32 range) {
-    return func_0204536c(rand(), range) >> 32;
+    return rand() % range;
 }

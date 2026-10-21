@@ -13,6 +13,7 @@ extern "C" {
 extern void func_01ff8a38(void);
 
 }
+
 // --- Variable Definitions --- //
 
 VCountTaskManager vcountTaskManager;

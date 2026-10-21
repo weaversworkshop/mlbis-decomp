@@ -2817,7 +2817,6 @@ from:0x020d1608 kind:arm_branch to:0x02123f28 module:overlay(6)
 from:0x020d1618 kind:arm_branch to:0x02123ecc module:overlay(6)
 from:0x020d1628 kind:arm_branch to:0x02123eac module:overlay(6)
 from:0x020d6924 kind:load to:0x0204ffd5 module:main
-from:0x020d9ba0 kind:load to:0x020501be module:main
 from:0x020db600 kind:load to:0x0204ffd3 module:main
 from:0x020db678 kind:load to:0x0204ffd3 module:main
 from:0x020db72c kind:load to:0x0204ffd3 module:main

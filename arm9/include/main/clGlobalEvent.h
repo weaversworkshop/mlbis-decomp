@@ -73,7 +73,7 @@ public:
     EventOpInfo * opInfo;  // +0x4
     u32 vars[32];  // +0x8
 
-    clScriptSystem();  // 0x02015ebc
+    clScriptSystem();  // C2 0x02015ebc
     virtual ~clScriptSystem();  // D1 0x02015ee8 D0 0x02015eec D2 0x02015f00
 
     virtual void setOpInfo(EventOpInfo *);  // 0x02015f04

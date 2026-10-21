@@ -6,10 +6,6 @@
 
 extern "C" {
 
-// --- Extern Functions --- //
-
-extern s64 func_0204536c(s32, s32);
-
 // --- Variable Definitions --- //
 
 u8 animEnded;  // 0x0205bb20
@@ -62,7 +58,7 @@ void clYanaAnim::advance() {
                 if (this->loopsRemaining == 1) {
                     next = (next < 0) ? 0 : end;
                 } else {
-                    next = (s32)(func_0204536c(next, end) >> 32);
+                    next = next % end;
                     if (next < 0) {
                         next += end;
                     }

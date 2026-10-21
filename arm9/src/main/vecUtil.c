@@ -12,10 +12,6 @@ typedef struct {
     VecFx32 sq2, sq1, prod, cross;  // +0x28
 } VectorScratchData;
 
-// --- Extern Functions --- //
-
-extern s64 func_0204536c(s32, s32);
-
 // --- Variable Definitions --- //
 
 VectorScratchData vectorScratch;  // 0x0205baec
@@ -58,7 +54,7 @@ fx32 vector_cosine(VecFx32 * a, VecFx32 * b) {
     }
 
     fx32 dot = vectorScratch.prod.x + vectorScratch.prod.y + vectorScratch.prod.z;
-    fx32 result = (fx32)func_0204536c(dot * 4, root);
+    fx32 result = (dot * 4) / (fx32)root;
     if (result > FX32_ONE) {
         result = FX32_ONE;
     }

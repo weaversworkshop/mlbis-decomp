@@ -15,6 +15,27 @@ typedef struct {
 } UnkStruct_0200b8bc_10;
 
 typedef struct {
+    u16 field00;
+    u8 field02[2];
+} UnkStruct_0200bce8_18;
+
+typedef struct {
+    union {
+        u16 field00;
+        struct {
+            u8 field00b;
+            u8 field01b;
+        };
+    };
+    u16 field02;
+} UnkStruct_0200bce8_20;
+
+typedef struct {
+    UnkStruct_0200bce8_18 struct18;  // +0x0
+    UnkStruct_0200bce8_20 s20;  // +0x4
+} UnkStruct_02013640;
+
+typedef struct {
     union {
         u32 field24;
         struct {
@@ -41,6 +62,17 @@ typedef struct {
     UnkCallback_0200b8bc_2c field04;
     void * field08;
 } UnkStruct_0200b8bc_2c;
+
+typedef struct {
+    union {
+        u32 field00;
+        struct {
+            u16 field00h;
+            u16 field02h;
+        };
+    };
+    u8 * field04;
+} UnkStruct_0200bce8_24;
 
 struct UnkStruct_0200b8bc {
     u32 field00;
@@ -123,8 +155,11 @@ typedef struct {
 } UnkStruct_0200baf0;
 
 void func_0200b8bc(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_10 **, u32, const char *, u8, u8, u8, u8, u8, u8, u8, u8, u8, u8, UnkStruct_0200b8bc_2c *);  // 0x0200b8bc
+void func_0200b9f4(UnkStruct_0200b8bc *);  // 0x0200b9f4
 void func_0200baf0(UnkStruct_0200b8bc_2c *, u32, u8, UnkCallback_0200b8bc_2c, void *);  // 0x0200baf0
 void func_0200bb1c(UnkStruct_0200b8bc *, UnkStruct_0200b8bc_24 *);  // 0x0200bb1c
 u16 func_0200bbb0(UnkStruct_0200b8bc *);  // 0x0200bbb0
+s16 func_0200c330(u16, u16, u8, u8, u32, u32, u32 *, u8, BOOL, u8);  // 0x0200c330
+UnkStruct_0200bce8_24 func_0200bce8(UnkStruct_0200b8bc *, u32, u32);  // 0x0200bce8
 
 #endif

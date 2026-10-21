@@ -284,6 +284,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0202eb94",
+      "sdk_name": "NNSi_FndInitHeapHead",
+      "library": "fnd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0202ec10",
       "sdk_name": "NNSi_FndFinalizeHeap",
       "library": "fnd",
@@ -356,6 +363,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0202eea8",
+      "sdk_name": "NNS_SndInit",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0202ef30",
       "sdk_name": "NNS_SndMain",
       "library": "snd",
@@ -420,6 +434,13 @@
       "sdk_name": "NNS_SndPlayerSetAllocatableChannel",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x0202f100",
+      "sdk_name": "NNS_SndPlayerCreateHeap",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x0202f194",
@@ -617,6 +638,13 @@
       "sdk_name": "SetPlayerPriority",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x0202fa2c",
+      "sdk_name": "NNS_SndStrmInit",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x0202faa4",
@@ -943,6 +971,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x020311a0",
+      "sdk_name": "LoadWaveArcTable",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x020312a8",
       "sdk_name": "DisposeCallback",
       "library": "snd",
@@ -1176,6 +1211,13 @@
       "library": "snd",
       "confidence": "certain",
       "note": "518-insn match, sndarc_stream"
+    },
+    {
+      "addr": "0x02032ed4",
+      "sdk_name": "SetupStreamFunction",
+      "library": "snd",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x02032f54",
@@ -1583,6 +1625,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02035480",
+      "sdk_name": "GX_SetGraphicsMode",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x020354e8",
       "sdk_name": "GXS_SetGraphicsMode",
       "library": "gx",
@@ -1966,6 +2015,18 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02036830",
+      "sdk_name": "G2_GetBG0CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036884",
+      "sdk_name": "G2_GetBG1CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
       "addr": "0x020368d8",
       "sdk_name": "G2_GetBG2CharPtr",
       "library": "gx",
@@ -2087,6 +2148,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02037084",
+      "sdk_name": "G3i_OrthoW_",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x020370e8",
       "sdk_name": "G3i_LookAt_",
       "library": "gx",
@@ -2192,6 +2260,30 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02037608",
+      "sdk_name": "GX_LoadBG0Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037668",
+      "sdk_name": "GXS_LoadBG0Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020376c8",
+      "sdk_name": "GX_LoadBG1Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02037728",
+      "sdk_name": "GXS_LoadBG1Char",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
       "addr": "0x02037788",
       "sdk_name": "GX_LoadBG2Char",
       "library": "gx",
@@ -2291,6 +2383,13 @@
       "library": "gx",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02037c90",
+      "sdk_name": "GXS_EndLoadOBJExtPltt",
+      "library": "gx",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x02037cd0",
@@ -2631,6 +2730,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02038ee8",
+      "sdk_name": "OS_SetThreadPriority",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x02038f90",
       "sdk_name": "OS_SetSwitchThreadCallback",
       "library": "os",
@@ -2871,6 +2977,13 @@
       "note": "FLOOR 99.97%: trampoline return-address literal (SDK '.word OSi_DisplayExContext+0x50'; ROM has raw 0x02039adc). dsd needs an exact symbol at that addr and can't synthesize func+addend -> irreducible. Identity correct."
     },
     {
+      "addr": "0x02039b08",
+      "sdk_name": "OSi_SetTimerReserved",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x02039b24",
       "sdk_name": "OS_InitTick",
       "library": "os",
@@ -2967,6 +3080,13 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02039d88",
+      "sdk_name": "OS_InitReset",
+      "library": "os",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x02039ddc",
       "sdk_name": "OSi_CommonCallback",
       "library": "os",
@@ -3043,6 +3163,13 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203a1f8",
+      "sdk_name": "MI_DmaFill32Async",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0203a2bc",
       "sdk_name": "MI_DmaCopy32Async",
       "library": "mi",
@@ -3078,6 +3205,13 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203a538",
+      "sdk_name": "MI_HBlankDmaCopy16",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0203a598",
       "sdk_name": "MI_SendGXCommandAsync",
       "library": "mi",
@@ -3085,11 +3219,25 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203a690",
+      "sdk_name": "MIi_FIFOCallback",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0203a73c",
       "sdk_name": "MIi_DMACallback",
       "library": "mi",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203a79c",
+      "sdk_name": "MI_SendGXCommandAsyncFast",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x0203a854",
@@ -4118,11 +4266,25 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203fc60",
+      "sdk_name": "MIC_StartAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
+    },
+    {
       "addr": "0x0203fc98",
       "sdk_name": "MIC_StopAutoSamplingAsync",
       "library": "spi",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x0203fcf4",
+      "sdk_name": "MIC_StopAutoSampling",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x0203fd2c",
@@ -4201,6 +4363,13 @@
       "library": "rtc",
       "confidence": "certain",
       "note": "tu_diff content+pool match"
+    },
+    {
+      "addr": "0x02040f6c",
+      "sdk_name": "RTC_GetTime",
+      "library": "rtc",
+      "confidence": "certain",
+      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     },
     {
       "addr": "0x02040fa4",
@@ -4629,6 +4798,14 @@
       "note": "tu_diff content match (SDK_TS sweep 2026-06-30)"
     },
     {
+      "addr": "0x0204536c",
+      "sdk_name": "_s32_div_f",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior signed 32-bit divmod runtime helper, prebuilt like _u32_div_f. Proof (2026-10-11): mwcc emits `bl _s32_div_f` for signed `/` and `%` in clMesWin::func_02013164, which matches 100% with the target calling 0x0204536c at all 4 sites; body = sign bits parked in ip (bit31 quotient, bit0 remainder), rsblt both operands, the same `mov r2,#0x1c` normalisation cascade as _u32_div_f, then rsbne of r0/r1. r0=dividend, r1=divisor; quotient r0, remainder r1 (callers that need both declare it `s64` and take `>> 32`). 65 call sites in main.",
+      "header": "runtime"
+    },
+    {
       "addr": "0x02045578",
       "sdk_name": "_u32_div_f",
       "library": "msl",
@@ -4877,139 +5054,6 @@
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
-    },
-    {
-      "addr": "0x0202eb94",
-      "sdk_name": "NNSi_FndInitHeapHead",
-      "library": "fnd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0202eea8",
-      "sdk_name": "NNS_SndInit",
-      "library": "snd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0202f100",
-      "sdk_name": "NNS_SndPlayerCreateHeap",
-      "library": "snd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0202fa2c",
-      "sdk_name": "NNS_SndStrmInit",
-      "library": "snd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x020311a0",
-      "sdk_name": "LoadWaveArcTable",
-      "library": "snd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02032ed4",
-      "sdk_name": "SetupStreamFunction",
-      "library": "snd",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02035480",
-      "sdk_name": "GX_SetGraphicsMode",
-      "library": "gx",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02037084",
-      "sdk_name": "G3i_OrthoW_",
-      "library": "gx",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02037c90",
-      "sdk_name": "GXS_EndLoadOBJExtPltt",
-      "library": "gx",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02038ee8",
-      "sdk_name": "OS_SetThreadPriority",
-      "library": "os",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02039b08",
-      "sdk_name": "OSi_SetTimerReserved",
-      "library": "os",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02039d88",
-      "sdk_name": "OS_InitReset",
-      "library": "os",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203a1f8",
-      "sdk_name": "MI_DmaFill32Async",
-      "library": "mi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203a538",
-      "sdk_name": "MI_HBlankDmaCopy16",
-      "library": "mi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203a690",
-      "sdk_name": "MIi_FIFOCallback",
-      "library": "mi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203a79c",
-      "sdk_name": "MI_SendGXCommandAsyncFast",
-      "library": "mi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203fc60",
-      "sdk_name": "MIC_StartAutoSampling",
-      "library": "spi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x0203fcf4",
-      "sdk_name": "MIC_StopAutoSampling",
-      "library": "spi",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
-    },
-    {
-      "addr": "0x02040f6c",
-      "sdk_name": "RTC_GetTime",
-      "library": "rtc",
-      "confidence": "certain",
-      "note": "rel-vs-abs over-rejection recovered (sdk_equiv fix); objdiff-verified"
     }
   ],
   "objdiff_units": [

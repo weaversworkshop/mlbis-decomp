@@ -17,42 +17,9 @@ typedef union {
 } UnkStruct_0200cb30;
 
 typedef struct {
-    union {
-        u32 field00;
-        struct {
-            u16 field00h;
-            u16 field02h;
-        };
-    };
-    u8 * field04;
-} UnkStruct_0200bce8_24;
-
-typedef struct {
-    u16 field00;
-    union {
-        u16 field02;
-        struct {
-            u8 field02b;
-            u8 field03b;
-        };
-    };
-} UnkStruct_0200bce8_18;
-
-typedef struct {
     u16 field00;
     u16 field02;
 } UnkStruct_0200bce8_1C;
-
-typedef struct {
-    union {
-        u16 field00;
-        struct {
-            u8 field00b;
-            u8 field01b;
-        };
-    };
-    u16 field02;
-} UnkStruct_0200bce8_20;
 
 typedef struct {
     UnkStruct_0200bce8_18 struct18;  // +0x0
@@ -76,10 +43,7 @@ extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Declarations --- //
 
-void func_0200b9f4(UnkStruct_0200b8bc *);  // 0x0200b9f4
 u16 func_0200bc48(UnkStruct_0200b8bc *);  // 0x0200bc48
-void func_0200bce8(u8 *, UnkStruct_0200b8bc *, u32, u32);  // 0x0200bce8
-s16 func_0200c330(u16, u16, u8, u8, u32, u32, u32 *, u8, BOOL, u8);  // 0x0200c330
 u32 func_0200c4b8(UnkStruct_0200b8bc *, UnkStruct_0200bce8_24 *, BOOL);  // 0x0200c4b8
 
 void func_0200cb30(u32 *, u16, u16, u16, u32 *, u8, u8);  // 0x0200cb30
@@ -148,7 +112,6 @@ void func_0200baf0(UnkStruct_0200b8bc_2c * param1, u32 param2, u8 param3, UnkCal
 
 // MATCHED 100%
 void func_0200bb1c(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_24 * param2) {
-    u8 scratch[8];
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
@@ -158,7 +121,7 @@ void func_0200bb1c(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_24 * param2) 
     }
 
     while (local.field04[0] != '\0') {
-        func_0200bce8(scratch, &local, 1, 1);
+        func_0200bce8(&local, 1, 1);
     }
 
     if (&local.unkStruct24 < param2) {
@@ -170,7 +133,6 @@ void func_0200bb1c(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_24 * param2) 
 
 // MATCHED 100%
 u16 func_0200bbb0(UnkStruct_0200b8bc * param1) {
-    u8 scratch[8];
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
@@ -182,7 +144,7 @@ u16 func_0200bbb0(UnkStruct_0200b8bc * param1) {
     local.field1c_21 = 1;
 
     while (local.field04[0] != 0) {
-        func_0200bce8(scratch, &local, 1, 1);
+        func_0200bce8(&local, 1, 1);
     }
 
     return local.unkStruct24.field28_16 + (local.unkStruct24.field24_0 << 8);
@@ -190,7 +152,6 @@ u16 func_0200bbb0(UnkStruct_0200b8bc * param1) {
 
 // MATCHED 100%
 u16 func_0200bc48(UnkStruct_0200b8bc * param1) {
-    u8 scratch[8];
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
@@ -206,14 +167,14 @@ u16 func_0200bc48(UnkStruct_0200b8bc * param1) {
             break;
         }
 
-        func_0200bce8(scratch, &local, 1, 1);
+        func_0200bce8(&local, 1, 1);
     }
 
     return local.field08_0 - param1->field08_0;
 }
 
 
-void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 param4) {
+UnkStruct_0200bce8_24 func_0200bce8(UnkStruct_0200b8bc * param1, u32 param2, u32 param3) {
     UnkStruct_0200bce8_24 outv = {0};
     UnkStruct_0200bce8_20 s20;
     struct {
@@ -221,50 +182,50 @@ void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 par
         UnkStruct_0200bce8_1C struct1c;
     } w;
 
-    switch (param2->field04[0]) {
+    switch (param1->field04[0]) {
         case 0:
             break;
         case 0x20: {
-            u8 val = param2->field0c_4 - 1;
+            u8 val = param1->field0c_4 - 1;
 
-            param2->field20_0 = param2->field08_0;
-            param2->field20_10 = param2->field08_10;
+            param1->field20_0 = param1->field08_0;
+            param1->field20_10 = param1->field08_10;
 
-            if (param2->field1c_22 == 0x3ff) {
-                param2->field1c_22 = param2->field08_0;
+            if (param1->field1c_22 == 0x3ff) {
+                param1->field1c_22 = param1->field08_0;
             }
 
-            param2->field08_0 = val+1 + param2->field1c_17 + param2->field08_0;
-            param2->field20_20 = val;
+            param1->field08_0 = val+1 + param1->field1c_17 + param1->field08_0;
+            param1->field20_20 = val;
 
-            param2->field04++;
+            param1->field04++;
 
             outv.field00h = 0xff20;
             outv.field02h = 0xff20;
 
-            UnkStruct_0200b8bc_10 * r3 = param2->field10[(u16)param2->field18_0 * 2];
+            UnkStruct_0200b8bc_10 * r3 = param1->field10[(u16)param1->field18_0 * 2];
             u32 r2 = WORD_10(r3, r3->field08[0]/4);
 
             val = (r2 & 0xf) * 4;
 
-            if (val > param2->field1c_11) {
-                param2->field1c_11 = val;
+            if (val > param1->field1c_11) {
+                param1->field1c_11 = val;
             }
             break;
         }
         case 0xff: {
-            param2->field04 += func_0200c4b8(param2, &outv, param4) + 2;
+            param1->field04 += func_0200c4b8(param1, &outv, param3) + 2;
             outv.field02h = outv.field00h;
             break;
         }
         default: {
-            outv.field04 = param2->field04;
+            outv.field04 = param1->field04;
 
-            param2->field20_10 = param2->field08_10;
+            param1->field20_10 = param1->field08_10;
 
-            UnkStruct_0200b8bc_10 ** tbl = param2->field10;
-            u16 j = param2->field18_0;
-            u16 r0 = param2->field04[0];
+            UnkStruct_0200b8bc_10 ** tbl = param1->field10;
+            u16 j = param1->field18_0;
+            u16 r0 = param1->field04[0];
             UnkStruct_0200b8bc_10 * r12;
 
             if (r0 < 0x100) {
@@ -277,13 +238,13 @@ void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 par
             s32 val = ((u16 *)PTR_10(r12, r12->field04))[r0];
 
             outv.field00h = val;
-            outv.field02h = param2->field04[0];
+            outv.field02h = param1->field04[0];
 
-            if (param4 == 0 && param3 == 0) {
-                BOOL flag = (param2->field1c_10) != 0;
-                u16 idx = param2->field18_0;
+            if (param3 == 0 && param2 == 0) {
+                BOOL flag = (param1->field1c_10) != 0;
+                u16 idx = param1->field18_0;
 
-                UnkStruct_0200b8bc_10 ** tbl = param2->field10;
+                UnkStruct_0200b8bc_10 ** tbl = param1->field10;
                 UnkStruct_0200b8bc_10 * r2;
 
                 if (outv.field02h < 0x100) {
@@ -294,14 +255,14 @@ void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 par
 
                 u32 * ptr = PTR_10(r2, WORD_10(r2, (u8)val + 2));
 
-                w.struct18.field00 = func_0200c330(param2->field08_0, param2->field08_10, param2->field14_0, val >> 8, (u16)param2->field0c_9, param2->field00, ptr, param2->field0c_0, flag, param2->field14_10);
+                w.struct18.field00 = func_0200c330(param1->field08_0, param1->field08_10, param1->field14_0, val >> 8, (u16)param1->field0c_9, param1->field00, ptr, param1->field0c_0, flag, param1->field14_10);
                 w.struct1c.field02 = w.struct18.field00;
                 s20.field00 = w.struct18.field00;
             } else {
-                BOOL flag = (param2->field1c_10) != 0;
-                u16 idx = param2->field18_0;
+                BOOL flag = (param1->field1c_10) != 0;
+                u16 idx = param1->field18_0;
                 
-                UnkStruct_0200b8bc_10 ** tbl = param2->field10;
+                UnkStruct_0200b8bc_10 ** tbl = param1->field10;
                 UnkStruct_0200b8bc_10 * r12;
 
                 if (outv.field02h < 0x100) {
@@ -311,7 +272,7 @@ void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 par
                 }
 
                 u32 * sec = PTR_10(r12, WORD_10(r12, (u8)val + 2));
-                u8 mode = param2->field14_0;
+                u8 mode = param1->field14_0;
 
                 u32 a;
                 u32 hdr;
@@ -332,54 +293,54 @@ void func_0200bce8(u8 * param1, UnkStruct_0200b8bc * param2, u32 param3, u32 par
                     }
                 }
 
-                w.struct18.field02b = a;
-                w.struct18.field03b = (hdr & 0xf) * 4 - 1;
+                w.struct18.field02[0] = a;
+                w.struct18.field02[1] = (hdr & 0xf) * 4 - 1;
 
                 if (mode & 1) {
-                    w.struct18.field02b = (w.struct18.field02b + 1) * 2 - 1;
+                    w.struct18.field02[0] = (w.struct18.field02[0] + 1) * 2 - 1;
                 }
 
                 if (mode & 2) {
-                    w.struct18.field03b = (w.struct18.field03b + 1) * 2 - 1;
+                    w.struct18.field02[1] = (w.struct18.field02[1] + 1) * 2 - 1;
                 }
 
-                w.struct1c.field00 = w.struct18.field02;
-                s20.field00 = w.struct18.field02;
+                w.struct1c.field00 = *(u16 *)w.struct18.field02;
+                s20.field00 = *(u16 *)w.struct18.field02;
             }
 
-            param2->field20_0 = param2->field08_0;
-            param2->field20_10 = param2->field08_10;
+            param1->field20_0 = param1->field08_0;
+            param1->field20_10 = param1->field08_10;
 
-            if (param2->field1c_22 == 0x3ff) {
-                param2->field1c_22 = param2->field08_0;
+            if (param1->field1c_22 == 0x3ff) {
+                param1->field1c_22 = param1->field08_0;
             }
 
-            param2->field08_0 = s20.field00b+1 + param2->field1c_17 + param2->field08_0;
-            param2->field20_20 = s20.field00b;
-            param2->field20_26 = s20.field01b;
+            param1->field08_0 = s20.field00b+1 + param1->field1c_17 + param1->field08_0;
+            param1->field20_20 = s20.field00b;
+            param1->field20_26 = s20.field01b;
 
             s20.field00 += 0x10001;
 
-            if (s20.field01b > param2->field1c_11) {
-                param2->field1c_11 = s20.field01b;
+            if (s20.field01b > param1->field1c_11) {
+                param1->field1c_11 = s20.field01b;
             }
 
-            param2->field04++;
+            param1->field04++;
             
-            if (param2->unkStruct24.field24_8 > param2->field1c_22) {
-                param2->unkStruct24.field24_8 = param2->field1c_22;
+            if (param1->unkStruct24.field24_8 > param1->field1c_22) {
+                param1->unkStruct24.field24_8 = param1->field1c_22;
             }
 
-            if (param2->field08_0 - param2->unkStruct24.field24_8 > param2->unkStruct24.field28_0) {
-                param2->unkStruct24.field28_0 = param2->field08_0 - param2->unkStruct24.field24_8;
+            if (param1->field08_0 - param1->unkStruct24.field24_8 > param1->unkStruct24.field28_0) {
+                param1->unkStruct24.field28_0 = param1->field08_0 - param1->unkStruct24.field24_8;
             }
 
-            param2->unkStruct24.field28_16 = param2->field08_10 - param2->unkStruct24.field24_18 + param2->field1c_11;
+            param1->unkStruct24.field28_16 = param1->field08_10 - param1->unkStruct24.field24_18 + param1->field1c_11;
             break;
         }
     }
 
-    *(UnkStruct_0200bce8_24 *)param1 = outv;
+    return outv;
 }
 
 // MATCHED 100%

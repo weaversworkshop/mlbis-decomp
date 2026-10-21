@@ -599,7 +599,6 @@ from:0x0207e7d0 kind:load to:0x0206a68c module:overlay(3)
 from:0x0207f71c kind:load to:0x0205fd4c add:0x37d module:main
 from:0x0207f924 kind:load to:0x020d00d0 module:overlays(55,101)
 from:0x0207fa14 kind:load to:0x021000d3 module:overlay(4)
-from:0x0207fc30 kind:load to:0x020500c8 module:main
 from:0x02080734 kind:load to:0x020a0000 module:overlays(124,130)
 from:0x02080964 kind:load to:0x020d0004 module:overlays(55,101)
 from:0x02080a2c kind:load to:0x020c0000 module:overlay(17)

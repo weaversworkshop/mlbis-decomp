@@ -377,7 +377,6 @@ from:0x02091358 kind:load to:0x020900f2 module:overlay(13)
 from:0x02091380 kind:load to:0x020d00f6 module:overlays(37,55,101)
 from:0x02091434 kind:load to:0x020e00f7 module:overlays(4,112)
 from:0x02091448 kind:load to:0x021000f9 module:overlay(4)
-from:0x02092a68 kind:load to:0x0205037c module:main
 from:0x02093690 kind:load to:0x020f00ef module:overlay(4)
 from:0x020939c8 kind:load to:0x0209041f module:overlay(13)
 from:0x020939e0 kind:load to:0x0209041f module:overlay(13)
