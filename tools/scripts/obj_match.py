@@ -217,7 +217,7 @@ def tokenize(elf, sym, is_code=True):
             if not (base <= tgt < base + size):
                 named, delta = elf.resolve(shndx, tgt)
                 if named:
-                    key = ("call", named, delta, False)
+                    key = ("call", named, delta - 8, False)
                     word &= BRANCH_MASK
         toks.append((word, key))
     return toks

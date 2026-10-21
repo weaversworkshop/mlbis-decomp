@@ -6,9 +6,7 @@
 
 extern "C" {
 
-#include <nitro/os.h>
-
-#include "main/cpu_mem32.h"
+#include <nitro.h>
 
 // --- Extern Data Variables --- //
 
@@ -28,7 +26,7 @@ Heap heaps[32];  // 0x0205b7f0
 
 // MATCHED 100%
 void initHeaps() {
-    cpu_clear32(0, &heaps, 32 * sizeof(Heap));
+    MIi_CpuClear32(0, &heaps, 32 * sizeof(Heap));
 
     u32 mainLo = ((u32)SDK_MAIN_ARENA_LO + 0x1f) & ~0x1f;
     u32 mainTail = HW_MAIN_MEM_MAIN_END - sizeof(HeapBlock);

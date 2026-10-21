@@ -6,7 +6,7 @@ extern "C" {
 
 #include "main/task.h"
 
-#include <nitro/os.h>
+#include <nitro.h>
 
 // --- Variable Definitions --- //
 

@@ -13,7 +13,6 @@ extern "C" {
 
 #include <nitro.h>
 
-#include "main/cpu_mem32.h"
 #include "main/system.h"
 
 #include "data/clMesWin.h"
@@ -3135,7 +3134,7 @@ void clMesIcon::loadTexPltt(u32 slot) {
 
 // MATCHED 100%
 void clMesIcon::add(MesIcon * icon, u8 screen, s8 anim, u16 x, u16 y, u8 flip, u8 priority, s32 depth) {
-    cpu_clear32(0, icon, sizeof(MesIcon));
+    MIi_CpuClear32(0, icon, sizeof(MesIcon));
 
     icon->active = 1;
     icon->screen = screen;

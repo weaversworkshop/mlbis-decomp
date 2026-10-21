@@ -189,11 +189,46 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x02004800",
+      "sdk_name": "_start",
+      "library": "init",
+      "confidence": "certain",
+      "note": "crt0.c; needs -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS (Makefile per-object override)"
+    },
+    {
       "addr": "0x02004954",
-      "sdk_name": "MIi_CpuClear32",
-      "library": "mi",
-      "header": "nitro/mi.h",
-      "confidence": "certain"
+      "sdk_name": "INITi_CpuClear32",
+      "library": "init",
+      "confidence": "certain",
+      "note": "crt0.c static (byte-identical to MIi_CpuClear32, but crt0 owns this copy)"
+    },
+    {
+      "addr": "0x02004a1c",
+      "sdk_name": "do_autoload",
+      "library": "init",
+      "confidence": "certain",
+      "note": "crt0.c static; tail b is a PC24 reloc to the weak callback"
+    },
+    {
+      "addr": "0x02004aac",
+      "sdk_name": "_start_AutoloadDoneCallback",
+      "library": "init",
+      "confidence": "certain",
+      "note": "weak default in crt0.c"
+    },
+    {
+      "addr": "0x02004b98",
+      "sdk_name": "NitroStartUp",
+      "library": "init",
+      "confidence": "certain",
+      "note": "weak default in crt0.c"
+    },
+    {
+      "addr": "0x02004b9c",
+      "sdk_name": "_start_ModuleParams",
+      "library": "init",
+      "confidence": "certain",
+      "note": "crt0.c data (BuildInfo)"
     },
     {
       "addr": "0x02004970",
@@ -3259,6 +3294,20 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x0203a8dc",
+      "sdk_name": "MIi_CpuClear32",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "was game cpu_mem32.c; sdk_equiv EQUIVALENT, sits in mi_memory.c source order"
+    },
+    {
+      "addr": "0x0203a8f8",
+      "sdk_name": "MIi_CpuCopy32",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "was game cpu_mem32.c; sdk_equiv EQUIVALENT, sits in mi_memory.c source order"
+    },
+    {
       "addr": "0x0203a920",
       "sdk_name": "MIi_CpuClearFast",
       "library": "mi",
@@ -5171,11 +5220,6 @@
       "source": "lib/NitroSDK/libraries/os/src/os_terminate_proc.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/sdk/os_terminate_proc"
-    },
-    {
-      "source": "lib/NitroSDK/libraries/mi/src/mi_memory.c",
-      "target": "build/delinks/_dsd_gap@main_7.o",
-      "name": "sdk/sdk/mi_memory"
     },
     {
       "source": "lib/NitroSDK/libraries/snd/src/snd_bank.c",
