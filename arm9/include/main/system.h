@@ -70,7 +70,7 @@ extern SystemState systemState;
 
 void initSystem(void);  // 0x02019a18
 void readKeypad(void);  // 0x02019a2c
-void decodeKeypad(InputState *, u16);
+void decodeKeypad(InputState *, u16);  // 0x02019a74
 void waitVBlankSync(void);  // 0x02019b2c
 void flushOam(u32);  // 0x02019bf4
 void clearOam(void);  // 0x02019c4c
