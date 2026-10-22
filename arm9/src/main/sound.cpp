@@ -69,11 +69,11 @@ extern void func_0202f388(u8);
 
 // --- Variable Definitions --- //
 
-const SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
-const s16 sndStackVolumeDrop[32] = { 27, 27, 40, 60, 80, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
+SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
+s16 sndStackVolumeDrop[32] = { 27, 27, 40, 60, 80, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
                                      90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90 };  // 0x02050048
 char sndHeapName[12] = "SoundHeap";  // 0x02050088
-const char sndArcPath[24] = "sound/sound_data.sdat";  // 0x02050094
+char sndArcPath[24] = "sound/sound_data.sdat";  // 0x02050094
 
 static SNDWaveArc sndWaveArcHeader;  // 0x02056520
 
