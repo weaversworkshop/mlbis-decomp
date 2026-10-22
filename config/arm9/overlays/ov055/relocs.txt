@@ -374,7 +374,7 @@ from:0x020cfb00 kind:load to:0x020cfb4c module:overlay(55)
 from:0x020cfb04 kind:load to:0x020cfc24 module:overlay(55)
 from:0x020cfb08 kind:load to:0x020cfc74 module:overlay(55)
 from:0x020cfb0c kind:load to:0x020cfb9c module:overlay(55)
-from:0x020cfb28 kind:load to:0x02055f34 module:main
+from:0x020cfb28 kind:load to:0x02055f2c add:0x8 module:main
 from:0x020cfb2c kind:load to:0x020cfb10 module:overlay(55)
 from:0x020cfb38 kind:load to:0x020551a8 module:main
 from:0x020cfb48 kind:load to:0x020cfb28 module:overlay(55)

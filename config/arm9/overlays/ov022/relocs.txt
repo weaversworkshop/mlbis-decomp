@@ -2138,7 +2138,7 @@ from:0x020dc974 kind:load to:0x020dc978 module:overlay(22)
 from:0x020dc978 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020dc97c kind:load to:0x020dc9a8 module:overlay(22)
 from:0x020dc980 kind:load to:0x020dc788 module:overlay(22)
-from:0x020dc9d0 kind:load to:0x02055f34 module:main
+from:0x020dc9d0 kind:load to:0x02055f2c add:0x8 module:main
 from:0x020dc9d4 kind:load to:0x020dc9bc module:overlay(22)
 from:0x020dc9e0 kind:load to:0x020dc978 module:overlay(22)
 from:0x020dc9e8 kind:load to:0x020dc960 module:overlay(22)

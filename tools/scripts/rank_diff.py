@@ -527,7 +527,7 @@ def report(sym, mine_path, target_path, verbose):
 
 
 def validate(limit):
-    tgt_dump = fn_diff.objdump(GAP_O)
+    tgt_dump = fn_diff.objdump(GAP_O, True)
     objs = sorted((BUILD / "arm9/src").rglob("*.o"))
     import asm_smell
     asm_defs = asm_smell.transcribed_symbols()
@@ -535,7 +535,7 @@ def validate(limit):
     bad = []
     for o in objs:
         syms = subprocess.run([OBJDUMP, "-t", str(o)], capture_output=True, text=True).stdout
-        dump = fn_diff.objdump(o)
+        dump = fn_diff.objdump(o, True)
         for line in syms.splitlines():
             p = line.split()
             if len(p) < 6 or "F" not in p[2:4] or ".text" not in line:

@@ -22,7 +22,7 @@ SYMBOL_LINE_RE = re.compile(
 ANCHOR_RE = re.compile(
     r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?"
     r"(?P<name>operator\s+(?:new|delete)(?:\s*\[\s*\])?|[A-Za-z_]\w*)"
-    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{].*//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)"
+    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{].*//.*?(?<!\+)0x(?P<addr>[0-9a-fA-F]+)"
 )
 OPERATOR_TOKENS = {"nw": "operator new", "na": "operator new[]",
                    "dl": "operator delete", "da": "operator delete[]"}
@@ -30,7 +30,9 @@ CTORDTOR_DECL_RE = re.compile(
     r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?(?P<tilde>~)?(?P<name>[A-Za-z_]\w*)"
     r"\s*\([^;{]*\)\s*(?:const\s*)?[;{](?P<rest>.*)"
 )
-CTOR_DTOR_CODE_RE = re.compile(r"\b(C[12]|D[012])\b\s+0x([0-9a-fA-F]+)")
+CTOR_DTOR_CODE_RE = re.compile(r"\b(?:Thn(\d+)_)?(C[12]|D[012])\b\s+0x([0-9a-fA-F]+)")
+THUNK_CODE_RE = re.compile(r"\bThn(\d+)\s+0x([0-9a-fA-F]+)")
+THUNK_SYM_RE = re.compile(r"^_ZThn(\d+)_(?P<rest>.*)$")
 CLASS_RE = re.compile(r"\b(?:class|struct)\s+([A-Za-z_]\w*)[^;{()]*\{")
 FUNC_ADDR_RE = re.compile(r"^func_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
 DATA_ADDR_RE = re.compile(r"^data_(?:ov[0-9A-Fa-f]+_)?([0-9a-fA-F]{8})$")
@@ -38,6 +40,9 @@ DATA_ANCHOR_RE = re.compile(
     r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*(?:=\s*\{|(?:=[^;]*)?;)"
     r".*//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)"
 )
+# Multi-line initializer: `T name[N] = {` ... `};  // 0xADDR` -- anchor accepted on the closing line.
+DATA_OPEN_RE = re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*=\s*\{")
+TRAIL_ANCHOR_RE = re.compile(r"//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
 ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
@@ -47,6 +52,9 @@ CTOR_CODE_RE = re.compile(r"[CD][0-9]$")
 def parse_name(sym):
     if not sym.startswith("_Z"):
         return "", sym
+    if tm := THUNK_SYM_RE.match(sym):
+        scope, simple = parse_name("_Z" + tm.group("rest"))
+        return scope, f"{simple}/Thn{tm.group(1)}"
     s = sym[2:]
     nested = s.startswith("N")
     if nested:
@@ -122,7 +130,7 @@ def is_userish(name):
         return False
     if name.split("/")[0] in OPERATOR_TOKENS.values():
         return True
-    return not CTOR_CODE_RE.match(name) and "operator" not in name
+    return not CTOR_CODE_RE.match(name.split("/")[0]) and "operator" not in name
 
 
 def load_anchors(verbose):
@@ -133,7 +141,7 @@ def load_anchors(verbose):
         if not d.exists():
             continue
         for f in sorted(d.rglob("*.h")) + sorted(d.rglob("*.cpp")) + sorted(d.rglob("*.c")):
-            depth, stack = 0, []
+            depth, stack, pending = 0, [], None
             frel = f.relative_to(ROOT)
             for lineno, line in enumerate(
                 f.read_text(encoding="utf-8", errors="replace").splitlines(), 1
@@ -145,8 +153,9 @@ def load_anchors(verbose):
                 cd = CTORDTOR_DECL_RE.search(line)
                 eff = cd and (cd.group("scope") or cls)
                 if eff and cd.group("name") == eff:
-                    for code, addr in CTOR_DTOR_CODE_RE.findall(cd.group("rest")):
-                        raw[(eff, code)].append((int(addr, 16), loc))
+                    for thn, code, addr in CTOR_DTOR_CODE_RE.findall(cd.group("rest")):
+                        key = f"{code}/Thn{thn}" if thn else code
+                        raw[(eff, key)].append((int(addr, 16), loc))
                 elif m := ANCHOR_RE.search(line):
                     scope = m.group("scope") or cls
                     nm = norm_name(m.group("name"))
@@ -155,11 +164,20 @@ def load_anchors(verbose):
                         idents.setdefault((scope, nm), set()).update(
                             re.findall(r"[A-Za-z_]\w*", m.group("params")))
                     raw[(scope, nm)].append((int(m.group("addr"), 16), loc))
+                    for thn, addr in THUNK_CODE_RE.findall(line.split("//", 1)[1]):
+                        raw[(scope, f"{nm}/Thn{thn}")].append((int(addr, 16), loc))
                 elif not stack and (dm := DATA_ANCHOR_RE.search(line)):
                     raw[("", dm.group("name"))].append((int(dm.group("addr"), 16), loc))
+                elif (not stack and pending is None and (om := DATA_OPEN_RE.search(line))
+                      and line.count("{") > line.count("}")):
+                    pending = (om.group("name"), loc, depth)
                 if cm := CLASS_RE.search(line):
                     stack.append((cm.group(1), depth))
                 depth += line.count("{") - line.count("}")
+                if pending and depth <= pending[2]:
+                    if tm := TRAIL_ANCHOR_RE.search(line):
+                        raw[("", pending[0])].append((int(tm.group("addr"), 16), pending[1]))
+                    pending = None
                 while stack and depth <= stack[-1][1]:
                     stack.pop()
     anchors, conflicts = {}, 0
@@ -329,7 +347,9 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
 
     resolved = []
     for scope, simple, full, is_def in syms:
-        addr = embedded_addr(simple)
+        addr = anchors.get((scope, simple))
+        if addr is None:
+            addr = embedded_addr(simple)
         if addr is None:
             addr = resolve_anchor(anchors, by_name, scope, simple, idents)
         tgt = None if addr is None else resolve_module(addr, mod, tables, resident, mod_by_addr)
@@ -352,8 +372,8 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
     for addr, tgt, simple, full, is_def in resolved:
         if tgt is None:
             # An unanchored extern (SDK link symbol) is expected; an anchored address nobody owns is not.
-            if is_userish(simple) and not known(full) and (is_def or addr is not None):
-                unplaced.append((full, addr))
+            if (is_userish(simple) or "/Thn" in simple) and not known(full) and (is_def or addr is not None):
+                unplaced.append((full, addr, simple))
             elif is_def and addr is None and is_userish(simple) and known(full):
                 unanchored.append(full)
             continue
@@ -365,8 +385,12 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
     for tgt, addr, old, new in changed:
         where = "" if tgt == mod else f" -> {tgt}"
         print(f"  [{mod}]{where} 0x{addr:08x}  {old}  ->  {new}")
-    for full, addr in unplaced:
-        why = ("add a // 0xADDR anchor to its declaration" if addr is None else
+    for full, addr, simple in unplaced:
+        thn = re.search(r"/Thn(\d+)$", simple)
+        why = ((f"this-adjust thunk: add `Thn{thn.group(1)} 0xADDR` (or "
+                f"`Thn{thn.group(1)}_D0`/`_D1` for dtors) to the base declaration's "
+                "anchor comment") if thn and addr is None else
+               "add a // 0xADDR anchor to its declaration" if addr is None else
                f"anchored 0x{addr:08x}, which no resident module carries a "
                f"symbol at -- wrong address, or defined in an overlay")
         print(f"  [{mod}] UNPLACED: {full} -- {why}", file=sys.stderr)

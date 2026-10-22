@@ -878,7 +878,7 @@ from:0x020db730 kind:load to:0x020d798c module:overlay(120)
 from:0x020db734 kind:load to:0x020d79a4 module:overlay(120)
 from:0x020db738 kind:load to:0x020d79bc module:overlay(120)
 from:0x020db73c kind:load to:0x020d79d4 module:overlay(120)
-from:0x020db740 kind:load to:0x02055f34 module:main
+from:0x020db740 kind:load to:0x02055f2c add:0x8 module:main
 from:0x020db744 kind:load to:0x020db6ec module:overlay(120)
 from:0x020db750 kind:load to:0x020db5e0 module:overlay(120)
 from:0x020db758 kind:load to:0x020db5bc module:overlay(120)

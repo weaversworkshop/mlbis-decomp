@@ -10,6 +10,7 @@ from common import BUILD, GAP_O, OBJDUMP, ROOT, die
 
 SYM_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
 ADDR_INSN_RE = re.compile(r"^\s*([0-9a-f]+):\s*[0-9a-f]{4,8}\s+(\S.*)$")
+RELOC_RE = re.compile(r"^\s*([0-9a-f]+):\s*R_ARM_")
 BRANCH_RE = re.compile(
     r"\b(b|bl|blx|bx|beq|bne|bcs|bcc|bmi|bpl|bvs|bvc|bhi|bls|bge|blt|bgt|ble|bhs|blo)"
     r"(\.w)?\s+(?:0x)?([0-9a-f]+)"
@@ -18,9 +19,9 @@ DATA_MNEMONICS = (".word", ".short", ".byte", ".ascii")
 SLOT_RE = re.compile(r"\[sp, #(\d+)\]")
 
 
-def objdump(path):
+def objdump(path, relocs=False):
     try:
-        r = subprocess.run([OBJDUMP, "-d", str(path)], capture_output=True, text=True)
+        r = subprocess.run([OBJDUMP, "-dr" if relocs else "-d", str(path)], capture_output=True, text=True)
     except FileNotFoundError:
         die(f"error: {OBJDUMP} not found on PATH")
     if r.returncode != 0:
@@ -31,6 +32,7 @@ def objdump(path):
 def extract_items(lines, symbol):
     """[(addr, insn, is_data, branch_target|None)]"""
     out, active, found = [], False, False
+    relocated = set()
     for line in lines:
         m = SYM_RE.match(line)
         if m:
@@ -41,6 +43,10 @@ def extract_items(lines, symbol):
                 active = False
             continue
         if not active:
+            continue
+        rm = RELOC_RE.match(line)
+        if rm:
+            relocated.add(int(rm.group(1), 16))
             continue
         im = ADDR_INSN_RE.match(line)
         if not im:
@@ -59,6 +65,7 @@ def extract_items(lines, symbol):
         # calls/bx are relocs (offset 0 in a .o): never relativize those
         tgt = int(bm.group(3), 16) if bm and not is_data and bm.group(1) not in ("bl", "blx", "bx") else None
         out.append((addr, insn, is_data, tgt))
+    out = [(a, i, d, None if a in relocated else t) for a, i, d, t in out]
     return out, found
 
 
@@ -143,8 +150,8 @@ def main():
         die(f"error: target not found: {target_path}")
 
     tsym = args.target_symbol or args.symbol
-    titems, tfound = extract_items(objdump(target_path), tsym)
-    mitems, mfound = extract_items(objdump(mine_path), args.symbol)
+    titems, tfound = extract_items(objdump(target_path, True), tsym)
+    mitems, mfound = extract_items(objdump(mine_path, True), args.symbol)
     tgt, _ = relativize(titems, args.pool)
     mine, _ = relativize(mitems, args.pool)
     if args.frame and tfound and mfound:

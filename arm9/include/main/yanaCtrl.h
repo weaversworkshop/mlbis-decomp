@@ -13,7 +13,7 @@ public:
     inYanaUnit * prev;  // +0x8
 
     virtual ~inYanaUnit() {}
-    virtual void func_0202066c(void) = 0;
+    virtual void update(void) = 0;
 
     void operator delete(void *);  // 0x020204a4
     void moveToList(inYanaUnit **);  // 0x02020508
@@ -31,7 +31,7 @@ public:
     void (*handler)(clYanaCtrl *);
 
     virtual ~clYanaCtrl() {};  // D1 0x020206cc D0 0x020206ac
-    virtual void func_0202066c(void);  // 0x0202066c
+    virtual void update(void);  // 0x0202066c
 };
 
 void * operator new(size_t, clYanaUnitSys *);  // 0x02020494

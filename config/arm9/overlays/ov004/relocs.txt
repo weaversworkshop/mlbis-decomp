@@ -147,8 +147,8 @@ from:0x0208a9dc kind:arm_call to:0x02020998 module:main
 from:0x0208aa00 kind:load to:0x0210fda8 module:overlay(4)
 from:0x0208aa04 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x0208aa08 kind:load to:0x02054f0c add:0x8 module:main
-from:0x0208aa0c kind:load to:0x02054f54 module:main
-from:0x0208aa10 kind:load to:0x02054f84 module:main
+from:0x0208aa0c kind:load to:0x02054f4c add:0x8 module:main
+from:0x0208aa10 kind:load to:0x02054f4c add:0x38 module:main
 from:0x0208aa14 kind:load to:0x02055914 module:main
 from:0x0208aa18 kind:load to:0x02055944 module:main
 from:0x0208aa1c kind:load to:0x0207e59c module:overlays(3,130)
@@ -2835,7 +2835,6 @@ from:0x020f0ba4 kind:load to:0x020801e0 module:overlays(3,125,130)
 from:0x020f3838 kind:load to:0x020801e0 module:overlays(3,125,130)
 from:0x020f3840 kind:load to:0x020801e0 module:overlays(3,125,130)
 from:0x020f63f4 kind:load to:0x0205fd4c add:0x4ad module:main
-from:0x020f72e0 kind:load to:0x027e0275 module:dtcm
 from:0x020fe940 kind:load to:0x020801e0 module:overlays(3,125,130)
 from:0x020fe948 kind:load to:0x020801e0 module:overlays(3,125,130)
 from:0x020ffae4 kind:load to:0x020800e5 module:overlays(3,125,130)
@@ -4499,14 +4498,14 @@ from:0x0210f148 kind:load to:0x02055204 module:main
 from:0x0210f14c kind:load to:0x02055f3c add:0x8 module:main
 from:0x0210f150 kind:load to:0x0210f134 module:overlay(4)
 from:0x0210f154 kind:load to:0x02055624 module:main
-from:0x0210f168 kind:load to:0x02055f34 module:main
+from:0x0210f168 kind:load to:0x02055f2c add:0x8 module:main
 from:0x0210f16c kind:load to:0x0210f158 module:overlay(4)
 from:0x0210f178 kind:load to:0x020555e0 module:main
-from:0x0210f180 kind:load to:0x02055f34 module:main
+from:0x0210f180 kind:load to:0x02055f2c add:0x8 module:main
 from:0x0210f184 kind:load to:0x0210f104 module:overlay(4)
 from:0x0210f190 kind:load to:0x020555e0 module:main
 from:0x0210f198 kind:load to:0x0210f114 module:overlay(4)
-from:0x0210f1a0 kind:load to:0x02055f34 module:main
+from:0x0210f1a0 kind:load to:0x02055f2c add:0x8 module:main
 from:0x0210f1a4 kind:load to:0x0210f10c module:overlay(4)
 from:0x0210f1b0 kind:load to:0x020551c0 module:main
 from:0x0210f1b8 kind:load to:0x0210f114 module:overlay(4)

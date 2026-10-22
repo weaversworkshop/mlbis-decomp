@@ -12,10 +12,10 @@ This project uses NO AI for any actual decompilation work. All C/C++ functions a
 
 | | |
 |---|---|
-| `main_7` functions matched | **1295 / 1849** |
-| game code | 548/1099 matched (49.86%) |
-| SDK / NitroSystem | 735 / 737 |
-| data objects homed | 77 / 520 (70 verified byte-exact, + 38 RTTI COMDAT) |
+| `main_7` functions matched | **1328 / 1849** |
+| game code | 581/1099 matched (52.87%) |
+| SDK / NitroSystem | 747 / 750 |
+| data objects homed | 144 / 516 (137 verified byte-exact, + 42 RTTI COMDAT) |
 | Relink vs ROM | 134 modules byte-exact, main 9 bytes off (35 bytes total) |
 
 `make progress` regenerates the live per-function and per-data-object tables (`main_7_todo.md`).

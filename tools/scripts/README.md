@@ -49,6 +49,8 @@ compiled `.o` symbols resolved through `symbols.txt`. The section table header i
 - Not part of `diff`/`progress`: a carve moves targets out of the gap and `obj_match` then reports 0/0.
 - Writes only on change (mtime drives the delink stamp); entries for unbuilt objects are preserved.
 - COMDAT symbols (bind 13) don't own ranges. Warns on overruns and gaps larger than alignment padding.
+- Warns when an object's section lands in a module section of another kind (`.rodata` range inside the ROM's
+  `.data`): the original wasn't `const`. dsd allows one range per section name per file, so fix the source.
 - Exit 1 on UNPLACED only with `--strict`; 2 on bad args.
 
 ### check_relocs.py
@@ -127,7 +129,8 @@ pairs them. Runs inside `make diff`/`make progress`; standalone `make sync-names
 - Address comes from a `func_<addr>`/`data_<addr>`/`func_ovNNN_<addr>` name, or an anchor on the
   **declaration** (headers and sources under `arm9/include`, `arm9/src`): `void foo();  // 0x0201b0e4`.
 - Ctors/dtors tag each ABI variant: `clFS(...);  // C2 0x0201a9e0`, `~clFS();  // D0 0x.. D1 0x.. D2 0x..`.
-- Data: anchor a global-scope definition/extern: `TPData bufs[2];  // 0x0205bac4`. Vtables/RTTI are manual
+- Data: anchor a global-scope definition/extern: `TPData bufs[2];  // 0x0205bac4`; a multi-line
+  initializer may carry it on its closing `};` line instead. Vtables/RTTI are manual
   (`map-cpp-tu`).
 - Allocation operators anchor like functions; keyed by (class, name, arity, class-typed param names), never
   by the name-only fallback.

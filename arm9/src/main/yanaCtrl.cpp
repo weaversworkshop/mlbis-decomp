@@ -112,7 +112,7 @@ void func_02020608(inYanaUnit ** head) {
 
     while (node != NULL) {
         inYanaUnit * next = node->next;
-        node->func_0202066c();
+        node->update();
         node = next;
     }
 }
@@ -130,7 +130,7 @@ void func_02020634(inYanaUnit ** head) {
 }
 
 // MATCHED 100%
-void clYanaCtrl::func_0202066c() {
+void clYanaCtrl::update() {
     if (this->handler != NULL) {
         this->handler(this);
     }

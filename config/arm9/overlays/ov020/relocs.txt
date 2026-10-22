@@ -539,7 +539,7 @@ from:0x020d4718 kind:load to:0x020d4764 module:overlay(20)
 from:0x020d471c kind:load to:0x020d483c module:overlay(20)
 from:0x020d4720 kind:load to:0x020d488c module:overlay(20)
 from:0x020d4724 kind:load to:0x020d47b4 module:overlay(20)
-from:0x020d4740 kind:load to:0x02055f34 module:main
+from:0x020d4740 kind:load to:0x02055f2c add:0x8 module:main
 from:0x020d4744 kind:load to:0x020d4728 module:overlay(20)
 from:0x020d4750 kind:load to:0x020551a8 module:main
 from:0x020d4760 kind:load to:0x020d4740 module:overlay(20)

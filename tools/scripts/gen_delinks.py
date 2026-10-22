@@ -140,6 +140,13 @@ def unit_ranges(rel_source, symbols, index, sections, wanted):
     for sec, (lo, hi) in list(ranges.items()):
         if sec == ".text" or sec not in wanted:
             continue
+        home = next((n for n, (a, b) in sections.items() if a <= lo < b), None)
+        if home is not None and home != sec:
+            # The ROM is ground truth for const-ness: a `const` table placed in the module's
+            # .data was writable in the original. Fix the source; a carve cannot interleave.
+            print("gen_delinks: %s: %s %#x-%#x lies in the module's %s -- object kind "
+                  "differs from the ROM (check `const`)" % (who, sec, lo, hi, home),
+                  file=sys.stderr)
         kind = KINDS[sec]
         items = sorted(placed[sec])
         for addr, size, name in items:

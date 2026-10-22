@@ -1069,7 +1069,7 @@ from:0x0208b8a4 kind:load to:0x0200ea48 module:main
 from:0x0208b8a8 kind:load to:0x02010c00 module:main
 from:0x0208b8ac kind:load to:0x020126d8 module:main
 from:0x0208b8b0 kind:load to:0x02012c24 module:main
-from:0x0208b8b4 kind:load to:0x02055f34 module:main
+from:0x0208b8b4 kind:load to:0x02055f2c add:0x8 module:main
 from:0x0208b8b8 kind:load to:0x0208b790 module:overlay(126)
 from:0x0208b8c4 kind:load to:0x0208b788 module:overlay(126)
 from:0x0208b8cc kind:load to:0x02054f9c module:main

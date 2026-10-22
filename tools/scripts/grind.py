@@ -99,7 +99,7 @@ class Harness:
 
     @staticmethod
     def extract(obj, symbol):
-        items, _ = fd.extract_items(fd.objdump(obj), symbol)
+        items, _ = fd.extract_items(fd.objdump(obj, True), symbol)
         return list(zip(*fd.relativize(items, False)))
 
     def make_regions(self):
