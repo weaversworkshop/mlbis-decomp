@@ -470,8 +470,8 @@ from:0x0207d1d4 kind:load to:0x020843e4 module:overlay(125)
 from:0x0207d1d8 kind:load to:0x02054e64 add:0x8 module:main
 from:0x0207d1dc kind:load to:0x02084368 module:overlay(125)
 from:0x0207d1e4 kind:load to:0x020750e4 module:overlays(3,122,130)
-from:0x0207d1e8 kind:load to:0x02054fdc module:main
-from:0x0207d1ec kind:load to:0x02054fcc module:main
+from:0x0207d1e8 kind:load to:0x02054fd4 add:0x8 module:main
+from:0x0207d1ec kind:load to:0x02054fc4 add:0x8 module:main
 from:0x0207d1f0 kind:load to:0x020551e8 module:main
 from:0x0207d1f4 kind:load to:0x020551fc module:main
 from:0x0207d1f8 kind:load to:0x02055188 module:main

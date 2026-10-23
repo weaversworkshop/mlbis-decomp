@@ -637,10 +637,10 @@ from:0x02082110 kind:load to:0x02054e08 add:0x8 module:main
 from:0x02082114 kind:load to:0x0208b888 module:overlay(126)
 from:0x02082118 kind:load to:0x02054e64 add:0x8 module:main
 from:0x0208211c kind:load to:0x0208b820 module:overlay(126)
-from:0x02082120 kind:load to:0x02054fdc module:main
+from:0x02082120 kind:load to:0x02054fd4 add:0x8 module:main
 from:0x02082124 kind:load to:0x0208b840 module:overlay(126)
 from:0x0208212c kind:load to:0x020750e4 module:overlays(3,122,130)
-from:0x02082130 kind:load to:0x02054fcc module:main
+from:0x02082130 kind:load to:0x02054fc4 add:0x8 module:main
 from:0x02082134 kind:load to:0x020551e8 module:main
 from:0x02082138 kind:load to:0x020551fc module:main
 from:0x0208213c kind:load to:0x02055188 module:main

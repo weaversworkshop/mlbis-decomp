@@ -8,13 +8,6 @@
 #include "main/clYanaAnim.h"
 #include "main/yanaCtrl.h"
 
-// #include "main/sndEmitter.h"
-
-// extern "C" {
-//     #include "main/uiUtil.h"
-//     #include "main/unk_tu_0200b8bc.h"
-// }
-
 class clRfx : public clYanaCtrlBase, public clYanaAnim {
 public:
     u16 * script;  // +0x18

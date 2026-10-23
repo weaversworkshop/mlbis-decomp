@@ -61,10 +61,6 @@ extern s16 sinCosTable[];  // 0x0204b1dc
 extern u8 rfxNodeBuf[0x1000];  // 0x027e00fc
 extern RfxStack rfxStack;  // 0x027e10fc
 
-// --- Extern Functions --- //
-
-// --- Variable Definitions --- //
-
 // --- Function Declarations --- //
 
 void evalRow(s16 *, u32, u32, u32, u32);  // 0x02020ba8
