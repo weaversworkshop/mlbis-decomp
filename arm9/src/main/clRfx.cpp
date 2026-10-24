@@ -63,14 +63,12 @@ extern RfxStack rfxStack;  // 0x027e10fc
 
 // --- Function Declarations --- //
 
-void evalRow(s16 *, u32, u32, u32, u32);  // 0x02020ba8
 u32 interpolateKey(s16 *, s32, s32, s32, u16 *, s32);  // 0x02020bec
 void applyRows(RfxNode *, s16 *, s32, s32, s32, s32, s32);  // 0x02020d90
 
 void applyKeyedRows(s32, s16 *);  // 0x02021b80
 s32 findKeySeg(RfxKeySeg *, s32, s16 *);  // 0x02021c48
 
-void vecMulAdd16(s32, VecFx32 *, VecFx32 *);  // 0x02021cd0
 void vecScale16(s32, VecFx32 *);  // 0x02021d14
 void vecRotPair(s32, s32, VecFx32 *, VecFx32 *);  // 0x02021d48
 void copyNode(RfxNode *, RfxNode *);  // 0x02021de0
@@ -147,11 +145,6 @@ void clRfx::onEnd() {
 }
 
 // MATCHED 100%
-clRfx::~clRfx() {
-    this->script = NULL;
-}
-
-// MATCHED 100%
 u32 clRfx::func_02020b98() {
     return 0;
 }
@@ -162,11 +155,11 @@ u16 * clRfx::func_02020ba0(s32 param1) {
 }
 
 // MATCHED 100%
-void evalRow(s16 * cmd, u32 row, u32 key, u32 t, u32 dur) {
+s32 evalRow(s16 * cmd, u32 row, u32 key, u32 t, u32 dur) {
     u32 numKeys = (((u16)cmd[0] >> 9) & 0x7f) + 1;
     u32 rowOffset = (numKeys+1) * row;
 
-    interpolateKey(&cmd[rowOffset], key, t, dur, (u16*)cmd, numKeys);
+    return interpolateKey(&cmd[rowOffset], key, t, dur, (u16*)cmd, numKeys);
 }
 
 // MATCHED 100%

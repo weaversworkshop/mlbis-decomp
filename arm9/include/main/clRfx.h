@@ -13,7 +13,7 @@ public:
     u16 * script;  // +0x18
     u32 * handle;  // +0x1c
 
-    virtual ~clRfx();  // D1 0x02021e60 D0 0x02020b68 Thn12_D1 0x02021ea8 Thn12_D0 0x02021e88
+    virtual ~clRfx() { this->script = NULL; }  // D1 0x02021e60 D0 0x02020b68 Thn12_D1 0x02021ea8 Thn12_D0 0x02021e88
     virtual void update(void);  // 0x02020a5c
     virtual void exec(void);  // 0x02020a90
     virtual void onEnd(void);  // 0x02020b18 Thn12 0x02021e98
@@ -33,11 +33,9 @@ public:
     void runExtTracks(s32, s16 *);  // 0x020217c4
 };
 
-// extern "C" {
-#endif // __cplusplus
+s32 evalRow(s16 *, u32, u32, u32, u32);  // 0x02020ba8
+void vecMulAdd16(s32, VecFx32 *, VecFx32 *);  // 0x02021cd0
 
-// #ifdef __cplusplus
-// } // extern "C"
-// #endif
+#endif // __cplusplus
 
 #endif
