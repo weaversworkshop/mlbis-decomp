@@ -80,7 +80,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
+.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
 
 # A failing compile under -j printed its diagnostics, then make kept echoing the
 # in-flight jobs after it. Defer the failure: record it, let the others finish, and
@@ -205,6 +205,12 @@ progress: all sync-names
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
 progress-py: progress          # deprecated alias
+
+# objdiff-format report scored by obj_match, for decmp.dev (notes/decmp.md).
+REPORT ?= progress/report.json
+report: all sync-names
+	@$(MAKE) --no-print-directory delinks
+	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/decmp_report.py --report - -o $(REPORT)
 
 # Cross-check against third-party objdiff. Functions only, and it loses on every
 # known disagreement (2026-07-29: 3 false near-misses + 2 unpairable duplicate

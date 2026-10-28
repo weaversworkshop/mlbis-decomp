@@ -12,7 +12,7 @@ listed where one exists.
 |---|---|
 | Build glue | `fix_deps`, `gen_objdiff`, `setup_tools` |
 | Delink / link | `gen_delinks`, `check_relocs`, `link_rom`, `patch_lcf` |
-| Scoring / progress | `obj_match`, `build_todo`, `call_graph`, `data_catalog` |
+| Scoring / progress | `obj_match`, `build_todo`, `decmp_report`, `call_graph`, `data_catalog` |
 | Naming | `sync_renames`, `apply_sdk_mappings`, `struct_offsets`, `data_syms` |
 | Per-function matching | `fn_diff`, `grind`, `rank_diff`, `asm_smell`, `../permuter/extract_target_asm` |
 | SDK identification | `tu_diff`, `sdk_equiv`, `sdk_match`, `map_data_syms`, `is_interleaved`, `sdk_compile_audit` |
@@ -93,6 +93,17 @@ homed data objects.
   `add:`); `diff`. COMDAT objects (bind 13, RTTI) are byte-checked but never owned.
 - Duplicate target names: a pair already matched by another unit is never reused; if two units compile the
   same static, the loser's row is dropped.
+
+### decmp_report.py
+objdiff-schema report for decmp.dev from obj_match scores. Denominator = every function/data object in
+every CURRENT gap (`asm/_dsd_gap@*.s` decides which `build/delinks` objects count; stale ones are
+ignored), so undecompiled code counts against progress; scores dedupe per target symbol, so `main`
+equals `main_7_todo.md`. Categories: `game`/`sdk` (sdk = resident address in `sdk_mappings.json`) plus
+one per module (`main`, `itcm`, `dtcm`, `ovNNN`; a unit's module = its objdiff.json `target_path`).
+Unowned functions go in `<module>/_undecompiled[_sdk]` pseudo-units (excluded from unit counts).
+Matched data = homed non-COMDAT objects with status `ok`/`pad`.
+`obj_match.py | decmp_report.py --report - -o FILE` = `make report [REPORT=progress/report.json]`.
+The committed `progress/report.json` is what `.github/workflows/progress.yml` uploads (no CI build).
 
 ### build_todo.py
 Writes `<target>_todo.md`: per gap function address, lines, distinct `data_*` refs, unit, match %, game/SDK

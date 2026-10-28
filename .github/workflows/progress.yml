@@ -1,0 +1,21 @@
+name: progress
+on:
+  push:
+    branches: [main]
+    paths: [progress/report.json]
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: decmp/upload-action@v1
+        with:
+          report: progress/report.json
+          version: CLJE
+          name: "Mario & Luigi: Bowser's Inside Story"
+          platform: nds
