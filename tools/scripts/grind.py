@@ -235,6 +235,8 @@ def main():
     ap.add_argument("--keep", help="keep this variant's spliced TU and .o in build/scratch/grind/")
     ap.add_argument("--jobs", type=int, default=os.cpu_count() or 4)
     ap.add_argument("--top", type=int, default=0, help="print only the N best rows")
+    ap.add_argument("--dump", help="write every variant's diff to DIR/<name>.diff")
+    ap.add_argument("--require", help="regex the compiled asm must contain; rows lacking it sort last, marked '!'")
     args = ap.parse_args()
 
     name = args.func or func_name_from_symbol(args.symbol)
@@ -268,18 +270,28 @@ def main():
         return nm, H.score(V[nm], keep=nm if nm == args.keep else None)
 
     rows = []
+    T = [t for t, _ in H.tgt]
+    req = re.compile(args.require) if args.require else None
+    if args.dump:
+        Path(args.dump).mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(args.jobs) as ex:
         for nm, (res, err) in ex.map(one, list(V)):
             if err:
                 rows.append((10 ** 9, 10 ** 9, nm, None, err))
-            else:
-                rows.append((res["raw"], res["norm"], nm, res, None))
+                continue
+            res["ok"] = bool(req.search("\n".join(res["mine"]))) if req else True
+            rows.append((res["raw"] + (0 if res["ok"] else 10 ** 6), res["norm"], nm, res, None))
+            if args.dump:
+                (Path(args.dump) / f"{nm}.diff").write_text(
+                    "\n".join(difflib.unified_diff(T, res["mine"], "target", "mine", n=3, lineterm="")) + "\n")
     rows.sort(key=lambda r: (r[0], r[1], r[2]))
     for raw, nm_, nm, res, err in rows[: args.top or None]:
         if err:
             el = [l for l in err.splitlines() if re.search(r":\d+: \S", l)] or err.splitlines()[-1:]
             print(f"{nm:24s} COMPILE FAIL: {el[0] if el else ''}")
             continue
+        raw = res["raw"]
+        nm = nm if res["ok"] else "!" + nm
         reg = " ".join(f"R{i + 1}={a}/{b}" for i, (a, b) in enumerate(res["regions"]) if a or b) or "-"
         sw = " ".join(f"{a}>{b}x{c}" for (a, b), c in res["swaps"].most_common(6))
         tag = "MATCH" if raw == 0 else f"raw {raw:4d} norm {res['norm']:4d}"

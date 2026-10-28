@@ -203,6 +203,13 @@ Batch-scores source variants of one function: each is spliced into a copy of the
   register swaps.
 - Exit 0 if the best variant matches, 1 if not, 2 on a `--show` compile error. `--keep` leaves the spliced
   TU/`.o` (findable by `fn_diff`).
+- `--dump DIR` writes every variant's unified diff to `DIR/<name>.diff`; `--require REGEX` (searched in the
+  variant's asm, `(?s)` for multi-line) sorts variants lacking it last and prefixes them `!` — use it to hold
+  a register-role signature fixed (e.g. `(?s)mov\tr9, r8.*add\tlr, lr, #4`) while optimising structure.
+- `perm_variants.py` (importable from a variants file via `sys.path.insert(0, str(ROOT/"tools/scripts"))`):
+  `Grid(template).axis(name, options).build(sample=N)` fills `$name` slots (`string.Template`) with the
+  cartesian product of the axes; `perms([(key, text), ...], sep)` gives every order of a declaration or
+  statement group as `{"keys": joined}`. Example grids: `build/scratch/dfx8/vars_eb0*.py`.
 
 ### rank_diff.py
 Register-coloring rank diff for rotation residues: rebuilds webs/interference from the final asm and infers

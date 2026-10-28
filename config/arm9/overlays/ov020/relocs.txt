@@ -520,8 +520,8 @@ from:0x020d45bc kind:load to:0x020d704c module:overlay(20)
 from:0x020d4680 kind:arm_call to:0x0204760c module:main
 from:0x020d4688 kind:load to:0x020d70b8 module:overlay(20)
 from:0x020d468c kind:load to:0x020d4718 module:overlay(20)
-from:0x020d4690 kind:load to:0x0205509c module:main
-from:0x020d4694 kind:load to:0x020550cc module:main
+from:0x020d4690 kind:load to:0x02055094 add:0x8 module:main
+from:0x020d4694 kind:load to:0x02055094 add:0x38 module:main
 from:0x020d4698 kind:load to:0x02055380 module:main
 from:0x020d469c kind:load to:0x020d4764 module:overlay(20)
 from:0x020d46a0 kind:load to:0x020d47b4 module:overlay(20)

@@ -358,8 +358,8 @@ from:0x020cf9d8 kind:load to:0x020710c0 module:overlay(11)
 from:0x020cfab8 kind:arm_call to:0x0204760c module:main
 from:0x020cfac0 kind:load to:0x020d01b8 module:overlay(55)
 from:0x020cfac4 kind:load to:0x020cfb00 module:overlay(55)
-from:0x020cfac8 kind:load to:0x0205509c module:main
-from:0x020cfacc kind:load to:0x020550cc module:main
+from:0x020cfac8 kind:load to:0x02055094 add:0x8 module:main
+from:0x020cfacc kind:load to:0x02055094 add:0x38 module:main
 from:0x020cfad0 kind:load to:0x02055380 module:main
 from:0x020cfad4 kind:load to:0x020cfb4c module:overlay(55)
 from:0x020cfad8 kind:load to:0x020cfb9c module:overlay(55)

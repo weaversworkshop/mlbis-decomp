@@ -20,17 +20,17 @@ extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
 // --- Function Definitions --- //
 
 // MATCHED 100%
-u32 clAfx::func_020224bc() {
-    return 0;
+DfxTexHeader * clAfx::func_020224bc() {
+    return NULL;
 }
 
 // MATCHED 100%
-u32 clAfx::func_020224c4() {
-    return 0;
+UnkStruct_020224c4 * clAfx::func_020224c4(u32 param1) {
+    return NULL;
 }
 
 // MATCHED 100%
-void clAfx::func_020224cc() {}
+void clAfx::func_020224cc(RfxNode * param1) {}
 
 // MATCHED 100%
 u32 clAfx::func_020224d0() {
@@ -38,10 +38,10 @@ u32 clAfx::func_020224d0() {
 }
 
 // MATCHED 100%
-void clAfx::func_020224d8(void (* param1)(void), u32 param2, s32 param3, s32 param4) {}
+void clAfx::func_020224d8(void (* param1)(void), GXRgb param2, s32 param3, s32 param4) {}
 
 // MATCHED 100%
-u16 clAfx::getBlendColor() {
+GXRgb clAfx::getBlendColor() {
     return 0;
 }
 
@@ -51,21 +51,21 @@ u32 clAfx::func_020224e4() {
 }
 
 // MATCHED 100%
-u32 clAfx::func_020224ec() {
-    return 0;
-}
-
-// MATCHED 100%
-nsObjSys::clCellAnime * clAfx::func_020224f4(s32 param1, u32 param2) {
+nsObjSys::clCellAnime * clAfx::func_020224ec(s32) {
     return NULL;
 }
 
 // MATCHED 100%
-void clAfx::func_020224fc(nsObjSys::clCellAnime * param1) {}
+nsObjSys::clCellAnime * clAfx::beginCellAnime(s32 param1, RfxNode * param2) {
+    return NULL;
+}
 
 // MATCHED 100%
-void clAfx::setCellFrame(s32 idx, s32 frame, u32 param3) {
-    nsObjSys::clCellAnime * ret = this->func_020224f4(idx, param3);
+void clAfx::endCellAnime(nsObjSys::clCellAnime * param1) {}
+
+// MATCHED 100%
+void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * param3) {
+    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, param3);
 
     if (ret != NULL) {
         if (frame >= 0 && frame < ret->func_020225d0()) {
@@ -78,13 +78,13 @@ void clAfx::setCellFrame(s32 idx, s32 frame, u32 param3) {
             }
         }
 
-        this->func_020224fc(ret);
+        this->endCellAnime(ret);
     }
 }
 
 // MATCHED 100%
-void clAfx::drawNumber(s32 idx, s32 digitFrame, u32 param3, s32 spacing, u32 align) {
-    nsObjSys::clCellAnime * ret = this->func_020224f4(idx, param3);
+void clAfx::drawNumber(s32 idx, s32 digitFrame, RfxNode * param3, s32 spacing, u32 align) {
+    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, param3);
 
     if (ret != NULL) {
         s32 val = this->func_020224d0();
@@ -99,7 +99,7 @@ void clAfx::drawNumber(s32 idx, s32 digitFrame, u32 param3, s32 spacing, u32 ali
         }
 
         if (off != 0) {
-            vecMulAdd16(off, &ret->field40, &ret->field70);
+            vecMulAdd16(off, (VecFx32 *)&ret->field40.m[0], (VecFx32 *)&ret->field40.m[3]);
         }
 
         do {
@@ -109,12 +109,12 @@ void clAfx::drawNumber(s32 idx, s32 digitFrame, u32 param3, s32 spacing, u32 ali
                 ret->func_0202bb44(this->func_020224e4());
             }
 
-            vecMulAdd16(-spacing, &ret->field40, &ret->field70);
+            vecMulAdd16(-spacing, (VecFx32 *)&ret->field40.m[0], (VecFx32 *)&ret->field40.m[3]);
 
             val /= 10;
         } while (val != 0);
 
-        this->func_020224fc(ret);
+        this->endCellAnime(ret);
     }
 }
 
@@ -171,7 +171,7 @@ void clAfx::runColorBlendTrack(s32 t, u16 * cmd) {
     rowOff = rowStride;
     u32 keyTime = elapsed;
     do {
-        s32 val = evalRow((s16 *)cmd, row, key, keyTime, segDur);
+        s32 val = evalRow(cmd, row, key, keyTime, segDur);
 
         rowHdr = cmd[rowOff];
 

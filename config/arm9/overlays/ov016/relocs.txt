@@ -448,8 +448,8 @@ from:0x020b15f8 kind:load to:0x02054f4c add:0x8 module:main
 from:0x020b15fc kind:load to:0x02054f4c add:0x38 module:main
 from:0x020b1600 kind:load to:0x02055008 add:0x8 module:main
 from:0x020b1604 kind:load to:0x02055008 add:0x38 module:main
-from:0x020b1608 kind:load to:0x0205509c module:main
-from:0x020b160c kind:load to:0x020550cc module:main
+from:0x020b1608 kind:load to:0x02055094 add:0x8 module:main
+from:0x020b160c kind:load to:0x02055094 add:0x38 module:main
 from:0x020b1610 kind:load to:0x020b819c module:overlay(16)
 from:0x020b1614 kind:load to:0x02055380 module:main
 from:0x020b1618 kind:load to:0x0207278c module:overlays(11,130)

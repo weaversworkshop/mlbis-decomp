@@ -12,14 +12,17 @@ public:
     u8 * field04;
     u8 pad_08[0x1e];
     s16 field26;
-    u8 pad_28[0x18];
-    VecFx32 field40;
-    u8 pad_4c[0x24];
-    VecFx32 field70;
-    u8 pad_7c[0x5];
+    u8 pad_28[0x8];
+    s32 field30;
+    u8 pad_34[0xc];
+    MtxFx44 field40;
+    u8 pad_80[0x1];
     u8 field81;
-    u8 pad_82[0x16];
+    u8 field82;
+    u8 pad_83[0x15];
     u8 field98;
+    u8 field99;
+    u16 field9a;
 
     virtual ~clCellAnime();  // D1 0x0202ac68 D0 0x0202ac90
     virtual void func_0202b24c();  // 0x0202b24c
@@ -48,7 +51,16 @@ public:
     virtual void func_0202e0bc();  // 0x0202e0bc
     virtual void func_0202e09c();  // 0x0202e09c
     virtual void func_0202d078();  // 0x0202d078
-    virtual void func_02022f38();  // 0x02022f38
+    virtual void func_02022f38(u32 param1) {  // 0x02022f38
+        this->field98 = param1;
+        if (this->field82 == 0) {
+            BOOL flag = (param1 != 0);
+            if (flag == TRUE) {
+                this->field30 = -1;
+            }
+        }
+        this->field82 = (param1 != 0);
+    };
     virtual void func_0202d800();  // 0x0202d800
 };
 

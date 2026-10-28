@@ -10,50 +10,6 @@ extern "C" {
 
 // --- Struct Definitions --- //
 
-typedef struct {
-    VecFx32 axisX;  // +0x0
-    VecFx32 axisY;  // +0xc
-    VecFx32 axisZ;  // +0x18
-    VecFx32 pos;  // +0x24
-    u8 pad_30[0x30];
-} RfxNode;
-
-typedef struct {
-    u8 pad_00[0x40];
-} UnkStruct_02021df8;
-
-typedef struct {
-    u8 pad_00[0x30];
-} UnkStruct_02021e10;
-
-typedef struct {
-    u8 pad_00[0x2c];
-} UnkStruct_02021e20;
-
-typedef struct {
-    u8 pad_00[0x24];
-} UnkStruct_02021e30;
-
-typedef struct {
-    u8 pad_00[0x20];
-} UnkStruct_02021e40;
-
-typedef struct {
-    u8 pad_00[0x14];
-} UnkStruct_02021e50;
-
-typedef struct {
-    s32 key;  // +0x0
-    s32 nextKey;  // +0x4
-    s32 t;  // +0x8
-    s32 dur;  // +0xc
-} RfxKeySeg;
-
-typedef struct {
-    u8 pad_00[0x20];
-    RfxNode * cur;  // +0x20
-} RfxStack;
-
 // --- Extern Data Variables --- //
 
 extern s16 sinCosTable[];  // 0x0204b1dc
@@ -64,21 +20,15 @@ extern RfxStack rfxStack;  // 0x027e10fc
 // --- Function Declarations --- //
 
 u32 interpolateKey(s16 *, s32, s32, s32, u16 *, s32);  // 0x02020bec
-void applyRows(RfxNode *, s16 *, s32, s32, s32, s32, s32);  // 0x02020d90
-
-void applyKeyedRows(s32, s16 *);  // 0x02021b80
-s32 findKeySeg(RfxKeySeg *, s32, s16 *);  // 0x02021c48
 
 void vecScale16(s32, VecFx32 *);  // 0x02021d14
 void vecRotPair(s32, s32, VecFx32 *, VecFx32 *);  // 0x02021d48
-void copyNode(RfxNode *, RfxNode *);  // 0x02021de0
-void copy64(UnkStruct_02021df8 *, UnkStruct_02021df8 *);  // 0x02021df8
-void copy48(UnkStruct_02021e10 *, UnkStruct_02021e10 *);  // 0x02021e10
-void copy44(UnkStruct_02021e20 *, UnkStruct_02021e20 *);  // 0x02021e20
-void copy36(UnkStruct_02021e30 *, UnkStruct_02021e30 *);  // 0x02021e30
-void copy32(UnkStruct_02021e40 *, UnkStruct_02021e40 *);  // 0x02021e40
-void copy20(UnkStruct_02021e50 *, UnkStruct_02021e50 *);  // 0x02021e50
 
+void copy48(void *, void *);  // 0x02021e10
+void copy44(void *, void *);  // 0x02021e20
+
+void copy32(void *, void *);  // 0x02021e40
+void copy20(void *, void *);  // 0x02021e50
 
 } // extern "C"
 
@@ -155,11 +105,11 @@ u16 * clRfx::func_02020ba0(s32 param1) {
 }
 
 // MATCHED 100%
-s32 evalRow(s16 * cmd, u32 row, u32 key, u32 t, u32 dur) {
-    u32 numKeys = (((u16)cmd[0] >> 9) & 0x7f) + 1;
+s32 evalRow(u16 * cmd, u32 row, u32 key, u32 t, u32 dur) {
+    u32 numKeys = ((cmd[0] >> 9) & 0x7f) + 1;
     u32 rowOffset = (numKeys+1) * row;
 
-    return interpolateKey(&cmd[rowOffset], key, t, dur, (u16*)cmd, numKeys);
+    return interpolateKey((s16 *)&cmd[rowOffset], key, t, dur, cmd, numKeys);
 }
 
 // MATCHED 100%
@@ -216,12 +166,12 @@ u32 interpolateKey(s16 * row, s32 key, s32 t, s32 dur, u16 * cmd, s32 numKeys) {
 }
 
 // MATCHED 100%
-void applyRows(RfxNode * node, s16 * cmd, s32 numRows, s32 numKeys, s32 key, s32 t, s32 dur) {
-    s16 * row = cmd;
+void applyRows(RfxNode * node, u16 * cmd, s32 numRows, s32 numKeys, s32 key, s32 t, s32 dur) {
+    s16 * row = (s16 *)cmd;
     if (dur != 0) {
         while (numRows-- != 0) {
             row += numKeys + 1;
-            s32 val = interpolateKey(row, key, t, dur, (u16 *)cmd, numKeys);
+            s32 val = interpolateKey(row, key, t, dur, cmd, numKeys);
             u16 ch = row[0] & 0x3ff;
             if (ch < 0x19) {
                 switch (ch) {
@@ -411,7 +361,7 @@ void applyRows(RfxNode * node, s16 * cmd, s32 numRows, s32 numKeys, s32 key, s32
                 }
 
                 s32 offset = ch * 2;
-                if (offset < 0x60) {
+                if (offset < 0x60) {    // sizeof(RfxNode)
                     *(s16 *)((u8 *)node + offset) = raw;
                 }
             }
@@ -455,30 +405,30 @@ void clRfx::runTrack(s32 t, u32 track) {
 }
 
 // MATCHED 100%
-void clRfx::func_020213a8() {}
+void clRfx::beginDraw() {}
 
 // MATCHED 100%
-void clRfx::runSubTracks(s32 t, s16 * cmd) {
+void clRfx::runSubTracks(s32 t, u16 * cmd) {
     s32 numKeys;
     s32 key;
     u16 * script;
     s32 sub;
     RfxNode ** cur;
 
-    s32 elapsed = t - (cmd[1] << 8);
+    s32 elapsed = t - ((s16)cmd[1] << 8);
     if (elapsed < 0) {
         return;
     }
 
     script = this->script;
 
-    s32 keyBits = ((u16)cmd[0] >> 9) & 0x7f;
-    s32 rowBits = ((u16)cmd[0] >> 6) & 0x7;
+    s32 keyBits = (cmd[0] >> 9) & 0x7f;
+    s32 rowBits = (cmd[0] >> 6) & 0x7;
     s32 numRows = rowBits + 1;
     numKeys = keyBits + 1;
     s32 tailOffset = (numKeys + 1) * numRows;
 
-    s16 * subRow = &cmd[tailOffset];
+    s16 * subRow = (s16 *)&cmd[tailOffset];
     cur = &rfxStack.cur;
     (*cur)++;
 
@@ -496,7 +446,7 @@ void clRfx::runSubTracks(s32 t, s16 * cmd) {
                     applyRows(*cur, cmd, numRows, numKeys, key, 0, 0);
                 }
 
-                copy36((UnkStruct_02021e30 *)SDK_AUTOLOAD_DTCM_START, (UnkStruct_02021e30 *)*cur);
+                copy36(SDK_AUTOLOAD_DTCM_START, *cur);
                 this->runTrack(elapsed, sub);
             }
 
@@ -505,7 +455,7 @@ void clRfx::runSubTracks(s32 t, s16 * cmd) {
                 break;
             }
 
-            elapsed -= (u16)cmd[key] << 8;
+            elapsed -= cmd[key] << 8;
             if (elapsed < 0) {
                 break;
             }
@@ -528,14 +478,14 @@ void clRfx::runSubTracks(s32 t, s16 * cmd) {
                 break;
             }
 
-            elapsed -= (u16)cmd[key] << 8;
+            elapsed -= cmd[key] << 8;
         } while (elapsed >= 0);
     }
     (*cur)--;
 }
 
 // MATCHED 100%
-void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
+void clRfx::runSubTrackSeg(s32 t, u16 * cmd) {
     s32 key;
     s32 nextKey;
     s32 segDur;
@@ -543,7 +493,7 @@ void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
     u16 * script;
     s16 sub;
 
-    s32 elapsed = t - (cmd[1] << 8);
+    s32 elapsed = t - ((s16)cmd[1] << 8);
     if (elapsed < 0) {
         return;
     }
@@ -551,14 +501,14 @@ void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
     script = this->script;
     key = 1;
 
-    s32 keyBits = ((u16)cmd[0] >> 9) & 0x7f;
-    s32 rowBits = ((u16)cmd[0] >> 6) & 0x7;
+    s32 keyBits = (cmd[0] >> 9) & 0x7f;
+    s32 rowBits = (cmd[0] >> 6) & 0x7;
     s32 numRows = rowBits + 1;
     s32 numKeys = keyBits + 1;
     s32 tailOffset = (numKeys + 1) * numRows;
 
     nextKey = key;
-    subRow = &cmd[tailOffset];
+    subRow = (s16 *)&cmd[tailOffset];
     segDur = 0;
     while (TRUE) {
         nextKey++;
@@ -569,7 +519,7 @@ void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
             break;
         }
 
-        segDur = (u16)cmd[nextKey];
+        segDur = cmd[nextKey];
         if (segDur == 0) {
             segDur = script[script[(u16)subRow[nextKey - 1]]];
             if (segDur == 0) {
@@ -608,7 +558,7 @@ void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
                     applyRows(*cur, cmd, numRows, numKeys, key, elapsed, segDur);
                 }
 
-                copy36((UnkStruct_02021e30 *)SDK_AUTOLOAD_DTCM_START, (UnkStruct_02021e30 *)*cur);
+                copy36(SDK_AUTOLOAD_DTCM_START, *cur);
                 this->runTrack(elapsed, sub);
             }
 
@@ -641,25 +591,25 @@ void clRfx::runSubTrackSeg(s32 t, s16 * cmd) {
 }
 
 // MATCHED 100%
-void clRfx::runExtTracks(s32 t, s16 * cmd) {
+void clRfx::runExtTracks(s32 t, u16 * cmd) {
     s32 key;
     u16 * ext;
     u16 * saved;
     s32 numKeys;
 
-    s32 elapsed = t - (cmd[1] << 8);
+    s32 elapsed = t - ((s16)cmd[1] << 8);
     if (elapsed < 0) {
         return;
     }
 
     key = 1;
 
-    s32 keyBits = ((u16)cmd[0] >> 9) & 0x7f;
-    s32 rowBits = ((u16)cmd[0] >> 6) & 0x7;
+    s32 keyBits = (cmd[0] >> 9) & 0x7f;
+    s32 rowBits = (cmd[0] >> 6) & 0x7;
     s32 numRows = rowBits + 1;
     numKeys = keyBits + 1;
     s32 tailOffset = (numKeys + 1) * numRows;
-    s16 * subRow = &cmd[tailOffset];
+    s16 * subRow = (s16 *)&cmd[tailOffset];
 
     RfxNode ** cur = &rfxStack.cur;
     (*cur)++;
@@ -679,7 +629,7 @@ void clRfx::runExtTracks(s32 t, s16 * cmd) {
                         applyRows(*cur, cmd, numRows, numKeys, key, 0, 0);
                     }
 
-                    copy36((UnkStruct_02021e30 *)SDK_AUTOLOAD_DTCM_START, (UnkStruct_02021e30 *)*cur);
+                    copy36(SDK_AUTOLOAD_DTCM_START, *cur);
 
                     saved = this->script;
                     this->script = ext;
@@ -713,7 +663,7 @@ void clRfx::runExtTracks(s32 t, s16 * cmd) {
                 break;
             }
 
-            elapsed -= (u16)cmd[key] << 8;
+            elapsed -= cmd[key] << 8;
             if (elapsed < 0) {
                 break;
             }
@@ -762,7 +712,7 @@ void clRfx::runExtTracks(s32 t, s16 * cmd) {
                 break;
             }
 
-            elapsed -= (u16)cmd[key] << 8;
+            elapsed -= cmd[key] << 8;
             if (elapsed < 0) {
                 break;
             }
@@ -772,12 +722,12 @@ void clRfx::runExtTracks(s32 t, s16 * cmd) {
 }
 
 // MATCHED 100%
-void applyKeyedRows(s32 t, s16 * cmd) {
+void applyKeyedRows(s32 t, u16 * cmd) {
     s32 key;
     s32 segDur;
     s32 numKeys;
 
-    s32 elapsed = t - (cmd[1] << 8);
+    s32 elapsed = t - ((s16)cmd[1] << 8);
     if (elapsed < 0) {
         return;
     }
@@ -785,8 +735,8 @@ void applyKeyedRows(s32 t, s16 * cmd) {
     key = 1;
     segDur = 0;
 
-    s32 keyBits = ((u16)cmd[0] >> 9) & 0x7f;
-    s32 rowBits = ((u16)cmd[0] >> 6) & 0x7;
+    s32 keyBits = (cmd[0] >> 9) & 0x7f;
+    s32 rowBits = (cmd[0] >> 6) & 0x7;
     numKeys = keyBits + 1;
 
     while (TRUE) {
@@ -798,7 +748,7 @@ void applyKeyedRows(s32 t, s16 * cmd) {
             break;
         }
 
-        segDur = (u16)cmd[key];
+        segDur = cmd[key];
         if (segDur != 0) {
             segDur <<= 8;
             if (elapsed <= segDur) {
@@ -811,34 +761,34 @@ void applyKeyedRows(s32 t, s16 * cmd) {
     }
 }
 
-// MATCHED 100%  -- possibly return BOOL
-s32 findKeySeg(RfxKeySeg * out, s32 t, s16 * cmd) {
+// MATCHED 100%
+BOOL findKeySeg(RfxKeySeg * out, s32 t, u16 * cmd) {
     s32 numKeys;
     s32 key;
     s32 nextKey;
     s32 segDur;
 
-    s32 elapsed = t - (cmd[1] << 8);
+    s32 elapsed = t - ((s16)cmd[1] << 8);
     if (elapsed < 0) {
-        return 0;
+        return FALSE;
     }
 
     key = 1;
     nextKey = key;
 
-    numKeys = (((u16)cmd[0] >> 9) & 0x7f) + 1;
+    numKeys = ((cmd[0] >> 9) & 0x7f) + 1;
     segDur = 0;
 
     while (TRUE) {
         nextKey++;
         if (nextKey > numKeys) {
             if (segDur != 0) {
-                return 0;
+                return FALSE;
             }
             break;
         }
 
-        segDur = (u16)cmd[nextKey];
+        segDur = cmd[nextKey];
         if (segDur != 0) {
             segDur <<= 8;
             if (elapsed <= segDur) {
@@ -855,7 +805,7 @@ s32 findKeySeg(RfxKeySeg * out, s32 t, s16 * cmd) {
     out->t = elapsed;
     out->dur = segDur;
 
-    return 1;
+    return TRUE;
 }
 
 #ifndef IDE_PARSE
@@ -950,7 +900,7 @@ asm void copyNode(RfxNode * src, RfxNode * dst) {
 }
 
 // MATCHED 100%
-asm void copy64(UnkStruct_02021df8 * src, UnkStruct_02021df8 * dst) {
+asm void copy64(void * src, void * dst) {
     stmdb sp!, {r4, r5, r6, r7, lr}
     ldmia r0!, {r2, r3, r4, r5, r6, r7, ip, lr}
     stmia r1!, {r2, r3, r4, r5, r6, r7, ip, lr}
@@ -960,7 +910,7 @@ asm void copy64(UnkStruct_02021df8 * src, UnkStruct_02021df8 * dst) {
 }
 
 // MATCHED 100%
-asm void copy48(UnkStruct_02021e10 * src, UnkStruct_02021e10 * dst) {
+asm void copy48(void * src, void * dst) {
     stmdb sp!, {r4, r5, r6, r7, r8, r9, r10, lr}
     ldmia r0, {r0, r2, r3, r4, r5, r6, r7, r8, r9, r10, ip, lr}
     stmia r1, {r0, r2, r3, r4, r5, r6, r7, r8, r9, r10, ip, lr}
@@ -968,7 +918,7 @@ asm void copy48(UnkStruct_02021e10 * src, UnkStruct_02021e10 * dst) {
 }
 
 // MATCHED 100%
-asm void copy44(UnkStruct_02021e20 * src, UnkStruct_02021e20 * dst) {
+asm void copy44(void * src, void * dst) {
     stmdb sp!, {r4, r5, r6, r7, r8, r9, lr}
     ldmia r0, {r0, r2, r3, r4, r5, r6, r7, r8, r9, ip, lr}
     stmia r1, {r0, r2, r3, r4, r5, r6, r7, r8, r9, ip, lr}
@@ -976,7 +926,7 @@ asm void copy44(UnkStruct_02021e20 * src, UnkStruct_02021e20 * dst) {
 }
 
 // MATCHED 100%
-asm void copy36(UnkStruct_02021e30 * src, UnkStruct_02021e30 * dst) {
+asm void copy36(void * src, void * dst) {
     stmdb sp!, {r4, r5, r6, r7, lr}
     ldmia r0, {r0, r2, r3, r4, r5, r6, r7, ip, lr}
     stmia r1, {r0, r2, r3, r4, r5, r6, r7, ip, lr}
@@ -984,7 +934,7 @@ asm void copy36(UnkStruct_02021e30 * src, UnkStruct_02021e30 * dst) {
 }
 
 // MATCHED 100%
-asm void copy32(UnkStruct_02021e40 * src, UnkStruct_02021e40 * dst) {
+asm void copy32(void * src, void * dst) {
     stmdb sp!, {r4, r5, r6, lr}
     ldmia r0, {r0, r2, r3, r4, r5, r6, ip, lr}
     stmia r1, {r0, r2, r3, r4, r5, r6, ip, lr}
@@ -992,7 +942,7 @@ asm void copy32(UnkStruct_02021e40 * src, UnkStruct_02021e40 * dst) {
 }
 
 // MATCHED 100%
-asm void copy20(UnkStruct_02021e50 * src, UnkStruct_02021e50 * dst) {
+asm void copy20(void * src, void * dst) {
     stmdb sp!, {lr}
     ldmia r0, {r0, r2, r3, ip, lr}
     stmia r1, {r0, r2, r3, ip, lr}

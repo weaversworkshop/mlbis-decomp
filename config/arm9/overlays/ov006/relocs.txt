@@ -801,8 +801,8 @@ from:0x021241d8 kind:load to:0x02054f4c add:0x8 module:main
 from:0x021241dc kind:load to:0x02054f4c add:0x38 module:main
 from:0x021241e0 kind:load to:0x02055008 add:0x8 module:main
 from:0x021241e4 kind:load to:0x02055008 add:0x38 module:main
-from:0x021241e8 kind:load to:0x0205509c module:main
-from:0x021241ec kind:load to:0x020550cc module:main
+from:0x021241e8 kind:load to:0x02055094 add:0x8 module:main
+from:0x021241ec kind:load to:0x02055094 add:0x38 module:main
 from:0x021241f0 kind:load to:0x0210f234 module:overlay(4)
 from:0x021241f4 kind:load to:0x02055380 module:main
 from:0x021241f8 kind:load to:0x020552a8 module:main
