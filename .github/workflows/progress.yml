@@ -2,7 +2,7 @@ name: progress
 on:
   push:
     branches: [main]
-    paths: [progress/report.json]
+    paths: [progress/report.json, .github/workflows/progress.yml]
   workflow_dispatch:
 
 jobs:
@@ -13,9 +13,14 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v5
-      - uses: decmp/upload-action@v1
-        with:
-          report: progress/report.json
-          version: CLJE
-          name: "Mario & Luigi: Bowser's Inside Story"
-          platform: nds
+      # script form: decmp/upload-action@v1's action.yml fails to parse (decmp/upload-action#1)
+      - name: Upload to decmp.dev
+        run: |
+          curl -fsSL https://api.decmp.dev/action/v1.1.0.mjs -o decmp.mjs
+          echo "10fb0039a067b4ffe67510959356a691efa6efbb0aae16450c04f8c64da0a5f8  decmp.mjs" | sha256sum -c
+          node decmp.mjs
+        env:
+          DECMP_REPORT: progress/report.json
+          DECMP_VERSION: CLJE
+          DECMP_NAME: "Mario & Luigi: Bowser's Inside Story"
+          DECMP_PLATFORM: nds
