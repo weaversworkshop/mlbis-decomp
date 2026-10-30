@@ -360,7 +360,7 @@ from:0x020cfac0 kind:load to:0x020d01b8 module:overlay(55)
 from:0x020cfac4 kind:load to:0x020cfb00 module:overlay(55)
 from:0x020cfac8 kind:load to:0x02055094 add:0x8 module:main
 from:0x020cfacc kind:load to:0x02055094 add:0x38 module:main
-from:0x020cfad0 kind:load to:0x02055380 module:main
+from:0x020cfad0 kind:load to:0x020552f4 add:0x8c module:main
 from:0x020cfad4 kind:load to:0x020cfb4c module:overlay(55)
 from:0x020cfad8 kind:load to:0x020cfb9c module:overlay(55)
 from:0x020cfadc kind:load to:0x020cfbcc module:overlay(55)

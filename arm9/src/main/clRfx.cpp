@@ -95,12 +95,12 @@ void clRfx::onEnd() {
 }
 
 // MATCHED 100%
-u32 clRfx::func_02020b98() {
+u32 clRfx::extScriptCount() {
     return 0;
 }
 
 // MATCHED 100%
-u16 * clRfx::func_02020ba0(s32 param1) {
+u16 * clRfx::extScript(s32 param1) {
     return NULL;
 }
 
@@ -621,7 +621,7 @@ void clRfx::runExtTracks(s32 t, u16 * cmd) {
         while (TRUE) {
             s32 sub = subRow[key];
             if (sub >= 0) {
-                ext = this->func_02020ba0(sub);
+                ext = this->extScript(sub);
                 if (ext != NULL && elapsed <= ext[ext[0]] << 8) {
                     copyNode(*cur-1, *cur);
 
@@ -672,7 +672,7 @@ void clRfx::runExtTracks(s32 t, u16 * cmd) {
         while (TRUE) {
             s32 sub = subRow[key];
             if (sub >= 0) {
-                ext = this->func_02020ba0(sub);
+                ext = this->extScript(sub);
                 if (ext != NULL && elapsed <= ext[ext[0]] << 8) {
                     copyNode(*cur-1, *cur);
 

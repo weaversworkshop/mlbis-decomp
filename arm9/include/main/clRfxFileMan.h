@@ -45,6 +45,18 @@ public:
     void clear(void);  // 0x020221a4
 };
 
+typedef struct {
+    clGenFileMan managerA;  // +0x0
+    clGenFileMan managerB;  // +0xc
+    GenFileEntry entriesA[128];  // +0x18
+    GenFileEntry entriesB[128];  // +0x418
+    u16 dirtyA;  // +0x818
+    u16 dirtyB;  // +0x81a
+} RfxGenPools;
+
+void * func_020222a4(RfxGenPools *, u32);  // 0x020222a4
+void * func_020223b0(RfxGenPools *, u32);  // 0x020223b0
+
 #endif // __cplusplus
 
 #endif

@@ -451,7 +451,7 @@ from:0x020b1604 kind:load to:0x02055008 add:0x38 module:main
 from:0x020b1608 kind:load to:0x02055094 add:0x8 module:main
 from:0x020b160c kind:load to:0x02055094 add:0x38 module:main
 from:0x020b1610 kind:load to:0x020b819c module:overlay(16)
-from:0x020b1614 kind:load to:0x02055380 module:main
+from:0x020b1614 kind:load to:0x020552f4 add:0x8c module:main
 from:0x020b1618 kind:load to:0x0207278c module:overlays(11,130)
 from:0x020b161c kind:load to:0x0207270c module:overlays(11,130)
 from:0x020b1620 kind:load to:0x020b86a8 module:overlay(16)

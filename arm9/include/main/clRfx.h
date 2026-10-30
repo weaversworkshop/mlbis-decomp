@@ -68,9 +68,9 @@ public:
     virtual void onEnd(void);  // 0x02020b18 Thn12 0x02021e98
     virtual void unk_virtual1(s32, u16 *, u8) = 0;
     virtual u32 unk_virtual2() = 0;
-    virtual u16 * func_02020ba0(s32);  // 0x02020ba0
-    virtual u32 func_02020b98(void);  // 0x02020b98
-    virtual void beginDraw();  // 0x020213a8
+    virtual u16 * extScript(s32);  // 0x02020ba0
+    virtual u32 extScriptCount(void);  // 0x02020b98
+    virtual void beginDraw(void);  // 0x020213a8
 
     void start(inYanaUnit **, u16 *);  // 0x02020998
     void finish(void);  // 0x02020a3c

@@ -241,7 +241,7 @@ void clDfx::cmdNodeCallback(s32 t, u16 * cmd) {
         node->pos.y -= this->originY << FX32_SHIFT;
         node->pos.z -= this->originZ;
 
-        this->func_020224cc(node);
+        this->onNodePos(node);
     }
 }
 
@@ -1071,12 +1071,12 @@ BOOL clDfx::setupTexture(u16 texIdx, RfxNode * node) {
 
 // MATCHED 100%
 DfxTexInfo * clDfx::resolveTexture(u16 texIdx, RfxNode * node) {
-    DfxTexHeader * hdr = this->func_020224bc();
+    DfxTexHeader * hdr = this->getTexHeader(texIdx);
     if (hdr == NULL) {
         return NULL;
     }
 
-    UnkStruct_020224c4 * pltt = this->func_020224c4(texIdx);
+    UnkStruct_020224c4 * pltt = this->getPlttHeader(texIdx);
     if (pltt == NULL) {
         return NULL;
     }

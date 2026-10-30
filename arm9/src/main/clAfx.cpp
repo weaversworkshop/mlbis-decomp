@@ -20,17 +20,17 @@ extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
 // --- Function Definitions --- //
 
 // MATCHED 100%
-DfxTexHeader * clAfx::func_020224bc() {
+DfxTexHeader * clAfx::getTexHeader(u32 param1) {
     return NULL;
 }
 
 // MATCHED 100%
-UnkStruct_020224c4 * clAfx::func_020224c4(u32 param1) {
+UnkStruct_020224c4 * clAfx::getPlttHeader(u32 param1) {
     return NULL;
 }
 
 // MATCHED 100%
-void clAfx::func_020224cc(RfxNode * param1) {}
+void clAfx::onNodePos(RfxNode * param1) {}
 
 // MATCHED 100%
 u32 clAfx::func_020224d0() {

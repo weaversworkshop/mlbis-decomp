@@ -58,11 +58,11 @@ from:0x020c9bd8 kind:load to:0x02054fd4 add:0x8 module:main
 from:0x020c9bdc kind:load to:0x02070a90 module:overlay(11)
 from:0x020c9be0 kind:load to:0x02054f0c add:0x8 module:main
 from:0x020c9be4 kind:load to:0x02054fc4 add:0x8 module:main
-from:0x020c9be8 kind:load to:0x020551e8 module:main
-from:0x020c9bec kind:load to:0x020551fc module:main
+from:0x020c9be8 kind:load to:0x020551e0 add:0x8 module:main
+from:0x020c9bec kind:load to:0x020551e0 add:0x1c module:main
 from:0x020c9bf0 kind:load to:0x02070e14 module:overlay(11)
 from:0x020c9bf4 kind:load to:0x02070e28 module:overlay(11)
-from:0x020c9bf8 kind:load to:0x02055188 module:main
+from:0x020c9bf8 kind:load to:0x02055180 add:0x8 module:main
 from:0x020c9bfc kind:load to:0x02054e30 add:0x8 module:main
 from:0x020c9c00 kind:load to:0x02055608 module:main
 from:0x020c9c04 kind:load to:0x0205561c module:main

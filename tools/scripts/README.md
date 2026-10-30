@@ -140,9 +140,13 @@ pairs them. Runs inside `make diff`/`make progress`; standalone `make sync-names
 - Address comes from a `func_<addr>`/`data_<addr>`/`func_ovNNN_<addr>` name, or an anchor on the
   **declaration** (headers and sources under `arm9/include`, `arm9/src`): `void foo();  // 0x0201b0e4`.
 - Ctors/dtors tag each ABI variant: `clFS(...);  // C2 0x0201a9e0`, `~clFS();  // D0 0x.. D1 0x.. D2 0x..`.
+- Thunks anchor on the method they enter, tagged `Thn<N>` (`_ZThn<N>_`), `Tv0_n<K>` (`_ZTv0_n<K>_`, vcall at
+  vptr-K) or `Tvn<N>_n<K>` (`_ZTvn<N>_n<K>_`): `virtual void f();  // 0x02025908 Thn12 0x02025ba4 Thn24 0x02025ccc`;
+  on dtor lines prefix the code: `Tv0_n48_D1 0x02025c2c`. `K` depends on the virtual base's declaration order
+  (LESSONS mwcc-vcall-slot-order-is-declaration-order).
 - Data: anchor a global-scope definition/extern: `TPData bufs[2];  // 0x0205bac4`; a multi-line
-  initializer may carry it on its closing `};` line instead. Vtables/RTTI are manual
-  (`map-cpp-tu`).
+  initializer may carry it on its closing `};` line instead. Vtables/RTTI/VTTs (`_ZTV/I/S/T`) are
+  manual (`map-cpp-tu`); a VTT nobody references is dead-stripped from the ROM (clDfxSh/Vr/Ex).
 - Allocation operators anchor like functions; keyed by (class, name, arity, class-typed param names), never
   by the name-only fallback.
 - Join key is (enclosing class, name) — overridden virtuals anchor per class. Name-only fallback applies only

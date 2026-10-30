@@ -804,9 +804,9 @@ from:0x021241e4 kind:load to:0x02055008 add:0x38 module:main
 from:0x021241e8 kind:load to:0x02055094 add:0x8 module:main
 from:0x021241ec kind:load to:0x02055094 add:0x38 module:main
 from:0x021241f0 kind:load to:0x0210f234 module:overlay(4)
-from:0x021241f4 kind:load to:0x02055380 module:main
-from:0x021241f8 kind:load to:0x020552a8 module:main
-from:0x021241fc kind:load to:0x02055474 module:main
+from:0x021241f4 kind:load to:0x020552f4 add:0x8c module:main
+from:0x021241f8 kind:load to:0x0205522c add:0x7c module:main
+from:0x021241fc kind:load to:0x020553cc add:0xa8 module:main
 from:0x02124200 kind:load to:0x021276fc module:overlay(6)
 from:0x02124204 kind:load to:0x0210fbf0 module:overlay(4)
 from:0x02124208 kind:load to:0x0210fb54 module:overlay(4)

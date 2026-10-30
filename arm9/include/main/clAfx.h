@@ -11,21 +11,22 @@
 typedef struct {
     u8 wBlocks;  // +0x0
     u8 hBlocks;  // +0x1
-    u8 pad_02[0x1];
+    u8 field02;
     u8 fmt;  // +0x3
 } DfxTexHeader;
 
 typedef struct {
-    u8 pad_00[0x0];
+    u8 pad_00[0x4];
+    u8 field04[];
 } UnkStruct_020224c4;
 
 class clAfx : public clRfx {
 public:
 
     // ~clAfx();  // implicit; D1 0x020228d0 D0 0x020228a0 Thn12_D1 0x02022908 Thn12_D0 0x020228f8
-    virtual DfxTexHeader * func_020224bc(void);  // 0x020224bc
-    virtual UnkStruct_020224c4 * func_020224c4(u32);  // 0x020224c4
-    virtual void func_020224cc(RfxNode *);  // 0x020224cc
+    virtual DfxTexHeader * getTexHeader(u32);  // 0x020224bc
+    virtual UnkStruct_020224c4 * getPlttHeader(u32);  // 0x020224c4
+    virtual void onNodePos(RfxNode *);  // 0x020224cc
     virtual u32 func_020224d0(void);  // 0x020224d0
     virtual void func_020224d8(void (*)(void), GXRgb, s32, s32);  // 0x020224d8
     virtual GXRgb getBlendColor(void);  // 0x020224dc

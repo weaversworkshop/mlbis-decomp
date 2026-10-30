@@ -7,7 +7,7 @@
 // --- Function Definitions --- //
 
 // MATCHED 100%
-u32 getTexVramAddr(GXVRamTex bank) {
+u8 * getTexVramAddr(GXVRamTex bank) {
     switch (bank) {
         case GX_VRAM_TEX_0_A:
         case GX_VRAM_TEX_01_AB:
@@ -17,37 +17,37 @@ u32 getTexVramAddr(GXVRamTex bank) {
         case GX_VRAM_TEX_012_ABD:
         case GX_VRAM_TEX_012_ACD:
         case GX_VRAM_TEX_0123_ABCD:
-            return (u32)HW_LCDC_VRAM_A;
+            return (u8 *)HW_LCDC_VRAM_A;
         case GX_VRAM_TEX_0_B:
         case GX_VRAM_TEX_01_BC:
         case GX_VRAM_TEX_01_BD:
         case GX_VRAM_TEX_012_BCD:
-            return (u32)HW_LCDC_VRAM_B;
+            return (u8 *)HW_LCDC_VRAM_B;
         case GX_VRAM_TEX_0_C:
         case GX_VRAM_TEX_01_CD:
-            return (u32)HW_LCDC_VRAM_C;
+            return (u8 *)HW_LCDC_VRAM_C;
         case GX_VRAM_TEX_0_D:
-            return (u32)HW_LCDC_VRAM_D;
+            return (u8 *)HW_LCDC_VRAM_D;
         default:
-            return 0;
+            return NULL;
     }
 }
 
 // MATCHED 100%
-u32 getTexPlttVramAddr(GXVRamTexPltt bank) {
+u8 * getTexPlttVramAddr(GXVRamTexPltt bank) {
     switch (bank) {
         case GX_VRAM_TEXPLTT_0123_E:
         case GX_VRAM_TEXPLTT_01234_EF:
         case GX_VRAM_TEXPLTT_012345_EFG:
-            return (u32)HW_LCDC_VRAM_E;
+            return (u8 *)HW_LCDC_VRAM_E;
         case GX_VRAM_TEXPLTT_0_F:
         case GX_VRAM_TEXPLTT_01_FG:
-            return (u32)HW_LCDC_VRAM_F;
+            return (u8 *)HW_LCDC_VRAM_F;
         case GX_VRAM_TEXPLTT_0_G:
-            return (u32)HW_LCDC_VRAM_G;
+            return (u8 *)HW_LCDC_VRAM_G;
         case GX_VRAM_TEXPLTT_NONE:
         default:
-            return 0;
+            return NULL;
     }
 }
 

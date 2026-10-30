@@ -177,7 +177,7 @@ from:0x020a1144 kind:load to:0x02055008 add:0x38 module:main
 from:0x020a1148 kind:load to:0x02055094 add:0x8 module:main
 from:0x020a114c kind:load to:0x02055094 add:0x38 module:main
 from:0x020a1150 kind:load to:0x020702f0 module:overlays(11,131)
-from:0x020a1154 kind:load to:0x02055380 module:main
+from:0x020a1154 kind:load to:0x020552f4 add:0x8c module:main
 from:0x020a1158 kind:load to:0x020726b4 module:overlays(11,130)
 from:0x020a115c kind:load to:0x0207275c module:overlays(11,130)
 from:0x020a1160 kind:load to:0x0207278c module:overlays(11,130)

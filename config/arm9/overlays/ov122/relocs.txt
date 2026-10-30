@@ -347,9 +347,9 @@ from:0x0206e9b0 kind:load to:0x02055008 add:0x38 module:main
 from:0x0206e9b4 kind:load to:0x02055094 add:0x8 module:main
 from:0x0206e9b8 kind:load to:0x02055094 add:0x38 module:main
 from:0x0206e9bc kind:load to:0x02075148 module:overlay(122)
-from:0x0206e9c0 kind:load to:0x02055380 module:main
-from:0x0206e9c4 kind:load to:0x020552a8 module:main
-from:0x0206e9c8 kind:load to:0x02055474 module:main
+from:0x0206e9c0 kind:load to:0x020552f4 add:0x8c module:main
+from:0x0206e9c4 kind:load to:0x0205522c add:0x7c module:main
+from:0x0206e9c8 kind:load to:0x020553cc add:0xa8 module:main
 from:0x0206e9cc kind:load to:0x020756f0 module:overlay(122)
 from:0x0206e9d0 kind:load to:0x02075760 module:overlay(122)
 from:0x0206e9d4 kind:load to:0x02075790 module:overlay(122)

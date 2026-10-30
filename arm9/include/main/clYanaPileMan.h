@@ -10,10 +10,12 @@
 
 typedef struct {
     u32 key;  // +0x0
-    u32 offset : 29;  // +0x4
-    u32 used : 1;
-    u32 stale : 1;
-    u32 needsLoad : 1;
+    struct {
+        u32 offset : 29;  // +0x4
+        u32 used : 1;
+        u32 stale : 1;
+        u32 needsLoad : 1;
+    };
 } YanaPileEntry;
 
 class clYanaPileMan {

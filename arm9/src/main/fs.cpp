@@ -30,7 +30,6 @@ FSManager fsManager;  // 0x0205ba8c
 
 // --- Function Declarations --- //
 
-u32 fsChunkCount(FSChunkTable *); // 0x0201adbc
 u32 fsChunkSize(FSChunkTable *, u32); // 0x0201ade4
 BOOL fsInit(u32, void *, u32); // 0x0201b28c
 BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4

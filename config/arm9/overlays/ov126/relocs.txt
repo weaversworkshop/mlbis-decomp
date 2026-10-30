@@ -641,9 +641,9 @@ from:0x02082120 kind:load to:0x02054fd4 add:0x8 module:main
 from:0x02082124 kind:load to:0x0208b840 module:overlay(126)
 from:0x0208212c kind:load to:0x020750e4 module:overlays(3,122,130)
 from:0x02082130 kind:load to:0x02054fc4 add:0x8 module:main
-from:0x02082134 kind:load to:0x020551e8 module:main
-from:0x02082138 kind:load to:0x020551fc module:main
-from:0x0208213c kind:load to:0x02055188 module:main
+from:0x02082134 kind:load to:0x020551e0 add:0x8 module:main
+from:0x02082138 kind:load to:0x020551e0 add:0x1c module:main
+from:0x0208213c kind:load to:0x02055180 add:0x8 module:main
 from:0x02082140 kind:load to:0x02054e30 add:0x8 module:main
 from:0x02082148 kind:load to:0x020750d4 module:overlays(3,122,130)
 from:0x0208214c kind:load to:0x02055608 module:main

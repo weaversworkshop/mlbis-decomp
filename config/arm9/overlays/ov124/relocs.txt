@@ -1697,9 +1697,9 @@ from:0x020947c8 kind:load to:0x020a24b4 module:overlay(124)
 from:0x020947d0 kind:load to:0x020750e4 module:overlays(3,122,130)
 from:0x020947d4 kind:load to:0x02054fd4 add:0x8 module:main
 from:0x020947d8 kind:load to:0x02054fc4 add:0x8 module:main
-from:0x020947dc kind:load to:0x020551e8 module:main
-from:0x020947e0 kind:load to:0x020551fc module:main
-from:0x020947e4 kind:load to:0x02055188 module:main
+from:0x020947dc kind:load to:0x020551e0 add:0x8 module:main
+from:0x020947e0 kind:load to:0x020551e0 add:0x1c module:main
+from:0x020947e4 kind:load to:0x02055180 add:0x8 module:main
 from:0x020947e8 kind:load to:0x02054e30 add:0x8 module:main
 from:0x020947f0 kind:load to:0x020750d4 module:overlays(3,122,130)
 from:0x020947f4 kind:load to:0x02055608 module:main
