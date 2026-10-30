@@ -48,6 +48,7 @@ void setMainHeapBase(void *);  // 0x0201a2bc
 void rebaseHeap(u32, void *);  // 0x0201a2e0
 
 #ifdef __cplusplus
+#include <nitro.h>
 }
 
 void * operator new(size_t, u32, void *, BOOL);  // 0x0201a138

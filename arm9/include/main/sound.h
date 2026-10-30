@@ -28,6 +28,60 @@
 #define SND_REQ_COUNT           16
 #define SND_VOICE_COUNT         20
 
+#include <nnsys.h>
+
+typedef struct SndVoiceList SndVoiceList;
+
+typedef struct SndVoice {
+    struct SndVoice * next;  // +0x0
+    struct SndVoice * prev;  // +0x4
+    struct SndVoice * chainNext;  // +0x8
+    struct SndVoice * chainPrev;  // +0xc
+    union {
+        NNSSndHandle handle;  // +0x10
+        NNSSndStrmHandle strmHandle;  // +0x10
+    };
+    SndVoiceList * owner;  // +0x14
+    u32 id;  // +0x18
+    s8 volume;  // +0x1c
+    u8 idx;  // +0x1d
+    s16 delay;  // +0x1e
+    s16 echoDelay;  // +0x20
+    s16 elapsed;  // +0x22
+    u16 trackCount;  // +0x24
+    s16 x;  // +0x26
+    s16 y;  // +0x28
+    u8 stackIdx;  // +0x2a
+    u8 pad_2b;
+    union {
+        u16 field2c;
+        struct {
+            u16 inUse : 1;  // +0x2c
+            u16 echoIdx : 7;
+            u16 stopOthers : 1;
+            u16 stopped : 1;
+            u16 field2c_10 : 1;
+            u16 streamIdx : 2;
+            u16 forceCenterX : 1;
+            u16 forceCenterY : 1;
+            u16 field2c_15 : 1;
+        };
+    };
+    union {
+        u16 dualPrio;  // +0x2e
+        struct {
+            s8 channelPrio;  // +0x2e
+            s8 playerPrio;  // +0x2f
+        };
+    };
+    s16 duration;  // +0x30
+    u8 pad_32[0x2];
+} SndVoice;
+
+struct SndVoiceList {
+    SndVoice * head;  // +0x0
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif

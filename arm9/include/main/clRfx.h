@@ -8,6 +8,10 @@
 #include "main/clYanaAnim.h"
 #include "main/yanaCtrl.h"
 
+extern "C" {
+    #include <nitro.h>
+}
+
 typedef struct {
     s16 field00;
     union {

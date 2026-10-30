@@ -7,6 +7,10 @@
 
 #include "main/clYanaUnitSys.h"
 
+extern "C" {
+    #include <nitro.h>
+}
+
 class inYanaUnit {
 public:
     inYanaUnit * next;  // +0x4

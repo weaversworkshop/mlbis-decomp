@@ -5,6 +5,10 @@
 
 #ifdef __cplusplus
 
+extern "C" {
+    #include <nitro.h>
+}
+
 namespace nsObjSys {
 
 class clCellAnime {

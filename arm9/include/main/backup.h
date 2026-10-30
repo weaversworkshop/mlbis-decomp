@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#include <nitro.h>
+
 enum BackupStatus {
     BACKUP_IDLE,
     BACKUP_BUSY,

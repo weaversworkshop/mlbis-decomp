@@ -11,8 +11,6 @@ extern "C" {
 #include "main/vecmath.h"
 #include "main/vecUtil.h"
 
-// --- Struct Definitions --- //
-
 // --- Extern Data Variables --- //
 
 extern s32 polygonIdCounter;  // 0x027e0024

@@ -10,12 +10,117 @@
 
 extern "C" {
 
-#include "structs/sndAltVoiceInfo.h"
-
 #include "main/unk_0202f1b4.h"
 #include "main/unk_02031be4.h"
 
 // --- Struct Definitions --- //
+
+typedef struct SndRequest {
+    struct SndRequest * next;  // +0x0
+    struct SndRequest * prev;  // +0x4
+    u8 argForm;  // +0x8
+    u8 pad_09[0x3];
+    void (*field0c)(void);
+    union {
+        struct {
+            u32 arg1;  // +0x10
+            u8 arg2;  // +0x14
+            u32 arg3;  // +0x18
+        } form0;
+        struct {
+            u16 * programs;  // +0x10
+            u32 arg2;  // +0x14
+            u32 arg3;  // +0x18
+        } form1;
+        struct {
+            u32 arg1;  // +0x10
+            u32 arg2;  // +0x14
+        } form2;
+    };
+} SndRequest;
+
+typedef struct {
+    SndRequest * first;  // +0x0
+} SndRequestHead;
+
+typedef struct {
+    u8 pad_00[0x4];
+    SndRequest * tail;  // +0x4
+} SndRequestTail;
+
+typedef struct {
+    NNSSndHeapHandle heap;  // +0x0
+} SndHeap;
+
+typedef struct {
+    u32 field00;
+    u8 field04;
+} SndCurrent;
+
+typedef struct {
+    fx32 maxVolume;  // +0x0
+    fx32 volume;  // +0x4
+    fx32 step;  // +0x8
+    NNSSndSeqMute state;  // +0xc
+} SndFade;
+
+typedef struct {
+    void * field00;
+    void * field04;
+    void * field08[4];
+} SndLoadedData;
+
+typedef struct SndLoadNode SndLoadNode;
+
+typedef struct SndLoadNodeHead {
+    SndLoadNode * next;  // +0x0
+} SndLoadNodeHead;
+
+typedef struct SndLoadNodeTail {
+    SndLoadNode * next;  // +0x0
+    SndLoadNode * prev;  // +0x4
+} SndLoadNodeTail;
+
+struct SndLoadNode {
+    SndLoadNode * next;  // +0x0
+    void * buffer;  // +0x4
+    u32 fileId;  // +0x8
+    u32 size;  // +0xc
+    u32 offset;  // +0x10
+    void (*onComplete)(SndLoadNode *self);
+    void * userData;  // +0x18
+};
+
+struct SndLoader : SndLoadNode {
+    SndLoadNode * current;  // +0x1c
+    u8 busy;  // +0x20
+    u8 slot;  // +0x21
+    u8 heapSel;  // +0x22
+    u8 pad_23[0x1];
+    u32 readSoFar;  // +0x24
+    u32 seqNo;  // +0x28
+    u32 state;  // +0x2c
+    u32 arg;  // +0x30
+};
+
+typedef struct {
+    u32 tableSize;  // +0x0
+    u32 userData;  // +0x4
+    u32 inUse : 1;  // +0x8
+    u32 offsetsFixed : 1;
+} SndLoadSlot;
+
+typedef struct {
+    const NNSSndArcBankInfo * bankInfo;  // +0x0
+    void * bankData;  // +0x4
+    u32 seqIdx;  // +0x8
+    u32 inUse;  // +0xc
+} SndBankSlot;
+
+typedef struct {
+    u16 voiceId;  // +0x0
+    u8 arg;  // +0x2
+} SndAltVoiceInfo;
 
 enum SndStreamState { SND_STREAM_IDLE, SND_STREAM_PLAYING };
 

@@ -14,23 +14,23 @@ struct YanaTransEntry {
     void * dst;  // +0x8
     union {
         struct { 
-            u32 size;
-            u32 arg;
+            u32 size;  // +0xc
+            u32 arg;  // +0x10
         } raw;
         struct { 
             u16 rowBytes : 12;
             u16 rows : 4;
-            u16 srcStride;
-            u16 dstStride;
+            u16 srcStride;  // +0xe
+            u16 dstStride;  // +0x10
         } strided;
         struct {
-            u16 widthTiles;
-            u16 rows;
-            u16 dstStrideTiles;
-            u16 srcStrideTiles;
+            u16 widthTiles;  // +0xc
+            u16 rows;  // +0xe
+            u16 dstStrideTiles;  // +0x10
+            u16 srcStrideTiles;  // +0x12
         } tiles;
         struct {
-            u32 size;
+            u32 size;  // +0xc
             u16 sub : 1;
             u16 : 15;
         } pltt;

@@ -171,9 +171,13 @@ def parse(path):
 
         if agg or anon:
             stack.append([agg.group("name") if agg else None, depth,
-                          bool(anon and anon.group("kind") == "union"), ignored])
+                          bool(anon and anon.group("kind") == "union"), ignored,
+                          len(members)])
         tc = TYPEDEF_CLOSE_RE.match(code)
-        if tc and stack and stack[-1][0] is None and not stack[-1][3]:
+        if tc and len(stack) > 1 and stack[-1][0] is None and not stack[-1][3]:
+            for mem in members[stack[-1][4]:]:
+                mem.name = f"{tc.group('name')}.{mem.name}"
+        elif tc and stack and stack[-1][0] is None and not stack[-1][3]:
             for mem in members:
                 if mem.type_name is None:
                     mem.type_name = tc.group("name")
@@ -482,7 +486,7 @@ def main():
     for path in targets:
         members, bfs = parse(path)
         if not a.all:
-            members = [m for m in members if not SELF_ENCODING_RE.match(m.name)]
+            members = [m for m in members if not SELF_ENCODING_RE.match(m.name.rsplit(".", 1)[-1])]
         if not members:
             continue
         rel = path.relative_to(ROOT).as_posix()

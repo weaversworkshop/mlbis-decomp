@@ -5,6 +5,10 @@
 
 #ifdef __cplusplus
 
+extern "C" {
+    #include <nitro.h>
+}
+
 typedef struct {
     u8 pad_00[0x8];
     u32 field08;

@@ -3,9 +3,13 @@
 
 #include "types.h"
 
+#include "main/sound.h"
+
 #define SND_ID_SCRIPT   0x2000000
 #define SND_ID_REQUEUE  0x4000000
 #define SND_ID_NO_DUP   0x2000
+
+#ifdef __cplusplus
 
 typedef struct {
     s32 id;  // +0x0
@@ -14,7 +18,6 @@ typedef struct {
     s16 duration;  // +0x8
     s16 life;  // +0xa
 } SndEmitterCmd;
-
 
 class SndEmitter {
 public:
@@ -61,15 +64,9 @@ class SndEmitterSlot : public SndEmitter {
 public:
     u8 slot;  // +0x48
 
-    // Implicit ctor // C1 0x0200b8a8
+    // SndEmitterSlot();  // implicit; // C1 0x0200b8a8
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
+#endif // __cplusplus
 
 #endif
