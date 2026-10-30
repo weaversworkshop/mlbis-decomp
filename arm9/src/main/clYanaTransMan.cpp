@@ -298,13 +298,13 @@ void doCopyStrided(YanaTransEntry * entry) {
 }
 
 // MATCHED 100%
-void doTilesToLinear4bpp(YanaTransEntry * param1) {
-    u32 * src = (u32 *)param1->src;
-    u32 * dst = (u32 *)param1->dst;
-    u32 widthTiles = param1->tiles.widthTiles;
-    s32 rows = param1->tiles.rows;
-    u32 srcStrideTiles = param1->tiles.srcStrideTiles;
-    u32 dstStrideTiles = param1->tiles.dstStrideTiles;
+void doTilesToLinear4bpp(YanaTransEntry * entry) {
+    u32 * src = (u32 *)entry->src;
+    u32 * dst = (u32 *)entry->dst;
+    u32 widthTiles = entry->tiles.widthTiles;
+    s32 rows = entry->tiles.rows;
+    u32 srcStrideTiles = entry->tiles.srcStrideTiles;
+    u32 dstStrideTiles = entry->tiles.dstStrideTiles;
 
     while (rows-- > 0) {
         TilesToLinear4bpp(src, dst, widthTiles * 4, 8);
@@ -314,13 +314,13 @@ void doTilesToLinear4bpp(YanaTransEntry * param1) {
 }
 
 // MATCHED 100%
-void doTilesToLinear8bpp(YanaTransEntry * param1) {
-    u32 * src = (u32 *)param1->src;
-    u32 * dst = (u32 *)param1->dst;
-    u32 widthTiles = param1->tiles.widthTiles;
-    s32 rows = param1->tiles.rows;
-    u32 srcStrideTiles = param1->tiles.srcStrideTiles;
-    u32 dstStrideTiles = param1->tiles.dstStrideTiles;
+void doTilesToLinear8bpp(YanaTransEntry * entry) {
+    u32 * src = (u32 *)entry->src;
+    u32 * dst = (u32 *)entry->dst;
+    u32 widthTiles = entry->tiles.widthTiles;
+    s32 rows = entry->tiles.rows;
+    u32 srcStrideTiles = entry->tiles.srcStrideTiles;
+    u32 dstStrideTiles = entry->tiles.dstStrideTiles;
 
     while (rows-- > 0) {
         TilesToLinear8bpp(src, dst, widthTiles * 8, 8);
@@ -330,13 +330,13 @@ void doTilesToLinear8bpp(YanaTransEntry * param1) {
 }
 
 // MATCHED 100%
-void doLinearToTiles4bpp(YanaTransEntry * param1) {
-    u32 * src = (u32 *)param1->src;
-    u32 * dst = (u32 *)param1->dst;
-    u32 widthTiles = param1->tiles.widthTiles;
-    s32 rows = param1->tiles.rows;
-    u32 srcStrideTiles = param1->tiles.srcStrideTiles;
-    u32 dstStrideTiles = param1->tiles.dstStrideTiles;
+void doLinearToTiles4bpp(YanaTransEntry * entry) {
+    u32 * src = (u32 *)entry->src;
+    u32 * dst = (u32 *)entry->dst;
+    u32 widthTiles = entry->tiles.widthTiles;
+    s32 rows = entry->tiles.rows;
+    u32 srcStrideTiles = entry->tiles.srcStrideTiles;
+    u32 dstStrideTiles = entry->tiles.dstStrideTiles;
 
     while (rows-- > 0) {
         LinearToTiles4bpp(src, dst, widthTiles * 4, 8);

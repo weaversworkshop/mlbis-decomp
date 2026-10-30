@@ -20,17 +20,17 @@ extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
 // --- Function Definitions --- //
 
 // MATCHED 100%
-DfxTexHeader * clAfx::getTexHeader(u32 param1) {
+DfxTexHeader * clAfx::getTexHeader(u32 id) {
     return NULL;
 }
 
 // MATCHED 100%
-UnkStruct_020224c4 * clAfx::getPlttHeader(u32 param1) {
+DfxPlttHeader * clAfx::getPlttHeader(u32 id) {
     return NULL;
 }
 
 // MATCHED 100%
-void clAfx::onNodePos(RfxNode * param1) {}
+void clAfx::onNodePos(RfxNode * node) {}
 
 // MATCHED 100%
 u32 clAfx::func_020224d0() {
@@ -56,16 +56,16 @@ nsObjSys::clCellAnime * clAfx::func_020224ec(s32) {
 }
 
 // MATCHED 100%
-nsObjSys::clCellAnime * clAfx::beginCellAnime(s32 param1, RfxNode * param2) {
+nsObjSys::clCellAnime * clAfx::beginCellAnime(s32 idx, RfxNode * node) {
     return NULL;
 }
 
 // MATCHED 100%
-void clAfx::endCellAnime(nsObjSys::clCellAnime * param1) {}
+void clAfx::endCellAnime(nsObjSys::clCellAnime * anime) {}
 
 // MATCHED 100%
-void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * param3) {
-    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, param3);
+void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * node) {
+    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, node);
 
     if (ret != NULL) {
         if (frame >= 0 && frame < ret->func_020225d0()) {
@@ -83,8 +83,8 @@ void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * param3) {
 }
 
 // MATCHED 100%
-void clAfx::drawNumber(s32 idx, s32 digitFrame, RfxNode * param3, s32 spacing, u32 align) {
-    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, param3);
+void clAfx::drawNumber(s32 idx, s32 digitFrame, RfxNode * node, s32 spacing, u32 align) {
+    nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, node);
 
     if (ret != NULL) {
         s32 val = this->func_020224d0();

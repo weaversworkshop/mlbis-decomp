@@ -100,7 +100,7 @@ u32 clRfx::extScriptCount() {
 }
 
 // MATCHED 100%
-u16 * clRfx::extScript(s32 param1) {
+u16 * clRfx::extScript(s32 idx) {
     return NULL;
 }
 

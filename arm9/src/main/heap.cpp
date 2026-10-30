@@ -232,13 +232,13 @@ void * operator new[](size_t size, u32 heap, void * ptr, BOOL flag) {
 }
 
 // MATCHED 100%
-void operator delete(void * param1) {
-    heapFree(param1);
+void operator delete(void * ptr) {
+    heapFree(ptr);
 }
 
 // MATCHED 100%
-void operator delete[](void * param1) {
-    heapFree(param1);
+void operator delete[](void * ptr) {
+    heapFree(ptr);
 }
 
 // MATCHED 100%

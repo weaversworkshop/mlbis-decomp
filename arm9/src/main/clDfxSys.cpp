@@ -21,7 +21,7 @@ u8 plttBlockCount[8] = {0, 2, 1, 1, 16, 0, 1, 0};  // 0x02055118
 // --- Function Declarations --- //
 
 s32 dfxLoadTexture(clDfxVramMan *, DfxTexHeader *, RfxNode *);  // 0x02025654
-s32 dfxLoadPalette(clDfxVramMan *, UnkStruct_020224c4 *, RfxNode *);  // 0x020257ac
+s32 dfxLoadPalette(clDfxVramMan *, DfxPlttHeader *, RfxNode *);  // 0x020257ac
 
 void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 0x020259b8
 
@@ -30,61 +30,61 @@ void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 dfxLoadTexture(clDfxVramMan * param1, DfxTexHeader * param2, RfxNode * param3) {
-    u8 * addr = param1->getTexBase();
+s32 dfxLoadTexture(clDfxVramMan * vramMan, DfxTexHeader * hdr, RfxNode * node) {
+    u8 * vram = vramMan->getTexBase();
 
-    if (param1->transMan == NULL || addr == NULL) {
+    if (vramMan->transMan == NULL || vram == NULL) {
         return 0;
     }
 
-    s32 x = param3->field30.field0c / 8;
-    s32 y = param3->field30.field0e / 8;
-    s32 idx = y * param2->wBlocks + x;
+    s32 blockX = node->dfx.field0c / 8;
+    s32 blockY = node->dfx.field0e / 8;
+    s32 blockIdx = blockY * hdr->wBlocks + blockX;
 
-    u8 * src = (u8 *)param2 + 8 + idx * param2->field02 * 8;
-    u32 key = ((u32)src >> 5) | (texInfo.sizeS << 26) | (texInfo.sizeT << 29);
+    u8 * tiles = (u8 *)hdr + 8 + blockIdx * hdr->bpp * 8;
+    u32 key = ((u32)tiles >> 5) | (texInfo.sizeS << 26) | (texInfo.sizeT << 29);
 
     u32 w = (1 << texInfo.sizeS);
     u32 h = (1 << texInfo.sizeT);
 
-    YanaPileEntry * entry = param1->texPile.acquire(key, param2->field02 * (w * h) * 8, 0);
+    YanaPileEntry * entry = vramMan->texPile.acquire(key, hdr->bpp * (w * h) * 8, 0);
 
     if (entry->needsLoad) {
-        addr = addr + param1->texOffset + entry->offset;
+        vram = vram + vramMan->texOffset + entry->offset;
 
-        if (param2->field02 == 4) {
-            param1->transMan->postTilesToLinear4bpp(src, addr, w, h, param2->wBlocks, w);
+        if (hdr->bpp == 4) {
+            vramMan->transMan->postTilesToLinear4bpp(tiles, vram, w, h, hdr->wBlocks, w);
         }
 
-        if (param2->field02 == 8) {
-            param1->transMan->postTilesToLinear8bpp(src, addr, w, h, param2->wBlocks, w);
+        if (hdr->bpp == 8) {
+            vramMan->transMan->postTilesToLinear8bpp(tiles, vram, w, h, hdr->wBlocks, w);
         }
     }
 
-    return param1->texOffset + entry->offset;
+    return vramMan->texOffset + entry->offset;
 }
 
 // MATCHED 100%
-s32 dfxLoadPalette(clDfxVramMan * param1, UnkStruct_020224c4 * param2, RfxNode * param3) {
-    u8 * addr = param1->getPlttBase();
+s32 dfxLoadPalette(clDfxVramMan * vramMan, DfxPlttHeader * pltt, RfxNode * node) {
+    u8 * vram = vramMan->getPlttBase();
 
-    if (param1->transMan == NULL || addr == NULL) {
+    if (vramMan->transMan == NULL || vram == NULL) {
         return 0;
     }
 
-    u8 r0 = plttBlockCount[texInfo.fmt];
-    u8 * src = param2->field04 + param3->field30.field14 * 32;
-    u32 key = ((u32)src >> 5) | (r0 << 27);
+    u8 blocks = plttBlockCount[texInfo.fmt];
+    u8 * src = pltt->data + node->dfx.field14 * 32;
+    u32 key = ((u32)src >> 5) | (blocks << 27);
 
-    YanaPileEntry * entry = param1->plttPile.acquire(key, (r0 << 5), 0);
+    YanaPileEntry * entry = vramMan->plttPile.acquire(key, (blocks << 5), 0);
 
     if (entry->needsLoad) {
         u32 offset = entry->offset;
-        u8 * r2 = param1->getPlttBase() + param1->plttOffset + offset;
-        param1->transMan->postCopy(src, r2, (r0 << 5));
+        u8 * dst = vramMan->getPlttBase() + vramMan->plttOffset + offset;
+        vramMan->transMan->postCopy(src, dst, (blocks << 5));
     }
 
-    return param1->plttOffset + entry->offset;
+    return vramMan->plttOffset + entry->offset;
 }
 
 // MATCHED 100%
@@ -98,39 +98,39 @@ u8 * clDfxVramMan::getPlttBase() {
 }
 
 // MATCHED 100%
-DfxTexHeader * clDfxVr::getTexHeader(u32 param1) {
+DfxTexHeader * clDfxVr::getTexHeader(u32 id) {
     if (this->sys == NULL) {
         return NULL;
     }
 
-    return (DfxTexHeader *)func_020222a4(&this->sys->pools, param1);
+    return (DfxTexHeader *)func_020222a4(&this->sys->pools, id);
 }
 
 // MATCHED 100%
-UnkStruct_020224c4 * clDfxVr::getPlttHeader(u32 param1) {
+DfxPlttHeader * clDfxVr::getPlttHeader(u32 id) {
     if (this->sys == NULL) {
         return NULL;
     }
 
-    return (UnkStruct_020224c4 *)func_020223b0(&this->sys->pools, param1);
+    return (DfxPlttHeader *)func_020223b0(&this->sys->pools, id);
 }
 
 // MATCHED 100%
-s32 clDfxVr::getTexAddr(DfxTexHeader * param1, RfxNode * param2) {
+s32 clDfxVr::getTexAddr(DfxTexHeader * hdr, RfxNode * node) {
     if (this->vramMan == NULL) {
         return -1;
     }
 
-    return dfxLoadTexture(this->vramMan, param1, param2);
+    return dfxLoadTexture(this->vramMan, hdr, node);
 }
 
 // MATCHED 100%
-s32 clDfxVr::getPlttAddr(UnkStruct_020224c4 * param1, RfxNode * param2) {
+s32 clDfxVr::getPlttAddr(DfxPlttHeader * pltt, RfxNode * node) {
     if (this->vramMan == NULL) {
         return -1;
     }
 
-    return dfxLoadPalette(this->vramMan, param1, param2);
+    return dfxLoadPalette(this->vramMan, pltt, node);
 }
 
 // MATCHED 100%
@@ -147,22 +147,22 @@ u32 clDfxVr::extScriptCount() {
 }
 
 // MATCHED 100%
-u16 * clDfxVr::extScript(s32 param1) {
+u16 * clDfxVr::extScript(s32 idx) {
     if (this->sys != NULL) {
         if (this->sys->dataTable == NULL) {
             return NULL;
         }
 
-        return (u16 *)fsChunkPtr(this->sys->dataTable, param1);
+        return (u16 *)fsChunkPtr(this->sys->dataTable, idx);
     }
 
     return NULL;
 }
 
 // MATCHED 100%
-void clDfxSh::onNodePos(RfxNode * param1) {
-    this->shiftX += param1->pos.x;
-    this->shiftY += param1->pos.y;
+void clDfxSh::onNodePos(RfxNode * node) {
+    this->shiftX += node->pos.x;
+    this->shiftY += node->pos.y;
 }
 
 // MATCHED 100%
@@ -174,10 +174,10 @@ void clDfxSh::exec() {
 }
 
 // MATCHED 100%
-void dfxVrStart(clDfxSys * param1, clDfxVr * param2, u32 param3, inYanaUnit ** param4, clDfxVramMan * param5) {
-    u16 * r4 = (param1->scriptTable != NULL) ? (u16 *)fsChunkPtr(param1->scriptTable, param3) : NULL;
+void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, inYanaUnit ** list, clDfxVramMan * vramMan) {
+    u16 * script = (sys->scriptTable != NULL) ? (u16 *)fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
-    clDfx & dfx = *param2;
+    clDfx & dfx = *vr;
 
     MTX_Identity33(&dfx.rot);
 
@@ -185,10 +185,10 @@ void dfxVrStart(clDfxSys * param1, clDfxVr * param2, u32 param3, inYanaUnit ** p
     dfx.originY = 128;
     dfx.originZ = 4096;
 
-    dfx.start(param4, r4);
+    dfx.start(list, script);
 
-    param2->vramMan = param5;
-    param2->sys = param1;
+    vr->vramMan = vramMan;
+    vr->sys = sys;
 }
 
 // MATCHED 100%

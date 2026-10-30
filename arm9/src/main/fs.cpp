@@ -14,10 +14,10 @@ extern "C" {
 
 // --- Extern Functions --- //
 
-extern void func_01ff8000(u8 ** param1, u32 * param2, u32 * param3);
-extern void func_01ff80a4(u8 ** param1, void ** param2);
-extern void func_01ff8150(u8 ** param1, void ** param2);
-extern void func_01ff8228(void * param1, u32 param2, u32 param3);
+extern void func_01ff8000(u8 **, u32 *, u32 *);
+extern void func_01ff80a4(u8 **, void **);
+extern void func_01ff8150(u8 **, void **);
+extern void func_01ff8228(void *, u32, u32);
 
 // --- Variable Definitions --- //
 

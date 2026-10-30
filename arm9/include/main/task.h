@@ -37,7 +37,7 @@ public:
     u8 pad_13[0x1];
     u32 numRuns;  // +0x14
 
-    clVBlankTask(u8 param1, u32 param2, u32 param3);  // C1 0x0201a69c
+    clVBlankTask(u8, u32, u32);  // C1 0x0201a69c
     virtual ~clVBlankTask();  // D1 0x0201a794 D0 0x0201a800 D2 0x0201a880
 
     void enable(void);  // 0x0201a8ec

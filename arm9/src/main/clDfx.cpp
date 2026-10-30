@@ -52,7 +52,7 @@ s32 clDfx::getTexAddr(DfxTexHeader * hdr, RfxNode * node) {
 }
 
 // MATCHED 100%
-s32 clDfx::getPlttAddr(UnkStruct_020224c4 * pltt, RfxNode * node) {
+s32 clDfx::getPlttAddr(DfxPlttHeader * pltt, RfxNode * node) {
     return -1;
 }
 
@@ -169,7 +169,7 @@ void clDfx::beginDraw() {
     node->pos.y = this->originY * 16;
     node->pos.z = this->originZ * 16;
     
-    func_01ff8228(&node->field30, 0, sizeof(RfxNode_30));
+    func_01ff8228(&node->dfx, 0, sizeof(DfxNodeParams));
 
     G3_MtxMode(GX_MTXMODE_TEXTURE);
     G3_Scale(0x10000, 0x10000, 0x10000);
@@ -245,7 +245,7 @@ void clDfx::cmdNodeCallback(s32 t, u16 * cmd) {
 
 // MATCHED 100%
 nsObjSys::clCellAnime * clDfx::beginCellAnime(s32 idx, RfxNode * node) {
-    s32 alpha = 31 - node->field30.transparency;
+    s32 alpha = 31 - node->dfx.transparency;
     if (alpha < 0) {
         alpha = 0;
     }
@@ -269,7 +269,7 @@ nsObjSys::clCellAnime * clDfx::beginCellAnime(s32 idx, RfxNode * node) {
     node->pos.z <<= 1;
 
     s32 polygonId = nextPolygonId(alpha);
-    GXRgb color = (node->field30.b << 10) | (node->field30.g << 5) | node->field30.r;
+    GXRgb color = (node->dfx.b << 10) | (node->dfx.g << 5) | node->dfx.r;
 
     anime->func_02022f38(alpha);
 
@@ -315,7 +315,7 @@ void clDfx::cmdCellFrame(s32 t, u16 * cmd) {
         s32 numKeys = (cmd[0] >> 9) & 0x7f;
         applyRows(node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
-        this->setCellFrame(node->field30.field0c, node->field30.field0e, node);
+        this->setCellFrame(node->dfx.field0c, node->dfx.field0e, node);
     }
 }
 
@@ -336,7 +336,7 @@ void clDfx::func_020230e4(s32 t, u16 * cmd) {
         s32 numKeys = (cmd[0] >> 9) & 0x7f;
         applyRows(node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
-        this->func_02023188(node->field30.transparency);
+        this->func_02023188(node->dfx.transparency);
     }
 }
 
@@ -355,9 +355,9 @@ void clDfx::cmdVertexStrip(s32 t, u16 * cmd) {
         numRows = (cmd[0] >> 6) & 7;
         numKeys = (cmd[0] >> 9) & 0x7f;
 
-        s32 alpha = 31 - node->field30.transparency;
+        s32 alpha = 31 - node->dfx.transparency;
         if (alpha >= 1) {
-            s32 polygonId = nextPolygonId(node->field30.transparency);
+            s32 polygonId = nextPolygonId(node->dfx.transparency);
             s32 vtxCount = stripVtxCount;
             s32 key = keySeg.key;
             while (key <= keySeg.nextKey) {
@@ -373,12 +373,12 @@ void clDfx::cmdVertexStrip(s32 t, u16 * cmd) {
                     G3_Begin(GX_BEGIN_TRIANGLE_STRIP);
                 }
 
-                GXRgb color = (node->field30.b << 10) | (node->field30.g << 5) | (node->field30.r);
+                GXRgb color = (node->dfx.b << 10) | (node->dfx.g << 5) | (node->dfx.r);
                 G3_Color(color);
-                G3_Vtx(node->field30.field00 << 4, node->field30.field02 << 4, node->field30.field04 << 4);
+                G3_Vtx(node->dfx.field00 << 4, node->dfx.field02 << 4, node->dfx.field04 << 4);
 
                 vtxCount++;
-                if (node->field30.field0c) {
+                if (node->dfx.field0c) {
                     while (vtxCount < 3) {
                         G3_Vtx(0, 0, 0);
                         vtxCount++;
@@ -407,12 +407,12 @@ void clDfx::cmdCircle(s32 t, u16 * cmd) {
         u16 shape = cmd[0] & 0x3f;
         applyRows(node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
-        s32 alpha = 31 - node->field30.transparency;
+        s32 alpha = 31 - node->dfx.transparency;
         if (alpha < 1) {
             return;
         }
 
-        s32 polygonId = nextPolygonId(node->field30.transparency);
+        s32 polygonId = nextPolygonId(node->dfx.transparency);
 
         flushStrip();
 
@@ -424,18 +424,18 @@ void clDfx::cmdCircle(s32 t, u16 * cmd) {
 
         G3_Begin(GX_BEGIN_TRIANGLE_STRIP);
 
-        GXRgb outerColor = (node->field30.b << 10) | (node->field30.g << 5) | node->field30.r;
-        GXRgb innerColor = (node->field30.field14 << 10) | (node->field30.h << 5) | node->field30.w;
+        GXRgb outerColor = (node->dfx.b << 10) | (node->dfx.g << 5) | node->dfx.r;
+        GXRgb innerColor = (node->dfx.field14 << 10) | (node->dfx.h << 5) | node->dfx.w;
 
-        s32 segments = node->field30.field00;
+        s32 segments = node->dfx.field00;
         if (segments < 3) {
             segments = 3;
         }
 
-        s32 radiusA = node->field30.field02;
-        s32 radiusB = node->field30.field04;
-        s32 innerRadiusA = node->field30.field0c;
-        s32 innerRadiusB = node->field30.field0e;
+        s32 radiusA = node->dfx.field02;
+        s32 radiusB = node->dfx.field04;
+        s32 innerRadiusA = node->dfx.field0c;
+        s32 innerRadiusB = node->dfx.field0e;
 
         switch (shape) {
             case 1: {
@@ -533,7 +533,7 @@ void clDfx::cmdTexQuads(u16 * cmd) {
 
 // MATCHED 100%
 BOOL clDfx::drawTexQuad(u16 texIdx, RfxNode * node) {
-    s32 alpha = 31 - node->field30.transparency;
+    s32 alpha = 31 - node->dfx.transparency;
     if (alpha < 1) {
         return TRUE;
     }
@@ -543,12 +543,12 @@ BOOL clDfx::drawTexQuad(u16 texIdx, RfxNode * node) {
         return TRUE;
     }
 
-    s32 polygonId = nextPolygonId(node->field30.transparency);
+    s32 polygonId = nextPolygonId(node->dfx.transparency);
     G3_PolygonAttr(0, GX_POLYGONMODE_MODULATE, GX_CULL_NONE, polygonId, alpha, 0);
     G3_TexImageParam(tex->fmt, GX_TEXGEN_TEXCOORD, tex->sizeS, tex->sizeT, GX_TEXREPEAT_ST, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_TRNS, tex->texAddr);
     G3_TexPlttBase(tex->plttAddr, tex->fmt);
 
-    node->pos.z += node->field30.field04 * 16;
+    node->pos.z += node->dfx.field04 * 16;
 
     G3_PushMtx();
 
@@ -556,13 +556,13 @@ BOOL clDfx::drawTexQuad(u16 texIdx, RfxNode * node) {
 
     G3_Begin(GX_BEGIN_QUADS);
 
-    GXRgb color = (node->field30.b << 10) | (node->field30.g << 5) | (node->field30.r);
+    GXRgb color = (node->dfx.b << 10) | (node->dfx.g << 5) | (node->dfx.r);
     G3_Color(color);
 
     s32 s0 = tex->offsetU * 256;
     s32 t0 = tex->offsetV * 256;
-    s32 x0 = node->field30.field00 * 16;
-    s32 y0 = node->field30.field02 * 16;
+    s32 x0 = node->dfx.field00 * 16;
+    s32 y0 = node->dfx.field02 * 16;
     s32 t1 = t0 + (tex->height * 256);
     s32 s1 = s0 + (tex->width * 256);
     s32 x1 = x0 + (tex->width * 16);
@@ -585,15 +585,15 @@ BOOL clDfx::drawTexQuad(u16 texIdx, RfxNode * node) {
 // MATCHED 100%
 void clDfx::cmdSetTexParams(u16 * cmd) {
     RfxNode * node = rfxStack.cur;
-    node->field30.field04 = cmd[1];
-    node->field30.field0c = cmd[3] * 8;
-    node->field30.field0e = cmd[5] * 8;
-    node->field30.w = 8 << cmd[7];
-    node->field30.h = 8 << cmd[9];
-    node->field30.field14 = cmd[11];
-    node->field30.cull = cmd[13];
-    node->field30.triStrip = cmd[15];
-    node->field30.cols = cmd[17];
+    node->dfx.field04 = cmd[1];
+    node->dfx.field0c = cmd[3] * 8;
+    node->dfx.field0e = cmd[5] * 8;
+    node->dfx.w = 8 << cmd[7];
+    node->dfx.h = 8 << cmd[9];
+    node->dfx.field14 = cmd[11];
+    node->dfx.cull = cmd[13];
+    node->dfx.triStrip = cmd[15];
+    node->dfx.cols = cmd[17];
 }
 
 // MATCHED 100%
@@ -658,17 +658,17 @@ void clDfx::cmdTexStrip(u16 * cmd) {
         RfxNode * node = &rfxStack.cur[1];
         copyNode(node-1, node);
 
-        if (!this->setupTexture(node->field30.field04, node)) {
-            node->pos.z += node->field30.field04 * 16;
+        if (!this->setupTexture(node->dfx.field04, node)) {
+            node->pos.z += node->dfx.field04 * 16;
 
             G3_PushMtx();
 
             func_02036b28(node);
 
-            GXRgb color = (node->field30.b << 10) | (node->field30.g << 5) | node->field30.r;
+            GXRgb color = (node->dfx.b << 10) | (node->dfx.g << 5) | node->dfx.r;
             G3_Color(color);
 
-            G3_Begin(node->field30.triStrip ? GX_BEGIN_TRIANGLE_STRIP : GX_BEGIN_QUAD_STRIP);
+            G3_Begin(node->dfx.triStrip ? GX_BEGIN_TRIANGLE_STRIP : GX_BEGIN_QUAD_STRIP);
 
             s32 stride = numKeys + 1;
             s16 * px = (s16 *)&cmd[(s32)(stride * 1)] + 1;
@@ -680,7 +680,7 @@ void clDfx::cmdTexStrip(u16 * cmd) {
             s32 u0 = 0;
             s32 v0 = 0;
             s32 u1 = 0;
-            s32 v1 = node->field30.h;
+            s32 v1 = node->dfx.h;
 
             for (s32 i = 0; i < numKeys / 2; i++) {
                 s32 x0 = *px++;
@@ -703,8 +703,8 @@ void clDfx::cmdTexStrip(u16 * cmd) {
                 G3_TexCoord(u1 * 256, v1 * 256);
                 G3_Vtx(x1 * 16, y1 * 16, z1 * 16);
 
-                u0 += node->field30.w;
-                u1 += node->field30.w;
+                u0 += node->dfx.w;
+                u1 += node->dfx.w;
             }
 
             G3_End();
@@ -726,17 +726,17 @@ void clDfx::cmdTexStrips(u16 * cmd) {
     RfxNode * node = &rfxStack.cur[1];
     copyNode(node-1, node);
 
-    if (this->setupTexture(node->field30.field04, node)) {
+    if (this->setupTexture(node->dfx.field04, node)) {
         return;
     }
 
-    node->pos.z += node->field30.field04 * 16;
+    node->pos.z += node->dfx.field04 * 16;
 
     G3_PushMtx();
 
     func_02036b28(node);
 
-    GXRgb color = (node->field30.b << 10) | (node->field30.g << 5) | node->field30.r;
+    GXRgb color = (node->dfx.b << 10) | (node->dfx.g << 5) | node->dfx.r;
     G3_Color(color);
 
     s32 stride = numKeys + 1;
@@ -772,11 +772,11 @@ void clDfx::cmdTexStrips(u16 * cmd) {
             s32 x0 = px[-segLen];
             s32 y0 = py[-segLen];
             s32 z0 = pz[-segLen];
-            s32 s0 = node->field30.w * pos + ps[-segLen];
-            s32 t0 = node->field30.h * (segIdx - 1) + pt[-segLen];
+            s32 s0 = node->dfx.w * pos + ps[-segLen];
+            s32 t0 = node->dfx.h * (segIdx - 1) + pt[-segLen];
 
             if (pos == 1) {
-                G3_Begin(node->field30.triStrip ? GX_BEGIN_TRIANGLE_STRIP : GX_BEGIN_QUAD_STRIP);
+                G3_Begin(node->dfx.triStrip ? GX_BEGIN_TRIANGLE_STRIP : GX_BEGIN_QUAD_STRIP);
             }
             G3_TexCoord(s0 * 256, t0 * 256);
             G3_Vtx(x0 * 16, y0 * 16, z0 * 16);
@@ -786,8 +786,8 @@ void clDfx::cmdTexStrips(u16 * cmd) {
             s32 x1 = *px++;
             s32 y1 = *py++;
             s32 z1 = *pz++;
-            s32 s1 = node->field30.w * pos + *ps++;
-            s32 t1 = node->field30.h * segIdx + *pt++;
+            s32 s1 = node->dfx.w * pos + *ps++;
+            s32 t1 = node->dfx.h * segIdx + *pt++;
             G3_TexCoord(s1 * 256, t1 * 256);
             G3_Vtx(x1 * 16, y1 * 16, z1 * 16);
         } else {
@@ -838,11 +838,11 @@ void clDfx::cmdLitMesh(u16 * cmd) {
 
     s32 numKeys = (cmd[0] >> 9) & 0x7f;
     copyNode(node-1, node);
-    if (this->setupTexture(node->field30.field04, node)) {
+    if (this->setupTexture(node->dfx.field04, node)) {
         return;
     }
 
-    cols = node->field30.cols;
+    cols = node->dfx.cols;
     if (cols > 11) {
         cols = 11;
     }
@@ -855,7 +855,7 @@ void clDfx::cmdLitMesh(u16 * cmd) {
         rows = 11;
     }
 
-    node->pos.z += node->field30.field04 * 16;
+    node->pos.z += node->dfx.field04 * 16;
 
     G3_PushMtx();
 
@@ -936,18 +936,18 @@ void clDfx::cmdLitMesh(u16 * cmd) {
                 fx32 cos = vector_cosine((VecFx32 *)&m._00, &light);
                 if (cos != VECTOR_COS_INVALID) {
                     s32 shade = (cos + FX32_ONE) / 2;
-                    cr = node->field30.r * shade / 4096;
-                    cg = node->field30.g * shade / 4096;
-                    cb = node->field30.b * shade / 4096;
+                    cr = node->dfx.r * shade / 4096;
+                    cg = node->dfx.g * shade / 4096;
+                    cb = node->dfx.b * shade / 4096;
 
                     s32 sC, tC;
-                    if (!node->field30.triStrip) {
-                        sA = c00.s + node->field30.w * c;
-                        tA = c00.t + node->field30.h * r;
-                        sB = c10.s + node->field30.w * c;
-                        tB = c10.t + node->field30.h * (r + 1);
-                        sC = c01.s + node->field30.w * (c + 1);
-                        tC = c01.t + node->field30.h * r;
+                    if (!node->dfx.triStrip) {
+                        sA = c00.s + node->dfx.w * c;
+                        tA = c00.t + node->dfx.h * r;
+                        sB = c10.s + node->dfx.w * c;
+                        tB = c10.t + node->dfx.h * (r + 1);
+                        sC = c01.s + node->dfx.w * (c + 1);
+                        tC = c01.t + node->dfx.h * r;
                     } else {
                         nx2 = m._00 * m._00 / 4;
                         ny2 = m._01 * m._01 / 4;
@@ -986,18 +986,18 @@ void clDfx::cmdLitMesh(u16 * cmd) {
                 cos = vector_cosine((VecFx32 *)&m._00, &light);
                 if (cos != VECTOR_COS_INVALID) {
                     s32 shade = (cos + FX32_ONE) / 2;
-                    cr = node->field30.r * shade / 4096;
-                    cg = node->field30.g * shade / 4096;
-                    cb = node->field30.b * shade / 4096;
+                    cr = node->dfx.r * shade / 4096;
+                    cg = node->dfx.g * shade / 4096;
+                    cb = node->dfx.b * shade / 4096;
 
                     s32 sC, tC;
-                    if (!node->field30.triStrip) {
-                        sA = c01.s + node->field30.w * (c + 1);
-                        tA = c01.t + node->field30.h * r;
-                        sB = c10.s + node->field30.w * c;
-                        tB = c10.t + node->field30.h * (r + 1);
-                        sC = c11.s + node->field30.w * (c + 1);
-                        tC = c11.t + node->field30.h * (r + 1);
+                    if (!node->dfx.triStrip) {
+                        sA = c01.s + node->dfx.w * (c + 1);
+                        tA = c01.t + node->dfx.h * r;
+                        sB = c10.s + node->dfx.w * c;
+                        tB = c10.t + node->dfx.h * (r + 1);
+                        sC = c11.s + node->dfx.w * (c + 1);
+                        tC = c11.t + node->dfx.h * (r + 1);
                     } else {
                         nx2 = m._00 * m._00 / 4;
                         ny2 = m._01 * m._01 / 4;
@@ -1050,7 +1050,7 @@ void clDfx::cmdLitMesh(u16 * cmd) {
 
 // MATCHED 100%
 BOOL clDfx::setupTexture(u16 texIdx, RfxNode * node) {
-    s32 alpha = 31 - node->field30.transparency;
+    s32 alpha = 31 - node->dfx.transparency;
     if (alpha < 1) {
         return TRUE;
     }
@@ -1060,7 +1060,7 @@ BOOL clDfx::setupTexture(u16 texIdx, RfxNode * node) {
         return TRUE;
     }
 
-    G3_PolygonAttr(0, GX_POLYGONMODE_MODULATE, (GXCull)(3 - node->field30.cull), nextPolygonId(node->field30.transparency), alpha, 0);
+    G3_PolygonAttr(0, GX_POLYGONMODE_MODULATE, (GXCull)(3 - node->dfx.cull), nextPolygonId(node->dfx.transparency), alpha, 0);
     G3_TexImageParam(tex->fmt, GX_TEXGEN_TEXCOORD, tex->sizeS, tex->sizeT, GX_TEXREPEAT_ST, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_TRNS, tex->texAddr);
     G3_TexPlttBase(tex->plttAddr, tex->fmt);
 
@@ -1074,13 +1074,13 @@ DfxTexInfo * clDfx::resolveTexture(u16 texIdx, RfxNode * node) {
         return NULL;
     }
 
-    UnkStruct_020224c4 * pltt = this->getPlttHeader(texIdx);
+    DfxPlttHeader * pltt = this->getPlttHeader(texIdx);
     if (pltt == NULL) {
         return NULL;
     }
 
-    s16 offsetU = node->field30.field0c;
-    s16 offsetV = node->field30.field0e;
+    s16 offsetU = node->dfx.field0c;
+    s16 offsetV = node->dfx.field0e;
     s32 width = hdr->wBlocks * 8 - offsetU;
     s32 height = hdr->hBlocks * 8 - offsetV;
 
@@ -1091,11 +1091,11 @@ DfxTexInfo * clDfx::resolveTexture(u16 texIdx, RfxNode * node) {
         return NULL;
     }
 
-    if (node->field30.w < width) {
-        width = node->field30.w;
+    if (node->dfx.w < width) {
+        width = node->dfx.w;
     }
-    if (node->field30.h < height) {
-        height = node->field30.h;
+    if (node->dfx.h < height) {
+        height = node->dfx.h;
     }
 
     DfxTexInfo * info = &texInfo;
@@ -1125,5 +1125,5 @@ DfxTexInfo * clDfx::resolveTexture(u16 texIdx, RfxNode * node) {
 // MATCHED 100%
 GXRgb clDfx::getBlendColor() {
     RfxNode * node = rfxStack.cur;
-    return (node->field30.b << 10) | (node->field30.g << 5) | (node->field30.r);
+    return (node->dfx.b << 10) | (node->dfx.g << 5) | (node->dfx.r);
 }
