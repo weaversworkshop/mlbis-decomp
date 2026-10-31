@@ -7,6 +7,7 @@
 #include <nnsys.h>
 
 #include "main/heap.h"
+#include "main/sndEmitter.h"
 
 extern "C" {
 
@@ -168,8 +169,6 @@ extern SNDDriverInfo sndDriverInfo[];  // 0x02056560
 
 // --- Extern Functions --- //
 
-extern void func_0200a600(void);
-
 extern void func_0202f388(u8);
 
 // --- Variable Definitions --- //
@@ -274,7 +273,7 @@ u16 sndGetTrackCount(u32);  // 0x0200a358
 // MATCHED 100%
 void sndInit(BOOL loadSymbols, u32 totalSize, u32 slot0Size, u32 slot1Size) {
     NNS_SndInit();
-    func_0200a600();
+    sndEmitInit();
 
     sndDriverInfoIdx = -1;
     sndDriverInfoDirty = 1;

@@ -10,6 +10,18 @@ extern "C" {
 }
 
 typedef struct {
+    u8 wBlocks;  // +0x0
+    u8 hBlocks;  // +0x1
+    u8 bpp;  // +0x2
+    u8 fmt;  // +0x3
+} RfxTexHeader;
+
+typedef struct {
+    u8 pad_00[0x4];
+    u8 data[];  // +0x4
+} RfxPlttHeader;
+
+typedef struct {
     void * data;  // +0x0
     u16 id;  // +0x4
     u16 owned;  // +0x6
@@ -54,8 +66,13 @@ typedef struct {
     u16 dirtyB;  // +0x81a
 } RfxGenPools;
 
-void * func_020222a4(RfxGenPools *, u32);  // 0x020222a4
-void * func_020223b0(RfxGenPools *, u32);  // 0x020223b0
+class clTexFileMan {
+public:
+    RfxGenPools pools;  // +0x0
+};
+
+RfxTexHeader * func_020222a4(RfxGenPools *, u32);  // 0x020222a4
+RfxPlttHeader * func_020223b0(RfxGenPools *, u32);  // 0x020223b0
 
 #endif // __cplusplus
 

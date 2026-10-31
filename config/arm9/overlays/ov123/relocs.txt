@@ -1419,9 +1419,9 @@ from:0x02094498 kind:load to:0x020551e0 add:0x1c module:main
 from:0x0209449c kind:load to:0x02055180 add:0x8 module:main
 from:0x020944a0 kind:load to:0x02054e30 add:0x8 module:main
 from:0x020944a8 kind:load to:0x020750d4 module:overlays(3,122,130)
-from:0x020944ac kind:load to:0x02055608 module:main
-from:0x020944b0 kind:load to:0x0205561c module:main
-from:0x020944b4 kind:load to:0x020555a8 module:main
+from:0x020944ac kind:load to:0x02055600 add:0x8 module:main
+from:0x020944b0 kind:load to:0x02055600 add:0x1c module:main
+from:0x020944b4 kind:load to:0x020555a0 add:0x8 module:main
 from:0x020944b8 kind:load to:0x020a19c0 module:overlay(123)
 from:0x020944bc kind:load to:0x020a2c08 module:overlay(123)
 from:0x020944c0 kind:load to:0x020a7628 module:overlay(123)

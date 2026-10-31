@@ -192,7 +192,7 @@ extern "C" {
 #endif // __cplusplus
 
 u32 fsChunkCount(FSChunkTable *); // 0x0201adbc
-u8 * fsChunkPtr(FSChunkTable *, u16); // 0x0201add4
+u16 * fsChunkPtr(FSChunkTable *, u16); // 0x0201add4
 BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
 BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
 

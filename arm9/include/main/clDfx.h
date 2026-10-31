@@ -27,8 +27,8 @@ public:
     s32 originZ;  // +0x48
 
     // ~clDfx();  // implicit; D1 0x0202560c D0 0x020255dc Thn12_D1 0x02025644 Thn12_D0 0x02025634
-    virtual s32 getTexAddr(DfxTexHeader *, RfxNode *);  // 0x02022918
-    virtual s32 getPlttAddr(DfxPlttHeader *, RfxNode *);  // 0x02022920
+    virtual s32 getTexAddr(RfxTexHeader *, RfxNode *);  // 0x02022918
+    virtual s32 getPlttAddr(RfxPlttHeader *, RfxNode *);  // 0x02022920
     virtual void unk_virtual1(s32, u16 *, u8);  // 0x02022928
     virtual u32 unk_virtual2(void);  // 0x02022b10
     virtual void beginDraw(void);  // 0x02022b18

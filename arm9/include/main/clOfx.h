@@ -39,8 +39,8 @@ public:
     s16 priority;  // +0x4c
 
     // ~clOfx();  // implicit; D1 0x02026abc D0 0x02026a8c Thn12_D1 0x02026af4 Thn12_D0 0x02026ae4
-    virtual s32 getTexAddr(DfxTexHeader *, RfxNode *);  // 0x02025dac
-    virtual s32 getPlttAddr(DfxPlttHeader *, RfxNode *, BOOL);  // 0x02025db4
+    virtual s32 getTexAddr(RfxTexHeader *, RfxNode *);  // 0x02025dac
+    virtual s32 getPlttAddr(RfxPlttHeader *, RfxNode *, BOOL);  // 0x02025db4
     virtual void unk_virtual1(s32, u16 *, u8);  // 0x02025dbc
     virtual u32 unk_virtual2(void);  // 0x02025ecc
     virtual void beginDraw(void);  // 0x02025ed4

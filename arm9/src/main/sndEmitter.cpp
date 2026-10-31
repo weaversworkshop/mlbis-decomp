@@ -50,7 +50,6 @@ SndEmitterSlot sndEmitters[16];  // 0x02058aac
 // --- Function Declarations --- //
 
 void sndEmitSetCmdTable(void);  // 0x0200a40c
-void sndEmitInit(void);  // 0x0200a600
 void sndEmitUpdate(void);  // 0x0200a61c
 void sndEmitTickScript(SndEmitter *);  // 0x0200a814
 void sndEmitArmEnd(SndEmitter *);  // 0x0200a98c

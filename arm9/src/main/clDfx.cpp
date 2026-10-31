@@ -46,12 +46,12 @@ s32 nextPolygonId(s32);  // 0x02022c64
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 clDfx::getTexAddr(DfxTexHeader * hdr, RfxNode * node) {
+s32 clDfx::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
     return -1;
 }
 
 // MATCHED 100%
-s32 clDfx::getPlttAddr(DfxPlttHeader * pltt, RfxNode * node) {
+s32 clDfx::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node) {
     return -1;
 }
 
@@ -1068,12 +1068,12 @@ BOOL clDfx::setupTexture(u16 texIdx, RfxNode * node) {
 
 // MATCHED 100%
 DfxTexInfo * clDfx::resolveTexture(u16 texIdx, RfxNode * node) {
-    DfxTexHeader * hdr = this->getTexHeader(texIdx);
+    RfxTexHeader * hdr = this->getTexHeader(texIdx);
     if (hdr == NULL) {
         return NULL;
     }
 
-    DfxPlttHeader * pltt = this->getPlttHeader(texIdx);
+    RfxPlttHeader * pltt = this->getPlttHeader(texIdx);
     if (pltt == NULL) {
         return NULL;
     }

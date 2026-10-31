@@ -7,6 +7,6 @@
 
 u8 * getTexVramAddr(GXVRamTex);  // 0x0201f0bc
 u8 * getTexPlttVramAddr(GXVRamTexPltt);  // 0x0201f13c
-u32 func_0201f1b4(BOOL);  // 0x0201f1b4
+u8 * getObjExtPlttVramAddr(u32);  // 0x0201f1b4
 
 #endif

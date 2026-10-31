@@ -71,7 +71,9 @@ typedef struct {
             s16 y;  // +0x2
             s16 zOffset;  // +0x4
             s16 shape;  // +0x6
-            u8 pad_08[0x6];
+            s16 tileX;
+            s16 tileY;
+            s16 plttBlock;
             s16 texIdx;  // +0xe
             s16 plttIdx;  // +0x10
             s16 doubleSize;  // +0x12

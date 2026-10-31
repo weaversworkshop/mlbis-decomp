@@ -477,9 +477,9 @@ from:0x0207d1f4 kind:load to:0x020551e0 add:0x1c module:main
 from:0x0207d1f8 kind:load to:0x02055180 add:0x8 module:main
 from:0x0207d1fc kind:load to:0x02054e30 add:0x8 module:main
 from:0x0207d204 kind:load to:0x020750d4 module:overlays(3,122,130)
-from:0x0207d208 kind:load to:0x02055608 module:main
-from:0x0207d20c kind:load to:0x0205561c module:main
-from:0x0207d210 kind:load to:0x020555a8 module:main
+from:0x0207d208 kind:load to:0x02055600 add:0x8 module:main
+from:0x0207d20c kind:load to:0x02055600 add:0x1c module:main
+from:0x0207d210 kind:load to:0x020555a0 add:0x8 module:main
 from:0x0207d214 kind:load to:0x020810dc module:overlay(125)
 from:0x0207d218 kind:load to:0x02080060 module:overlay(125)
 from:0x0207d21c kind:load to:0x0208527c module:overlay(125)

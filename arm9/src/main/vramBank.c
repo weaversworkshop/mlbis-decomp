@@ -52,17 +52,17 @@ u8 * getTexPlttVramAddr(GXVRamTexPltt bank) {
 }
 
 // MATCHED 100%
-u32 func_0201f1b4(BOOL param1) {
-    if (param1 == FALSE) {
+u8 * getObjExtPlttVramAddr(u32 engine) {
+    if (engine == 0) {
         switch (GX_GetBankForOBJExtPltt()) {
             case GX_VRAM_OBJEXTPLTT_0_F:
-                return HW_LCDC_VRAM_F;
+                return (u8 *)HW_LCDC_VRAM_F;
             case GX_VRAM_OBJEXTPLTT_0_G:
-                return HW_LCDC_VRAM_G;
+                return (u8 *)HW_LCDC_VRAM_G;
             default:
-                return HW_OBJ_PLTT;
+                return (u8 *)HW_OBJ_PLTT;
         }
     } else {
-        return (GX_GetBankForSubOBJExtPltt() == GX_VRAM_SUB_OBJEXTPLTT_0_I) ? HW_LCDC_VRAM_I : HW_DB_OBJ_PLTT;
+        return (GX_GetBankForSubOBJExtPltt() == GX_VRAM_SUB_OBJEXTPLTT_0_I) ? (u8 *)HW_LCDC_VRAM_I : (u8 *)HW_DB_OBJ_PLTT;
     }
 }

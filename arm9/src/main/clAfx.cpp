@@ -20,12 +20,12 @@ extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
 // --- Function Definitions --- //
 
 // MATCHED 100%
-DfxTexHeader * clAfx::getTexHeader(u32 id) {
+RfxTexHeader * clAfx::getTexHeader(u32 id) {
     return NULL;
 }
 
 // MATCHED 100%
-DfxPlttHeader * clAfx::getPlttHeader(u32 id) {
+RfxPlttHeader * clAfx::getPlttHeader(u32 id) {
     return NULL;
 }
 
@@ -46,7 +46,7 @@ GXRgb clAfx::getBlendColor() {
 }
 
 // MATCHED 100%
-nsObjSys::clOamMan * clAfx::func_020224e4() {
+nsObjSys::clOamMan * clAfx::getOamMan() {
     return NULL;
 }
 
@@ -74,7 +74,7 @@ void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * node) {
             }
 
             if (ret->field81 != 1 || (s32)ret->field98 > 0) {
-                ret->func_0202bb44(this->func_020224e4());
+                ret->func_0202bb44(this->getOamMan());
             }
         }
 
@@ -106,7 +106,7 @@ void clAfx::drawNumber(s32 idx, s32 digitFrame, RfxNode * node, s32 spacing, u32
             s32 digit = val % 10 + digitFrame;
             if (digit >= 0 && digit < ret->func_020225d0()) {
                 ret->func_0202dee8(digit, -1);
-                ret->func_0202bb44(this->func_020224e4());
+                ret->func_0202bb44(this->getOamMan());
             }
 
             vecMulAdd16(-spacing, (VecFx32 *)&ret->field40.m[0], (VecFx32 *)&ret->field40.m[3]);

@@ -154,7 +154,7 @@ void func_0202224c(RfxGenPools * param1, void * param2, u16 param3) {
 }
 
 // MATCHED 100%
-void * func_020222a4(RfxGenPools * param1, u32 param2) {
+RfxTexHeader * func_020222a4(RfxGenPools * param1, u32 param2) {
     if (param1->dirtyA != 0) {
         param1->dirtyA = 0;
 
@@ -180,11 +180,11 @@ void * func_020222a4(RfxGenPools * param1, u32 param2) {
         }
     }
 
-    return param1->managerA.find(param2);
+    return (RfxTexHeader *)param1->managerA.find(param2);
 }
 
 // MATCHED 100%
-void * func_020223b0(RfxGenPools * param1, u32 param2) {
+RfxPlttHeader * func_020223b0(RfxGenPools * param1, u32 param2) {
     if (param1->dirtyB != 0) {
         param1->dirtyB = 0;
 
@@ -210,5 +210,5 @@ void * func_020223b0(RfxGenPools * param1, u32 param2) {
         }
     }
 
-    return param1->managerB.find(param2);
+    return (RfxPlttHeader *)param1->managerB.find(param2);
 }

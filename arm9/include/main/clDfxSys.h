@@ -6,7 +6,6 @@
 #ifdef __cplusplus
 
 #include "main/clDfx.h"
-#include "main/clRfxFileMan.h"
 #include "main/clYanaPileMan.h"
 #include "main/clYanaTransMan.h"
 
@@ -20,11 +19,6 @@ public:
     
     virtual u8 * getTexBase(void);  // 0x02025870
     virtual u8 * getPlttBase(void);  // 0x02025880
-};
-
-class clTexFileMan {
-public:
-    RfxGenPools pools;  // +0x0
 };
 
 class clDfxSh : public virtual clDfx {
@@ -50,10 +44,10 @@ public:
     clDfxVramMan * vramMan;  // +0x8
 
     // ~clDfxVr();  // implicit; D1 0x02025abc D0 0x02025a8c Tv0_n48_D1 0x02025c84 Tv0_n48_D0 0x02025c74 Tvn12_n48_D1 0x02025c58 Tvn12_n48_D0 0x02025c3c
-    virtual DfxTexHeader * getTexHeader(u32);  // 0x02025890 Thn12 0x02025bd4 Thn24 0x02025d1c
-    virtual DfxPlttHeader * getPlttHeader(u32);  // 0x020258b0 Thn12 0x02025bc4 Thn24 0x02025d0c
-    virtual s32 getTexAddr(DfxTexHeader *, RfxNode *);  // 0x020258d0 Tv0_n12 0x02025d5c
-    virtual s32 getPlttAddr(DfxPlttHeader *, RfxNode *);  // 0x020258ec Tv0_n16 0x02025d4c
+    virtual RfxTexHeader * getTexHeader(u32);  // 0x02025890 Thn12 0x02025bd4 Thn24 0x02025d1c
+    virtual RfxPlttHeader * getPlttHeader(u32);  // 0x020258b0 Thn12 0x02025bc4 Thn24 0x02025d0c
+    virtual s32 getTexAddr(RfxTexHeader *, RfxNode *);  // 0x020258d0 Tv0_n12 0x02025d5c
+    virtual s32 getPlttAddr(RfxPlttHeader *, RfxNode *);  // 0x020258ec Tv0_n16 0x02025d4c
     virtual u32 extScriptCount(void);  // 0x02025908 Thn12 0x02025ba4 Thn24 0x02025ccc
     virtual u16 * extScript(s32);  // 0x02025938 Thn12 0x02025bb4 Thn24 0x02025cdc
 };

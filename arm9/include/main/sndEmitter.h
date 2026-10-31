@@ -67,6 +67,8 @@ public:
     // SndEmitterSlot();  // implicit; // C1 0x0200b8a8
 };
 
+void sndEmitInit(void);  // 0x0200a600
+
 #endif // __cplusplus
 
 #endif

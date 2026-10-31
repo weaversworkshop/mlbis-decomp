@@ -393,9 +393,9 @@ from:0x0206ecf8 kind:load to:0x02055008 add:0x38 module:main
 from:0x0206ecfc kind:load to:0x020554d4 add:0x8 module:main
 from:0x0206ed00 kind:load to:0x020554d4 add:0x38 module:main
 from:0x0206ed04 kind:load to:0x02075120 module:overlay(122)
-from:0x0206ed08 kind:load to:0x020557a4 module:main
-from:0x0206ed0c kind:load to:0x020556c8 module:main
-from:0x0206ed10 kind:load to:0x0205589c module:main
+from:0x0206ed08 kind:load to:0x02055714 add:0x90 module:main
+from:0x0206ed0c kind:load to:0x0205564c add:0x7c module:main
+from:0x0206ed10 kind:load to:0x020557f0 add:0xac module:main
 from:0x0206ed14 kind:load to:0x020757e8 module:overlay(122)
 from:0x0206ed18 kind:load to:0x0207585c module:overlay(122)
 from:0x0206ed1c kind:load to:0x0207588c module:overlay(122)

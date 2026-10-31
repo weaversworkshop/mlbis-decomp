@@ -152,8 +152,8 @@ u32 fsChunkCount(FSChunkTable * tbl) {
 }
 
 // MATCHED 100%
-u8 * fsChunkPtr(FSChunkTable * tbl, u16 idx) {
-    return (u8 *)tbl + CHUNK_OFFSET(tbl, idx);
+u16 * fsChunkPtr(FSChunkTable * tbl, u16 idx) {
+    return (u16 *)((u8 *)tbl + CHUNK_OFFSET(tbl, idx));
 }
 
 // MATCHED 100%

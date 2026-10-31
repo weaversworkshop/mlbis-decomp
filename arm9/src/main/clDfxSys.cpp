@@ -20,8 +20,8 @@ u8 plttBlockCount[8] = {0, 2, 1, 1, 16, 0, 1, 0};  // 0x02055118
 
 // --- Function Declarations --- //
 
-s32 dfxLoadTexture(clDfxVramMan *, DfxTexHeader *, RfxNode *);  // 0x02025654
-s32 dfxLoadPalette(clDfxVramMan *, DfxPlttHeader *, RfxNode *);  // 0x020257ac
+s32 dfxLoadTexture(clDfxVramMan *, RfxTexHeader *, RfxNode *);  // 0x02025654
+s32 dfxLoadPalette(clDfxVramMan *, RfxPlttHeader *, RfxNode *);  // 0x020257ac
 
 void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 0x020259b8
 
@@ -30,7 +30,7 @@ void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 dfxLoadTexture(clDfxVramMan * vramMan, DfxTexHeader * hdr, RfxNode * node) {
+s32 dfxLoadTexture(clDfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
     u8 * vram = vramMan->getTexBase();
 
     if (vramMan->transMan == NULL || vram == NULL) {
@@ -65,7 +65,7 @@ s32 dfxLoadTexture(clDfxVramMan * vramMan, DfxTexHeader * hdr, RfxNode * node) {
 }
 
 // MATCHED 100%
-s32 dfxLoadPalette(clDfxVramMan * vramMan, DfxPlttHeader * pltt, RfxNode * node) {
+s32 dfxLoadPalette(clDfxVramMan * vramMan, RfxPlttHeader * pltt, RfxNode * node) {
     u8 * vram = vramMan->getPlttBase();
 
     if (vramMan->transMan == NULL || vram == NULL) {
@@ -98,39 +98,23 @@ u8 * clDfxVramMan::getPlttBase() {
 }
 
 // MATCHED 100%
-DfxTexHeader * clDfxVr::getTexHeader(u32 id) {
-    if (this->sys == NULL) {
-        return NULL;
-    }
-
-    return (DfxTexHeader *)func_020222a4(&this->sys->pools, id);
+RfxTexHeader * clDfxVr::getTexHeader(u32 id) {
+    return (this->sys != NULL) ? func_020222a4(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-DfxPlttHeader * clDfxVr::getPlttHeader(u32 id) {
-    if (this->sys == NULL) {
-        return NULL;
-    }
-
-    return (DfxPlttHeader *)func_020223b0(&this->sys->pools, id);
+RfxPlttHeader * clDfxVr::getPlttHeader(u32 id) {
+    return (this->sys != NULL) ? func_020223b0(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-s32 clDfxVr::getTexAddr(DfxTexHeader * hdr, RfxNode * node) {
-    if (this->vramMan == NULL) {
-        return -1;
-    }
-
-    return dfxLoadTexture(this->vramMan, hdr, node);
+s32 clDfxVr::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
+    return (this->vramMan != NULL) ? dfxLoadTexture(this->vramMan, hdr, node) : -1;
 }
 
 // MATCHED 100%
-s32 clDfxVr::getPlttAddr(DfxPlttHeader * pltt, RfxNode * node) {
-    if (this->vramMan == NULL) {
-        return -1;
-    }
-
-    return dfxLoadPalette(this->vramMan, pltt, node);
+s32 clDfxVr::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node) {
+    return (this->vramMan != NULL) ? dfxLoadPalette(this->vramMan, pltt, node) : -1;
 }
 
 // MATCHED 100%
@@ -139,23 +123,19 @@ u32 clDfxVr::extScriptCount() {
         if (this->sys->dataTable != NULL) {
             return fsChunkCount(this->sys->dataTable);
         }
-
         return 0;
     }
-
     return 0;
 }
 
 // MATCHED 100%
 u16 * clDfxVr::extScript(s32 idx) {
     if (this->sys != NULL) {
-        if (this->sys->dataTable == NULL) {
-            return NULL;
+        if (this->sys->dataTable != NULL) {
+            return fsChunkPtr(this->sys->dataTable, idx);
         }
-
-        return (u16 *)fsChunkPtr(this->sys->dataTable, idx);
+        return NULL;
     }
-
     return NULL;
 }
 
@@ -175,7 +155,7 @@ void clDfxSh::exec() {
 
 // MATCHED 100%
 void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, inYanaUnit ** list, clDfxVramMan * vramMan) {
-    u16 * script = (sys->scriptTable != NULL) ? (u16 *)fsChunkPtr(sys->scriptTable, scriptId) : NULL;
+    u16 * script = (sys->scriptTable != NULL) ? fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
     clDfx & dfx = *vr;
 

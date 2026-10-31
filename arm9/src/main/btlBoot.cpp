@@ -37,8 +37,6 @@ FS_EXTERN_OVERLAY(OVY_121);
 
 // --- Extern Functions --- //
 
-extern u32 func_0201a138(u32, u32, u32, u32);
-
 extern void func_ov008_0206406c(void);
 extern void func_ov009_02064f30(UnkStruct_ov009_02064f30 *);
 

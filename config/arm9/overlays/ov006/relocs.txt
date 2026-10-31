@@ -825,9 +825,9 @@ from:0x0212442c kind:load to:0x02055008 add:0x38 module:main
 from:0x02124430 kind:load to:0x020554d4 add:0x8 module:main
 from:0x02124434 kind:load to:0x020554d4 add:0x38 module:main
 from:0x02124438 kind:load to:0x0210f20c module:overlay(4)
-from:0x0212443c kind:load to:0x020557a4 module:main
-from:0x02124440 kind:load to:0x020556c8 module:main
-from:0x02124444 kind:load to:0x0205589c module:main
+from:0x0212443c kind:load to:0x02055714 add:0x90 module:main
+from:0x02124440 kind:load to:0x0205564c add:0x7c module:main
+from:0x02124444 kind:load to:0x020557f0 add:0xac module:main
 from:0x02124448 kind:load to:0x021276fc module:overlay(6)
 from:0x0212444c kind:load to:0x0210fd1c module:overlay(4)
 from:0x02124450 kind:load to:0x0210fc78 module:overlay(4)

@@ -29,12 +29,12 @@ BOOL calcOamAffineTranspose(OfxOamParams *, RfxNode *, s16, s16, int, u8);  // 0
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 clOfx::getTexAddr(DfxTexHeader * hdr, RfxNode * node) {
+s32 clOfx::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
     return -1;
 }
 
 // MATCHED 100%
-s32 clOfx::getPlttAddr(DfxPlttHeader * pltt, RfxNode * node, BOOL bpp4) {
+s32 clOfx::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node, BOOL bpp4) {
     return -1;
 }
 
@@ -124,7 +124,7 @@ void clOfx::endDraw() {}
 // MATCHED 100%
 void clOfx::cmdSprite(s32 t, u16 * cmd) {
     if (findKeySeg(&keySeg, t, cmd)) {
-        nsObjSys::clOamMan * oamMan = this->func_020224e4();
+        nsObjSys::clOamMan * oamMan = this->getOamMan();
         if (oamMan != NULL) {
             RfxNode * node = &rfxStack.cur[1];
             copyNode(node - 1, node);
@@ -140,9 +140,9 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
 
                 if ((u32)(oamMan->field18 - oamMan->field04) < 0x80) {
                     if (calcOamAffine(&oamParams, node, node->ofx.sprite.x, node->ofx.sprite.y, node->ofx.sprite.shape, node->ofx.sprite.doubleSize != 0)) {
-                        DfxTexHeader * tex = this->getTexHeader((u16)node->ofx.sprite.texIdx);
+                        RfxTexHeader * tex = this->getTexHeader((u16)node->ofx.sprite.texIdx);
                         if (tex != NULL) {
-                            DfxPlttHeader * pltt = this->getPlttHeader((u16)node->ofx.sprite.plttIdx);
+                            RfxPlttHeader * pltt = this->getPlttHeader((u16)node->ofx.sprite.plttIdx);
                             if (pltt != NULL) {
                                 s32 texAddr = this->getTexAddr(tex, node);
                                 if (texAddr >= 0) {
