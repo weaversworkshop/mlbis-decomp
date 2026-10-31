@@ -37,6 +37,8 @@ public:
     virtual void endCellAnime(nsObjSys::clCellAnime *);  // 0x02022f74
     virtual void func_02023188(s16);  // 0x02023188
 
+    void endDraw(void);  // 0x02022bc8
+
     void cmdNodeCallback(s32, u16 *);  // 0x02022c9c
 
     void cmdCellFrame(s32, u16 *);  // 0x02022fd8

@@ -46,8 +46,8 @@ GXRgb clAfx::getBlendColor() {
 }
 
 // MATCHED 100%
-u32 clAfx::func_020224e4() {
-    return 0;
+nsObjSys::clOamMan * clAfx::func_020224e4() {
+    return NULL;
 }
 
 // MATCHED 100%

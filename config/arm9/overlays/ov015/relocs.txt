@@ -194,8 +194,8 @@ from:0x020a1310 kind:load to:0x02054f4c add:0x8 module:main
 from:0x020a1314 kind:load to:0x02054f4c add:0x38 module:main
 from:0x020a1318 kind:load to:0x02055008 add:0x8 module:main
 from:0x020a131c kind:load to:0x02055008 add:0x38 module:main
-from:0x020a1320 kind:load to:0x020554dc module:main
-from:0x020a1324 kind:load to:0x0205550c module:main
+from:0x020a1320 kind:load to:0x020554d4 add:0x8 module:main
+from:0x020a1324 kind:load to:0x020554d4 add:0x38 module:main
 from:0x020a1328 kind:load to:0x020702d0 module:overlays(11,131)
 from:0x020a132c kind:load to:0x020557a4 module:main
 from:0x020a1330 kind:load to:0x02072584 module:overlays(11,130)

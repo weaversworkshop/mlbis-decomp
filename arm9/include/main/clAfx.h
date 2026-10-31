@@ -6,6 +6,7 @@
 #ifdef __cplusplus
 
 #include "main/clCellAnime.h"
+#include "main/clOamMan.h"
 #include "main/clRfx.h"
 
 typedef struct {
@@ -30,7 +31,7 @@ public:
     virtual u32 func_020224d0(void);  // 0x020224d0
     virtual void func_020224d8(void (*)(void), GXRgb, s32, s32);  // 0x020224d8
     virtual GXRgb getBlendColor(void);  // 0x020224dc
-    virtual u32 func_020224e4();  // 0x020224e4
+    virtual nsObjSys::clOamMan * func_020224e4(void);  // 0x020224e4
     virtual nsObjSys::clCellAnime * func_020224ec(s32);  // 0x020224ec
     virtual nsObjSys::clCellAnime * beginCellAnime(s32, RfxNode *);  // 0x020224f4
     virtual void endCellAnime(nsObjSys::clCellAnime *);  // 0x020224fc

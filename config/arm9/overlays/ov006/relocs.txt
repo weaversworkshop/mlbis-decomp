@@ -822,8 +822,8 @@ from:0x02124420 kind:load to:0x02054f4c add:0x8 module:main
 from:0x02124424 kind:load to:0x02054f4c add:0x38 module:main
 from:0x02124428 kind:load to:0x02055008 add:0x8 module:main
 from:0x0212442c kind:load to:0x02055008 add:0x38 module:main
-from:0x02124430 kind:load to:0x020554dc module:main
-from:0x02124434 kind:load to:0x0205550c module:main
+from:0x02124430 kind:load to:0x020554d4 add:0x8 module:main
+from:0x02124434 kind:load to:0x020554d4 add:0x38 module:main
 from:0x02124438 kind:load to:0x0210f20c module:overlay(4)
 from:0x0212443c kind:load to:0x020557a4 module:main
 from:0x02124440 kind:load to:0x020556c8 module:main

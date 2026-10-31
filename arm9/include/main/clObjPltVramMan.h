@@ -19,7 +19,6 @@ namespace nsObjSys {
 
 class clObjPltVramMan {
 public:
-
     GXOamAttr * field04;
     u8 pad_08[0x10];
     GXOamAttr * field18;

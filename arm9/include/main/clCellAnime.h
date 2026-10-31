@@ -5,6 +5,8 @@
 
 #ifdef __cplusplus
 
+#include "main/clOamMan.h"
+
 extern "C" {
     #include <nitro.h>
 }
@@ -36,7 +38,7 @@ public:
     virtual void func_0202b71c();  // 0x0202b71c
     virtual void func_0202b7b4();  // 0x0202b7b4
     virtual void func_0202bac0();  // 0x0202bac0
-    virtual void func_0202bb44(u32);  // 0x0202bb44
+    virtual void func_0202bb44(nsObjSys::clOamMan *);  // 0x0202bb44
     virtual void func_0202bc64();  // 0x0202bc64
     virtual void func_0202bd24();  // 0x0202bd24
     virtual void func_0202bcc8();  // 0x0202bcc8

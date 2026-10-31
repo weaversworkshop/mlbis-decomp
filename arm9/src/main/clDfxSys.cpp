@@ -37,8 +37,8 @@ s32 dfxLoadTexture(clDfxVramMan * vramMan, DfxTexHeader * hdr, RfxNode * node) {
         return 0;
     }
 
-    s32 blockX = node->dfx.field0c / 8;
-    s32 blockY = node->dfx.field0e / 8;
+    s32 blockX = node->dfx.tex.offsetU / 8;
+    s32 blockY = node->dfx.tex.offsetV / 8;
     s32 blockIdx = blockY * hdr->wBlocks + blockX;
 
     u8 * tiles = (u8 *)hdr + 8 + blockIdx * hdr->bpp * 8;
@@ -73,7 +73,7 @@ s32 dfxLoadPalette(clDfxVramMan * vramMan, DfxPlttHeader * pltt, RfxNode * node)
     }
 
     u8 blocks = plttBlockCount[texInfo.fmt];
-    u8 * src = pltt->data + node->dfx.field14 * 32;
+    u8 * src = pltt->data + node->dfx.tex.plttBlock * 32;
     u32 key = ((u32)src >> 5) | (blocks << 27);
 
     YanaPileEntry * entry = vramMan->plttPile.acquire(key, (blocks << 5), 0);
