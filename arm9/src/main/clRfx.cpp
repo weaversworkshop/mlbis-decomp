@@ -370,7 +370,7 @@ void applyRows(RfxNode * node, u16 * cmd, s32 numRows, s32 numKeys, s32 key, s32
 }
 
 // MATCHED 100%
-void clRfx::runTrackLooped(s32 t, u32 track, s32 loops) {
+void clRfx::runTrackLooped(s32 t, s16 track, s32 loops) {
     s32 period = (this->script[this->script[track]] << 8);
     if (loops == 0 || t < period * loops) {
         t %= period;
@@ -389,7 +389,7 @@ void clRfx::runTrackLooped(s32 t, u32 track, s32 loops) {
 }
 
 // MATCHED 100%
-void clRfx::runTrack(s32 t, u32 track) {
+void clRfx::runTrack(s32 t, s16 track) {
     u32 next = track+1;
     u16 * cmd = &this->script[this->script[track]]+1;
     u16 * end = &this->script[this->script[next]];
@@ -412,7 +412,7 @@ void clRfx::runSubTracks(s32 t, u16 * cmd) {
     s32 numKeys;
     s32 key;
     u16 * script;
-    s32 sub;
+    s16 sub;
     RfxNode ** cur;
 
     s32 elapsed = t - ((s16)cmd[1] << 8);
@@ -614,7 +614,7 @@ void clRfx::runExtTracks(s32 t, u16 * cmd) {
     RfxNode ** cur = &rfxStack.cur;
     (*cur)++;
 
-    u16 flag = (u16)subRow[0];
+    u16 flag = subRow[0];
     numRows--;
 
     if (flag == 1) {

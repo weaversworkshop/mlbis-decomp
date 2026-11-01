@@ -237,8 +237,8 @@ from:0x020af534 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x020af538 kind:load to:0x02054f0c add:0x8 module:main
 from:0x020af53c kind:load to:0x02054f4c add:0x8 module:main
 from:0x020af540 kind:load to:0x02054f4c add:0x38 module:main
-from:0x020af544 kind:load to:0x02055914 module:main
-from:0x020af548 kind:load to:0x02055944 module:main
+from:0x020af544 kind:load to:0x0205590c add:0x8 module:main
+from:0x020af548 kind:load to:0x0205590c add:0x38 module:main
 from:0x020af54c kind:load to:0x0207162c module:overlay(11)
 from:0x020af550 kind:load to:0x0207165c module:overlay(11)
 from:0x020af560 kind:arm_call to:0x02020784 module:main

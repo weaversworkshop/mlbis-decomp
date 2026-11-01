@@ -89,8 +89,8 @@ from:0x020c9c54 kind:load to:0x02071c28 module:overlays(11,130)
 from:0x020c9c58 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x020c9c5c kind:load to:0x02054f4c add:0x8 module:main
 from:0x020c9c60 kind:load to:0x02054f4c add:0x38 module:main
-from:0x020c9c64 kind:load to:0x02055914 module:main
-from:0x020c9c68 kind:load to:0x02055944 module:main
+from:0x020c9c64 kind:load to:0x0205590c add:0x8 module:main
+from:0x020c9c68 kind:load to:0x0205590c add:0x38 module:main
 from:0x020c9c6c kind:load to:0x020c9d18 module:overlay(19)
 from:0x020c9c70 kind:load to:0x020c9cdc module:overlay(19)
 from:0x020c9c74 kind:load to:0x02070e80 module:overlay(11)

@@ -334,8 +334,8 @@ from:0x0206e860 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x0206e864 kind:load to:0x02054f0c add:0x8 module:main
 from:0x0206e868 kind:load to:0x02054f4c add:0x8 module:main
 from:0x0206e86c kind:load to:0x02054f4c add:0x38 module:main
-from:0x0206e870 kind:load to:0x02055914 module:main
-from:0x0206e874 kind:load to:0x02055944 module:main
+from:0x0206e870 kind:load to:0x0205590c add:0x8 module:main
+from:0x0206e874 kind:load to:0x0205590c add:0x38 module:main
 from:0x0206e878 kind:load to:0x02075174 module:overlay(122)
 from:0x0206e87c kind:load to:0x020751a4 module:overlay(122)
 from:0x0206e99c kind:load to:0x02054ee4 add:0x8 module:main

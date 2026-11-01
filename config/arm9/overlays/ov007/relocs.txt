@@ -328,8 +328,8 @@ from:0x02113b64 kind:load to:0x02054ee4 add:0x8 module:main
 from:0x02113b68 kind:load to:0x02054f0c add:0x8 module:main
 from:0x02113b6c kind:load to:0x02054f4c add:0x8 module:main
 from:0x02113b70 kind:load to:0x02054f4c add:0x38 module:main
-from:0x02113b74 kind:load to:0x02055914 module:main
-from:0x02113b78 kind:load to:0x02055944 module:main
+from:0x02113b74 kind:load to:0x0205590c add:0x8 module:main
+from:0x02113b78 kind:load to:0x0205590c add:0x38 module:main
 from:0x02113b7c kind:load to:0x0207e59c module:overlays(3,130)
 from:0x02113b80 kind:load to:0x0207e5cc module:overlays(3,130)
 from:0x02113b9c kind:load to:0x02115fcc module:overlay(7)

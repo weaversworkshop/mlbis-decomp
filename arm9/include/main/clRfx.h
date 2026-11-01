@@ -44,8 +44,8 @@ public:
     void start(inYanaUnit **, u16 *);  // 0x02020998
     void finish(void);  // 0x02020a3c
 
-    void runTrackLooped(s32, u32, s32);  // 0x02021290
-    void runTrack(s32, u32);  // 0x02021324
+    void runTrackLooped(s32, s16, s32);  // 0x02021290
+    void runTrack(s32, s16);  // 0x02021324
     void runSubTracks(s32, u16 *);  // 0x020213ac
     void runSubTrackSeg(s32, u16 *);  // 0x02021570
     void runExtTracks(s32, u16 *);  // 0x020217c4

@@ -71,9 +71,9 @@ typedef struct {
             s16 y;  // +0x2
             s16 zOffset;  // +0x4
             s16 shape;  // +0x6
-            s16 tileX;
-            s16 tileY;
-            s16 plttBlock;
+            s16 tileX;  // +0x8
+            s16 tileY;  // +0xa
+            s16 plttBlock;  // +0xc
             s16 texIdx;  // +0xe
             s16 plttIdx;  // +0x10
             s16 doubleSize;  // +0x12
@@ -91,20 +91,35 @@ typedef struct {
 } OfxNodeParams;
 
 typedef struct {
+    s16 dstIdx;  // +0x0
+    s16 count;  // +0x2
+    s16 srcIdx;  // +0x4
+    s16 r;  // +0x6
+    s16 g;  // +0x8
+    s16 b;  // +0xa
+    s16 field0c;
+} PafNodeParams;
+
+typedef struct {
     union {
-        MtxFx43 mtx;  // +0x0
         struct {
-            VecFx32 axisX;  // +0x0
-            VecFx32 axisY;  // +0xc
-            VecFx32 axisZ;  // +0x18
-            VecFx32 pos;  // +0x24
+            union {
+                MtxFx43 mtx;  // +0x0
+                struct {
+                    VecFx32 axisX;  // +0x0
+                    VecFx32 axisY;  // +0xc
+                    VecFx32 axisZ;  // +0x18
+                    VecFx32 pos;  // +0x24
+                };
+            };
+            union {
+                DfxNodeParams dfx;  // +0x30
+                OfxNodeParams ofx;  // +0x30
+            };
+            u8 pad_48[0x18];
         };
+        PafNodeParams paf;  // +0x0
     };
-    union {
-        DfxNodeParams dfx;  // +0x30
-        OfxNodeParams ofx;  // +0x30
-    };
-    u8 pad_48[0x18];
 } RfxNode;
 
 #endif // __cplusplus
