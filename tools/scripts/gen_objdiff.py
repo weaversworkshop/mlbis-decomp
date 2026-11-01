@@ -25,11 +25,18 @@ def game_units():
 def sdk_units():
     if not SDK_MAPPINGS.exists():
         return []
-    return [{
-        "name": e.get("name") or "sdk/" + e["source"][len("lib/"):-len(".c")],
-        "target_path": e["target"],
-        "base_path": f"build/{e['source'][:-len('.c')]}.o",
-    } for e in load_json(SDK_MAPPINGS).get("objdiff_units", [])]
+    units = []
+    for e in load_json(SDK_MAPPINGS).get("objdiff_units", []):
+        if "prebuilt" in e:
+            units.append({"name": e["name"], "target_path": e["target"],
+                          "base_path": f"build/prebuilt/{e['prebuilt']}"})
+            continue
+        units.append({
+            "name": e.get("name") or "sdk/" + e["source"][len("lib/"):-len(".c")],
+            "target_path": e["target"],
+            "base_path": f"build/{e['source'][:-len('.c')]}.o",
+        })
+    return units
 
 
 def main():

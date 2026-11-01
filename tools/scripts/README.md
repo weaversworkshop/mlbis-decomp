@@ -29,7 +29,8 @@ missing file is silent. Called by the compile rule (`FIXDEP`).
 
 ### gen_objdiff.py
 Prints `objdiff.json`. Game units come from each `arm9/src` file's `// objdiff-target:` comment; SDK units
-from `objdiff_units` in `config/sdk_mappings.json`. A game file without the comment is warned about and
+from `objdiff_units` in `config/sdk_mappings.json` (a `"prebuilt"` entry points at an archive member
+extracted to `build/prebuilt/`, `notes/prebuilt_units.md`). A game file without the comment is warned about and
 **never diffed**. Driven by the `objdiff.json` make target (gated on a clean compile).
 
 ### setup_tools.py
@@ -81,7 +82,8 @@ imports `patch()`.
 Reloc-aware byte match of every `objdiff.json` unit vs the delinked target: words compared with relocated
 bits masked, each reloc compared as (kind, symbol, addend), section-relative relocs and reloc-less branches
 resolved to symbols first. **100.00% = identical after linking**; any real diff caps at 99.99%. Also scores
-homed data objects.
+homed data objects. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
+sized to the next symbol or section end.
 `obj_match.py [--config objdiff.json] [--out -|FILE] [--unit main/X ...] [--text] [-v]`
 - `make progress` (piped into `build_todo`), `make obj-match [UNIT=main/X] [OBJ_MATCH_ARGS=-v]`.
 - Output: objdiff-report-shaped JSON plus `objects` (data status) and per-function `section`. Exit 0; 2 on

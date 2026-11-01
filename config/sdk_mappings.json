@@ -4859,7 +4859,15 @@
       "sdk_name": "_u32_div_f",
       "library": "msl",
       "confidence": "certain",
-      "note": "CodeWarrior unsigned 32-bit divide runtime helper. No source in the tree (the CW ARM runtime ships prebuilt), but mwcc emits the symbol by name for any unsigned `/`: compiling func_02005e44's ramp as (fadeTimer*16)/fadeFrames produced an instruction-identical body whose only delta vs the hand-declared extern was `bl func_02045578` -> `bl _u32_div_f` (2026-08-04). Body agrees: `cmp r1,#0; bxeq lr` div-by-zero guard + `mov r2,#0x1c` normalisation cascade. r0=dividend, r1=divisor, quotient in r0. Signed counterpart would be _s32_div_f at another address. 9 call sites in main.",
+      "note": "CodeWarrior unsigned 32-bit divide runtime helper. No source in the tree (the CW ARM runtime ships prebuilt), but mwcc emits the symbol by name for any unsigned `/`: compiling func_02005e44's ramp as (fadeTimer*16)/fadeFrames produced an instruction-identical body whose only delta vs the hand-declared extern was `bl func_02045578` -> `bl _u32_div_f` (2026-08-04). Body agrees: `cmp r1,#0; bxeq lr` div-by-zero guard + `mov r2,#0x1c` normalisation cascade. r0=dividend, r1=divisor, quotient in r0. Signed counterpart would be _s32_div_f at another address. 9 call sites in main. The member (_u32_div_f.o) defines a second entry, _u32_div_not_0_f at +8, past the cmp/bxeq guard; split 2026-10-31 (only caller: func_02045330's bl). Both runtime helpers are scored as prebuilt units extracted from Mathlib (byte-identical to the ROM).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02045580",
+      "sdk_name": "_u32_div_not_0_f",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "Second entry of the prebuilt _u32_div_f.o member (skips the divide-by-zero guard). Called directly by func_02045330.",
       "header": "runtime"
     },
     {
@@ -5710,6 +5718,16 @@
       "source": "lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_ARM/Src/abort_exit_ARM.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/MSL_ARM/Src/abort_exit_ARM"
+    },
+    {
+      "prebuilt": "mathlib/_s32_div_f.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_s32_div_f"
+    },
+    {
+      "prebuilt": "mathlib/_u32_div_f.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_u32_div_f"
     }
   ]
 }

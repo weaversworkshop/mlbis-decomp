@@ -65,6 +65,11 @@ SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 # Safe because "source" appears only inside objdiff_units (123 keys, 123 units).
 SDK_DIFF_FILES := $(shell sed -n 's/.*"source"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json)
 
+# Prebuilt units (objdiff_units "prebuilt"): CW runtime members with no source, see notes/prebuilt_units.md.
+AR      := arm-none-eabi-ar
+MATHLIB := lib/mw-libraries/ARM_EABI_Support/Mathlib/lib_ds_2.0_sp1/FP_fastI_v5t_LE.a
+PREBUILT_OBJ := $(addprefix $(BUILD_DIR)/prebuilt/,$(shell sed -n 's/.*"prebuilt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json))
+
 SRC_ALL   := $(shell $(FIND) arm9/src \( -name '*.c' -o -name '*.cpp' \) 2>/dev/null)
 C_FILES   := $(filter %.c,$(SRC_ALL)) $(LIB_C_FILES) $(SDK_DIFF_FILES)
 CXX_FILES := $(filter %.cpp,$(SRC_ALL))
@@ -94,7 +99,7 @@ all: compile-ok objdiff.json
 # stops objdiff.json (an order-only dependent) from running on a broken build. PHONY on
 # purpose: a stamp file is skipped on an incremental break, because a failed compile
 # writes nothing and the stale object's mtime never moves.
-compile-ok: $(FX_CONST_H) $(OBJ_FILES)
+compile-ok: $(FX_CONST_H) $(OBJ_FILES) $(PREBUILT_OBJ)
 	@e=`$(FIND) $(BUILD_DIR) -name '*.o.err' -size +0 2>/dev/null`; \
 	if [ -n "$$e" ]; then echo; echo "----- !! ERRORS !! -----"; \
 	  for f in $$e; do $(SHOWERR) $$f | $(ERRLAST); done; exit 1; fi
@@ -111,6 +116,10 @@ MAKEFLAGS += -j$(JOBS)
 $(FX_CONST_H): $(FX_CONST_GEN) $(FX_CONST_CSV)
 	@mkdir -p $(@D)
 	python $(FX_CONST_GEN) $(FX_CONST_CSV) $@
+
+$(BUILD_DIR)/prebuilt/mathlib/%.o: $(MATHLIB)
+	@mkdir -p $(@D)
+	$(AR) x --output=$(@D) $< $*.o && touch $@
 
 sdk: $(FX_CONST_H)
 	@mkdir -p $(BUILD_DIR)

@@ -11,7 +11,9 @@ import common
 from common import ROOT, read_symbols
 
 SHT_SYMTAB, SHT_REL, SHT_RELA, SHT_NOBITS = 2, 9, 4, 8
-STT_OBJECT, STT_FUNC, STT_SECTION = 1, 2, 3
+STT_NOTYPE, STT_OBJECT, STT_FUNC, STT_SECTION = 0, 1, 2, 3
+STB_GLOBAL = 1
+SHF_EXECINSTR = 0x4
 STB_COMDAT = 13
 DATA_SECTIONS = (".rodata", ".data", ".bss")
 MAPPING_SYMS = ("$a", "$t", "$d")
@@ -143,12 +145,25 @@ class Elf:
         if self._funcs is None:
             self._funcs = {}
             for sym in self.symbols:
-                if sym["type"] != STT_FUNC or not sym["name"] or not sym["size"]:
+                if sym["type"] == STT_NOTYPE and sym["bind"] == STB_GLOBAL:
+                    sym = self._asm_extent(sym)
+                if sym is None or sym["type"] != STT_FUNC or not sym["name"] or not sym["size"]:
                     continue
                 if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
                     continue
                 self._funcs.setdefault(sym["name"], []).append(sym)
         return self._funcs
+
+    def _asm_extent(self, sym):
+        if sym["size"] or not sym["shndx"] or sym["shndx"] >= len(self.sections):
+            return sym
+        sec = self.sections[sym["shndx"]]
+        if not sec["flags"] & SHF_EXECINSTR:
+            return sym
+        ends = [s["value"] for s in self.symbols
+                if s["shndx"] == sym["shndx"] and s["name"] and s["value"] > sym["value"]]
+        end = min(ends, default=sec["size"])
+        return dict(sym, type=STT_FUNC, size=end - sym["value"])
 
     def data_objects(self):
         """name -> (section_class, symbol, comdat)."""

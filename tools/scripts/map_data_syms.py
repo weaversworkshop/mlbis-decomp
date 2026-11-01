@@ -20,6 +20,8 @@ def main():
     votes = defaultdict(lambda: defaultdict(int))
     skipped_addend = set()
     for u in cfg.get("objdiff_units", []):
+        if "source" not in u:
+            continue
         o = BUILD / (u["source"][:-2] + ".o")
         if not o.exists():
             continue

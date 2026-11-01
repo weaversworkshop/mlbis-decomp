@@ -1817,8 +1817,8 @@ func_02045174 kind:function(arm,size=0x1b0) addr:0x02045174
 func_02045324 kind:function(arm,size=0xc) addr:0x02045324
 func_02045330 kind:function(arm,size=0x3c) addr:0x02045330
 _s32_div_f kind:function(arm,size=0x20c) addr:0x0204536c
-_u32_div_f kind:function(arm,size=0x1e4) addr:0x02045578
-.L_02045580 kind:label(arm) addr:0x02045580 local
+_u32_div_f kind:function(arm,size=0x8) addr:0x02045578
+_u32_div_not_0_f kind:function(arm,size=0x1dc) addr:0x02045580
 func_02045774 kind:function(arm,size=0x544) addr:0x02045774
 func_02045cb8 kind:function(arm,size=0x4) addr:0x02045cb8
 func_02045cbc kind:function(arm,size=0x14) addr:0x02045cbc

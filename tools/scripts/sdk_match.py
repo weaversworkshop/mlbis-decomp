@@ -135,7 +135,7 @@ def apply_proposals(rows):
     """rows: [(addr_int, sdk_name, src)] in insertion order -> (mappings added, units added)"""
     cfg = load_json(CFG_PATH)
     have_a = {e["addr"].lower() for e in cfg["mappings"]}
-    have_s = {u["source"] for u in cfg["objdiff_units"]}
+    have_s = {u["source"] for u in cfg["objdiff_units"] if "source" in u}
     nm = nu = 0
     for a, name, src in rows:
         ha = f"0x{a:08x}"

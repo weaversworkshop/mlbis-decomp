@@ -1,21 +1,21 @@
 {
  "measures": {
-  "fuzzy_match_percent": 6.382401576134864,
+  "fuzzy_match_percent": 6.412551518257743,
   "total_code": 3343290,
-  "matched_code": 204334,
-  "matched_code_percent": 6.1117641604527275,
+  "matched_code": 205342,
+  "matched_code_percent": 6.1419141025756065,
   "total_data": 1803036,
   "matched_data": 40950,
   "matched_data_percent": 2.271169294456683,
-  "total_functions": 12145,
-  "matched_functions": 1528,
-  "matched_functions_percent": 12.581309180732811,
-  "complete_code": 153574,
-  "complete_code_percent": 4.593499217836323,
+  "total_functions": 12146,
+  "matched_functions": 1531,
+  "matched_functions_percent": 12.604972830561502,
+  "complete_code": 154582,
+  "complete_code_percent": 4.623649159959202,
   "complete_data": 22834,
   "complete_data_percent": 1.2664195279517436,
-  "total_units": 164,
-  "complete_units": 154
+  "total_units": 166,
+  "complete_units": 156
  },
  "categories": [
   {
@@ -44,44 +44,44 @@
    "id": "sdk",
    "name": "SDK",
    "measures": {
-    "fuzzy_match_percent": 97.28338647718999,
+    "fuzzy_match_percent": 98.54879610334179,
     "total_code": 79658,
-    "matched_code": 77078,
-    "matched_code_percent": 96.76115393306385,
+    "matched_code": 78086,
+    "matched_code_percent": 98.02656355921565,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 760,
-    "matched_functions": 747,
-    "matched_functions_percent": 98.28947368421052,
-    "complete_code": 72310,
-    "complete_code_percent": 90.77556554269502,
+    "total_functions": 761,
+    "matched_functions": 750,
+    "matched_functions_percent": 98.5545335085414,
+    "complete_code": 73318,
+    "complete_code_percent": 92.04097516884681,
     "complete_data": 6746,
     "complete_data_percent": 0.0,
-    "total_units": 119,
-    "complete_units": 115
+    "total_units": 121,
+    "complete_units": 117
    }
   },
   {
    "id": "main",
    "name": "main",
    "measures": {
-    "fuzzy_match_percent": 77.57941961634586,
+    "fuzzy_match_percent": 77.94589843837822,
     "total_code": 275050,
-    "matched_code": 204334,
-    "matched_code_percent": 74.28976549718233,
+    "matched_code": 205342,
+    "matched_code_percent": 74.6562443192147,
     "total_data": 114092,
     "matched_data": 40950,
     "matched_data_percent": 35.892087087613504,
-    "total_functions": 1877,
-    "matched_functions": 1528,
-    "matched_functions_percent": 81.40649973361748,
-    "complete_code": 153574,
-    "complete_code_percent": 55.834939101981455,
+    "total_functions": 1878,
+    "matched_functions": 1531,
+    "matched_functions_percent": 81.52289669861555,
+    "complete_code": 154582,
+    "complete_code_percent": 56.20141792401382,
     "complete_data": 22834,
     "complete_data_percent": 20.013673176033375,
-    "total_units": 164,
-    "complete_units": 154
+    "total_units": 166,
+    "complete_units": 156
    }
   },
   {
@@ -14689,6 +14689,69 @@
    }
   },
   {
+   "name": "msl/runtime/_s32_div_f",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 524,
+    "matched_code": 524,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_s32_div_f",
+     "size": 524,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_u32_div_f",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 484,
+    "matched_code": 484,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_u32_div_f",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_u32_div_not_0_f",
+     "size": 476,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
    "name": "main/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
@@ -16388,40 +16451,6 @@
     "complete": false,
     "progress_categories": [
      "game",
-     "main"
-    ]
-   }
-  },
-  {
-   "name": "main/_undecompiled_sdk",
-   "measures": {
-    "fuzzy_match_percent": 0.0,
-    "total_code": 1008,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0
-   },
-   "functions": [
-    {
-     "name": "_s32_div_f",
-     "size": 524,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "_u32_div_f",
-     "size": 484,
-     "fuzzy_match_percent": 0.0
-    }
-   ],
-   "metadata": {
-    "complete": false,
-    "progress_categories": [
-     "sdk",
      "main"
     ]
    }
