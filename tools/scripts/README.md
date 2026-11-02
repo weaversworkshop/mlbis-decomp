@@ -200,6 +200,8 @@ Normalized instruction diff of one function: compiled `.o` vs delinked target.
 `fn_diff.py <symbol> [--mine X.o] [--target X.o] [--target-symbol NAME] [--pool] [--context N] [--frame]`
 - Exit 0 match / 1 diff / 2 error. Empty extractions are refused, so a match is never vacuous.
 - Without `--mine` searches `build/arm9/src/**/*.o`, then `build/scratch/**/*.o`.
+  A `func_<addr>` no object defines falls back to the mangled C++ method embedding it
+  (`_ZN5clLfx13func_02027d30ElPt`), used on both sides when the target carries it (synced names).
 - Branch targets become instruction deltas (`b <T+12>`), so a wrong-block jump is a diff; `bl`/`blx`/`bx`
   stay `<T>` (relocs).
 - `--target-symbol` for a mangled name vs a still-`func_<addr>` target. `--pool` includes literal pools.

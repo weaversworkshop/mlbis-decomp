@@ -7,6 +7,16 @@
 
 #include "main/clRfx.h"
 
+typedef struct {
+    s16 dstIdx;  // +0x0
+    s16 count;  // +0x2
+    s16 srcIdx;  // +0x4
+    s16 r;  // +0x6
+    s16 g;  // +0x8
+    s16 b;  // +0xa
+    s16 field0c;
+} PafNode;
+
 class clPaf : public clRfx {
 public:
     u16 * palette;  // +0x20

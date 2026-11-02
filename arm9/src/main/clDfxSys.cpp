@@ -20,8 +20,8 @@ u8 plttBlockCount[8] = {0, 2, 1, 1, 16, 0, 1, 0};  // 0x02055118
 
 // --- Function Declarations --- //
 
-s32 dfxLoadTexture(clDfxVramMan *, RfxTexHeader *, RfxNode *);  // 0x02025654
-s32 dfxLoadPalette(clDfxVramMan *, RfxPlttHeader *, RfxNode *);  // 0x020257ac
+s32 dfxLoadTexture(clDfxVramMan *, RfxTexHeader *, DfxNode *);  // 0x02025654
+s32 dfxLoadPalette(clDfxVramMan *, RfxPlttHeader *, DfxNode *);  // 0x020257ac
 
 void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 0x020259b8
 
@@ -30,15 +30,15 @@ void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 dfxLoadTexture(clDfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
+s32 dfxLoadTexture(clDfxVramMan * vramMan, RfxTexHeader * hdr, DfxNode * node) {
     u8 * vram = vramMan->getTexBase();
 
     if (vramMan->transMan == NULL || vram == NULL) {
         return 0;
     }
 
-    s32 blockX = node->dfx.tex.offsetU / 8;
-    s32 blockY = node->dfx.tex.offsetV / 8;
+    s32 blockX = node->tex.offsetU / 8;
+    s32 blockY = node->tex.offsetV / 8;
     s32 blockIdx = blockY * hdr->wBlocks + blockX;
 
     u8 * tiles = (u8 *)hdr + 8 + blockIdx * hdr->bpp * 8;
@@ -65,7 +65,7 @@ s32 dfxLoadTexture(clDfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
 }
 
 // MATCHED 100%
-s32 dfxLoadPalette(clDfxVramMan * vramMan, RfxPlttHeader * pltt, RfxNode * node) {
+s32 dfxLoadPalette(clDfxVramMan * vramMan, RfxPlttHeader * pltt, DfxNode * node) {
     u8 * vram = vramMan->getPlttBase();
 
     if (vramMan->transMan == NULL || vram == NULL) {
@@ -73,7 +73,7 @@ s32 dfxLoadPalette(clDfxVramMan * vramMan, RfxPlttHeader * pltt, RfxNode * node)
     }
 
     u8 blocks = plttBlockCount[texInfo.fmt];
-    u8 * src = pltt->data + node->dfx.tex.plttBlock * 32;
+    u8 * src = pltt->data + node->tex.plttBlock * 32;
     u32 key = ((u32)src >> 5) | (blocks << 27);
 
     YanaPileEntry * entry = vramMan->plttPile.acquire(key, (blocks << 5), 0);
@@ -98,22 +98,22 @@ u8 * clDfxVramMan::getPlttBase() {
 }
 
 // MATCHED 100%
-RfxTexHeader * clDfxVr::getTexHeader(u32 id) {
+RfxTexHeader * clDfxVr::getTexHeader(u16 id) {
     return (this->sys != NULL) ? func_020222a4(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-RfxPlttHeader * clDfxVr::getPlttHeader(u32 id) {
+RfxPlttHeader * clDfxVr::getPlttHeader(u16 id) {
     return (this->sys != NULL) ? func_020223b0(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-s32 clDfxVr::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
+s32 clDfxVr::getTexAddr(RfxTexHeader * hdr, DfxNode * node) {
     return (this->vramMan != NULL) ? dfxLoadTexture(this->vramMan, hdr, node) : -1;
 }
 
 // MATCHED 100%
-s32 clDfxVr::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node) {
+s32 clDfxVr::getPlttAddr(RfxPlttHeader * pltt, DfxNode * node) {
     return (this->vramMan != NULL) ? dfxLoadPalette(this->vramMan, pltt, node) : -1;
 }
 

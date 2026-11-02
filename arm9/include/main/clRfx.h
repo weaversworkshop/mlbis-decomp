@@ -8,11 +8,22 @@
 #include "main/clYanaAnim.h"
 #include "main/yanaCtrl.h"
 
-#include "structs/rfxNode.h"
-
 extern "C" {
     #include <nitro.h>
 }
+
+typedef struct RfxNode {
+    union {
+        MtxFx43 mtx;  // +0x0
+        struct {
+            VecFx32 axisX;  // +0x0
+            VecFx32 axisY;  // +0xc
+            VecFx32 axisZ;  // +0x18
+            VecFx32 pos;  // +0x24
+        };
+    };
+    s16 param[0x18];  // +0x30
+} RfxNode;
 
 typedef struct {
     u8 pad_00[0x20];

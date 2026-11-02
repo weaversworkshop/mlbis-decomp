@@ -79,7 +79,7 @@ void clPaf::unk_virtual1(s32 t, u16 * cmd, u8 type) {
 
 // MATCHED 100%
 u32 clPaf::unk_virtual2() {
-    return 0xe;
+    return sizeof(PafNode);
 }
 
 // MATCHED 100%
@@ -89,10 +89,10 @@ void clPaf::beginDraw() {
 
 // MATCHED 100%
 void cmdSetRange(u16 * cmd) {
-    RfxNode * node = rfxStack.cur;
-    node->paf.dstIdx = cmd[3];
-    node->paf.count = cmd[5];
-    node->paf.srcIdx = cmd[7];
+    PafNode * node = (PafNode *)rfxStack.cur;
+    node->dstIdx = cmd[3];
+    node->count = cmd[5];
+    node->srcIdx = cmd[7];
 }
 
 // MATCHED 100%
@@ -101,15 +101,15 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
         int op = cmd[0] & 0x3f;
         s32 numKeys = (cmd[0] >> 9) & 0x7f;
 
-        RfxNode * node = &rfxStack.cur[1];
-        copyNode(node - 1, node);
+        PafNode * node = (PafNode *)&rfxStack.cur[1];
+        copyNode((RfxNode *)node-1, (RfxNode *)node);
 
-        applyRows(node, cmd, 1, numKeys + 1, keySeg.nextKey, keySeg.t, keySeg.dur);
+        applyRows((RfxNode *)node, cmd, 1, numKeys + 1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
-        s32 count = node->paf.count;
-        s16 dstIdx = node->paf.dstIdx;
+        s32 count = node->count;
+        s16 dstIdx = node->dstIdx;
         u16 * dst = &this->palette[dstIdx];
-        s16 srcIdx = node->paf.srcIdx;
+        s16 srcIdx = node->srcIdx;
         u16 * src = &this->palette[srcIdx];
 
         if (0x100 - srcIdx < count) {
@@ -123,7 +123,7 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
             case 4: {
                 s32 shift;
                 if (count > 0) {
-                    shift = (node->paf.field0c * count + 50) / 100;
+                    shift = (node->field0c * count + 50) / 100;
                     if (shift <= 0 && count <= shift) {
                         cpu_copy16(src, dst, count * sizeof(u16));
                     } else {
@@ -140,8 +140,8 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
             case 8: {
                 if (count > 0) {
                     u16 color;
-                    s32 w = (node->paf.field0c * 32 + 50) / 100;
-                    color = node->paf.r | ((node->paf.b << 10) | (node->paf.g << 5));
+                    s32 w = (node->field0c * 32 + 50) / 100;
+                    color = node->r | ((node->b << 10) | (node->g << 5));
                     
                     if (w <= 0) {
                         cpu_copy16(src, dst, count * 2);
@@ -176,7 +176,7 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
             }
             case 9: {
                 if (count > 0) {
-                    s32 w = (node->paf.field0c * 32 + 50) / 100;
+                    s32 w = (node->field0c * 32 + 50) / 100;
                     if (w <= 0) {
                         cpu_copy16(src, dst, count * 2);
                     } else {
@@ -216,13 +216,13 @@ void clPaf::cmdCrossFade(s32 t, u16 * cmd) {
     if (findKeySeg(&keySeg, t, cmd)) {
         s32 numKeys = ((cmd[0] >> 9) & 0x7f) + 1;
 
-        RfxNode * node = rfxStack.cur;
+        PafNode * node = (PafNode *)rfxStack.cur;
 
         s32 key = keySeg.nextKey;
         s32 row = numKeys+1;
         s16 srcIdx = cmd[row + key];
-        s16 dstIdx = node->paf.dstIdx;
-        s32 count = node->paf.count;
+        s16 dstIdx = node->dstIdx;
+        s32 count = node->count;
 
         u16 * dst = &this->palette[dstIdx];
         u16 * src = &this->palette[srcIdx];

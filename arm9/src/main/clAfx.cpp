@@ -20,12 +20,12 @@ extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
 // --- Function Definitions --- //
 
 // MATCHED 100%
-RfxTexHeader * clAfx::getTexHeader(u32 id) {
+RfxTexHeader * clAfx::getTexHeader(u16 id) {
     return NULL;
 }
 
 // MATCHED 100%
-RfxPlttHeader * clAfx::getPlttHeader(u32 id) {
+RfxPlttHeader * clAfx::getPlttHeader(u16 id) {
     return NULL;
 }
 

@@ -14,8 +14,8 @@ class clAfx : public clRfx {
 public:
 
     // ~clAfx();  // implicit; D1 0x020228d0 D0 0x020228a0 Thn12_D1 0x02022908 Thn12_D0 0x020228f8
-    virtual RfxTexHeader * getTexHeader(u32);  // 0x020224bc
-    virtual RfxPlttHeader * getPlttHeader(u32);  // 0x020224c4
+    virtual RfxTexHeader * getTexHeader(u16);  // 0x020224bc
+    virtual RfxPlttHeader * getPlttHeader(u16);  // 0x020224c4
     virtual void onNodePos(RfxNode *);  // 0x020224cc
     virtual u32 func_020224d0(void);  // 0x020224d0
     virtual void func_020224d8(void (*)(void), GXRgb, s32, s32);  // 0x020224d8

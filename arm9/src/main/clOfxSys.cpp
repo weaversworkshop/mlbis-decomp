@@ -12,8 +12,8 @@ extern "C" {
 
 // --- Function Declarations --- //
 
-s32 ofxLoadTexture(clOfxVramMan *, RfxTexHeader *, RfxNode *);  // 0x02026b04
-s32 ofxLoadPalette(clOfxVramMan *, RfxPlttHeader *, RfxNode *, BOOL);  // 0x02026ca4
+s32 ofxLoadTexture(clOfxVramMan *, RfxTexHeader *, OfxNode *);  // 0x02026b04
+s32 ofxLoadPalette(clOfxVramMan *, RfxPlttHeader *, OfxNode *, BOOL);  // 0x02026ca4
 void ofxVrStart(clOfxSys *, clOfxVr *, u32, inYanaUnit **, clOfxVramMan *);  // 0x02026f44
 
 } // extern "C"
@@ -21,17 +21,17 @@ void ofxVrStart(clOfxSys *, clOfxVr *, u32, inYanaUnit **, clOfxVramMan *);  // 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 ofxLoadTexture(clOfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
+s32 ofxLoadTexture(clOfxVramMan * vramMan, RfxTexHeader * hdr, OfxNode * node) {
     u8 * vram = vramMan->getTexBase(vramMan->engine);
 
     if (vramMan->transMan == NULL || vram == NULL) {
         return 0;
     }
 
-    s32 blockIdx = node->ofx.sprite.tileY * hdr->wBlocks + node->ofx.sprite.tileX;
+    s32 blockIdx = node->sprite.tileY * hdr->wBlocks + node->sprite.tileX;
 
     u8 * tiles = (u8 *)hdr + 8 + hdr->bpp * blockIdx * 8;
-    u32 key = ((u32)tiles >> 5) | (node->ofx.sprite.shape << 26);
+    u32 key = ((u32)tiles >> 5) | (node->sprite.shape << 26);
 
     u32 mask;
     GXOBJVRamModeChar mode = (vramMan->engine == 0) ? GX_GetOBJVRamModeChar() : GXS_GetOBJVRamModeChar();
@@ -54,8 +54,8 @@ s32 ofxLoadTexture(clOfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
         }
     }
 
-    s32 wTiles = oamShapeSizes[node->ofx.sprite.shape].w / 8;
-    s32 hTiles = oamShapeSizes[node->ofx.sprite.shape].h / 8;
+    s32 wTiles = oamShapeSizes[node->sprite.shape].w / 8;
+    s32 hTiles = oamShapeSizes[node->sprite.shape].h / 8;
 
     u32 size = hdr->bpp * (wTiles * hTiles) * 8;
     size += mask;
@@ -74,7 +74,7 @@ s32 ofxLoadTexture(clOfxVramMan * vramMan, RfxTexHeader * hdr, RfxNode * node) {
 }
 
 // MATCHED 100%
-s32 ofxLoadPalette(clOfxVramMan * vramMan, RfxPlttHeader * pltt, RfxNode * node, BOOL bpp4) {
+s32 ofxLoadPalette(clOfxVramMan * vramMan, RfxPlttHeader * pltt, OfxNode * node, BOOL bpp4) {
     u8 * vram = (u8 *)vramMan->getPlttBase(vramMan->engine, bpp4);
 
     if (vramMan->transMan == NULL || vram == NULL) {
@@ -82,7 +82,7 @@ s32 ofxLoadPalette(clOfxVramMan * vramMan, RfxPlttHeader * pltt, RfxNode * node,
     }
 
     if (bpp4 == TRUE) {
-        u8 * src = pltt->data + node->ofx.sprite.plttBlock * 32;
+        u8 * src = pltt->data + node->sprite.plttBlock * 32;
         YanaPileEntry * entry = vramMan->plttPile.acquire((u32)src >> 5, 0x20, 0);
         s32 offset;
 
@@ -130,22 +130,22 @@ nsObjSys::clOamMan * clOfxVr::getOamMan() {
 }
 
 // MATCHED 100%
-RfxTexHeader * clOfxVr::getTexHeader(u32 id) {
+RfxTexHeader * clOfxVr::getTexHeader(u16 id) {
     return (this->sys != NULL) ? func_020222a4(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-RfxPlttHeader * clOfxVr::getPlttHeader(u32 id) {
+RfxPlttHeader * clOfxVr::getPlttHeader(u16 id) {
     return (this->sys != NULL) ? func_020223b0(&this->sys->pools, id) : NULL;
 }
 
 // MATCHED 100%
-s32 clOfxVr::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
+s32 clOfxVr::getTexAddr(RfxTexHeader * hdr, OfxNode * node) {
     return (this->vramMan != NULL) ? ofxLoadTexture(this->vramMan, hdr, node) : -1;
 }
 
 // MATCHED 100%
-s32 clOfxVr::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node, BOOL bpp4) {
+s32 clOfxVr::getPlttAddr(RfxPlttHeader * pltt, OfxNode * node, BOOL bpp4) {
     return (this->vramMan != NULL) ? ofxLoadPalette(this->vramMan, pltt, node, bpp4) : -1;
 }
 

@@ -118,17 +118,29 @@ def print_frame(tgt_items, mine_items):
     print("first webs follow declaration order. Adjacent same-kind slots in section order = one shared variable.")
 
 
+def defined_syms(path):
+    r = subprocess.run([OBJDUMP, "-t", str(path)], capture_output=True, text=True)
+    if r.returncode != 0:
+        return set()
+    return {ln.rsplit(" ", 1)[-1] for ln in r.stdout.splitlines() if ln[:1] != " " and "*UND*" not in ln}
+
+
 def find_mine(symbol):
+    """-> (path, defined name): exact name first, else the mangled C++ method embedding func_<addr>."""
+    mangled = re.compile(rf"^_Z.*\d{re.escape(symbol)}E") if re.fullmatch(r"func_[0-9a-f]{8}", symbol) else None
+    fuzzy = None
     for base in (BUILD / "arm9/src", BUILD / "scratch"):
         if not base.is_dir():
             continue
         for o in sorted(base.rglob("*.o")):
-            r = subprocess.run([OBJDUMP, "-t", str(o)], capture_output=True, text=True)
-            if r.returncode == 0 and re.search(
-                rf"^\S+(?!.*\*UND\*).* {re.escape(symbol)}$", r.stdout, re.M
-            ):
-                return o
-    return None
+            syms = defined_syms(o)
+            if symbol in syms:
+                return o, symbol
+            if mangled and fuzzy is None:
+                hit = [n for n in syms if mangled.match(n)]
+                if hit:
+                    fuzzy = (o, hit[0])
+    return fuzzy
 
 
 def main():
@@ -142,7 +154,11 @@ def main():
     ap.add_argument("--frame", action="store_true", help="also print the spill-slot table (target vs mine, by first use)")
     args = ap.parse_args()
 
-    mine_path = Path(args.mine) if args.mine else find_mine(args.symbol)
+    msym = args.symbol
+    if args.mine:
+        mine_path = Path(args.mine)
+    else:
+        mine_path, msym = find_mine(args.symbol) or (None, args.symbol)
     if not mine_path or not mine_path.is_file():
         die(f"error: no compiled .o contains '{args.symbol}' (searched build/arm9/src, build/scratch); pass --mine")
     target_path = Path(args.target)
@@ -150,8 +166,12 @@ def main():
         die(f"error: target not found: {target_path}")
 
     tsym = args.target_symbol or args.symbol
+    if msym != args.symbol:
+        if not args.target_symbol and msym in defined_syms(target_path):
+            tsym = msym
+        print(f"note: '{args.symbol}' is compiled as '{msym}' (target: '{tsym}')")
     titems, tfound = extract_items(objdump(target_path, True), tsym)
-    mitems, mfound = extract_items(objdump(mine_path, True), args.symbol)
+    mitems, mfound = extract_items(objdump(mine_path, True), msym)
     tgt, _ = relativize(titems, args.pool)
     mine, _ = relativize(mitems, args.pool)
     if args.frame and tfound and mfound:
@@ -160,7 +180,7 @@ def main():
     if not tfound:
         die(f"error: symbol '{tsym}' not in target {target_path.name}")
     if not mfound:
-        die(f"error: symbol '{args.symbol}' not in {mine_path}")
+        die(f"error: symbol '{msym}' not in {mine_path}")
     if not tgt or not mine:
         die(f"error: EMPTY EXTRACTION (target={len(tgt)}, mine={len(mine)} insns) -- refusing to compare")
 

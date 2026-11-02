@@ -30,6 +30,41 @@ extern OfxOamParams oamParams;  // 0x027e1180
 
 }
 
+typedef struct {
+    union {
+        MtxFx43 mtx;  // +0x0
+        struct {
+            VecFx32 axisX;  // +0x0
+            VecFx32 axisY;  // +0xc
+            VecFx32 axisZ;  // +0x18
+            VecFx32 pos;  // +0x24
+        };
+    };
+    union {
+        struct {
+            s16 x;  // +0x30
+            s16 y;  // +0x32
+            s16 zOffset;  // +0x34
+            s16 shape;  // +0x36
+            s16 tileX;  // +0x38
+            s16 tileY;  // +0x3a
+            s16 plttBlock;  // +0x3c
+            s16 texIdx;  // +0x3e
+            s16 plttIdx;  // +0x40
+            s16 doubleSize;  // +0x42
+        } sprite;
+        struct {
+            s16 cellIdx;  // +0x30
+            s16 frame;  // +0x32
+        } cell;
+        struct {
+            s16 r;  // +0x30
+            s16 g;  // +0x32
+            s16 b;  // +0x34
+        } color;
+    };
+} OfxNode;
+
 class clOfx : public clAfx {
 public:
     MtxFx33 rot;  // +0x20
@@ -39,8 +74,8 @@ public:
     s16 priority;  // +0x4c
 
     // ~clOfx();  // implicit; D1 0x02026abc D0 0x02026a8c Thn12_D1 0x02026af4 Thn12_D0 0x02026ae4
-    virtual s32 getTexAddr(RfxTexHeader *, RfxNode *);  // 0x02025dac
-    virtual s32 getPlttAddr(RfxPlttHeader *, RfxNode *, BOOL);  // 0x02025db4
+    virtual s32 getTexAddr(RfxTexHeader *, OfxNode *);  // 0x02025dac
+    virtual s32 getPlttAddr(RfxPlttHeader *, OfxNode *, BOOL);  // 0x02025db4
     virtual void unk_virtual1(s32, u16 *, u8);  // 0x02025dbc
     virtual u32 unk_virtual2(void);  // 0x02025ecc
     virtual void beginDraw(void);  // 0x02025ed4

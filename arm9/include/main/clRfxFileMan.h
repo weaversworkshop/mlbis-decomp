@@ -14,6 +14,8 @@ typedef struct {
     u8 hBlocks;  // +0x1
     u8 bpp;  // +0x2
     u8 fmt;  // +0x3
+    u8 pad_00[0x4];
+    u8 data[];  // +0x8
 } RfxTexHeader;
 
 typedef struct {

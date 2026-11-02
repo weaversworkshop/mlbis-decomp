@@ -16,6 +16,6 @@ animeMtx kind:bss addr:0x027e1120
 stripVtxCount kind:bss addr:0x027e1160
 texInfo kind:bss addr:0x027e1164
 oamParams kind:bss addr:0x027e1180
-data_027e1190 kind:bss addr:0x027e1190
+lfxNode kind:bss addr:0x027e1190
 OSi_IrqThreadQueue kind:bss addr:0x027e11f0
 SDK_AUTOLOAD_DTCM_END kind:data(any) addr:0x027e1200

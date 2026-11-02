@@ -1,43 +1,43 @@
 {
  "measures": {
-  "fuzzy_match_percent": 6.412551518257743,
+  "fuzzy_match_percent": 6.5086245481175515,
   "total_code": 3343290,
-  "matched_code": 205342,
-  "matched_code_percent": 6.1419141025756065,
+  "matched_code": 208554,
+  "matched_code_percent": 6.237987132435415,
   "total_data": 1803036,
-  "matched_data": 40950,
-  "matched_data_percent": 2.271169294456683,
+  "matched_data": 41074,
+  "matched_data_percent": 2.2780465836511308,
   "total_functions": 12146,
-  "matched_functions": 1531,
-  "matched_functions_percent": 12.604972830561502,
-  "complete_code": 154582,
-  "complete_code_percent": 4.623649159959202,
-  "complete_data": 22834,
-  "complete_data_percent": 1.2664195279517436,
-  "total_units": 166,
-  "complete_units": 156
+  "matched_functions": 1551,
+  "matched_functions_percent": 12.769636094187387,
+  "complete_code": 157794,
+  "complete_code_percent": 4.71972218981901,
+  "complete_data": 22958,
+  "complete_data_percent": 1.2732968171461911,
+  "total_units": 167,
+  "complete_units": 157
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 4.163710665135018,
+    "fuzzy_match_percent": 4.262128624022539,
     "total_code": 3263632,
-    "matched_code": 127256,
-    "matched_code_percent": 3.8992141270829555,
+    "matched_code": 130468,
+    "matched_code_percent": 3.9976320859704773,
     "total_data": 1803036,
-    "matched_data": 40950,
-    "matched_data_percent": 2.271169294456683,
+    "matched_data": 41074,
+    "matched_data_percent": 2.2780465836511308,
     "total_functions": 11385,
-    "matched_functions": 781,
-    "matched_functions_percent": 6.859903381642512,
-    "complete_code": 82656,
-    "complete_code_percent": 2.532638483750619,
-    "complete_data": 16228,
-    "complete_data_percent": 0.9000374923185117,
-    "total_units": 46,
-    "complete_units": 40
+    "matched_functions": 801,
+    "matched_functions_percent": 7.0355731225296445,
+    "complete_code": 85868,
+    "complete_code_percent": 2.6310564426381404,
+    "complete_data": 16352,
+    "complete_data_percent": 0.9069147815129592,
+    "total_units": 47,
+    "complete_units": 41
    }
   },
   {
@@ -66,22 +66,22 @@
    "id": "main",
    "name": "main",
    "measures": {
-    "fuzzy_match_percent": 77.94589843837822,
+    "fuzzy_match_percent": 79.1136861133464,
     "total_code": 275050,
-    "matched_code": 205342,
-    "matched_code_percent": 74.6562443192147,
+    "matched_code": 208554,
+    "matched_code_percent": 75.82403199418287,
     "total_data": 114092,
-    "matched_data": 40950,
-    "matched_data_percent": 35.892087087613504,
+    "matched_data": 41074,
+    "matched_data_percent": 36.00077130736599,
     "total_functions": 1878,
-    "matched_functions": 1531,
-    "matched_functions_percent": 81.52289669861555,
-    "complete_code": 154582,
-    "complete_code_percent": 56.20141792401382,
-    "complete_data": 22834,
-    "complete_data_percent": 20.013673176033375,
-    "total_units": 166,
-    "complete_units": 156
+    "matched_functions": 1551,
+    "matched_functions_percent": 82.58785942492013,
+    "complete_code": 157794,
+    "complete_code_percent": 57.369205598982006,
+    "complete_data": 22958,
+    "complete_data_percent": 20.12235739578586,
+    "total_units": 167,
+    "complete_units": 157
    }
   },
   {
@@ -3210,12 +3210,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clAfx12getTexHeaderEm",
+     "name": "_ZN5clAfx12getTexHeaderEt",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clAfx13getPlttHeaderEm",
+     "name": "_ZN5clAfx13getPlttHeaderEt",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
@@ -3329,12 +3329,12 @@
    },
    "functions": [
     {
-     "name": "_ZN5clDfx10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZN5clDfx10getTexAddrEP12RfxTexHeaderP7DfxNode",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clDfx11getPlttAddrEP13RfxPlttHeaderP7RfxNode",
+     "name": "_ZN5clDfx11getPlttAddrEP13RfxPlttHeaderP7DfxNode",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
@@ -3424,7 +3424,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clDfx11drawTexQuadEtP7RfxNode",
+     "name": "_ZN5clDfx11drawTexQuadEtP7DfxNode",
      "size": 524,
      "fuzzy_match_percent": 100.0
     },
@@ -3454,12 +3454,12 @@
      "fuzzy_match_percent": 75.32751091703057
     },
     {
-     "name": "_ZN5clDfx12setupTextureEtP7RfxNode",
+     "name": "_ZN5clDfx12setupTextureEtP7DfxNode",
      "size": 184,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clDfx14resolveTextureEtP7RfxNode",
+     "name": "_ZN5clDfx14resolveTextureEtP7DfxNode",
      "size": 380,
      "fuzzy_match_percent": 100.0
     },
@@ -3533,22 +3533,22 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clDfxVr12getTexHeaderEm",
+     "name": "_ZN7clDfxVr12getTexHeaderEt",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clDfxVr13getPlttHeaderEm",
+     "name": "_ZN7clDfxVr13getPlttHeaderEt",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clDfxVr10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZN7clDfxVr10getTexAddrEP12RfxTexHeaderP7DfxNode",
      "size": 28,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clDfxVr11getPlttAddrEP13RfxPlttHeaderP7RfxNode",
+     "name": "_ZN7clDfxVr11getPlttAddrEP13RfxPlttHeaderP7DfxNode",
      "size": 28,
      "fuzzy_match_percent": 100.0
     },
@@ -3633,12 +3633,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn12_N7clDfxVr13getPlttHeaderEm",
+     "name": "_ZThn12_N7clDfxVr13getPlttHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn12_N7clDfxVr12getTexHeaderEm",
+     "name": "_ZThn12_N7clDfxVr12getTexHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -3713,12 +3713,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn24_N7clDfxVr13getPlttHeaderEm",
+     "name": "_ZThn24_N7clDfxVr13getPlttHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn24_N7clDfxVr12getTexHeaderEm",
+     "name": "_ZThn24_N7clDfxVr12getTexHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -3733,12 +3733,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZTv0_n16_N7clDfxVr11getPlttAddrEP13RfxPlttHeaderP7RfxNode",
+     "name": "_ZTv0_n16_N7clDfxVr11getPlttAddrEP13RfxPlttHeaderP7DfxNode",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZTv0_n12_N7clDfxVr10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZTv0_n12_N7clDfxVr10getTexAddrEP12RfxTexHeaderP7DfxNode",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -3953,6 +3953,130 @@
    ],
    "metadata": {
     "complete": false,
+    "progress_categories": [
+     "game",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clLfx",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 3212,
+    "matched_code": 3212,
+    "matched_code_percent": 100.0,
+    "total_data": 124,
+    "matched_data": 124,
+    "matched_data_percent": 100.0,
+    "total_functions": 20,
+    "matched_functions": 20,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ZN5clLfx13func_02027b54Ev",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx12unk_virtual1ElPth",
+     "size": 216,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx12unk_virtual2Ev",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx9beginDrawEv",
+     "size": 240,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx7endDrawEv",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx10cmdDrawTexElPt",
+     "size": 416,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx13cmdLayerColorElPt",
+     "size": 256,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx13cmdLayerDecayElPt",
+     "size": 196,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "blitTile4bppMax",
+     "size": 604,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "decayTiles4bpp",
+     "size": 64,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "scrollTiles4bpp",
+     "size": 148,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx12cmdLayerRowsElPt",
+     "size": 160,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfx13getBlendColorEv",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "lfxLayerInit",
+     "size": 64,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "lfxLayerUpdate",
+     "size": 308,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "lfxLayerApply",
+     "size": 356,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfxD0Ev",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN5clLfxD1Ev",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZThn12_N5clLfxD0Ev",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZThn12_N5clLfxD1Ev",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
     "progress_categories": [
      "game",
      "main"
@@ -4399,12 +4523,12 @@
    },
    "functions": [
     {
-     "name": "_ZN5clOfx10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZN5clOfx10getTexAddrEP12RfxTexHeaderP7OfxNode",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN5clOfx11getPlttAddrEP13RfxPlttHeaderP7RfxNodei",
+     "name": "_ZN5clOfx11getPlttAddrEP13RfxPlttHeaderP7OfxNodei",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
@@ -4548,22 +4672,22 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clOfxVr12getTexHeaderEm",
+     "name": "_ZN7clOfxVr12getTexHeaderEt",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clOfxVr13getPlttHeaderEm",
+     "name": "_ZN7clOfxVr13getPlttHeaderEt",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clOfxVr10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZN7clOfxVr10getTexAddrEP12RfxTexHeaderP7OfxNode",
      "size": 28,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN7clOfxVr11getPlttAddrEP13RfxPlttHeaderP7RfxNodei",
+     "name": "_ZN7clOfxVr11getPlttAddrEP13RfxPlttHeaderP7OfxNodei",
      "size": 28,
      "fuzzy_match_percent": 100.0
     },
@@ -4653,12 +4777,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn12_N7clOfxVr13getPlttHeaderEm",
+     "name": "_ZThn12_N7clOfxVr13getPlttHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn12_N7clOfxVr12getTexHeaderEm",
+     "name": "_ZThn12_N7clOfxVr12getTexHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -4738,12 +4862,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn24_N7clOfxVr13getPlttHeaderEm",
+     "name": "_ZThn24_N7clOfxVr13getPlttHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZThn24_N7clOfxVr12getTexHeaderEm",
+     "name": "_ZThn24_N7clOfxVr12getTexHeaderEt",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -4758,12 +4882,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZTv0_n16_N7clOfxVr11getPlttAddrEP13RfxPlttHeaderP7RfxNodei",
+     "name": "_ZTv0_n16_N7clOfxVr11getPlttAddrEP13RfxPlttHeaderP7OfxNodei",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZTv0_n12_N7clOfxVr10getTexAddrEP12RfxTexHeaderP7RfxNode",
+     "name": "_ZTv0_n12_N7clOfxVr10getTexAddrEP12RfxTexHeaderP7OfxNode",
      "size": 16,
      "fuzzy_match_percent": 100.0
     },
@@ -14755,13 +14879,13 @@
    "name": "main/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
-    "total_code": 56048,
+    "total_code": 52836,
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 336,
+    "total_functions": 316,
     "matched_functions": 0,
     "matched_functions_percent": 0.0
    },
@@ -14904,106 +15028,6 @@
     {
      "name": "func_0201ddd0",
      "size": 56,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027b54",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027b5c",
-     "size": 216,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027c34",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027c3c",
-     "size": 240,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027d2c",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027d30",
-     "size": 416,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027ed0",
-     "size": 256,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02027fd0",
-     "size": 196,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028094",
-     "size": 604,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020282f0",
-     "size": 64,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028330",
-     "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020283c4",
-     "size": 160,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028464",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028490",
-     "size": 64,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020284d0",
-     "size": 308,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028604",
-     "size": 356,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028768",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02028798",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020287c0",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020287d0",
-     "size": 16,
      "fuzzy_match_percent": 0.0
     },
     {

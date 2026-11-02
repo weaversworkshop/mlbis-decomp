@@ -21,20 +21,20 @@ extern void func_01ff8228(void *, u32, u32);
 
 // --- Function Declarations --- //
 
-BOOL calcOamAffine(OfxOamParams *, RfxNode *, s16, s16, int, u8);  // 0x02026254
-BOOL calcOamAffineTranspose(OfxOamParams *, RfxNode *, s16, s16, int, u8);  // 0x020264dc
+BOOL calcOamAffine(OfxOamParams *, OfxNode *, s16, s16, int, u8);  // 0x02026254
+BOOL calcOamAffineTranspose(OfxOamParams *, OfxNode *, s16, s16, int, u8);  // 0x020264dc
 
 } // extern "C"
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
-s32 clOfx::getTexAddr(RfxTexHeader * hdr, RfxNode * node) {
+s32 clOfx::getTexAddr(RfxTexHeader * hdr, OfxNode * node) {
     return -1;
 }
 
 // MATCHED 100%
-s32 clOfx::getPlttAddr(RfxPlttHeader * pltt, RfxNode * node, BOOL bpp4) {
+s32 clOfx::getPlttAddr(RfxPlttHeader * pltt, OfxNode * node, BOOL bpp4) {
     return -1;
 }
 
@@ -93,7 +93,7 @@ void clOfx::unk_virtual1(s32 t, u16 * cmd, u8 type) {
             break;
         }
         case 65: {
-            endDraw();
+            this->endDraw();
             break;
         }
     }
@@ -101,12 +101,12 @@ void clOfx::unk_virtual1(s32 t, u16 * cmd, u8 type) {
 
 // MATCHED 100%
 u32 clOfx::unk_virtual2() {
-    return 0x44;
+    return sizeof(OfxNode);
 }
 
 // MATCHED 100%
 void clOfx::beginDraw() {
-    RfxNode * node = rfxStack.cur;
+    OfxNode * node = (OfxNode *)rfxStack.cur;
 
     copy36(&this->rot, SDK_AUTOLOAD_DTCM_START);
     copy36(&this->rot, node);
@@ -115,7 +115,7 @@ void clOfx::beginDraw() {
     node->pos.y = 0;
     node->pos.z = 0;
     
-    func_01ff8228(&node->ofx, 0, sizeof(OfxNodeParams));
+    func_01ff8228(&node->mtx + 1, 0, sizeof(OfxNode) - sizeof(MtxFx43));
 }
 
 // MATCHED 100%
@@ -126,8 +126,8 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
     if (findKeySeg(&keySeg, t, cmd)) {
         nsObjSys::clOamMan * oamMan = this->getOamMan();
         if (oamMan != NULL) {
-            RfxNode * node = &rfxStack.cur[1];
-            copyNode(node - 1, node);
+            OfxNode * node = (OfxNode *)&rfxStack.cur[1];
+            copyNode((RfxNode *)node-1, (RfxNode *)node);
             
             s32 numRows = (cmd[0] >> 6) & 7;
             s32 numKeys = (cmd[0] >> 9) & 0x7f;
@@ -136,13 +136,13 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
             node->pos.y = node->pos.y / 16 + this->originY;
 
             for (s32 key = keySeg.key; key <= keySeg.nextKey; key++) {
-                applyRows(node, cmd, numRows + 1, numKeys + 1, key, keySeg.t, keySeg.dur);
+                applyRows((RfxNode *)node, cmd, numRows + 1, numKeys + 1, key, keySeg.t, keySeg.dur);
 
                 if ((u32)(oamMan->field18 - oamMan->field04) < 0x80) {
-                    if (calcOamAffine(&oamParams, node, node->ofx.sprite.x, node->ofx.sprite.y, node->ofx.sprite.shape, node->ofx.sprite.doubleSize != 0)) {
-                        RfxTexHeader * tex = this->getTexHeader((u16)node->ofx.sprite.texIdx);
+                    if (calcOamAffine(&oamParams, node, node->sprite.x, node->sprite.y, node->sprite.shape, node->sprite.doubleSize != 0)) {
+                        RfxTexHeader * tex = this->getTexHeader(node->sprite.texIdx);
                         if (tex != NULL) {
-                            RfxPlttHeader * pltt = this->getPlttHeader((u16)node->ofx.sprite.plttIdx);
+                            RfxPlttHeader * pltt = this->getPlttHeader(node->sprite.plttIdx);
                             if (pltt != NULL) {
                                 s32 texAddr = this->getTexAddr(tex, node);
                                 if (texAddr >= 0) {
@@ -150,12 +150,12 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
                                     s32 plttAddr = this->getPlttAddr(pltt, node, bpp4);
                                     if (plttAddr >= 0) {
                                         GXOamAttr * oam = oamMan->field18;
-                                        s32 z = this->func_02023188(node->pos.z / 16 + node->ofx.sprite.zOffset);
+                                        s32 z = this->func_02023188(node->pos.z / 16 + node->sprite.zOffset);
                                         s32 baseZ = this->originZ;
                                         s32 affineIdx = oamMan->func_0202aaac(oamParams.pa, oamParams.pb, oamParams.pc, oamParams.pd);
                                         
                                         oamMan->func_0202a780(oamMan->field18 - oamMan->field04, 1, baseZ + z);
-                                        G2_SetOBJAttr(oam, oamParams.x, oamParams.y, this->priority, GX_OAM_MODE_NORMAL, FALSE, oamParams.attr, oamShapes[node->ofx.sprite.shape], bpp4 ? GX_OAM_COLORMODE_16 : GX_OAM_COLORMODE_256, texAddr, plttAddr, affineIdx);
+                                        G2_SetOBJAttr(oam, oamParams.x, oamParams.y, this->priority, GX_OAM_MODE_NORMAL, FALSE, oamParams.attr, oamShapes[node->sprite.shape], bpp4 ? GX_OAM_COLORMODE_16 : GX_OAM_COLORMODE_256, texAddr, plttAddr, affineIdx);
                                         oamMan->field18 = oam + 1;
                                     }
                                 }
@@ -169,7 +169,7 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
 }
 
 // MATCHED 100%
-BOOL calcOamAffine(OfxOamParams * out, RfxNode * node, s16 x, s16 y, int shape, u8 doubleSize) {
+BOOL calcOamAffine(OfxOamParams * out, OfxNode * node, s16 x, s16 y, int shape, u8 doubleSize) {
     s32 pa, pb, pc, pd;
     GXOamEffect effect;
     s32 w, h, cx, cy;
@@ -257,7 +257,7 @@ BOOL calcOamAffine(OfxOamParams * out, RfxNode * node, s16 x, s16 y, int shape, 
 }
 
 // MATCHED 100%
-BOOL calcOamAffineTranspose(OfxOamParams * out, RfxNode * node, s16 x, s16 y, int shape, u8 doubleSize) {
+BOOL calcOamAffineTranspose(OfxOamParams * out, OfxNode * node, s16 x, s16 y, int shape, u8 doubleSize) {
     s32 pa, pb, pc, pd;
     GXOamEffect effect;
     s32 w, h, cx, cy;
@@ -347,18 +347,18 @@ BOOL calcOamAffineTranspose(OfxOamParams * out, RfxNode * node, s16 x, s16 y, in
 // MATCHED 100%
 void clOfx::cmdNodeCallback(s32 t, u16 * cmd) {
     if (findKeySeg(&keySeg, t, cmd)) {
-        RfxNode * node = &rfxStack.cur[1];
-        copyNode(node-1, node);
+        OfxNode * node = (OfxNode *)&rfxStack.cur[1];
+        copyNode((RfxNode *)node-1, (RfxNode *)node);
 
         s32 numRows = (cmd[0] >> 6) & 7;
         s32 numKeys = (cmd[0] >> 9) & 0x7f;
-        applyRows(node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
+        applyRows((RfxNode *)node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
         node->pos.x = node->pos.x / 16 << FX32_SHIFT;
         node->pos.y = node->pos.y / 16 << FX32_SHIFT;
         node->pos.z = this->func_02023188(node->pos.z / 16);
 
-        this->onNodePos(node);
+        this->onNodePos((RfxNode *)node);
     }
 }
 
@@ -396,28 +396,28 @@ void clOfx::endCellAnime(nsObjSys::clCellAnime * anime) {
 // MATCHED 100%
 void clOfx::cmdCellFrame(s32 t, u16 * cmd) {
     if (findKeySeg(&keySeg, t, cmd)) {
-        RfxNode * node = &rfxStack.cur[1];
-        copyNode(node-1, node);
+        OfxNode * node = (OfxNode *)&rfxStack.cur[1];
+        copyNode((RfxNode *)node-1, (RfxNode *)node);
 
         s32 numRows = (cmd[0] >> 6) & 7;
         s32 numKeys = (cmd[0] >> 9) & 0x7f;
-        applyRows(node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
+        applyRows((RfxNode *)node, cmd, numRows+1, numKeys+1, keySeg.nextKey, keySeg.t, keySeg.dur);
 
-        this->setCellFrame(node->ofx.cell.cellIdx, node->ofx.cell.frame, node);
+        this->setCellFrame(node->cell.cellIdx, node->cell.frame, (RfxNode *)node);
     }
 }
 
 // MATCHED 100%
 void clOfx::cmdDrawNumber(u16 * cmd) {
-    RfxNode * node = &rfxStack.cur[1];
-    copyNode(node-1, node);
-    this->drawNumber(cmd[3], cmd[5], node, cmd[7], cmd[9]);
+    OfxNode * node = (OfxNode *)&rfxStack.cur[1];
+    copyNode((RfxNode *)node-1, (RfxNode *)node);
+    this->drawNumber(cmd[3], cmd[5], (RfxNode *)node, cmd[7], cmd[9]);
 }
 
 // MATCHED 100%
 GXRgb clOfx::getBlendColor() {
-    RfxNode * node = rfxStack.cur;
-    return (node->ofx.color.b << 10) | (node->ofx.color.g << 5) | node->ofx.color.r;
+    OfxNode * node = (OfxNode *)rfxStack.cur;
+    return (node->color.b << 10) | (node->color.g << 5) | node->color.r;
 }
 
 // MATCHED 100%

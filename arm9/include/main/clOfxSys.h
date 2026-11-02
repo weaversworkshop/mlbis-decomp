@@ -49,10 +49,10 @@ public:
 
     // ~clOfxVr();  // implicit; D1 0x02027050 D0 0x02027020 Tv0_n48_D1 0x02027228 Tv0_n48_D0 0x02027218 Tvn12_n48_D1 0x020271fc Tvn12_n48_D0 0x020271e0
     virtual nsObjSys::clOamMan * getOamMan(void);  // 0x02026e08 Thn12 0x02027158 Thn24 0x020272a0
-    virtual RfxTexHeader * getTexHeader(u32);  // 0x02026e1c Thn12 0x02027178 Thn24 0x020272d0
-    virtual RfxPlttHeader * getPlttHeader(u32);  // 0x02026e3c Thn12 0x02027168 Thn24 0x020272c0
-    virtual s32 getTexAddr(RfxTexHeader *, RfxNode *);  // 0x02026e5c Tv0_n12 0x02027310
-    virtual s32 getPlttAddr(RfxPlttHeader *, RfxNode *, BOOL);  // 0x02026e78 Tv0_n16 0x02027300
+    virtual RfxTexHeader * getTexHeader(u16);  // 0x02026e1c Thn12 0x02027178 Thn24 0x020272d0
+    virtual RfxPlttHeader * getPlttHeader(u16);  // 0x02026e3c Thn12 0x02027168 Thn24 0x020272c0
+    virtual s32 getTexAddr(RfxTexHeader *, OfxNode *);  // 0x02026e5c Tv0_n12 0x02027310
+    virtual s32 getPlttAddr(RfxPlttHeader *, OfxNode *, BOOL);  // 0x02026e78 Tv0_n16 0x02027300
     virtual u32 extScriptCount(void);  // 0x02026e94 Thn12 0x02027138 Thn24 0x02027270
     virtual u16 * extScript(s32);  // 0x02026ec4 Thn12 0x02027148 Thn24 0x02027280
 };
