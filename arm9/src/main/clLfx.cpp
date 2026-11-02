@@ -8,6 +8,8 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "main/palAnim.h"
+
 // --- Extern Data Variables --- //
 
 extern RfxKeySeg keySeg;
@@ -20,8 +22,6 @@ extern LfxNode lfxNode;  // 0x027e1190
 extern void func_01ff8228(void *, u32, u32);
 extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
-
-extern u16 func_0201dcb0(u16, u16, s32);
 
 // --- Function Declarations --- //
 
@@ -428,16 +428,16 @@ void lfxLayerApply(LfxLayer * layer, u32 engine) {
             if (layer->midIdx >= 0) {
                 s32 n = layer->midIdx;
                 for (s32 i = 0; i < n; i++) {
-                    *pltt++ = func_0201dcb0(layer->colorStart, layer->colorMid, (i * 32 + n/2) / n);
+                    *pltt++ = colorLerp(layer->colorStart, layer->colorMid, (i * 32 + n/2) / n);
                 }
 
                 n = 16 - layer->midIdx;
                 for (s32 i = 0; i < n; i++) {
-                    *pltt++ = func_0201dcb0(layer->colorMid, layer->colorEnd, (i * 32 + n/2) / n);
+                    *pltt++ = colorLerp(layer->colorMid, layer->colorEnd, (i * 32 + n/2) / n);
                 }
             } else {
                 for (s32 i = 0; i < 16; i++) {
-                    *pltt++ = func_0201dcb0(layer->colorStart, layer->colorEnd, (i * 32 + 8) / 16);
+                    *pltt++ = colorLerp(layer->colorStart, layer->colorEnd, (i * 32 + 8) / 16);
                 }
             }
         }

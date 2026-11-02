@@ -9,6 +9,7 @@ extern "C" {
 #include <nitro.h>
 
 #include "main/cpu_mem16.h"
+#include "main/palAnim.h"
 
 // --- Extern Data Variables --- //
 
@@ -22,15 +23,11 @@ extern u16 data_0205bbac[];  // 0x0205bbac
 extern u16 data_0205bdac[];  // 0x0205bdac
 extern u16 data_0205bfac[];  // 0x0205bfac
 
-typedef u16 (*BlendFunc)(u16, u16, s32);
 extern BlendFunc pafBlendFuncs[4];  // 0x020558fc
 
 // --- Extern Functions --- //
 
 extern void func_01ff8228(void *, u32, u32);
-
-extern u16 func_0201dcb0(u16, u16, s32);
-extern u16 func_0201ddd0(u16, s32);
 
 // --- Function Declarations --- //
 
@@ -188,7 +185,7 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
 
                         if (dst < src) {
                             while (n > 0) {
-                                *dst++ = func_0201ddd0(*src++, w);
+                                *dst++ = colorInvertLerp(*src++, w);
                                 n--;
                             }
                         } else {
@@ -199,7 +196,7 @@ void clPaf::cmdPaletteOp(s32 t, u16 * cmd) {
                                 dst--;
                                 src--;
 
-                                *dst = func_0201ddd0(*src, w);
+                                *dst = colorInvertLerp(*src, w);
                                 n--;
                             }
                         }
@@ -258,7 +255,7 @@ void clPaf::cmdCrossFade(s32 t, u16 * cmd) {
                 s32 w = keySeg.t * 31 / keySeg.dur;
 
                 while (count > 0) {
-                    *dst++ = func_0201dcb0(*a++, *b++, w);
+                    *dst++ = colorLerp(*a++, *b++, w);
                     count--;
                 }
             }

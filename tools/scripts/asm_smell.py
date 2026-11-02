@@ -175,12 +175,7 @@ def sweep(lines):
                         kinds.append(k)
                 flagged.append((s, "; ".join(kinds)))
     if flagged:
-        def quarantined(s):
-            m = re.match(r"func_(0201d[0-9a-f]{3})$", s)
-            return m and 0x0201d0bc <= int(m.group(1), 16) < 0x0201de08
-        q = sum(1 for s, _ in flagged if quarantined(s))
-        flagged = [(s, h) for s, h in flagged if not quarantined(s)]
-        game = [(s, h) for s, h in flagged if s.startswith("func_") or s.islower()]
+        game =[(s, h) for s, h in flagged if s.startswith("func_") or s.islower()]
         vendor = len(flagged) - len(game)
         print(f"ASM-SMELL WARNING: {len(flagged)} unmatched functions have hard "
               f"asm tells -- do NOT decomp these as C:")
@@ -188,8 +183,6 @@ def sweep(lines):
             print(f"  {s:28s} {h}  (transcribe as asm)")
         if vendor:
             print(f"  (+{vendor} SDK/vendor-named -- route via sdk pipeline)")
-        if q:
-            print(f"  (+{q} in quarantined graphics lib -- do not touch)")
         if todo_is_stale():
             print("  NOTE: main_7_todo.md predates the current build (only `make "
                   "progress` regenerates it) -- some of these may already match.")

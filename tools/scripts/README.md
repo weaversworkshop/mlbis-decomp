@@ -247,8 +247,7 @@ Hand-asm vs compiled-C classifier — run before any decomp.
   before any flag-setter; H5 `swp`/`mrs`/`msr`/`mcr`/`mrc`; H6 `add pc,pc` into non-`b` rows.
 - C tells reported: `pop_pc`, `pad_push` (`push {r3,…}`), `switch_table`.
 - In SDK/vendor regions a hard tell may be vendor-built C with an older frame (FS_OpenFileFast) → SDK pipeline.
-- `--sweep` covers compiled-but-unmatched functions, skips `asm`-defined ones and the quarantined graphics
-  lib, and warns when `main_7_todo.md` is older than the newest `.o`. Duplicate names: first instance only.
+- `--sweep` covers compiled-but-unmatched functions, skips `asm`-defined ones, and warns when `main_7_todo.md` is older than the newest `.o`. Duplicate names: first instance only.
 
 ### ../permuter/extract_target_asm.py
 Writes one function from a delinked `.o` as assembleable `.s` (`glabel`, `.L` labels, pool `.word`s via

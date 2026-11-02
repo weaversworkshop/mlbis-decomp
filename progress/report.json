@@ -1,20 +1,20 @@
 {
  "measures": {
-  "fuzzy_match_percent": 6.5086245481175515,
+  "fuzzy_match_percent": 6.59500652515215,
   "total_code": 3343290,
-  "matched_code": 208554,
-  "matched_code_percent": 6.237987132435415,
+  "matched_code": 210822,
+  "matched_code_percent": 6.305824502211893,
   "total_data": 1803036,
-  "matched_data": 41074,
-  "matched_data_percent": 2.2780465836511308,
-  "total_functions": 12146,
-  "matched_functions": 1551,
-  "matched_functions_percent": 12.769636094187387,
+  "matched_data": 41174,
+  "matched_data_percent": 2.283592784614395,
+  "total_functions": 12137,
+  "matched_functions": 1565,
+  "matched_functions_percent": 12.894454972398451,
   "complete_code": 157794,
   "complete_code_percent": 4.71972218981901,
   "complete_data": 22958,
   "complete_data_percent": 1.2732968171461911,
-  "total_units": 167,
+  "total_units": 168,
   "complete_units": 157
  },
  "categories": [
@@ -22,21 +22,21 @@
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 4.262128624022539,
+    "fuzzy_match_percent": 4.350618993034732,
     "total_code": 3263632,
-    "matched_code": 130468,
-    "matched_code_percent": 3.9976320859704773,
+    "matched_code": 132736,
+    "matched_code_percent": 4.06712521509778,
     "total_data": 1803036,
-    "matched_data": 41074,
-    "matched_data_percent": 2.2780465836511308,
-    "total_functions": 11385,
-    "matched_functions": 801,
-    "matched_functions_percent": 7.0355731225296445,
+    "matched_data": 41174,
+    "matched_data_percent": 2.283592784614395,
+    "total_functions": 11376,
+    "matched_functions": 815,
+    "matched_functions_percent": 7.164205344585091,
     "complete_code": 85868,
     "complete_code_percent": 2.6310564426381404,
     "complete_data": 16352,
     "complete_data_percent": 0.9069147815129592,
-    "total_units": 47,
+    "total_units": 48,
     "complete_units": 41
    }
   },
@@ -66,21 +66,21 @@
    "id": "main",
    "name": "main",
    "measures": {
-    "fuzzy_match_percent": 79.1136861133464,
+    "fuzzy_match_percent": 80.1636770240899,
     "total_code": 275050,
-    "matched_code": 208554,
-    "matched_code_percent": 75.82403199418287,
+    "matched_code": 210822,
+    "matched_code_percent": 76.64860934375568,
     "total_data": 114092,
-    "matched_data": 41074,
-    "matched_data_percent": 36.00077130736599,
-    "total_functions": 1878,
-    "matched_functions": 1551,
-    "matched_functions_percent": 82.58785942492013,
+    "matched_data": 41174,
+    "matched_data_percent": 36.088419871682504,
+    "total_functions": 1869,
+    "matched_functions": 1565,
+    "matched_functions_percent": 83.73461744248262,
     "complete_code": 157794,
     "complete_code_percent": 57.369205598982006,
     "complete_data": 22958,
     "complete_data_percent": 20.12235739578586,
-    "total_units": 167,
+    "total_units": 168,
     "complete_units": 157
    }
   },
@@ -6423,6 +6423,110 @@
    ],
    "metadata": {
     "complete": true,
+    "progress_categories": [
+     "game",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "main/palAnim",
+   "measures": {
+    "fuzzy_match_percent": 99.58620689655173,
+    "total_code": 2900,
+    "matched_code": 2268,
+    "matched_code_percent": 78.20689655172414,
+    "total_data": 100,
+    "matched_data": 100,
+    "matched_data_percent": 100.0,
+    "total_functions": 16,
+    "matched_functions": 14,
+    "matched_functions_percent": 87.5
+   },
+   "functions": [
+    {
+     "name": "palAnimRun",
+     "size": 404,
+     "fuzzy_match_percent": 98.01980198019803
+    },
+    {
+     "name": "palAnimRunOne",
+     "size": 228,
+     "fuzzy_match_percent": 98.24561403508771
+    },
+    {
+     "name": "palAnimRotate",
+     "size": 152,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimRotateBounce",
+     "size": 268,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimKeySeg",
+     "size": 152,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimCrossFade",
+     "size": 188,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimBlendLerp",
+     "size": 236,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimBlendAdd",
+     "size": 236,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimBlendSub",
+     "size": 236,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimBlendLuminance",
+     "size": 236,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "palAnimInvert",
+     "size": 220,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "colorLerp",
+     "size": 60,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "colorAddSaturation",
+     "size": 64,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "colorSubSaturation",
+     "size": 72,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "colorLuminanceBlend",
+     "size": 92,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "colorInvertLerp",
+     "size": 56,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": false,
     "progress_categories": [
      "game",
      "main"
@@ -14879,13 +14983,13 @@
    "name": "main/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
-    "total_code": 52836,
+    "total_code": 49936,
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 316,
+    "total_functions": 291,
     "matched_functions": 0,
     "matched_functions_percent": 0.0
    },
@@ -14903,131 +15007,6 @@
     {
      "name": "__sinit_02047ca8",
      "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d2b4",
-     "size": 404,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d448",
-     "size": 228,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d52c",
-     "size": 144,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d5bc",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d5c4",
-     "size": 260,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d6c8",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d6d0",
-     "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d764",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d768",
-     "size": 172,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d814",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d824",
-     "size": 220,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d900",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d910",
-     "size": 220,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d9ec",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201d9fc",
-     "size": 220,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dad8",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dae8",
-     "size": 220,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dbc4",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dbd4",
-     "size": 204,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dca0",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dcb0",
-     "size": 60,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dcec",
-     "size": 64,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dd2c",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201dd74",
-     "size": 92,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0201ddd0",
-     "size": 56,
      "fuzzy_match_percent": 0.0
     },
     {
