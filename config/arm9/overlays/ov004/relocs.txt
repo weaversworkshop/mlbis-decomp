@@ -482,7 +482,7 @@ from:0x02092ad4 kind:arm_call to:0x02014220 module:main
 from:0x02092adc kind:load to:0x0205c268 module:main
 from:0x02092ae0 kind:load to:0x02055af0 module:main
 from:0x02092ae4 kind:load to:0x0205c1b0 module:main
-from:0x02092ae8 kind:load to:0x02055a78 module:main
+from:0x02092ae8 kind:load to:0x02055a70 add:0x8 module:main
 from:0x02092aec kind:load to:0x0210cedc module:overlay(4)
 from:0x02092af0 kind:load to:0x0210ceb0 module:overlay(4)
 from:0x02092af4 kind:load to:0x0205c230 module:main

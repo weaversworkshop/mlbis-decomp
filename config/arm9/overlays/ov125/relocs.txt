@@ -676,7 +676,7 @@ from:0x0207ebb0 kind:load to:0x02055c3c module:main
 from:0x0207ebb4 kind:load to:0x01ff93c4 module:itcm
 from:0x0207ebc8 kind:load to:0x02055af0 module:main
 from:0x0207ebcc kind:load to:0x0205c1b0 module:main
-from:0x0207ebd0 kind:load to:0x02055a78 module:main
+from:0x0207ebd0 kind:load to:0x02055a70 add:0x8 module:main
 from:0x0207ebd4 kind:load to:0x0204ac68 module:main
 from:0x0207ebd8 kind:load to:0x020853b0 module:overlay(125)
 from:0x0207ebdc kind:load to:0x0205c25c module:main
