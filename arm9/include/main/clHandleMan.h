@@ -31,13 +31,34 @@ typedef struct VramHandle {
 
 }
 
+namespace nsObjSys { 
+    class clVramManBase;
+    class clHandleMan;
+}
+
+extern nsObjSys::clHandleMan * handleMan;
+extern nsObjSys::clVramManBase * vramManTable[2][4][4];
+
 namespace nsObjSys {
 
 class clVramManBase {
 public:
+    u8 manBank;  // +0x4
+    u8 manType;  // +0x5
+    u8 manIndex;  // +0x6
+    u8 pad_07[0x1];
 
-    virtual ~clVramManBase() {};
-    virtual void unk_virtual1() = 0;
+    clVramManBase(u8 bank, u8 type, u32 index) {
+        this->manBank = bank;
+        this->manType = type;
+        this->manIndex = index;
+        if (index < 4) {
+            vramManTable[bank][type][index] = this;
+        }
+    };
+
+    virtual ~clVramManBase() {};  // D1 0x0202ac4c D0 0x0202ac38
+    virtual u32 getVramAddr(VramHandle *) = 0;
     virtual VramHandle * alloc(u32, u32, u32) = 0;
     virtual BOOL release(VramHandle *, s32, u32) = 0;
     virtual u32 compact(u32) = 0;
@@ -45,9 +66,9 @@ public:
 
 class clHandleMan {
 public:
-    VramHandle * pool;
-    VramHandle * freeList;
-    u32 used;
+    VramHandle * pool;  // +0x4
+    VramHandle * freeList;  // +0x8
+    u32 used;  // +0xc
 
     clHandleMan(u32, u32);  // C1 0x02028820
     virtual ~clHandleMan();  // D1 0x02028878 D0 0x020288bc
@@ -57,13 +78,9 @@ public:
 
 class clVramManByteBase : public clVramManBase {
 public:
-    u8 manBank;
-    u8 manType;
-    u8 manIndex;
-    u8 pad_07[0x1];
-    VramHandle * head[2];
-    u32 base;
-    u32 size;
+    VramHandle * head[2];  // +0x8
+    u32 base;  // +0x10
+    u32 size;  // +0x14
 
     virtual ~clVramManByteBase() {};  // D1 0x020296c0 D0 0x020296ac
     virtual VramHandle * alloc(u32, u32, u32);  // 0x02028950

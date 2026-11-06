@@ -64,8 +64,9 @@ Delink-faithfulness check: `bl`/`blx` to another symbol with no relocation in `b
 Relinks and byte-compares with the ROM: `gen_delinks --with-data` → `dsd delink` → `dsd lcf` → `patch_lcf`
 → `mwldarm`, then compares `build/link/build/*.bin` against `extract/`. `make link`.
 `link_rom.py [-v] [--keep-carve] [--strict]`
-- Always restores `delinks.txt` and removes `build/delinks/.stamp` on exit; `--keep-carve` leaves the carve
-  (then `make progress` reports 0/0).
+- On exit restores every `delinks.txt`, wipes `build/delinks/` (dsd never deletes stale gap objects, so the
+  carve's `_dsd_gap@main_N.o` used to linger and clobber `main_7.o`) and re-delinks; the stamp stays absent so
+  the next `make delinks` also redoes `dis`. `--keep-carve` leaves the carve (then `make progress` reports 0/0).
 - Mismatches are reported, not fatal, unless `--strict`.
 
 ### patch_lcf.py

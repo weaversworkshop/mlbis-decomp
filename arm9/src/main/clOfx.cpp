@@ -138,7 +138,7 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
             for (s32 key = keySeg.key; key <= keySeg.nextKey; key++) {
                 applyRows((RfxNode *)node, cmd, numRows + 1, numKeys + 1, key, keySeg.t, keySeg.dur);
 
-                if ((u32)(oamMan->field18 - oamMan->field04) < 0x80) {
+                if ((u32)(oamMan->oamEnd - oamMan->oam) < 0x80) {
                     if (calcOamAffine(&oamParams, node, node->sprite.x, node->sprite.y, node->sprite.shape, node->sprite.doubleSize != 0)) {
                         RfxTexHeader * tex = this->getTexHeader(node->sprite.texIdx);
                         if (tex != NULL) {
@@ -149,14 +149,14 @@ void clOfx::cmdSprite(s32 t, u16 * cmd) {
                                     BOOL bpp4 = (tex->bpp == 4);
                                     s32 plttAddr = this->getPlttAddr(pltt, node, bpp4);
                                     if (plttAddr >= 0) {
-                                        GXOamAttr * oam = oamMan->field18;
+                                        GXOamAttr * oam = oamMan->oamEnd;
                                         s32 z = this->func_02023188(node->pos.z / 16 + node->sprite.zOffset);
                                         s32 baseZ = this->originZ;
-                                        s32 affineIdx = oamMan->func_0202aaac(oamParams.pa, oamParams.pb, oamParams.pc, oamParams.pd);
+                                        s32 affineIdx = oamMan->getAffineIndex(oamParams.pa, oamParams.pb, oamParams.pc, oamParams.pd);
                                         
-                                        oamMan->func_0202a780(oamMan->field18 - oamMan->field04, 1, baseZ + z);
+                                        oamMan->addRun(oamMan->oamEnd - oamMan->oam, 1, baseZ + z);
                                         G2_SetOBJAttr(oam, oamParams.x, oamParams.y, this->priority, GX_OAM_MODE_NORMAL, FALSE, oamParams.attr, oamShapes[node->sprite.shape], bpp4 ? GX_OAM_COLORMODE_16 : GX_OAM_COLORMODE_256, texAddr, plttAddr, affineIdx);
-                                        oamMan->field18 = oam + 1;
+                                        oamMan->oamEnd = oam + 1;
                                     }
                                 }
                             }

@@ -19,6 +19,7 @@ SENTINEL = 0xffffffff
 AGG_OPEN_RE = re.compile(r"\b(?:class|struct|union)\s+(?P<name>[A-Za-z_]\w*)"
                          r"(?:\s*:[^{;]*)?\s*\{")
 ANON_OPEN_RE = re.compile(r"\b(?P<kind>struct|union)\s*\{")
+NS_OPEN_RE = re.compile(r"\bnamespace\s+(?P<name>[A-Za-z_]\w*)\s*\{")
 TYPEDEF_CLOSE_RE = re.compile(r"^\s*\}\s*(?P<name>[A-Za-z_]\w*)\s*;")
 MEMBER_RE = re.compile(r"^\s*.*?\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\]\s*)*;")
 BITFIELD_RE = re.compile(r"^\s*.*?(?:\b(?P<name>[A-Za-z_]\w*)\s*)?:\s*\d+\s*;")
@@ -139,13 +140,15 @@ def load_cache():
 def parse(path):
     # stack entries: [name, depth, is_union, ignored]
     members, bitfields, stack, depth = [], [], [], 0
-    func_levels = []
+    func_levels, ns_stack = [], []
     template = False
     for lineno, line in enumerate(read_lines(path), 1):
         code = line.split("//")[0]
         agg = AGG_OPEN_RE.search(code)
         anon = ANON_OPEN_RE.search(code)
         enclosing = next((e[0] for e in reversed(stack) if e[0]), None)
+        if enclosing and ns_stack:
+            enclosing = "::".join([n for n, _ in ns_stack] + [enclosing])
         in_union = any(e[2] for e in stack)
         if code.lstrip().startswith("template"):
             template = True
@@ -188,11 +191,16 @@ def parse(path):
         if not agg and not anon and FUNC_OPEN_RE.search(code) \
                 and not CONTROL_RE.match(code):
             func_levels.append(depth)
+        ns = NS_OPEN_RE.search(code)
+        if ns and not stack:
+            ns_stack.append((ns.group("name"), depth))
         depth += code.count("{") - code.count("}")
         while stack and depth <= stack[-1][1]:
             stack.pop()
         while func_levels and depth <= func_levels[-1]:
             func_levels.pop()
+        while ns_stack and depth <= ns_stack[-1][1]:
+            ns_stack.pop()
     return [m for m in members if m.type_name], bitfields
 
 
@@ -383,6 +391,11 @@ def parse_dwarf(text):
     return out
 
 
+# DWARF names an aggregate without its namespace.
+def bare(type_name):
+    return type_name.rsplit("::", 1)[-1]
+
+
 def bitfield_heads(bitfields, dw, probed):
     heads, run = [], []
 
@@ -392,7 +405,7 @@ def bitfield_heads(bitfields, dw, probed):
         # Unnamed fillers have no DIE: inherit from the next named bitfield.
         filled, last = [], None
         for t, n, _ in reversed(run):
-            o = dw.get((t, n))
+            o = dw.get((bare(t), n))
             last = o if o is not None else last
             filled.append(last)
         filled.reverse()
@@ -520,7 +533,7 @@ def main():
             dw = dwarf_offsets(path, types, pre, a.verbose)
             # DWARF must agree with the probe on every known member, or its bitfields can't be trusted.
             drift = {m.type_name for m in members
-                     if dw.get((m.type_name, m.name), m.offset) != m.offset}
+                     if dw.get((bare(m.type_name), m.name), m.offset) != m.offset}
             for t in sorted(drift):
                 print(f"  WARN  {rel}  {t}: DWARF disagrees with probe; bitfields skipped")
             heads = [h for h in bitfield_heads(bfs, dw, members)

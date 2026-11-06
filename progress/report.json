@@ -1,43 +1,43 @@
 {
  "measures": {
-  "fuzzy_match_percent": 6.7090259491327195,
+  "fuzzy_match_percent": 6.874013132416252,
   "total_code": 3343290,
-  "matched_code": 214634,
-  "matched_code_percent": 6.419843926192463,
+  "matched_code": 220150,
+  "matched_code_percent": 6.584831109475995,
   "total_data": 1803036,
-  "matched_data": 41374,
-  "matched_data_percent": 2.294685186540923,
+  "matched_data": 41382,
+  "matched_data_percent": 2.2951288826179845,
   "total_functions": 12137,
-  "matched_functions": 1579,
-  "matched_functions_percent": 13.009804729340035,
-  "complete_code": 161606,
-  "complete_code_percent": 4.833741613799581,
-  "complete_data": 23158,
-  "complete_data_percent": 1.2843892190727195,
-  "total_units": 169,
-  "complete_units": 158
+  "matched_functions": 1610,
+  "matched_functions_percent": 13.265222048282112,
+  "complete_code": 167122,
+  "complete_code_percent": 4.998728797083113,
+  "complete_data": 23166,
+  "complete_data_percent": 1.2848329151497806,
+  "total_units": 170,
+  "complete_units": 159
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 4.467421377617307,
+    "fuzzy_match_percent": 4.636435531173836,
     "total_code": 3263632,
-    "matched_code": 136548,
-    "matched_code_percent": 4.183927599680356,
+    "matched_code": 142064,
+    "matched_code_percent": 4.352941753236885,
     "total_data": 1803036,
-    "matched_data": 41374,
-    "matched_data_percent": 2.294685186540923,
+    "matched_data": 41382,
+    "matched_data_percent": 2.2951288826179845,
     "total_functions": 11376,
-    "matched_functions": 829,
-    "matched_functions_percent": 7.287271448663854,
-    "complete_code": 89680,
-    "complete_code_percent": 2.7478588272207163,
-    "complete_data": 16552,
-    "complete_data_percent": 0.9180071834394876,
-    "total_units": 49,
-    "complete_units": 42
+    "matched_functions": 860,
+    "matched_functions_percent": 7.559774964838256,
+    "complete_code": 95196,
+    "complete_code_percent": 2.9168729807772444,
+    "complete_data": 16560,
+    "complete_data_percent": 0.9184508795165488,
+    "total_units": 50,
+    "complete_units": 43
    }
   },
   {
@@ -66,22 +66,22 @@
    "id": "main",
    "name": "main",
    "measures": {
-    "fuzzy_match_percent": 81.54960685502974,
+    "fuzzy_match_percent": 83.55506040892904,
     "total_code": 275050,
-    "matched_code": 214634,
-    "matched_code_percent": 78.03453917469551,
+    "matched_code": 220150,
+    "matched_code_percent": 80.0399927285948,
     "total_data": 114092,
-    "matched_data": 41374,
-    "matched_data_percent": 36.26371700031554,
+    "matched_data": 41382,
+    "matched_data_percent": 36.270728885460855,
     "total_functions": 1869,
-    "matched_functions": 1579,
-    "matched_functions_percent": 84.4836811128946,
-    "complete_code": 161606,
-    "complete_code_percent": 58.75513542992183,
-    "complete_data": 23158,
-    "complete_data_percent": 20.29765452441889,
-    "total_units": 169,
-    "complete_units": 158
+    "matched_functions": 1610,
+    "matched_functions_percent": 86.14232209737828,
+    "complete_code": 167122,
+    "complete_code_percent": 60.76058898382112,
+    "complete_data": 23166,
+    "complete_data_percent": 20.304666409564213,
+    "total_units": 170,
+    "complete_units": 159
    }
   },
   {
@@ -4493,7 +4493,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN9clMesIcon9setObjManEiPN8nsObjSys15clObjPltVramManES2_S2_",
+     "name": "_ZN9clMesIcon9setObjManEiPN8nsObjSys8clOamManEPNS0_15clObjPltVramManES4_",
      "size": 60,
      "fuzzy_match_percent": 100.0
     },
@@ -4538,7 +4538,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN8nsObjSys15clObjPltVramMan13func_02014380Emmm",
+     "name": "_ZN8nsObjSys15clObjPltVramMan5allocEmmm",
      "size": 44,
      "fuzzy_match_percent": 100.0
     },
@@ -4595,6 +4595,185 @@
    ],
    "metadata": {
     "complete": false,
+    "progress_categories": [
+     "game",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clObjPltVramMan",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 5516,
+    "matched_code": 5516,
+    "matched_code_percent": 100.0,
+    "total_data": 8,
+    "matched_data": 8,
+    "matched_data_percent": 100.0,
+    "total_functions": 31,
+    "matched_functions": 31,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramManC1Ehmmm",
+     "size": 96,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan4initEmm",
+     "size": 296,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan12linkFromBackEmmmt",
+     "size": 356,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan13linkFromFrontEmmmt",
+     "size": 344,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan8allocStdEmmm",
+     "size": 404,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan8allocExtEmmm",
+     "size": 440,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan10allocStdAtEmmmm",
+     "size": 328,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan10allocExtAtEmmmm",
+     "size": 408,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan7releaseEP10VramHandlelm",
+     "size": 240,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan10compactStdEm",
+     "size": 312,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan10compactExtEm",
+     "size": 428,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan10findSharedEmtmms",
+     "size": 256,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamManC1Eh",
+     "size": 96,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan4initEhP9GXOamAttrP9OamAffineP6OamRun",
+     "size": 68,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamManD1Ev",
+     "size": 80,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamManD0Ev",
+     "size": 88,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan5resetEmm",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan6addRunElll",
+     "size": 36,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan8sortRunsEm",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "sortRunsUnsigned",
+     "size": 140,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "sortRunsSigned",
+     "size": 140,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "scatterAffine",
+     "size": 124,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan5flushEP9GXOamAttrm",
+     "size": 332,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys8clOamMan14getAffineIndexEllll",
+     "size": 100,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "findOrAddAffine",
+     "size": 116,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramManD0Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan7compactEm",
+     "size": 56,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramMan11getVramAddrEP10VramHandle",
+     "size": 100,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys15clObjPltVramManD1Ev",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys13clVramManBaseD0Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN8nsObjSys13clVramManBaseD1Ev",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
     "progress_categories": [
      "game",
      "main"
@@ -15077,13 +15256,13 @@
    "name": "main/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
-    "total_code": 46124,
+    "total_code": 40608,
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 277,
+    "total_functions": 246,
     "matched_functions": 0,
     "matched_functions_percent": 0.0
    },
@@ -15101,161 +15280,6 @@
     {
      "name": "__sinit_02047ca8",
      "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020296c4",
-     "size": 96,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02029724",
-     "size": 296,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202984c",
-     "size": 356,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020299b0",
-     "size": 344,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02029b08",
-     "size": 404,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02029c9c",
-     "size": 440,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02029e54",
-     "size": 328,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02029f9c",
-     "size": 408,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a134",
-     "size": 240,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a224",
-     "size": 312,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a35c",
-     "size": 428,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a508",
-     "size": 256,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a608",
-     "size": 96,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a668",
-     "size": 68,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a6ac",
-     "size": 80,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a6fc",
-     "size": 88,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a754",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a780",
-     "size": 36,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a7a4",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a7cc",
-     "size": 140,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a858",
-     "size": 140,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a8e4",
-     "size": 124,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202a960",
-     "size": 332,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202aaac",
-     "size": 100,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ab10",
-     "size": 116,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ab84",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ab98",
-     "size": 56,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202abd0",
-     "size": 100,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ac34",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ac38",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202ac4c",
-     "size": 4,
      "fuzzy_match_percent": 0.0
     },
     {

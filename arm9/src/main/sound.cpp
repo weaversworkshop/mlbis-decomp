@@ -725,7 +725,7 @@ void sndLoadGroup(u32 groupNo, u32 budget) {
         const NNSSndArcGroupItem * item = &groupInfo->item[i];
 
         if (item->type == 3) {
-            sndLoadSeqArc(item->idx, budget);
+            sndLoadSeqArc(item->index, budget);
         }
     }
 }

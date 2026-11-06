@@ -91,17 +91,17 @@ void waitVBlankSync() {
 
 // MATCHED 100%
 void flushOam(u32 dmaNo) {
-    DC_FlushRange(&systemState.oamBuffer, sizeof(systemState.oamBuffer));
-    MI_DmaCopy32(dmaNo, &systemState.oamBuffer, HW_OAM, sizeof(systemState.oamBuffer));
+    DC_FlushRange(&systemState.oamBuffers[0], sizeof(systemState.oamBuffers[0]));
+    MI_DmaCopy32(dmaNo, &systemState.oamBuffers[0], HW_OAM, sizeof(systemState.oamBuffers[0]));
 
-    DC_FlushRange(&systemState.subOamBuffer, sizeof(systemState.subOamBuffer));
-    MI_DmaCopy32(dmaNo, &systemState.subOamBuffer, HW_DB_OAM, sizeof(systemState.subOamBuffer));
+    DC_FlushRange(&systemState.oamBuffers[1], sizeof(systemState.oamBuffers[1]));
+    MI_DmaCopy32(dmaNo, &systemState.oamBuffers[1], HW_DB_OAM, sizeof(systemState.oamBuffers[1]));
 }
 
 // MATCHED 100%
 void clearOam() {
-    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.oamBuffer, sizeof(systemState.oamBuffer));
-    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.subOamBuffer, sizeof(systemState.subOamBuffer));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.oamBuffers[0], sizeof(systemState.oamBuffers[0]));
+    MIi_CpuClearFast(GX_OAM_EFFECT_NODISPLAY, &systemState.oamBuffers[1], sizeof(systemState.oamBuffers[1]));
 }
 
 // MATCHED 100%

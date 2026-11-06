@@ -401,8 +401,8 @@ void clMesWin::attachTexMan(nsObjSys::clObjPltVramMan * manager) {
 
         this->icons->setTexMan(manager, NULL);
 
-        this->texAlloc = this->texMan->func_02014380(this->charPoolSizeMain, 0x19720329 | 0x80000000, 4);
-        this->texAddr = this->texAlloc->field08;
+        this->texAlloc = this->texMan->alloc(this->charPoolSizeMain, 0x19720329 | 0x80000000, 4);
+        this->texAddr = this->texAlloc->offset;
     }
 }
 
@@ -440,8 +440,8 @@ void clMesWin::attachTexPlttMan(nsObjSys::clObjPltVramMan * manager, u32 kind) {
 
     u32 size = mesTexPlttSize;
 
-    this->texPlttAlloc = this->texPlttMan->func_02014380(size, 0x19720329, kind);
-    this->texPlttAddr = this->texPlttAlloc->field08;
+    this->texPlttAlloc = this->texPlttMan->alloc(size, 0x19720329, kind);
+    this->texPlttAddr = this->texPlttAlloc->offset;
 
     GX_BeginLoadTexPltt();
 
@@ -548,7 +548,7 @@ clMesWin::~clMesWin() {
     if (this->screenMask & 4) {
         if (this->texAlloc != NULL) {
             if (this->texMan != NULL) {
-                this->texMan->func_0202a134(this->texAlloc, 0, -1);
+                this->texMan->release(this->texAlloc, 0, -1);
             }
             this->texAlloc = NULL;
             this->texAddr = NULL;
@@ -556,7 +556,7 @@ clMesWin::~clMesWin() {
 
         if (this->texPlttAlloc != NULL) {
             if (this->texPlttMan != NULL) {
-                this->texPlttMan->func_0202a134(this->texPlttAlloc, 0, -1);
+                this->texPlttMan->release(this->texPlttAlloc, 0, -1);
             }
             this->texPlttAlloc = NULL;
             this->texPlttAddr = NULL;
@@ -1762,8 +1762,8 @@ void clMesWin::drawFrameTex(MesWinSlot * window, u32 * chars) {
     }
 }
 
-// MATCHED 100%
 #ifndef IDE_PARSE
+// MATCHED 100%
 asm void putTileColumn(register void * src, register void * dst, register s32 stride) {
     stmdb sp!, {r4, r5, r6, r7, r8, r9, r10, r11, lr}
     ldmia r0!, {r4, r5, r6, r7, r8, r9, r10, r11}
@@ -2931,22 +2931,22 @@ void clMesIcon::update() {
 }
 
 // MATCHED 100%
-void clMesIcon::setObjMan(BOOL sub, nsObjSys::clObjPltVramMan * oam, nsObjSys::clObjPltVramMan * chars, nsObjSys::clObjPltVramMan * pltt) {
+void clMesIcon::setObjMan(BOOL sub, nsObjSys::clOamMan * oam, nsObjSys::clObjPltVramMan * chars, nsObjSys::clObjPltVramMan * pltt) {
     if (!sub) {
-        this->objManMain[0] = oam;
+        this->objManMain.oamMan = oam;
         if (chars != NULL) {
-            this->objManMain[1] = chars;
+            this->objManMain.charMan = chars;
         }
         if (pltt != NULL) {
-            this->objManMain[2] = pltt;
+            this->objManMain.plttMan = pltt;
         }
     } else {
-        this->objManSub[0] = oam;
+        this->objManSub.oamMan = oam;
         if (chars != NULL) {
-            this->objManSub[1] = chars;
+            this->objManSub.charMan = chars;
         }
         if (pltt != NULL) {
-            this->objManSub[2] = pltt;
+            this->objManSub.plttMan = pltt;
         }
     }
 }
@@ -2973,15 +2973,15 @@ void clMesIcon::loadChars(u32 screen, u32 addr) {
 
 // NONMATCHING 91.14 % -- r0 param is lifted above sp params in target asm
 void clMesIcon::loadObjChars(u32 screen, u32 addr) {
-    UnkStruct_02029b08 ** alloc = (screen == 0) ? &this->charAllocMan : &this->charAllocSub;
+    VramHandle ** alloc = (screen == 0) ? &this->charAllocMan : &this->charAllocSub;
 
     if (addr == -1) {
         u32 size = this->getCharSize(screen);
 
         if (screen == 0) {
-            *alloc = this->objManMain[1]->func_02014380(size, (u32)mesIconChars | 0x80000000, 5);
+            *alloc = this->objManMain.charMan->alloc(size, (u32)mesIconChars | 0x80000000, 5);
         } else {
-            *alloc = this->objManSub[1]->func_02014380(size, (u32)mesIconChars | 0x40000000, 5);
+            *alloc = this->objManSub.charMan->alloc(size, (u32)mesIconChars | 0x40000000, 5);
         }
     }
 
@@ -2989,7 +2989,7 @@ void clMesIcon::loadObjChars(u32 screen, u32 addr) {
     this->tileRes[screen] = RES_ENTRY(MES_ICON_RES, entry);
 
     if (addr == -1) {
-        addr = (*alloc)->field08;
+        addr = (*alloc)->offset;
     }
 
     u16 shift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
@@ -3009,7 +3009,7 @@ void func_02014070(MesFrameEntry * param1, u32 param2, u32 param3, u32 param4) {
 void clMesIcon::loadTex(u32 addr) {
     if (addr == -1) {
         u32 size = func_0202afbc(0, 1, 0, MES_ICON_RES);
-        this->charAllocMan = this->texMan[0]->func_02014380(size, (u32)mesIconChars, 5);
+        this->charAllocMan = this->texMan[0]->alloc(size, (u32)mesIconChars, 5);
     }
 
     u32 entry = func_0202af48(0, 1, 0, MES_ICON_RES);
@@ -3034,7 +3034,7 @@ void clMesIcon::loadTex(u32 addr) {
 
     u32 dst;
     if (addr == -1) {
-        dst = (this->charAllocMan->field08 & 0x1FFFF) + texBankAddrs[this->charAllocMan->field08 >> 17];
+        dst = (this->charAllocMan->offset & 0x1FFFF) + texBankAddrs[this->charAllocMan->offset >> 17];
     } else {
         dst = (addr & 0x1FFFF) + texBankAddrs[addr >> 17];
     }
@@ -3062,7 +3062,7 @@ void clMesIcon::loadPltt(u32 screen, u32 addr) {
 
 // MATCHED 100%
 void clMesIcon::loadObjPltt(u32 screen, u32 slot) {
-    UnkStruct_02029b08 ** alloc = (screen == 0) ? &this->plttAllocMain : &this->plttAllocSub;
+    VramHandle ** alloc = (screen == 0) ? &this->plttAllocMain : &this->plttAllocSub;
 
     if (*alloc == NULL) {
         if (slot == 0) {
@@ -3071,19 +3071,19 @@ void clMesIcon::loadObjPltt(u32 screen, u32 slot) {
 
         u32 size = func_0202b170(MES_ICON_RES, &mesIconPlttSize);
         if (screen == 0) {
-            *alloc = this->objManMain[2]->func_02014380(size, (u32)&mesIconPlttSize, slot);
+            *alloc = this->objManMain.plttMan->alloc(size, (u32)&mesIconPlttSize, slot);
         } else {
-            *alloc = this->objManSub[2]->func_02014380(size, (u32)&mesIconPlttSize, slot);
+            *alloc = this->objManSub.plttMan->alloc(size, (u32)&mesIconPlttSize, slot);
         }
 
-        UnkStruct_02029b08 * a = *alloc;
+        VramHandle * a = *alloc;
 
         void * src = mesIconPltt;
-        u32 bytes = a->field0c * 32;
-        u32 offset = (a->field08 & 0xff) * 32;
+        u32 bytes = a->size * 32;
+        u32 offset = (a->offset & 0xff) * 32;
 
         if (screen == 0) {
-            if ((a->field08 & 0x100) == 0) {
+            if ((a->offset & 0x100) == 0) {
                 GX_BeginLoadOBJExtPltt();
                 GX_LoadOBJExtPltt(src, offset, bytes);
                 GX_EndLoadOBJExtPltt();
@@ -3091,7 +3091,7 @@ void clMesIcon::loadObjPltt(u32 screen, u32 slot) {
                 GX_LoadOBJPltt(src, offset, bytes);
             }
         } else {
-            if ((a->field08 & 0x100) == 0) {
+            if ((a->offset & 0x100) == 0) {
                 GXS_BeginLoadOBJExtPltt();
                 GXS_LoadOBJExtPltt(src, offset, bytes);
                 GXS_EndLoadOBJExtPltt();
@@ -3103,13 +3103,13 @@ void clMesIcon::loadObjPltt(u32 screen, u32 slot) {
 }
 
 // MATCHED 100%
-UnkStruct_02029b08 * nsObjSys::clObjPltVramMan::func_02014380(u32 param1, u32 param2, u32 param3) {
+VramHandle * nsObjSys::clObjPltVramMan::alloc(u32 param1, u32 param2, u32 param3) {
     u32 p3 = param3 & ~0x100;
 
     if (param3 & 0x100) {
-        return this->func_02029c9c(param1, param2, p3);
+        return this->allocExt(param1, param2, p3);
     } else {
-        return this->func_02029b08(param1, param2, p3);
+        return this->allocStd(param1, param2, p3);
     }
 }
 
@@ -3120,11 +3120,11 @@ void clMesIcon::loadTexPltt(u32 slot) {
             slot = 0;
         }
 
-        UnkStruct_02029b08 * alloc = this->texMan[1]->func_02014380(0x20, NULL, slot);
+        VramHandle * alloc = this->texMan[1]->alloc(0x20, NULL, slot);
         this->plttAllocMain = alloc;
 
-        u32 offset = alloc->field08;
-        u32 bytes = alloc->field0c;
+        u32 offset = alloc->offset;
+        u32 bytes = alloc->size;
 
         GX_BeginLoadTexPltt();
         GX_LoadTexPltt(mesIconPltt, offset, bytes);
@@ -3172,18 +3172,18 @@ void clMesIcon::freeChars(BOOL sub) {
     if (!sub) {
         if (!this->useTex) {
             if (this->charAllocMan != NULL) {
-                this->objManMain[1]->func_0202a134(this->charAllocMan, 0, -1);
+                this->objManMain.charMan->release(this->charAllocMan, 0, -1);
                 this->charAllocMan = NULL;
             }
         } else {
             if (this->charAllocMan != NULL) {
-                this->texMan[0]->func_0202a134(this->charAllocMan, 0, -1);
+                this->texMan[0]->release(this->charAllocMan, 0, -1);
                 this->charAllocMan = NULL;
             }
         }
     } else {
         if (this->charAllocSub != NULL) {
-            this->objManSub[1]->func_0202a134(this->charAllocSub, 0, -1);
+            this->objManSub.charMan->release(this->charAllocSub, 0, -1);
             this->charAllocSub = NULL;
         }
     }
@@ -3194,18 +3194,18 @@ void clMesIcon::freePltt(BOOL sub) {
     if (!sub) {
         if (!this->useTex) {
             if (this->plttAllocMain != NULL) {
-                this->objManMain[2]->func_0202a134(this->plttAllocMain, 0, -1);
+                this->objManMain.plttMan->release(this->plttAllocMain, 0, -1);
                 this->plttAllocMain = NULL;
             }
         } else {
             if (this->plttAllocMain != NULL) {
-                this->texMan[1]->func_0202a134(this->plttAllocMain, 0, -1);
+                this->texMan[1]->release(this->plttAllocMain, 0, -1);
                 this->plttAllocMain = NULL;
             }
         }
     } else {
         if (this->plttAllocSub != NULL) {
-            this->objManSub[2]->func_0202a134(this->plttAllocSub, 0, -1);
+            this->objManSub.plttMan->release(this->plttAllocSub, 0, -1);
             this->plttAllocSub = NULL;
         }
     }
@@ -3213,8 +3213,8 @@ void clMesIcon::freePltt(BOOL sub) {
 
 // MATCHED 100%
 clMesIcon::clMesIcon(BOOL useTex) {
-    func_01ff8228(this->objManMain, 0, sizeof(this->objManMain));
-    func_01ff8228(this->objManSub, 0, sizeof(this->objManSub));
+    func_01ff8228(&this->objManMain, 0, sizeof(this->objManMain));
+    func_01ff8228(&this->objManSub, 0, sizeof(this->objManSub));
     func_01ff8228(this->texMan, 0, sizeof(this->texMan));
 
     this->useTex = FALSE;
@@ -3270,18 +3270,18 @@ void clMesIcon::drawOam(MesIcon * icon) {
     IconOffset * offsets = (IconOffset *)RES_PTR(base, MES_ICON_RES->header.field10);
     IconOffset * offset = &offsets[frame->offsetIdx-1];
 
-    UnkStruct_02029b08 * charAlloc;
-    UnkStruct_02029b08 * plttAlloc;
-    nsObjSys::clObjPltVramMan * oamManager;
+    VramHandle * charAlloc;
+    VramHandle * plttAlloc;
+    nsObjSys::clOamMan * oamManager;
 
     if (icon->screen == 0) {
         charAlloc = this->charAllocMan;
         plttAlloc = this->plttAllocMain;
-        oamManager = this->objManMain[0];
+        oamManager = this->objManMain.oamMan;
     } else {
         charAlloc = this->charAllocSub;
         plttAlloc = this->plttAllocSub;
-        oamManager = this->objManSub[0];
+        oamManager = this->objManSub.oamMan;
     }
 
     if (this->tileRes[icon->screen] == NULL) {
@@ -3290,12 +3290,12 @@ void clMesIcon::drawOam(MesIcon * icon) {
 
     u32 screen = icon->screen;
     u16 * tiles = (u16 *)RES_PTR(base, this->tileRes[screen]->offset) + frame->cell;
-    GXOamAttr * oam = oamManager->field18;
+    GXOamAttr * oam = oamManager->oamEnd;
 
     u32 charBase;
     if (charAlloc != NULL) {
         u16 mapShift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
-        charBase = charAlloc->field08 >> (mapShift + 5);
+        charBase = charAlloc->offset >> (mapShift + 5);
     } else {
         u16 mapShift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
         charBase = this->charBase[screen] >> (mapShift + 5);
@@ -3303,10 +3303,10 @@ void clMesIcon::drawOam(MesIcon * icon) {
 
     u16 plttBase;
     if (plttAlloc != NULL) {
-        if ((u16)plttAlloc->field08 & 0x100) {
-            plttBase = (u8)plttAlloc->field08;
+        if ((u16)plttAlloc->offset & 0x100) {
+            plttBase = (u8)plttAlloc->offset;
         } else {
-            plttBase = plttAlloc->field08 >> 4;
+            plttBase = plttAlloc->offset >> 4;
         }
     } else {
         plttBase = this->plttIdx[screen];
@@ -3355,9 +3355,9 @@ void clMesIcon::drawOam(MesIcon * icon) {
         oam++;
     }
 
-    oamManager->func_02014380(oamManager->field18 - oamManager->field04, frame->numObj, 0x7fffffff);
+    oamManager->addRun(oamManager->oamEnd - oamManager->oam, frame->numObj, 0x7fffffff);
 
-    oamManager->field18 += frame->numObj;
+    oamManager->oamEnd += frame->numObj;
 }
 
 // MATCHED 100%
@@ -3377,7 +3377,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
     u16 * tiles = (u16 *)RES_PTR(base, this->tileRes[0]->offset) + frame->cell;
     u32 pltt;
     if (this->plttAllocMain != NULL) {
-        pltt = this->plttAllocMain->field08;
+        pltt = this->plttAllocMain->offset;
     } else {
         pltt = this->texPlttAddr;
     }
@@ -3389,7 +3389,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
     u32 texOff;
     u32 fmt = ((YanaRes *)base)->header.field02_0;
     if (this->charAllocMan != NULL) {
-        texOff = this->charAllocMan->field08 >> 3;
+        texOff = this->charAllocMan->offset >> 3;
     } else {
         texOff = this->charBase[0] >> 3;
     }

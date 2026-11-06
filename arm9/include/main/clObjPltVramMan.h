@@ -5,46 +5,45 @@
 
 #ifdef __cplusplus
 
+#include "main/clHandleMan.h"
+
 extern "C" {
     #include <nitro.h>
 }
 
-typedef struct {
-    u8 pad_00[0x8];
-    u32 field08;
-    u32 field0c;
-} UnkStruct_02029b08;
-
 namespace nsObjSys {
 
-class clObjPltVramMan {
+class clObjPltVramMan : public clVramManBase {
 public:
-    GXOamAttr * field04;
-    u8 pad_08[0x10];
-    GXOamAttr * field18;
+    VramHandle * head[2];  // +0x8
+    u16 extMap[16];  // +0x10
+    u16 stdMap;  // +0x30
+    u16 base;  // +0x32
+    u16 size;  // +0x34
 
-    virtual void func_0202ac34();
-    virtual void func_0202ab84();
-    virtual void func_0202abd0(u32);
-    virtual UnkStruct_02029b08 * func_02014380(u32, u32, u32);  // 0x02014380
-    virtual void func_0202a134(void *, s32, s32);
-    virtual void func_0202ab98(u32);
-    virtual UnkStruct_02029b08 * func_02029b08(u32, u32, u32);
-    virtual UnkStruct_02029b08 * func_02029c9c(u32, u32, u32);
-    virtual void func_02029e54(void *, u32, u32, u32);
-    virtual void func_02029f9c(void *, u32, u32, u32);
-    virtual void func_0202a224(u32);
-    virtual void func_0202a35c(u32);
-    virtual void func_0202a508(void *, u32, u32, u32);
+    clObjPltVramMan(u8, u32, u32, u32);  // C1 0x020296c4
+    virtual ~clObjPltVramMan() {};  // D1 0x0202ac34 D0 0x0202ab84
+    virtual u32 getVramAddr(VramHandle *);  // 0x0202abd0
+    virtual VramHandle * alloc(u32, u32, u32);  // 0x02014380
+    virtual BOOL release(VramHandle *, s32, u32);  // 0x0202a134
+    virtual u32 compact(u32);  // 0x0202ab98
+    virtual VramHandle * allocStd(u32, u32, u32);  // 0x02029b08
+    virtual VramHandle * allocExt(u32, u32, u32);  // 0x02029c9c
+    virtual VramHandle * allocStdAt(u32, u32, u32, u32);  // 0x02029e54
+    virtual VramHandle * allocExtAt(u32, u32, u32, u32);  // 0x02029f9c
+    virtual u32 compactStd(u32);  // 0x0202a224
+    virtual u32 compactExt(u32);  // 0x0202a35c
+    virtual VramHandle * findShared(u32, u16, u32, u32, s16);  // 0x0202a508
+
+    void init(u32, u32);  // 0x02029724
+    VramHandle * linkFromBack(u32, u32, u32, u16);  // 0x0202984c
+    VramHandle * linkFromFront(u32, u32, u32, u16);  // 0x020299b0
+
+    VramHandle * insert(VramHandle *, VramHandle *, u32, u32, u32, u16);
 };
 
 }
 
-// extern "C" {
 #endif // __cplusplus
-
-// #ifdef __cplusplus
-// } // extern "C"
-// #endif
 
 #endif

@@ -61,8 +61,8 @@ typedef struct {
 typedef struct {
     InputState inputState;  // +0x0
     TouchpadStruct touchpad;  // +0x14
-    GXOamAttr oamBuffer[128];  // +0x1c
-    GXOamAttr subOamBuffer[128];  // +0x41c
+    GXOamAttr oamBuffers[2][128];  // +0x1c
+    // GXOamAttr subOamBuffer[128];  // +0x41c
     FrameTimer frameTimer;  // +0x81c
 } SystemState;
 

@@ -38,8 +38,8 @@ void main() {
     resetTasks();
     resetVBlankTasks();
 
-    MI_DmaFill32(3, systemState.oamBuffer, GX_OAM_EFFECT_NODISPLAY, sizeof(systemState.oamBuffer));
-    MI_DmaFill32(3, systemState.subOamBuffer, GX_OAM_EFFECT_NODISPLAY, sizeof(systemState.subOamBuffer));
+    MI_DmaFill32(3, &systemState.oamBuffers[0], GX_OAM_EFFECT_NODISPLAY, sizeof(systemState.oamBuffers[0]));
+    MI_DmaFill32(3, &systemState.oamBuffers[1], GX_OAM_EFFECT_NODISPLAY, sizeof(systemState.oamBuffers[1]));
     MI_CpuFill8(&systemState.inputState, 0, sizeof(systemState.inputState));
 
     systemState.inputState.repeatDelay = 10;

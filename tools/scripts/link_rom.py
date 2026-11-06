@@ -2,6 +2,7 @@
 import argparse
 import os
 import re
+import shutil
 import subprocess
 import sys
 
@@ -10,8 +11,7 @@ from patch_lcf import patch as patch_lcf
 
 SCRIPTS = ROOT / "tools" / "scripts"
 CFG = CONFIG / "config.yaml"
-DELINKS_TXT = CONFIG / "delinks.txt"
-STAMP = BUILD / "delinks" / ".stamp"
+DELINKS = BUILD / "delinks"
 LINK = BUILD / "link"
 LCF = BUILD / "arm9.lcf"
 OBJECTS = BUILD / "objects.txt"
@@ -79,7 +79,7 @@ def main():
         if not tool.exists():
             sys.exit("link_rom: missing %s (run `make tools`)" % tool)
 
-    saved = DELINKS_TXT.read_bytes()
+    saved = {p: p.read_bytes() for p in CONFIG.rglob("delinks.txt")}
     try:
         run([sys.executable, SCRIPTS / "gen_delinks.py", "--with-data"],
             "gen_delinks", quiet=not args.verbose)
@@ -103,8 +103,11 @@ def main():
             print("link_rom: carve LEFT IN PLACE -- `make progress` will report 0/0")
         else:
             # A carve moves targets out of the gap, so obj_match would report 0/0.
-            DELINKS_TXT.write_bytes(saved)
-            STAMP.unlink(missing_ok=True)
+            for p, data in saved.items():
+                if p.read_bytes() != data:
+                    p.write_bytes(data)
+            shutil.rmtree(DELINKS, ignore_errors=True)
+            run([DSD, "delink", "-c", CFG], "dsd delink (restore)")
 
     noref = [n for n, r in rows if r is None]
     bad = [(n, r) for n, r in rows if r]

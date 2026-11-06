@@ -5,6 +5,7 @@
 
 #ifdef __cplusplus
 
+#include "main/clOamMan.h"
 #include "main/clObjPltVramMan.h"
 
 #include "main/sndEmitter.h"
@@ -166,14 +167,20 @@ typedef struct MesWinSlot {
     u8 pad_146[0xc];
 } MesWinSlot;
 
+typedef struct {
+    nsObjSys::clOamMan * oamMan;  // +0x0
+    nsObjSys::clObjPltVramMan * charMan;  // +0x4
+    nsObjSys::clObjPltVramMan * plttMan;  // +0x8
+} MesIconObjMan;
+
 class clMesIcon {
 public:
-    UnkStruct_02029b08 * charAllocMan;  // +0x0
-    UnkStruct_02029b08 * charAllocSub;  // +0x4
-    UnkStruct_02029b08 * plttAllocMain;  // +0x8
-    UnkStruct_02029b08 * plttAllocSub;  // +0xc
-    nsObjSys::clObjPltVramMan * objManMain[3];  // +0x10
-    nsObjSys::clObjPltVramMan * objManSub[3];  // +0x1c
+    VramHandle * charAllocMan;  // +0x0
+    VramHandle * charAllocSub;  // +0x4
+    VramHandle * plttAllocMain;  // +0x8
+    VramHandle * plttAllocSub;  // +0xc
+    MesIconObjMan objManMain;  // +0x10
+    MesIconObjMan objManSub;  // +0x1c
     nsObjSys::clObjPltVramMan * texMan[2];  // +0x28
     YanaResEntry * tileRes[2];  // +0x30
     u32 scale;  // +0x38
@@ -191,7 +198,7 @@ public:
 
     void update(void);  // 0x02013dc8
 
-    void setObjMan(BOOL, nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013ec4
+    void setObjMan(BOOL, nsObjSys::clOamMan *, nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013ec4
     void setTexMan(nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013f00
     void loadChars(u32, u32);  // 0x02013f14
     void loadObjChars(u32, u32);  // 0x02013f3c
@@ -278,8 +285,8 @@ public:
     ListLink<MesWinSlot> listSubEnd;  // +0x70
     nsObjSys::clObjPltVramMan * texMan;  // +0x78
     nsObjSys::clObjPltVramMan * texPlttMan;  // +0x7c
-    UnkStruct_02029b08 * texAlloc;  // +0x80
-    UnkStruct_02029b08 * texPlttAlloc;  // +0x84
+    VramHandle * texAlloc;  // +0x80
+    VramHandle * texPlttAlloc;  // +0x84
     u32 texAddr;  // +0x88
     u32 texPlttAddr;  // +0x8c
     u32 baseDepth;  // +0x90
