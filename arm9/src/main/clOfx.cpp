@@ -374,23 +374,23 @@ nsObjSys::clCellAnime * clOfx::beginCellAnime(s32 idx, RfxNode * node) {
     node->pos.y = (node->pos.y / 16 + this->originY) << FX32_SHIFT;
     node->pos.z = this->func_02023188(node->pos.z / 16) + this->originZ;
 
-    copy64(&anime->field40, &animeMtx);
+    copy64(&anime->mtx, &animeMtx);
 
     MtxFx44 mtx;
     MTX_Copy43To44(&node->mtx, &mtx);
-    MTX_Concat44(&anime->field40, &mtx, &anime->field40);
+    MTX_Concat44(&anime->mtx, &mtx, &anime->mtx);
 
-    if (anime->field82 == 0) {
-        anime->field30 = -1;
+    if (anime->visible == 0) {
+        anime->loadedCell = -1;
     }
-    anime->field82 = 1;
+    anime->visible = 1;
 
     return anime;
 }
 
 // MATCHED 100%
 void clOfx::endCellAnime(nsObjSys::clCellAnime * anime) {
-    copy64(&animeMtx, &anime->field40);
+    copy64(&animeMtx, &anime->mtx);
 }
 
 // MATCHED 100%

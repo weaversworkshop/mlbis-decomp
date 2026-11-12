@@ -32,6 +32,8 @@ public:
     void runIdTracks(s32, u16 *);  // 0x020278c8
 };
 
+void pafUpdate(u16 *, u16 *, s32, s32, s32 *, s16);  // 0x020279a8
+
 #endif // __cplusplus
 
 #endif

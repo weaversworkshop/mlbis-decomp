@@ -7,6 +7,8 @@
 
 extern "C" {
 
+enum VramManType { VRAM_MAN_OBJ, VRAM_MAN_TEX };
+
 typedef struct VramHandle {
     VramHandle * next;  // +0x0
     VramHandle * prev;  // +0x4
@@ -21,10 +23,17 @@ typedef struct VramHandle {
             u8 moved;  // +0x17
         };
         struct {
-            u8 kind : 2;  // +0x16
-            u8 manBank : 1;
-            u8 manType : 3;
-            u8 manIndex : 2;
+            struct {
+                u8 kind : 2;  // +0x16
+                u8 manBank : 1;
+                u8 manType : 3;
+                u8 manIndex : 2;
+            };
+            struct {
+                u8 movedBit : 1;  // +0x17
+                u8 queued : 1;
+                u8 : 6;
+            };
         };
     };
 } VramHandle;
@@ -94,6 +103,8 @@ public:
 };
 
 }
+
+nsObjSys::clVramManBase * getVramManOfHandle(VramHandle *);  // 0x020287e0
 
 #endif // __cplusplus
 

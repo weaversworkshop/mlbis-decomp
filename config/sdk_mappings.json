@@ -246,12 +246,6 @@
       "note": "FLOOR 99.91%: references DTCM autoload/linker symbols (SDK_AUTOLOAD_DTCM_START, data_027e00xx) absent as ROM data symbols. crt0-special. Identity correct."
     },
     {
-      "addr": "0x0202b168",
-      "sdk_name": "ENV_GetNextResourceSet",
-      "library": "env",
-      "confidence": "certain"
-    },
-    {
       "addr": "0x0202e92c",
       "sdk_name": "NNS_FndInitList",
       "library": "fnd",
@@ -5111,6 +5105,14 @@
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0204b1dc",
+      "sdk_name": "FX_SinCosTable_",
+      "library": "fx",
+      "header": "nitro/fx/fx_trig.h",
+      "confidence": "certain",
+      "note": "fx_sincos.c const table, all 8192 entries byte-identical to ROM; spans to FX_AtanTable_; ov044/ov055 interior refs folded (+0x3000/+0x3800)"
     }
   ],
   "objdiff_units": [
@@ -5288,11 +5290,6 @@
       "source": "lib/NitroSDK/libraries/fs/src/fs_command.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/fs/fs_command"
-    },
-    {
-      "source": "lib/NitroSDK/libraries/env/src/env_system.c",
-      "target": "build/delinks/_dsd_gap@main_7.o",
-      "name": "sdk/env/env_system"
     },
     {
       "source": "lib/NitroSDK/libraries/gx/src/gx_load3d.c",
@@ -5728,6 +5725,11 @@
       "prebuilt": "mathlib/_u32_div_f.o",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "msl/runtime/_u32_div_f"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/fx/src/fx_sincos.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/fx/src/fx_sincos"
     }
   ]
 }

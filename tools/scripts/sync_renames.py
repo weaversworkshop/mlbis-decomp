@@ -45,7 +45,7 @@ DATA_ANCHOR_RE = re.compile(
 # Multi-line initializer: `T name[N] = {` ... `};  // 0xADDR` -- anchor accepted on the closing line.
 DATA_OPEN_RE = re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*=\s*\{")
 TRAIL_ANCHOR_RE = re.compile(r"//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
-OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+g\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
+OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+(?P<bind>[gl])\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
 ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
 CTOR_CODE_RE = re.compile(r"[CD][0-9]$")
@@ -250,7 +250,7 @@ def sources_by_module():
     return by_mod
 
 
-def dump_symbols(o_paths, verbose):
+def dump_symbols(o_paths, verbose, local_ok):
     defined, undef = {}, {}
     present = []
     for o in o_paths:
@@ -269,6 +269,8 @@ def dump_symbols(o_paths, verbose):
         for line in txt.splitlines():
             dm = OBJ_DATA_SYM_RE.match(line)
             if dm and re.match(r"_ZT[VIST]", line.split()[-1]):
+                continue
+            if dm and dm.group("bind") == "l" and not local_ok(line.split()[-1]):
                 continue
             if re.search(r"\bF\s+\.text\b", line) or dm:
                 dst = defined
@@ -339,7 +341,7 @@ def resolve_module(addr, mod, tables, resident, mod_by_addr):
 
 def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
                    verbose):
-    syms = dump_symbols(o_paths, verbose)
+    syms = dump_symbols(o_paths, verbose, lambda n: ("", n) in anchors)
     if not syms or mod not in tables:
         return 0, [], set(), 0
 

@@ -68,13 +68,13 @@ void clAfx::setCellFrame(s32 idx, s32 frame, RfxNode * node) {
     nsObjSys::clCellAnime * ret = this->beginCellAnime(idx, node);
 
     if (ret != NULL) {
-        if (frame >= 0 && frame < ret->func_020225d0()) {
-            if (idx >= 0 && frame != ret->func_020225dc()) {
-                ret->func_0202dee8(frame, -1);
+        if (frame >= 0 && frame < ret->getNumAnims()) {
+            if (idx >= 0 && frame != ret->getAnim()) {
+                ret->setAnim(frame, -1);
             }
 
-            if (ret->field81 != 1 || (s32)ret->field98 > 0) {
-                ret->func_0202bb44(this->getOamMan());
+            if (ret->mode != 1 || (s32)ret->alpha > 0) {
+                ret->draw(this->getOamMan());
             }
         }
 
@@ -99,17 +99,17 @@ void clAfx::drawNumber(s32 idx, s32 digitFrame, RfxNode * node, s32 spacing, u32
         }
 
         if (off != 0) {
-            vecMulAdd16(off, (VecFx32 *)&ret->field40.m[0], (VecFx32 *)&ret->field40.m[3]);
+            vecMulAdd16(off, (VecFx32 *)&ret->mtx.m[0], (VecFx32 *)&ret->mtx.m[3]);
         }
 
         do {
             s32 digit = val % 10 + digitFrame;
-            if (digit >= 0 && digit < ret->func_020225d0()) {
-                ret->func_0202dee8(digit, -1);
-                ret->func_0202bb44(this->getOamMan());
+            if (digit >= 0 && digit < ret->getNumAnims()) {
+                ret->setAnim(digit, -1);
+                ret->draw(this->getOamMan());
             }
 
-            vecMulAdd16(-spacing, (VecFx32 *)&ret->field40.m[0], (VecFx32 *)&ret->field40.m[3]);
+            vecMulAdd16(-spacing, (VecFx32 *)&ret->mtx.m[0], (VecFx32 *)&ret->mtx.m[3]);
 
             val /= 10;
         } while (val != 0);

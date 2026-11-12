@@ -339,7 +339,7 @@ from:0x020cf880 kind:arm_call to:0x020339f4 module:main
 from:0x020cf89c kind:arm_call_thumb to:0x02033b84 module:main
 from:0x020cf8ac kind:arm_call to:0x02033bc0 module:main
 from:0x020cf8dc kind:load to:0x02064f08 module:overlay(8)
-from:0x020cf8e0 kind:load to:0x0204e1dc module:main
+from:0x020cf8e0 kind:load to:0x0204b1dc add:0x3000 module:main
 from:0x020cf8e4 kind:load to:0x020cf8ec module:overlay(55)
 from:0x020cf8e8 kind:load to:0x020cd524 module:overlays(19,88)
 from:0x020cf948 kind:load to:0x020d0290 module:overlay(55)

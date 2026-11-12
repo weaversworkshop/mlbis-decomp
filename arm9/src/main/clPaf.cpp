@@ -33,8 +33,6 @@ extern void func_01ff8228(void *, u32, u32);
 
 void cmdSetRange(u16 *);  // 0x02027420
 
-void pafUpdate(u16 *, u16 *, s32, s32, s32 *, s16);  // 0x020279a8
-
 } // extern "C"
 
 // --- Function Definitions --- //

@@ -270,33 +270,33 @@ nsObjSys::clCellAnime * clDfx::beginCellAnime(s32 idx, RfxNode * node) {
     s32 polygonId = nextPolygonId(alpha);
     GXRgb color = (((DfxNode *)node)->color.b << 10) | (((DfxNode *)node)->color.g << 5) | ((DfxNode *)node)->color.r;
 
-    anime->func_02022f38(alpha);
+    anime->setAlpha(alpha);
 
-    anime->field99 = polygonId;
-    anime->field9a = color;
+    anime->polygonId = polygonId;
+    anime->color = color;
 
-    copy64(&anime->field40, &animeMtx);
+    copy64(&anime->mtx, &animeMtx);
 
     MtxFx44 nodeMtx;
     MTX_Copy43To44((MtxFx43 *)node, &nodeMtx);
-    MTX_Concat44((MtxFx44 *)&anime->field40, &nodeMtx, (MtxFx44 *)&anime->field40);
+    MTX_Concat44((MtxFx44 *)&anime->mtx, &nodeMtx, (MtxFx44 *)&anime->mtx);
 
-    if (anime->field82 == 0) {
-        anime->field30 = -1;
+    if (anime->visible == 0) {
+        anime->loadedCell = -1;
     }
 
-    anime->field82 = 1;
+    anime->visible = 1;
 
     return anime;
 }
 
 // MATCHED 100%
 void clDfx::endCellAnime(nsObjSys::clCellAnime * anime) {
-    anime->func_02022f38(31);
-    anime->field99 = 0;
-    anime->field9a = 0x7fff;
+    anime->setAlpha(31);
+    anime->polygonId = 0;
+    anime->color = 0x7fff;
 
-    copy64(&animeMtx, &anime->field40);
+    copy64(&animeMtx, &anime->mtx);
 
     G3_MtxMode(GX_MTXMODE_TEXTURE);
     G3_PopMtx(1);

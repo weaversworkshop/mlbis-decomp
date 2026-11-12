@@ -12,8 +12,6 @@ extern "C" {
 
 // --- Extern Data Variables --- //
 
-extern s16 sinCosTable[];  // 0x0204b1dc
-
 extern u8 rfxNodeBuf[0x1000];  // 0x027e00fc
 extern RfxStack rfxStack;  // 0x027e10fc
 
@@ -22,7 +20,7 @@ extern RfxStack rfxStack;  // 0x027e10fc
 u32 interpolateKey(s16 *, s32, s32, s32, u16 *, s32);  // 0x02020bec
 
 void vecScale16(s32, VecFx32 *);  // 0x02021d14
-void vecRotPair(s32, s32, VecFx32 *, VecFx32 *);  // 0x02021d48
+void vecRotPair(fx16, fx16, VecFx32 *, VecFx32 *);  // 0x02021d48
 
 void copy48(void *, void *);  // 0x02021e10
 void copy44(void *, void *);  // 0x02021e20
@@ -200,18 +198,15 @@ void applyRows(RfxNode * node, u16 * cmd, s32 numRows, s32 numKeys, s32 key, s32
                         break;
                     }
                     case 6: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisY, &node->axisZ);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisY, &node->axisZ);
                         break;
                     }
                     case 7: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisX, &node->axisZ);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisX, &node->axisZ);
                         break;
                     }
                     case 8: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisX, &node->axisY);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisX, &node->axisY);
                         break;
                     }
                     case 9: {
@@ -303,18 +298,15 @@ void applyRows(RfxNode * node, u16 * cmd, s32 numRows, s32 numKeys, s32 key, s32
                         break;
                     }
                     case 6: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisY, &node->axisZ);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisY, &node->axisZ);
                         break;
                     }
                     case 7: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisX, &node->axisZ);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisX, &node->axisZ);
                         break;
                     }
                     case 8: {
-                        s32 angleIdx = ((u16)val >> 4) * 2;
-                        vecRotPair(sinCosTable[angleIdx + 1], sinCosTable[angleIdx], &node->axisX, &node->axisY);
+                        vecRotPair(FX_CosIdx((u16)val), FX_SinIdx((u16)val), &node->axisX, &node->axisY);
                         break;
                     }
                     case 9: {
@@ -848,7 +840,7 @@ asm void vecScale16(s32 scale, VecFx32 * v) {
 }
 
 // MATCHED 100%
-asm void vecRotPair(s32 cos, s32 sin, VecFx32 * vecA, VecFx32 * vecB) {
+asm void vecRotPair(fx16 cos, fx16 sin, VecFx32 * vecA, VecFx32 * vecB) {
     stmdb sp!, {r4, r5, r6, r7, r8, r9, lr}
     mov r0, r0, lsl #0x12
     mov r1, r1, lsl #0x12

@@ -4,6 +4,7 @@
 
 #include "main/clYanaTransMan.h"
 
+#include "main/clCellAnime.h"
 #include "main/heap.h"
 
 extern "C" {
@@ -22,8 +23,6 @@ extern GXVRamTexPltt data_027e00e4;  // 0x027e00e4
 
 extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
-
-extern void func_0202d10c(u32, u32, YanaRes *, void *, void *, u16, u32, u32, u8); 
 
 // --- Function Declarations --- //
 
@@ -352,7 +351,7 @@ void doResChunk(YanaTransEntry * entry) {
     u32 size = entry->raw.size;
     u16 arg = entry->raw.arg;
 
-    func_0202d10c(size, 0, res, dst, getResChunk(res, arg, -1), arg, 0, 0, 0);
+    transferChars(size, 0, res, (u32 *)dst, (u16 *)getResChunk(res, arg, -1), arg, 0, 0, 0);
 }
 
 // MATCHED 100%
@@ -361,7 +360,7 @@ void doResChunkTex(YanaTransEntry * entry) {
     void * dst = entry->dst;
     u32 size = entry->raw.size;
 
-    func_0202d10c(size, 1, res, dst, getResChunk(res, 3, -1), 3, 0, 0, 0);
+    transferChars(size, 1, res, (u32 *)dst, (u16 *)getResChunk(res, 3, -1), 3, 0, 0, 0);
 }
 
 // MATCHED 100%

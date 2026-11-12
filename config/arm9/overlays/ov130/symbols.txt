@@ -739,7 +739,6 @@ data_ov130_0208aee8 kind:bss addr:0x0208aee8 ambiguous
 data_ov130_0208aefc kind:bss addr:0x0208aefc ambiguous
 data_ov130_0208ba0c kind:bss addr:0x0208ba0c
 data_ov130_0208d788 kind:bss addr:0x0208d788 ambiguous
-data_ov130_0208f021 kind:bss addr:0x0208f021
 data_ov130_0208fae8 kind:bss addr:0x0208fae8 ambiguous
 data_ov130_02090100 kind:bss addr:0x02090100 ambiguous
 data_ov130_02091cac kind:bss addr:0x02091cac ambiguous

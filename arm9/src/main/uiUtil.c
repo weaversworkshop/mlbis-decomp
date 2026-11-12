@@ -78,7 +78,7 @@ void * getResChunk(YanaRes * res, u32 id, s32 index) {
     u32 kind = (index >= 0) ? 1 : 0;
     u32 i = 0;
     while (TRUE) {
-        if (curEntry->id == id && curEntry->kind == kind) {
+        if (curEntry->unitShift == id && curEntry->kind == kind) {
             break;
         }
 

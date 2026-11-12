@@ -16,10 +16,6 @@ nsObjSys::clHandleMan * handleMan;  // 0x0205c1ac
 
 nsObjSys::clVramManBase * vramManTable[2][4][4];  // 0x0205c1b0
 
-// --- Function Declarations --- //
-
-nsObjSys::clVramManBase * getVramManOfHandle(VramHandle *);  // 0x020287e0
-
 } // extern "C"
 
 // --- Function Definitions --- //

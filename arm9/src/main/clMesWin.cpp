@@ -4,6 +4,7 @@
 
 #include "main/clMesWin.h"
 
+#include "main/clCellAnime.h"
 #include "main/clGameMain.h"
 
 #include "main/heap.h"
@@ -23,50 +24,11 @@ extern "C" {
 #define MES_SCREEN_ROWS 30
 #define MES_SCREEN_SIZE (MES_SCREEN_COLS * MES_SCREEN_ROWS * sizeof(u16))
 
-typedef struct {
-    u8 pad_00[0x8];
-    s16 x;  // +0x8
-    s16 y;  // +0xa
-} IconOffset;
-
-typedef struct {
-    struct {
-        u32 cell : 24;  // +0x0
-        u32 numObj : 8;
-    };
-    u16 time;  // +0x4
-    u16 offsetIdx;  // +0x6
-} IconFrame;
-
-typedef struct {
-    struct {
-        u32 : 2;  // +0x0
-        u32 mode : 2;
-        u32 mosaic : 1;
-        u32 color : 1;
-        u32 shape : 2;
-        u32 flip : 2;
-        u32 size : 2;
-        u32 : 2;
-        u32 pltt : 4;
-        u32 : 14;
-    };
-    s16 x;  // +0x4
-    s16 y;  // +0x6
-} IconObj;
-
-typedef struct {
-    u32 frames;  // +0x0
-    u16 count;  // +0x4
-} IconAnim;
-
 #define MES_ICON_RES ((YanaRes *)mesIconRes)
 
 // --- Extern Data Variables --- //
 
 extern u8 data_0205c25c[];
-
-extern u32 texBankAddrs[];
 
 // --- Extern Functions --- //
 
@@ -75,29 +37,14 @@ extern void func_01ff8228(void *, u32, u32);
 extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
 
-extern void func_02028950(MesFrameEntry *, u32, u32, u32);
-
-extern u32 func_0202af48(u32, u32, u32, YanaRes *);
-
-extern u32 func_0202afbc(u32, u32, u32, void *);
-
-extern u32 func_0202b170(YanaRes *, void *);
-
-extern void func_0202d10c(u32, u32, void *, void *, void *, u32, u32, u32, u8);
-
-// --- Variable Definitions --- //
-
-extern u32 data_0204ac60[2];
-extern vu32 * data_0204ac68[2];
-
 // --- Function Declarations --- //
 
-void func_0200e238(MesFrameEntry *, u32, u32, u32);  // 0x0200e238
-void func_0200e35c(MesFrameEntry *, u32, u32, u32);  // 0x0200e35c
+void func_0200e238(nsObjSys::clVramManByteBase *, u32, u32, u32);  // 0x0200e238
+void func_0200e35c(nsObjSys::clVramManByteBase *, u32, u32, u32);  // 0x0200e35c
 
 void putTileColumn(void *, void *, s32);  // 0x02011320
 
-void func_02014070(MesFrameEntry *, u32, u32, u32);  // 0x02014070
+void func_02014070(nsObjSys::clVramManByteBase *, u32, u32, u32);  // 0x02014070
 
 } // extern "C"
 
@@ -407,8 +354,8 @@ void clMesWin::attachTexMan(nsObjSys::clObjPltVramMan * manager) {
 }
 
 // MATCHED 100%
-void func_0200e238(MesFrameEntry * entry, u32 size, u32 param3, u32 param4) {
-    func_02028950(entry, MATH_ROUNDUP(size, 8), param3, param4);
+void func_0200e238(nsObjSys::clVramManByteBase *man, u32 size, u32 param3, u32 param4) {
+    man->clVramManByteBase::alloc(MATH_ROUNDUP(size, 8), param3, param4);
 }
 
 // MATCHED 100%
@@ -452,8 +399,8 @@ void clMesWin::attachTexPlttMan(nsObjSys::clObjPltVramMan * manager, u32 kind) {
 }
 
 // MATCHED 100%
-void func_0200e35c(MesFrameEntry * entry, u32 size, u32 param3, u32 param4) {
-    func_02028950(entry, MATH_ROUNDUP(size, 16), param3, param4);
+void func_0200e35c(nsObjSys::clVramManByteBase *man, u32 size, u32 param3, u32 param4) {
+    man->clVramManByteBase::alloc(MATH_ROUNDUP(size, 16), param3, param4);
 }
 
 // MATCHED 100%
@@ -2898,9 +2845,9 @@ void clMesIcon::update() {
     while (icon->link.next != (MesIcon *)-1) {
         if (icon->hidden == 0) {
             if (--icon->timer == 0) {
-                IconAnim * anims = (IconAnim *)RES_PTR(MES_ICON_RES, MES_ICON_RES->header.field04);
-                IconAnim * anim = &anims[icon->anim];
-                IconFrame * frames;
+                YanaResAnim * anims = (YanaResAnim *)RES_PTR(MES_ICON_RES, MES_ICON_RES->animOffset);
+                YanaResAnim * anim = &anims[icon->anim];
+                YanaResFrame * frames;
                 u8 frame;
                 u16 delay;
 
@@ -2909,7 +2856,7 @@ void clMesIcon::update() {
                 }
                 frame = icon->frame;
 
-                frames = (IconFrame *)RES_PTR(MES_ICON_RES, anim->frames);
+                frames = (YanaResFrame *)RES_PTR(MES_ICON_RES, anim->frames);
 
                 if (frame == 0) {
                     delay = frames[0].time;
@@ -2985,34 +2932,34 @@ void clMesIcon::loadObjChars(u32 screen, u32 addr) {
         }
     }
 
-    u32 entry = func_0202af48(screen, 0, 0, MES_ICON_RES);
+    u32 entry = findCharEntry(screen, 0, 0, MES_ICON_RES);
     this->tileRes[screen] = RES_ENTRY(MES_ICON_RES, entry);
 
     if (addr == -1) {
         addr = (*alloc)->offset;
     }
 
-    u16 shift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
+    u16 shift = (*dispcntRegs[screen] & 0x300000) >> 0x14;
 
-    u32 dst = addr + data_0204ac60[screen];
+    u32 dst = addr + objVramBase[screen];
 
-    func_0202d10c(dst, 0, MES_ICON_RES, mesIconChars, (u8 *)MES_ICON_RES + this->tileRes[screen]->offset, shift+5, 0, 0, 0);
+    transferChars(dst, 0, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[screen]->offset), shift+5, 0, 0, 0);
 }
 
 // MATCHED 100%
-void func_02014070(MesFrameEntry * param1, u32 param2, u32 param3, u32 param4) {
-    u32 base = (1 << data_0205c25c[param1->maxH]);
-    func_02028950(param1, MATH_ROUNDUP(param2, base), param3, param4);
+void func_02014070(nsObjSys::clVramManByteBase *man, u32 size, u32 param3, u32 param4) {
+    u32 base = (1 << data_0205c25c[man->manBank]);
+    man->clVramManByteBase::alloc(MATH_ROUNDUP(size, base), param3, param4);
 }
 
 // MATCHED 100%
 void clMesIcon::loadTex(u32 addr) {
     if (addr == -1) {
-        u32 size = func_0202afbc(0, 1, 0, MES_ICON_RES);
+        u32 size = getResCharSize(0, 1, 0, MES_ICON_RES);
         this->charAllocMan = this->texMan[0]->alloc(size, (u32)mesIconChars, 5);
     }
 
-    u32 entry = func_0202af48(0, 1, 0, MES_ICON_RES);
+    u32 entry = findCharEntry(0, 1, 0, MES_ICON_RES);
     this->tileRes[0] = RES_ENTRY(MES_ICON_RES, entry);
 
     GXVRamTex bank = GX_GetBankForTex();
@@ -3038,14 +2985,14 @@ void clMesIcon::loadTex(u32 addr) {
     } else {
         dst = (addr & 0x1FFFF) + texBankAddrs[addr >> 17];
     }
-    func_0202d10c(dst, 1, MES_ICON_RES, mesIconChars, (u8 *)MES_ICON_RES + this->tileRes[0]->offset, 3, 0, 0, 0);
+    transferChars(dst, 1, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[0]->offset), 3, 0, 0, 0);
 
     GX_SetBankForTex(saved);
 }
 
 // MATCHED 100%
 u32 clMesIcon::getCharSize(u32 screen) {
-    return func_0202afbc(screen, 0, 0, MES_ICON_RES);
+    return getResCharSize(screen, 0, 0, MES_ICON_RES);
 }
 
 // MATCHED 100%
@@ -3069,7 +3016,7 @@ void clMesIcon::loadObjPltt(u32 screen, u32 slot) {
             slot = 0x104;
         }
 
-        u32 size = func_0202b170(MES_ICON_RES, &mesIconPlttSize);
+        u32 size = getObjPlttUnits(MES_ICON_RES, &mesIconPlttSize);
         if (screen == 0) {
             *alloc = this->objManMain.plttMan->alloc(size, (u32)&mesIconPlttSize, slot);
         } else {
@@ -3148,8 +3095,8 @@ void clMesIcon::add(MesIcon * icon, u8 screen, s8 anim, u16 x, u16 y, u8 flip, u
     u32 frame = icon->frame;
 
     u8 * base = (u8 *)MES_ICON_RES;
-    IconAnim * anims = (IconAnim *)(base + MES_ICON_RES->header.field04);
-    IconFrame * frames = (IconFrame *)(base + anims[icon->anim].frames);
+    YanaResAnim * anims = (YanaResAnim *)(base + MES_ICON_RES->animOffset);
+    YanaResFrame * frames = (YanaResFrame *)(base + anims[icon->anim].frames);
 
     u16 delay;
     if (frame == 0) {
@@ -3262,13 +3209,13 @@ clMesIcon::~clMesIcon() {
 void clMesIcon::drawOam(MesIcon * icon) {
     u8 * base = (u8 *)MES_ICON_RES;
 
-    IconAnim * anims = (IconAnim *)RES_PTR(base, MES_ICON_RES->header.field04);
-    IconFrame * frame = (IconFrame *)RES_PTR(base, anims[icon->anim].frames) + icon->frame;
+    YanaResAnim * anims = (YanaResAnim *)RES_PTR(base, MES_ICON_RES->animOffset);
+    YanaResFrame * frame = (YanaResFrame *)RES_PTR(base, anims[icon->anim].frames) + icon->frame;
 
-    IconObj * obj = (IconObj *)RES_PTR(base, MES_ICON_RES->header.field08) + frame->cell;
+    YanaResObj * obj = (YanaResObj *)RES_PTR(base, MES_ICON_RES->objOffset) + frame->cell;
 
-    IconOffset * offsets = (IconOffset *)RES_PTR(base, MES_ICON_RES->header.field10);
-    IconOffset * offset = &offsets[frame->offsetIdx-1];
+    YanaResXform * offsets = (YanaResXform *)RES_PTR(base, MES_ICON_RES->xformOffset);
+    YanaResXform * offset = &offsets[frame->xformIdx-1];
 
     VramHandle * charAlloc;
     VramHandle * plttAlloc;
@@ -3285,7 +3232,7 @@ void clMesIcon::drawOam(MesIcon * icon) {
     }
 
     if (this->tileRes[icon->screen] == NULL) {
-        this->tileRes[icon->screen] = RES_ENTRY(MES_ICON_RES, func_0202af48(icon->screen, 0, 0, MES_ICON_RES));
+        this->tileRes[icon->screen] = RES_ENTRY(MES_ICON_RES, findCharEntry(icon->screen, 0, 0, MES_ICON_RES));
     }
 
     u32 screen = icon->screen;
@@ -3294,10 +3241,10 @@ void clMesIcon::drawOam(MesIcon * icon) {
 
     u32 charBase;
     if (charAlloc != NULL) {
-        u16 mapShift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
+        u16 mapShift = (*dispcntRegs[screen] & 0x300000) >> 0x14;
         charBase = charAlloc->offset >> (mapShift + 5);
     } else {
-        u16 mapShift = (*data_0204ac68[screen] & 0x300000) >> 0x14;
+        u16 mapShift = (*dispcntRegs[screen] & 0x300000) >> 0x14;
         charBase = this->charBase[screen] >> (mapShift + 5);
     }
 
@@ -3328,7 +3275,7 @@ void clMesIcon::drawOam(MesIcon * icon) {
 
         u8 flip = obj->flip;
 
-        if (frame->offsetIdx != 0) {
+        if (frame->xformIdx != 0) {
             x += offset->x;
             y += offset->y;
         }
@@ -3363,15 +3310,15 @@ void clMesIcon::drawOam(MesIcon * icon) {
 // MATCHED 100%
 void clMesIcon::drawTex(MesIcon * icon) {
     u8 * base = (u8 *)MES_ICON_RES;
-    IconAnim * anims = (IconAnim *)RES_PTR(base, MES_ICON_RES->header.field04);
-    IconFrame * frame = (IconFrame *)RES_PTR(base, anims[icon->anim].frames) + icon->frame;
-    IconObj * obj = (IconObj *)RES_PTR(base, MES_ICON_RES->header.field08) + frame->cell;
-    IconOffset * offsets = (IconOffset *)RES_PTR(base, MES_ICON_RES->header.field10);
+    YanaResAnim * anims = (YanaResAnim *)RES_PTR(base, MES_ICON_RES->animOffset);
+    YanaResFrame * frame = (YanaResFrame *)RES_PTR(base, anims[icon->anim].frames) + icon->frame;
+    YanaResObj * obj = (YanaResObj *)RES_PTR(base, MES_ICON_RES->objOffset) + frame->cell;
+    YanaResXform * offsets = (YanaResXform *)RES_PTR(base, MES_ICON_RES->xformOffset);
 
-    IconOffset * offset = &offsets[frame->offsetIdx-1];
+    YanaResXform * offset = &offsets[frame->xformIdx-1];
 
     if (this->tileRes[0] == NULL) {
-        this->tileRes[0] = RES_ENTRY(MES_ICON_RES, func_0202af48(icon->screen, 0, 0, MES_ICON_RES));
+        this->tileRes[0] = RES_ENTRY(MES_ICON_RES, findCharEntry(icon->screen, 0, 0, MES_ICON_RES));
     }
 
     u16 * tiles = (u16 *)RES_PTR(base, this->tileRes[0]->offset) + frame->cell;
@@ -3387,7 +3334,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
     G3_PolygonAttr(0, GX_POLYGONMODE_MODULATE, GX_CULL_NONE, 0, 31, 0);
 
     u32 texOff;
-    u32 fmt = ((YanaRes *)base)->header.field02_0;
+    u32 fmt = ((YanaRes *)base)->texFmt;
     if (this->charAllocMan != NULL) {
         texOff = this->charAllocMan->offset >> 3;
     } else {
@@ -3402,7 +3349,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
         x = obj->x;
         y = obj->y;
 
-        if (frame->offsetIdx != 0) {
+        if (frame->xformIdx != 0) {
             x += offset->x;
             y += offset->y;
         }
