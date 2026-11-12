@@ -147,7 +147,7 @@ from:0x0206bd5c kind:load to:0x02074d28 module:overlay(122)
 from:0x0206bd60 kind:load to:0x02074dc8 module:overlay(122)
 from:0x0206bd64 kind:load to:0x020729ec module:overlay(122)
 from:0x0206bd68 kind:load to:0x020729e8 module:overlay(122)
-from:0x0206bd6c kind:load to:0x02055c3c module:main
+from:0x0206bd6c kind:load to:0x02055c34 add:0x8 module:main
 from:0x0206bd70 kind:load to:0x02074e4c module:overlay(122)
 from:0x0206bd74 kind:load to:0x02074ea8 module:overlay(122)
 from:0x0206bd84 kind:arm_call to:0x0202acc0 module:main

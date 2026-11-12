@@ -4,6 +4,7 @@
 
 #include "main/clCellAnime.h"
 
+#include "main/cellObjSize.h"
 #include "main/clPaf.h"
 
 extern "C" {
@@ -47,10 +48,6 @@ typedef struct {
 
 extern const u8 texPlttBaseShift[8];  // 0x0204ac70
 extern const u8 texPlttSizeShift[8];  // 0x0204ac80
-extern const u8 tileSizeShift[];  // 0x0204b0ec
-extern const u8 objHalfWidths[12];  // 0x0204b0f4
-extern const u8 objHalfHeights[12];  // 0x0204b100
-extern const u8 objTileCounts[];  // 0x0204b10c
 
 extern u8 * texPlttBuf;  // 0x0205c230
 extern u32 texPlttBankAddrs[6];  // 0x0205c244
@@ -139,7 +136,6 @@ void flushCharLoads(u32);  // 0x0202d980
 void flushPlttLoads(u32);  // 0x0202d9f4
 void cellAnimeUpdateAll(void);  // 0x0202da68
 void cellAnimeDrawAll(nsObjSys::clOamMan *, nsObjSys::clOamMan *, u32, u32);  // 0x0202daa0
-void queuePush(nsObjSys::clCellAnime *, nsObjSys::clCellAnime * &, nsObjSys::clCellAnime * &, u32);  // 0x0202dbf0
 void queueClear(nsObjSys::clCellAnime * &);  // 0x0202dc34
 
 void buildCharMap(YanaRes *, u16 *, u32);  // 0x0202ddcc

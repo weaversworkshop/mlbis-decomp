@@ -167,10 +167,13 @@ s32 findCharEntry(u32, u32, u32, YanaRes *);  // 0x0202af48
 u32 getResCharSize(u32, u32, u32, YanaRes *);  // 0x0202afbc
 u32 getObjPlttUnits(YanaRes *, u32 *);  // 0x0202b170
 void transferChars(u32, u32, YanaRes *, u32 *, u16 *, u32, u32, u32, u8);  // 0x0202d10c
+void queuePush(nsObjSys::clCellAnime *, nsObjSys::clCellAnime * &, nsObjSys::clCellAnime * &, u32);  // 0x0202dbf0
 
 }
 
 extern u32 texBankAddrs[4];  // 0x0205c234
+extern nsObjSys::clCellAnime * charLoadQueue[2];
+extern nsObjSys::clCellAnime * plttLoadQueue[2];
 
 extern const u32 objVramBase[2];
 extern vu32 * const dispcntRegs[2];

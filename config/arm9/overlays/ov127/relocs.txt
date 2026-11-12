@@ -170,7 +170,7 @@ from:0x0206b40c kind:arm_call to:0x02034db8 module:main
 from:0x0206b418 kind:arm_call to:0x02034c40 module:main
 from:0x0206b4b4 kind:arm_call to:0x0206b110 module:overlay(127)
 from:0x0206b4bc kind:arm_call to:0x0202ac50 module:main
-from:0x0206b4f0 kind:load to:0x02055c3c module:main
+from:0x0206b4f0 kind:load to:0x02055c34 add:0x8 module:main
 from:0x0206b4f4 kind:load to:0x0206da74 module:overlay(127)
 from:0x0206b4f8 kind:load to:0x0206da8c module:overlay(127)
 from:0x0206b528 kind:arm_call to:0x0202acc0 module:main
