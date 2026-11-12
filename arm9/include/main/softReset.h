@@ -3,11 +3,18 @@
 
 #include "types.h"
 
+extern "C" {
+
 #include "main/system.h"
+
+} // extern "C"
 
 #define MASTER_BRIGHT_MAX 16
 
-typedef struct {
+struct SoftResetState {
+    SoftResetState();  // C1 0x02005d50
+    ~SoftResetState();  // D1 0x02005fe0
+
     u32 inhibit : 1;  // +0x0
     u32 pending : 1;
     u32 active : 1;
@@ -17,16 +24,14 @@ typedef struct {
     u32 : 5;
     u32 resetParam;  // +0x4
     InputState input;  // +0x8
-} SoftResetState;
+};
 
 extern SoftResetState softResetState;  // 0x02056504
 
-void initSoftReset(SoftResetState *);  // 0x02005d50
 void setSoftResetFade(SoftResetState *, s32);  // 0x02005da0
 void updateSoftReset(SoftResetState *);  // 0x02005ddc
 void runResetFade(SoftResetState *);  // 0x02005e44
 BOOL checkResetCombo(SoftResetState *);  // 0x02005f24
 void startResetFade(SoftResetState *);  // 0x02005f8c
-void func_02005fe0(void);  // 0x02005fe0
 
 #endif

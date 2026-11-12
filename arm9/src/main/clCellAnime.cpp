@@ -59,10 +59,6 @@ extern PlttBufs objPlttBufs[2];  // 0x0205c268
 extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
 
-extern void func_02036b0c(const MtxFx44 *);
-extern void func_02036b28(const MtxFx43 *);
-extern void func_02036b44(const MtxFx33 *);
-
 // --- Variable Definitions --- //
 
 vu32 * const dispcntRegs[2] = { (vu32 *)REG_DISPCNT_ADDR, (vu32 *)REG_DB_DISPCNT_ADDR };  // 0x0204ac68
@@ -1150,7 +1146,7 @@ u32 clCellAnime::draw3d() {
     this->mtx._03 >>= 7;
     this->mtx._13 >>= 7;
 
-    func_02036b0c(&this->mtx);
+    G3_MultMtx44(&this->mtx);
 
     this->mtx._30 = m30;
     this->mtx._31 = m31;
@@ -1228,7 +1224,7 @@ u32 clCellAnime::draw3d() {
         xformMtx._30 = xform->x * 32;
         xformMtx._31 = xform->y * 32;
         xformMtx._32 = 0;
-        func_02036b28(&xformMtx);
+        G3_MultMtx43(&xformMtx);
 
         if (!hasXform) {
             if (xformMtx._00 != FX32_ONE || xformMtx._01 != 0) {
@@ -1285,7 +1281,7 @@ u32 clCellAnime::draw3d() {
             objMtx._12 = 0;
             objMtx._02 = 0;
             objMtx._22 = FX32_ONE;
-            func_02036b44(&objMtx);
+            G3_MultMtx33(&objMtx);
 
             hasMtx = TRUE;
         } else {

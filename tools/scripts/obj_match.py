@@ -161,7 +161,8 @@ class Elf:
         if not sec["flags"] & SHF_EXECINSTR:
             return sym
         ends = [s["value"] for s in self.symbols
-                if s["shndx"] == sym["shndx"] and s["name"] and s["value"] > sym["value"]]
+                if s["shndx"] == sym["shndx"] and s["name"] and not s["name"].startswith("$")
+                and s["value"] > sym["value"]]
         end = min(ends, default=sec["size"])
         return dict(sym, type=STT_FUNC, size=end - sym["value"])
 

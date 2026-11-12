@@ -28,8 +28,6 @@ extern DfxTexInfo texInfo;  // 0x027e1164
 
 extern void func_01ff8228(void *, u32, u32);
 
-extern void func_02036b28(RfxNode *);
-
 // --- Variable Definitions --- //
 
 static MtxFx33 lightMtx;  // 0x0205bb24
@@ -367,7 +365,7 @@ void clDfx::cmdVertexStrip(s32 t, u16 * cmd) {
                     G3_TexImageParam(GX_TEXFMT_NONE, GX_TEXGEN_NONE, GX_TEXSIZE_S8, GX_TEXSIZE_T8, GX_TEXREPEAT_NONE, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_USE, 0);
                     G3_PushMtx();
 
-                    func_02036b28((RfxNode *)node);
+                    G3_MultMtx43(&node->mtx);
 
                     G3_Begin(GX_BEGIN_TRIANGLE_STRIP);
                 }
@@ -419,7 +417,7 @@ void clDfx::cmdCircle(s32 t, u16 * cmd) {
         G3_TexImageParam(GX_TEXFMT_NONE, GX_TEXGEN_NONE, GX_TEXSIZE_S8, GX_TEXSIZE_T8, GX_TEXREPEAT_NONE, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_USE, 0);
         G3_PushMtx();
 
-        func_02036b28((RfxNode *)node);
+        G3_MultMtx43(&node->mtx);
 
         G3_Begin(GX_BEGIN_TRIANGLE_STRIP);
 
@@ -551,7 +549,7 @@ BOOL clDfx::drawTexQuad(u16 texIdx, DfxNode * node) {
 
     G3_PushMtx();
 
-    func_02036b28((RfxNode *)node);
+    G3_MultMtx43(&node->mtx);
 
     G3_Begin(GX_BEGIN_QUADS);
 
@@ -643,7 +641,7 @@ void clDfx::cmdTexMatrix(s32 t, u16 * cmd) {
     texMtx._30 *= 256;
     texMtx._31 *= 256;
     texMtx._32 *= 256;
-    func_02036b28((RfxNode *)&texMtx);
+    G3_MultMtx43(&texMtx);
 
     G3_MtxMode(GX_MTXMODE_POSITION_VECTOR);
 }
@@ -662,7 +660,7 @@ void clDfx::cmdTexStrip(u16 * cmd) {
 
             G3_PushMtx();
 
-            func_02036b28((RfxNode *)node);
+            G3_MultMtx43(&node->mtx);
 
             GXRgb color = (node->color.b << 10) | (node->color.g << 5) | node->color.r;
             G3_Color(color);
@@ -733,7 +731,7 @@ void clDfx::cmdTexStrips(u16 * cmd) {
 
     G3_PushMtx();
 
-    func_02036b28((RfxNode *)node);
+    G3_MultMtx43(&node->mtx);
 
     GXRgb color = (node->color.b << 10) | (node->color.g << 5) | node->color.r;
     G3_Color(color);
@@ -858,7 +856,7 @@ void clDfx::cmdLitMesh(u16 * cmd) {
 
     G3_PushMtx();
 
-    func_02036b28((RfxNode *)node);
+    G3_MultMtx43(&node->mtx);
 
     VecFx32 light;
     if (MTX_Inverse33((MtxFx33 *)node, &lightMtx)) {

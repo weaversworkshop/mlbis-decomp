@@ -167,10 +167,6 @@ extern NNSSndStrmThread sndStrmThread;  // 0x01ff9c7c
 
 extern SNDDriverInfo sndDriverInfo[];  // 0x02056560
 
-// --- Extern Functions --- //
-
-extern void func_0202f388(u8);
-
 // --- Variable Definitions --- //
 
 SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
@@ -1750,7 +1746,7 @@ void sndStartAlt(SndVoice * voice, s16 id, s16 delay, s16 x, s16 y, s8 volume, s
 
         sndAltVoiceId[sndAltIdx] = id;
 
-        func_0202f388(sndAltVoiceInfo[sndAltIdx].arg);
+        NNS_SndPlayerWriteGlobalVariable(sndAltVoiceInfo[sndAltIdx].arg, id);
 
         if (delay == 0) {
             sndStartVoice(voice, altId | SND_ID_ALT, volume, x, y, 1, sndEchoMode, SND_PRIO_DEFAULT, duration);

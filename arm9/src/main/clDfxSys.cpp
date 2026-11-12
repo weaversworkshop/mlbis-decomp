@@ -23,7 +23,7 @@ u8 plttBlockCount[8] = {0, 2, 1, 1, 16, 0, 1, 0};  // 0x02055118
 s32 dfxLoadTexture(clDfxVramMan *, RfxTexHeader *, DfxNode *);  // 0x02025654
 s32 dfxLoadPalette(clDfxVramMan *, RfxPlttHeader *, DfxNode *);  // 0x020257ac
 
-void dfxVrStart(clDfxSys *, clDfxVr *, u32, inYanaUnit **, clDfxVramMan *);  // 0x020259b8
+void dfxVrStart(clDfxSys *, clDfxVr *, u32, clYanaCtrlBase **, clDfxVramMan *);  // 0x020259b8
 
 } // extern "C"
 
@@ -154,7 +154,7 @@ void clDfxSh::exec() {
 }
 
 // MATCHED 100%
-void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, inYanaUnit ** list, clDfxVramMan * vramMan) {
+void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, clYanaCtrlBase ** list, clDfxVramMan * vramMan) {
     u16 * script = (sys->scriptTable != NULL) ? fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
     clDfx & dfx = *vr;

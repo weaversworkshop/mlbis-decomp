@@ -20,6 +20,7 @@ public:
         u16 stopped : 1;
     };
 
+    clYanaAnim() { this->atEnd = 1; }
     virtual ~clYanaAnim();  // D1 0x02020744 D0 0x02020754 D2 0x02020774
     virtual void onEnd(void);  // 0x02020930
     virtual void seekEnd(void);  // 0x02020940

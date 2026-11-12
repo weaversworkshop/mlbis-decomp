@@ -5113,6 +5113,237 @@
       "header": "nitro/fx/fx_trig.h",
       "confidence": "certain",
       "note": "fx_sincos.c const table, all 8192 entries byte-identical to ROM; spans to FX_AtanTable_; ov044/ov055 interior refs folded (+0x3000/+0x3800)"
+    },
+    {
+      "addr": "0x0202f388",
+      "sdk_name": "NNS_SndPlayerWriteGlobalVariable",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036ad4",
+      "sdk_name": "G3_LoadMtx44",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036af0",
+      "sdk_name": "G3_LoadMtx43",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036b0c",
+      "sdk_name": "G3_MultMtx44",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036b28",
+      "sdk_name": "G3_MultMtx43",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036b44",
+      "sdk_name": "G3_MultMtx33",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020380dc",
+      "sdk_name": "OSi_IrqDma0",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020380ec",
+      "sdk_name": "OSi_IrqDma1",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020380fc",
+      "sdk_name": "OSi_IrqDma2",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203810c",
+      "sdk_name": "OSi_IrqDma3",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203811c",
+      "sdk_name": "OSi_IrqTimer0",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203812c",
+      "sdk_name": "OSi_IrqTimer1",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203813c",
+      "sdk_name": "OSi_IrqTimer2",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203814c",
+      "sdk_name": "OSi_IrqTimer3",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039030",
+      "sdk_name": "OS_SetThreadDestructor",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039154",
+      "sdk_name": "OS_GetConsoleType",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039ef8",
+      "sdk_name": "OS_GetMacAddress",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039f98",
+      "sdk_name": "OS_GetOwnerRtcOffset",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039fac",
+      "sdk_name": "OsCountZeroBits",
+      "library": "os",
+      "confidence": "certain",
+      "note": "os_vramExclusive.c static; body also EQUIVALENT to MATH_CountLeadingZerosFunc, placement (OS_GetOwnerRtcOffset | OSi_InitVramExclusive) picks this one"
+    },
+    {
+      "addr": "0x0203e630",
+      "sdk_name": "FS_UnloadOverlayImage",
+      "library": "fs",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203ff90",
+      "sdk_name": "MicGetResultCallback",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02041564",
+      "sdk_name": "RtcGetResultCallback",
+      "library": "rtc",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204209c",
+      "sdk_name": "CARD_GetBackupSectorSize",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020428e8",
+      "sdk_name": "CARDi_GetRomAccessor",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043394",
+      "sdk_name": "CTRDGi_InitTaskInfo",
+      "library": "ctrdg",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043d4c",
+      "sdk_name": "_d_dtoi",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _d_dtoi.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02043d98",
+      "sdk_name": "_d_dtou",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _d_dtou.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02043e6c",
+      "sdk_name": "_d_mul",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _d_mul.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x020448cc",
+      "sdk_name": "_f_div",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _f_div.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02044c84",
+      "sdk_name": "_f_ftoi",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _f_ftoi.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02044d00",
+      "sdk_name": "_f_mul",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _f_mul.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02044e98",
+      "sdk_name": "__f_result_INF",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "Tail label of _f_mul.o, split like _u32_div_not_0_f.",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02044ea4",
+      "sdk_name": "__f_result_x_NaN",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "Tail label of _f_mul.o.",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02044eac",
+      "sdk_name": "__f_result_invalid",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "Tail label of _f_mul.o.",
+      "header": "runtime"
+    },
+    {
+      "addr": "0x02045774",
+      "sdk_name": "_d_div",
+      "library": "msl",
+      "confidence": "certain",
+      "note": "CodeWarrior FP runtime, prebuilt Mathlib member _d_div.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
+      "header": "runtime"
     }
   ],
   "objdiff_units": [
@@ -5730,6 +5961,46 @@
       "source": "lib/NitroSDK/libraries/fx/src/fx_sincos.c",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "sdk/fx/src/fx_sincos"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/gx/src/g3imm.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/gx/g3imm"
+    },
+    {
+      "prebuilt": "mathlib/_d_dtoi.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_dtoi"
+    },
+    {
+      "prebuilt": "mathlib/_d_dtou.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_dtou"
+    },
+    {
+      "prebuilt": "mathlib/_d_mul.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_mul"
+    },
+    {
+      "prebuilt": "mathlib/_f_div.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_div"
+    },
+    {
+      "prebuilt": "mathlib/_f_ftoi.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_ftoi"
+    },
+    {
+      "prebuilt": "mathlib/_f_mul.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_mul"
+    },
+    {
+      "prebuilt": "mathlib/_d_div.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_div"
     }
   ]
 }

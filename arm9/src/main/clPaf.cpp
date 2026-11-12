@@ -17,8 +17,6 @@ extern RfxKeySeg keySeg;
 extern u8 rfxNodeBuf[0x1000];
 extern RfxStack rfxStack;
 
-extern clPaf data_0205bb84;  // 0x0205bb84
-
 extern u16 data_0205bbac[];  // 0x0205bbac
 extern u16 data_0205bdac[];  // 0x0205bdac
 extern u16 data_0205bfac[];  // 0x0205bfac
@@ -28,6 +26,10 @@ extern BlendFunc pafBlendFuncs[4];  // 0x020558fc
 // --- Extern Functions --- //
 
 extern void func_01ff8228(void *, u32, u32);
+
+// --- Variable Definitions --- //
+
+clPaf data_0205bb84;
 
 // --- Function Declarations --- //
 

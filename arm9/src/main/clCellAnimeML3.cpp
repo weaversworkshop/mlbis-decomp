@@ -15,10 +15,6 @@ extern "C" {
 extern const u8 texPlttBaseShift[8];
 extern const u8 texPlttSizeShift[8];
 
-// --- Extern Functions --- //
-
-extern void func_02036b28(const MtxFx43 *);
-
 } // extern "C"
 
 // --- Function Definitions --- //
@@ -213,7 +209,7 @@ u32 clCellAnimeML3::draw3d() {
             flip ^= 2;
         }
 
-        func_02036b28(&objMtx);
+        G3_MultMtx43(&objMtx);
 
         if (multiPltt) {
             G3_Direct1(G3OP_TEXPLTT_BASE, plttBase + (((bits >> 14) & 0xf) << plttShift));

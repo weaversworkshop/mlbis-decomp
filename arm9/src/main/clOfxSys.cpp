@@ -14,7 +14,7 @@ extern "C" {
 
 s32 ofxLoadTexture(clOfxVramMan *, RfxTexHeader *, OfxNode *);  // 0x02026b04
 s32 ofxLoadPalette(clOfxVramMan *, RfxPlttHeader *, OfxNode *, BOOL);  // 0x02026ca4
-void ofxVrStart(clOfxSys *, clOfxVr *, u32, inYanaUnit **, clOfxVramMan *);  // 0x02026f44
+void ofxVrStart(clOfxSys *, clOfxVr *, u32, clYanaCtrlBase **, clOfxVramMan *);  // 0x02026f44
 
 } // extern "C"
 
@@ -187,7 +187,7 @@ void clOfxSh::exec() {
 }
 
 // MATCHED 100%
-void ofxVrStart(clOfxSys * sys, clOfxVr * vr, u32 scriptId, inYanaUnit ** list, clOfxVramMan * vramMan) {
+void ofxVrStart(clOfxSys * sys, clOfxVr * vr, u32 scriptId, clYanaCtrlBase ** list, clOfxVramMan * vramMan) {
     u16 * script = (sys->scriptTable != NULL) ? fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
     clOfx & ofx = *vr;

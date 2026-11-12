@@ -4,9 +4,13 @@
 
 #include "main/softReset.h"
 
+#include "main/clVCountTask.h"
 #include "main/task.h"
 #include "main/touchpad.h"
 
+extern "C" {
+
+#include "main/frameSync.h"
 
 #define RESET_COMBO (PAD_BUTTON_L | PAD_BUTTON_R | PAD_BUTTON_START | PAD_BUTTON_SELECT)
 
@@ -15,19 +19,25 @@
 extern void func_02040670(u32);
 extern u32 _u32_div_f(u32);
 
+} // extern "C"
+
+// --- Variable Definitions --- //
+
+SoftResetState softResetState;
+
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void initSoftReset(SoftResetState * softReset) {
-    softReset->inhibit = 0;
-    softReset->pending = 0;
-    softReset->active = 0;
+SoftResetState::SoftResetState() {
+    this->inhibit = 0;
+    this->pending = 0;
+    this->active = 0;
 
-    softReset->resetParam = 1;
+    this->resetParam = 1;
 
-    softReset->fadeFrames = 0;
-    softReset->defaultFadeFrames = 16;
-    softReset->fadeTimer = 0;
+    this->fadeFrames = 0;
+    this->defaultFadeFrames = 16;
+    this->fadeTimer = 0;
 }
 
 // MATCHED 100%
@@ -108,7 +118,6 @@ void startResetFade(SoftResetState * param1) {
     disableAllTasks();
 }
 
-// MATCHED 100% -- Noop
-void func_02005fe0() {
-    return;
+// MATCHED 100%
+SoftResetState::~SoftResetState() {
 }

@@ -17,8 +17,8 @@ extern clYanaUnitSys * data_027e00e8;
 // --- Function Declarations --- //
 
 clYanaUnitSys * findOwner(void *);  // 0x020204c8
-void func_02020608(inYanaUnit **);  // 0x02020608
-void func_02020634(inYanaUnit **);  // 0x02020634
+void func_02020608(clYanaCtrlBase **);  // 0x02020608
+void func_02020634(clYanaCtrlBase **);  // 0x02020634
 void nullHandler(clYanaCtrl *);  // 0x020206c8
 
 } // extern "C"
@@ -57,20 +57,20 @@ clYanaUnitSys * findOwner(void * addr) {
 }
 
 // MATCHED 100%
-void inYanaUnit::moveToList(inYanaUnit ** head) {
+void clYanaCtrlBase::moveToList(clYanaCtrlBase ** head) {
     if (head != NULL) {
-        inYanaUnit * prev = this->prev;
+        clYanaCtrlBase * prev = this->prev;
         if (this->prev != NULL) {
             this->prev = NULL;
-            inYanaUnit * next = this->next;
+            clYanaCtrlBase * next = this->next;
             if (next != NULL) {
                 next->prev = prev;
             }
             prev->next = next;
         }
 
-        inYanaUnit * base = (inYanaUnit *)((u8 *)head - 4);
-        inYanaUnit * next = base->next;
+        clYanaCtrlBase * base = (clYanaCtrlBase *)((u8 *)head - 4);
+        clYanaCtrlBase * next = base->next;
         if (next != NULL) {
             next->prev = this;
         }
@@ -81,11 +81,11 @@ void inYanaUnit::moveToList(inYanaUnit ** head) {
 }
 
 // MATCHED 100%
-void inYanaUnit::detach() {
-    inYanaUnit * prev = this->prev;
+void clYanaCtrlBase::detach() {
+    clYanaCtrlBase * prev = this->prev;
     if (prev != NULL) {
         this->prev = NULL;
-        inYanaUnit * next = this->next;
+        clYanaCtrlBase * next = this->next;
         if (next != NULL) {
             next->prev = prev;
         }
@@ -95,10 +95,10 @@ void inYanaUnit::detach() {
 
 // MATCHED 100%
 clYanaCtrlBase::~clYanaCtrlBase() {
-    inYanaUnit * prev = this->prev;
+    clYanaCtrlBase * prev = this->prev;
     if (prev != NULL) {
         this->prev = NULL;
-        inYanaUnit * next = this->next;
+        clYanaCtrlBase * next = this->next;
         if (next != NULL) {
             next->prev = prev;
         }
@@ -107,19 +107,19 @@ clYanaCtrlBase::~clYanaCtrlBase() {
 }
 
 // MATCHED 100%
-void func_02020608(inYanaUnit ** head) {
-    inYanaUnit * node = *head;
+void func_02020608(clYanaCtrlBase ** head) {
+    clYanaCtrlBase * node = *head;
 
     while (node != NULL) {
-        inYanaUnit * next = node->next;
+        clYanaCtrlBase * next = node->next;
         node->update();
         node = next;
     }
 }
 
 // MATCHED 100%
-void func_02020634(inYanaUnit ** head) {
-    inYanaUnit * node = *head;
+void func_02020634(clYanaCtrlBase ** head) {
+    clYanaCtrlBase * node = *head;
     while (node != NULL) {
         if (node != NULL) {
             delete node;

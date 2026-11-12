@@ -5,6 +5,7 @@
 #include "main/clGlobalEvent.h"
 
 #include "main/clGameMain.h"
+#include "main/softReset.h"
 
 extern "C" {
 
@@ -13,24 +14,12 @@ extern "C" {
 
 #include <nitro.h>
 
-// --- Struct Definitions --- //
-
-typedef struct {
-    u32 field00;
-    u8 pad_04[0x18];
-} UnkGlobal_02056504;
-
-// --- Extern Data Variables --- //
-
-extern UnkGlobal_02056504 data_02056504;
-
 // --- Extern Functions --- //
 
 extern void func_01ff8228(void *, u32, u32);
 
 extern s32 getGameVar(u16, clGlobalEvent *, EventContext *);
 extern void setGameVar(u16, s32, clGlobalEvent *, EventContext *);
-extern void setSoftResetFade(UnkGlobal_02056504 *, s32);
 
 // --- Variable Definitions --- //
 
@@ -473,8 +462,8 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
             return 0;
         case OP64:
-            setSoftResetFade(&data_02056504, -1);
-            data_02056504.field00 |= 2;
+            setSoftResetFade(&softResetState, -1);
+            softResetState.pending = 1;
             return 0;
         case OP65:
             val = addCoins(inst->args[0]);

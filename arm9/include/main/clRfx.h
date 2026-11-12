@@ -42,6 +42,7 @@ public:
     u16 * script;  // +0x18
     u32 * handle;  // +0x1c
 
+    clRfx() { this->handle = NULL; this->script = NULL; }
     virtual ~clRfx() { this->script = NULL; }  // D1 0x02021e60 D0 0x02020b68 Thn12_D1 0x02021ea8 Thn12_D0 0x02021e88
     virtual void update(void);  // 0x02020a5c
     virtual void exec(void);  // 0x02020a90
@@ -52,7 +53,7 @@ public:
     virtual u32 extScriptCount(void);  // 0x02020b98
     virtual void beginDraw(void);  // 0x020213a8
 
-    void start(inYanaUnit **, u16 *);  // 0x02020998
+    void start(clYanaCtrlBase **, u16 *);  // 0x02020998
     void finish(void);  // 0x02020a3c
 
     void runTrackLooped(s32, s16, s32);  // 0x02021290

@@ -11,23 +11,24 @@ extern "C" {
     #include <nitro.h>
 }
 
+class clYanaCtrlBase;
+
 class inYanaUnit {
 public:
-    inYanaUnit * next;  // +0x4
-    inYanaUnit * prev;  // +0x8
-
-    virtual ~inYanaUnit() {}
-    virtual void update(void) = 0;
+    clYanaCtrlBase * next;  // +0x0
+    clYanaCtrlBase * prev;  // +0x4
 
     void operator delete(void *);  // 0x020204a4
-    void moveToList(inYanaUnit **);  // 0x02020508
-    void detach(void);  // 0x02020554
 };
 
 class clYanaCtrlBase : public inYanaUnit {
 public:
-
+    clYanaCtrlBase() { this->next = NULL; this->prev = NULL; }
     virtual ~clYanaCtrlBase();  // D1 0x0202057c D0 0x020205a4 D2 0x020205e0
+    virtual void update(void) = 0;
+
+    void moveToList(clYanaCtrlBase **);  // 0x02020508
+    void detach(void);  // 0x02020554
 };
 
 class clYanaCtrl: public clYanaCtrlBase {
