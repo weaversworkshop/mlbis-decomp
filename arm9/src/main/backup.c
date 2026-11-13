@@ -18,12 +18,6 @@ typedef struct {
     void (*read)(u32, u32, u32, MIDmaCallback, void *);
 } BackupWork;
 
-// --- Extern Functions --- //
-
-extern s16 func_02038708(void); // OS_GetLockID?
-extern void func_02038770(u16); // OS_ReleaseLockID?
-extern BOOL func_020421e8(void);
-
 // --- Variable Definitions --- //
 
 BackupWork backup;  // 0x02058f6c
@@ -146,7 +140,7 @@ void writeDone(void * param1) {
 // MATCHED 100%
 BOOL lockBackup() {
 
-    s16 lock = func_02038708();
+    s32 lock = OS_GetLockID();
     backup.lockId = lock;
 
     if (lock == OS_LOCK_ID_ERROR) {
@@ -166,14 +160,14 @@ void unlockBackup() {
 
     CARD_UnlockBackup(backup.lockId);
 
-    func_02038770(backup.lockId);
+    OS_ReleaseLockID(backup.lockId);
 
     backup.lockId = OS_LOCK_ID_ERROR;
 }
 
 // MATCHED 100%
 BOOL backupWait() {
-    if (func_020421e8()) {
+    if (CARD_WaitBackupAsync()) {
         return (backup.status != BACKUP_ERROR);
     }
 

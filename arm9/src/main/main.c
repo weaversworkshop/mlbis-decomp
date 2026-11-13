@@ -14,7 +14,7 @@
 extern void func_01ff85a4(void);
 extern void func_01ff8b50(void);
 
-extern void func_02035250(void);
+extern void FX_Init(void);
 
 // --- Function Definitions --- //
 
@@ -25,7 +25,7 @@ void main() {
     GX_DispOff();
     GXS_DispOff();
 
-    func_02035250();
+    FX_Init();
 
     OS_SetIrqFunction(OS_IE_V_BLANK, func_01ff85a4);
     OS_EnableIrqMask(OS_IE_V_BLANK);

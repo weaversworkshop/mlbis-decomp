@@ -11,9 +11,6 @@
 
 extern "C" {
 
-#include "main/unk_0202f1b4.h"
-#include "main/unk_02031be4.h"
-
 // --- Struct Definitions --- //
 
 typedef struct SndRequest {
@@ -309,7 +306,7 @@ void sndInit(BOOL loadSymbols, u32 totalSize, u32 slot0Size, u32 slot1Size) {
     NNS_SndArcStrmCreatePrepareThread(&sndStrmThread, 17);
 
     for (s16 i = 1; i >= 0; i--) {
-        func_0202f1b4(&sndSeqHandle[i]);
+        NNS_SndHandleInit(&sndSeqHandle[i]);
     }
 
     sndInitVoices();
@@ -683,7 +680,7 @@ void sndStopAllVoices() {
         if ((ptr->id & SND_ID_TYPE_MASK) != SND_ID_STREAM) {
             sndStopVoice(ptr, 0);
             NNS_SndHandleReleaseSeq(&ptr->handle);
-            func_0202f1b4(&ptr->handle);
+            NNS_SndHandleInit(&ptr->handle);
         }
         ptr = ptr->next;
     }
@@ -940,7 +937,7 @@ void sndStopStream(s8 streamIdx, u32 fadeFrames) {
     if (voice != NULL) {
         NNS_SndArcStrmStop(&voice->strmHandle, fadeFrames);
         NNS_SndStrmHandleRelease(&voice->strmHandle);
-        func_02031be4(&voice->strmHandle);
+        NNS_SndStrmHandleInit(&voice->strmHandle);
 
         voice->stopped = 1;
     }
@@ -1105,7 +1102,7 @@ void sndInitVoices() {
 
         voice->idx = i;
 
-        func_0202f1b4(&voice->handle);
+        NNS_SndHandleInit(&voice->handle);
 
         voice++;
     }
@@ -1150,7 +1147,7 @@ SndVoice * sndAllocVoice(SndVoice * exclude) {
         } else {
             sndStopVoice(voice, 0);
             NNS_SndHandleReleaseSeq(&voice->handle);
-            func_0202f1b4(&voice->handle);
+            NNS_SndHandleInit(&voice->handle);
         }
 
         sndFreeVoice(voice);
@@ -1190,7 +1187,7 @@ SndVoice * sndFreeVoice(SndVoice * voice) {
 
     if ((voice->id & SND_ID_STREAM) == 0) {
         NNS_SndHandleReleaseSeq(&voice->handle);
-        func_0202f1b4(&voice->handle);
+        NNS_SndHandleInit(&voice->handle);
     }
 
     voice->next = NULL;
@@ -1323,7 +1320,7 @@ void sndReleaseVoice(SndVoice * voice, u32 fadeFrames) {
     NNS_SndPlayerStopSeq(&voice->handle, fadeFrames);
     NNS_SndHandleReleaseSeq(&voice->handle);
 
-    func_0202f1b4(&voice->handle);
+    NNS_SndHandleInit(&voice->handle);
 
     voice->stopped = 1;
     voice->owner = NULL;
@@ -1632,7 +1629,7 @@ BOOL sndReserveChannels(s32 trackCount, s8 playerPrio, s8 channelPrio) {
 
         NNS_SndHandleReleaseSeq(&sndVoices[*cursor].handle);
 
-        func_0202f1b4(&sndVoices[*cursor].handle);
+        NNS_SndHandleInit(&sndVoices[*cursor].handle);
 
         cursor++;
     }

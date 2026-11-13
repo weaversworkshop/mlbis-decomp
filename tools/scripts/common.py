@@ -45,6 +45,17 @@ def read_symbols(path=SYMBOLS):
     return out
 
 
+def word_symbols(path=SYMBOLS):
+    return [s for s in read_symbols(path) if re.fullmatch(r"\w+", s.name)]
+
+
+def read_relocs(path=CONFIG / "relocs.txt"):
+    """sorted [(from, to)]"""
+    rx = re.compile(r"from:0x([0-9a-fA-F]+)\b.*?\bto:0x([0-9a-fA-F]+)\b")
+    pairs = (rx.search(line) for line in Path(path).read_text(encoding="utf-8").splitlines())
+    return sorted((int(m.group(1), 16), int(m.group(2), 16)) for m in pairs if m)
+
+
 def die(msg, code=2):
     print(msg, file=sys.stderr)
     sys.exit(code)

@@ -15,8 +15,8 @@ listed where one exists.
 | Scoring / progress | `obj_match`, `build_todo`, `decmp_report`, `call_graph`, `data_catalog` |
 | Naming | `sync_renames`, `apply_sdk_mappings`, `struct_offsets`, `data_syms` |
 | Per-function matching | `fn_diff`, `grind`, `rank_diff`, `asm_smell`, `../permuter/extract_target_asm` |
-| SDK identification | `tu_diff`, `sdk_equiv`, `sdk_match`, `map_data_syms`, `is_interleaved`, `sdk_compile_audit` |
-| TU scouting | `tu_cluster`, `is_interleaved` |
+| SDK identification | `sdk_propose`, `sdk_compile_audit` |
+| TU scouting | `tu_cluster` |
 
 ---
 
@@ -259,48 +259,22 @@ reloc symbols) for decomp-permuter's `import.py`.
 
 ## SDK identification
 
-### tu_diff.py — discovery only
-Matches a gap `.o` against compiled SDK `.o` by normalized skeleton (branch/call targets + relocs masked;
-ISA and pool constants kept). **Candidates only — false positives on forked game code; never bulk-map.**
-Verify each with `sdk_equiv`. Needs `make sdk`.
-- `tu_diff.py --all [--new] [--low] [--min N] [--gap-o build/delinks/_dsd_gap@<mod>.o]` (`make sdk-sweep`);
-  `tu_diff.py SDK.o [TARGET.o]` for one object.
-- `--new` unmapped `func_*` only; `--low` adds short / multi-candidate hits; `--min` high-confidence insn
-  count (8).
-- Tags: `NEW!`/`new?` unmapped candidate, `MAPPED`, `named`, `POOL!?` (same insns, different literal ⇒ not
-  the same function).
-- `--fuzzy [--sim 0.85] [--min 12] [--lentol 0.20] [--show func_X]`: near-matches with compiler drift that
-  exact matching misses (excludes exact matches); `--show` prints one skeleton diff.
-
-### sdk_equiv.py — authoritative identity
-Compares skeleton, literal pool and reloc symbols, recursing into every differing callee. `EQUIVALENT` only
-if the whole call graph is stock SDK — **map only `EQUIVALENT`**. `DIVERGES` = real fork or a cascade from an
-unmapped callee: read `-v`, resolve leaf-first.
-`make sdk-check FUNC=func_x [SDK_EQUIV_ARGS=...]`, or `sdk_equiv.py FUNC... [--gap-o O] [--sdk-func NAME] [--depth 8] [--min 6] [-v]`
-- Skeletons shorter than `--min` are skipped as ambiguous; `--sdk-func` forces a comparison. Exit 0.
-
-### sdk_match.py
-Proposes SDK mappings by exact normalized body + byte size against unmapped `func_*` in main; only
-unambiguous, collision-free proposals.
-- `sdk_match.py [--min-insns 3] [--json] [--apply]` — `--apply` writes mappings + objdiff units to
-  `config/sdk_mappings.json`; re-run with `make delinks` until 0 proposals.
-- `sdk_match.py --disambiguate [--apply]` — byte-identical siblings (GX banks, `OS_Lock*`, `SNDi_*Mutex`,
-  `CARD_*`) told apart by their one distinguishing pool reloc addend. Run after the main pass.
-
-### map_data_syms.py
-Aligns literal pools of matched SDK functions against the gap to name `data_xxxx` → SDK globals. Proposes
-only 1:1 renames with addend 0; conflicts / ambiguous statics / base+addend splits are listed and skipped.
-`map_data_syms.py [--apply]` — `--apply` writes to `sdk_mappings.json`.
-
-### is_interleaved.py
-Does a function belong inside an SDK TU? Interleaved = its relocs hit a static function private to a compiled
-SDK unit (duplicate statics told apart by size; static data not detected). Points at the SDK source to fork.
-`is_interleaved.py func_X [--json]` (exit 1 if interleaved), `is_interleaved.py --all [--json]`.
-Needs `make sdk` + `objdiff.json`; main only.
+### sdk_propose.py
+The one SDK-identity tool. Proposes a name for every unassigned function that `obj_match`-compares 100%
+against a function in `build/lib` or a prebuilt archive member (`ARCHIVES`, extracted to `build/prebuilt/`).
+Picks among identical candidates by, in order: `called` (an already-matched caller's reloc names it),
+`adjacent` (candidate's object owns the neighbouring mapped function, in object order), `unique`.
+Also proposes `data_x` -> SDK global from the pools of matched functions (addend 0, 1:1 only).
+`sdk_propose.py [--gap main_7|itcm_1|dtcm_1] [--lo 0xADDR] [-v] [--apply]` (`make sdk-propose`).
+- `-v` lists unresolved functions with their candidates and skipped data.
+- `--apply` appends mappings + objdiff units to `config/sdk_mappings.json`; then `make progress`, and
+  re-run until nothing new. Resident modules only: mappings are keyed by address, overlays share addresses.
+- Needs `make sdk`. A 100% proposal can still be wrong for byte-identical siblings with no caller and no
+  neighbour; those are left unresolved, not guessed.
 
 ### sdk_compile_audit.py
 Which SDK/MSL/syscall `.c` files fail to compile (sp1p2, incl. `SDK_SKIP`) — those have no `.o`, so
-`tu_diff` can't match them. `make sdk-audit`. ~2 min.
+`sdk_propose` can't see them. `make sdk-audit`. ~2 min.
 `sdk_compile_audit.py [--reasons] [--list-fail] [--stub H] [--inc DIR]`
 
 ---
@@ -312,4 +286,4 @@ Candidate TUs for one module by narrowly-shared data (file-local statics). Data 
 `--max-shared` referrers or spread wider than `--max-span` counts as global. Modules never mix.
 `tu_cluster.py [--module main|ovNNN] [--calls] [--min-shared 2] [--max-shared 6] [--max-span 0x4000] [--min-cluster 2] [--only-open] [--report R]`
 - `--report` (default `build/report.json`, usually absent — pass an `obj_match.py --out` file) adds `[x]`/`[~]`.
-- Flags matched members living in separate files and SDK affiliation (via `is_interleaved`).
+- Flags matched members living in separate files.

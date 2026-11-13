@@ -31,6 +31,10 @@ def sdk_units():
             units.append({"name": e["name"], "target_path": e["target"],
                           "base_path": f"build/prebuilt/{e['prebuilt']}"})
             continue
+        if "object" in e:
+            units.append({"name": e["name"], "target_path": e["target"],
+                          "base_path": e["object"]})
+            continue
         units.append({
             "name": e.get("name") or "sdk/" + e["source"][len("lib/"):-len(".c")],
             "target_path": e["target"],

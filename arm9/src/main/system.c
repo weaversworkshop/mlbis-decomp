@@ -8,7 +8,7 @@
 
 // --- Extern Functions --- //
 
-extern void func_02039888(void);
+extern void OS_EnableMainExArena(void);
 
 // --- Variable Definitions --- //
 
@@ -25,7 +25,7 @@ SystemState systemState;  // 0x0205afa8
 
 // MATCHED 100%
 void initSystem() {
-    func_02039888();
+    OS_EnableMainExArena();
     OS_Init();
     initHeaps();
 }

@@ -13,7 +13,7 @@ Task-oriented reference. See [README](../README.md) for setup.
 | `make progress-objdiff` | second opinion via third-party objdiff-cli, functions only |
 | `make link` | relink every module from delinked objects, byte-compare vs ROM |
 | `make sdk` | compile every NitroSDK/NitroSystem `.c` into `build/` |
-| `make sdk-check FUNC=<name>` | authoritative SDK-identity check for one function |
+| `make sdk-propose` | propose SDK names for unassigned functions and data (`SDK_PROPOSE_ARGS=--apply` writes them) |
 | `make sync-names` | harvest mangled names from compiled `.o` into `symbols.txt` |
 | `make check-relocs` | find branches missing a relocation |
 | `make clean` / `distclean` | drop compiled output / drop everything |
@@ -68,16 +68,15 @@ Much of `main_7` is library code. Try to match it rather than decompile it if po
 
 ```bash
 make sdk                          # compile the SDK surface
-make sdk-sweep                    # candidates (tu_diff)
-make sdk-check FUNC=func_02016254 # verify ONE candidate
+make sdk-propose                  # byte-exact proposals
+make sdk-propose SDK_PROPOSE_ARGS=--apply && make progress
 ```
 
 **Tool hierarchy:**
 
 | Tool | Authority |
 |---|---|
-| `tu_diff.py` (incl. `--fuzzy`) | **discovery only**,  relocs masked, false-positives over forked code. Never bulk-map. |
-| `sdk_equiv.py` (`make sdk-check`) | **authoritative** for individual identity. Map only if `[EQUIVALENT]`. |
+| `sdk_propose.py` (`make sdk-propose`) | SDK identity: byte-exact vs compiled SDK objects, disambiguated by callers and object order. |
 | `obj_match.py` (`make progress`) | ground-truth byte match vs ROM. Final arbiter. |
 | `fn_diff.py` | per-function tiebreaker, independent instruction path. |
 | `objdiff` GUI, `make progress-objdiff` | second opinion, and the way to read a diff by eye. |

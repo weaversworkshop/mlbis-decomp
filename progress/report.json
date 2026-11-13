@@ -1,41 +1,41 @@
 {
  "measures": {
-  "fuzzy_match_percent": 7.341456877948348,
+  "fuzzy_match_percent": 7.985612784256205,
   "total_code": 3343290,
-  "matched_code": 236030,
-  "matched_code_percent": 7.0598123405388105,
+  "matched_code": 257566,
+  "matched_code_percent": 7.703968246846669,
   "total_data": 1803036,
-  "matched_data": 59266,
-  "matched_data_percent": 3.287011462888151,
-  "total_functions": 12137,
-  "matched_functions": 1678,
-  "matched_functions_percent": 13.82549229628409,
-  "complete_code": 182754,
-  "complete_code_percent": 5.46629218524268,
-  "complete_data": 41038,
-  "complete_data_percent": 2.2760499513043557,
-  "total_units": 173,
-  "complete_units": 162
+  "matched_data": 59406,
+  "matched_data_percent": 3.294776144236721,
+  "total_functions": 12135,
+  "matched_functions": 1827,
+  "matched_functions_percent": 15.055624227441285,
+  "complete_code": 204118,
+  "complete_code_percent": 6.105303458569254,
+  "complete_data": 41178,
+  "complete_data_percent": 2.2838146326529256,
+  "total_units": 205,
+  "complete_units": 194
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 5.115521125331203,
-    "total_code": 3263640,
-    "matched_code": 157952,
-    "matched_code_percent": 4.8397494821732785,
+    "fuzzy_match_percent": 5.160617404889563,
+    "total_code": 3242484,
+    "matched_code": 158332,
+    "matched_code_percent": 4.883046454508333,
     "total_data": 1803036,
-    "matched_data": 59266,
-    "matched_data_percent": 3.287011462888151,
-    "total_functions": 11377,
-    "matched_functions": 929,
-    "matched_functions_percent": 8.165597257625032,
-    "complete_code": 110836,
-    "complete_code_percent": 3.396085352551139,
-    "complete_data": 18048,
-    "complete_data_percent": 1.0009783498499198,
+    "matched_data": 59406,
+    "matched_data_percent": 3.294776144236721,
+    "total_functions": 11228,
+    "matched_functions": 931,
+    "matched_functions_percent": 8.291770573566085,
+    "complete_code": 111960,
+    "complete_code_percent": 3.452908325839079,
+    "complete_data": 18140,
+    "complete_data_percent": 1.0060808547361229,
     "total_units": 53,
     "complete_units": 46
    }
@@ -44,44 +44,44 @@
    "id": "sdk",
    "name": "SDK",
    "measures": {
-    "fuzzy_match_percent": 98.54865034526051,
-    "total_code": 79650,
-    "matched_code": 78078,
-    "matched_code_percent": 98.02636534839925,
+    "fuzzy_match_percent": 98.85324286252802,
+    "total_code": 100806,
+    "matched_code": 99234,
+    "matched_code_percent": 98.44056901374918,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 760,
-    "matched_functions": 749,
-    "matched_functions_percent": 98.55263157894737,
-    "complete_code": 73310,
-    "complete_code_percent": 92.04017576898933,
-    "complete_data": 23130,
+    "total_functions": 907,
+    "matched_functions": 896,
+    "matched_functions_percent": 98.787210584344,
+    "complete_code": 94470,
+    "complete_code_percent": 93.7146598416761,
+    "complete_data": 23178,
     "complete_data_percent": 0.0,
-    "total_units": 121,
-    "complete_units": 117
+    "total_units": 154,
+    "complete_units": 150
    }
   },
   {
    "id": "main",
    "name": "main",
    "measures": {
-    "fuzzy_match_percent": 89.23693643147038,
+    "fuzzy_match_percent": 97.0667855498125,
     "total_code": 275050,
-    "matched_code": 236030,
-    "matched_code_percent": 85.81348845664425,
+    "matched_code": 257566,
+    "matched_code_percent": 93.64333757498636,
     "total_data": 114092,
-    "matched_data": 59266,
-    "matched_data_percent": 51.94579812782666,
-    "total_functions": 1869,
-    "matched_functions": 1678,
-    "matched_functions_percent": 89.78063135366506,
-    "complete_code": 182754,
-    "complete_code_percent": 66.4439192874023,
-    "complete_data": 41038,
-    "complete_data_percent": 35.96921782421204,
-    "total_units": 173,
-    "complete_units": 162
+    "matched_data": 59406,
+    "matched_data_percent": 52.06850611786979,
+    "total_functions": 1867,
+    "matched_functions": 1827,
+    "matched_functions_percent": 97.85752544188537,
+    "complete_code": 204118,
+    "complete_code_percent": 74.21123432103253,
+    "complete_data": 41178,
+    "complete_data_percent": 36.09192581425516,
+    "total_units": 205,
+    "complete_units": 194
    }
   },
   {
@@ -5608,17 +5608,22 @@
    "name": "main/clPaf",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 2036,
-    "matched_code": 2036,
+    "total_code": 2184,
+    "matched_code": 2184,
     "matched_code_percent": 100.0,
-    "total_data": 72,
-    "matched_data": 72,
+    "total_data": 112,
+    "matched_data": 112,
     "matched_data_percent": 100.0,
-    "total_functions": 12,
-    "matched_functions": 12,
+    "total_functions": 13,
+    "matched_functions": 13,
     "matched_functions_percent": 100.0
    },
    "functions": [
+    {
+     "name": "__sinit_clPaf.cpp",
+     "size": 148,
+     "fuzzy_match_percent": 100.0
+    },
     {
      "name": "_ZN5clPaf12unk_virtual1ElPth",
      "size": 152,
@@ -5704,7 +5709,7 @@
    },
    "functions": [
     {
-     "name": "_ZN5clRfx5startEPP10inYanaUnitPt",
+     "name": "_ZN5clRfx5startEPP14clYanaCtrlBasePt",
      "size": 164,
      "fuzzy_match_percent": 100.0
     },
@@ -7732,49 +7737,54 @@
    "name": "main/softReset",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 660,
-    "matched_code": 660,
+    "total_code": 704,
+    "matched_code": 704,
     "matched_code_percent": 100.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
-    "total_functions": 7,
-    "matched_functions": 7,
+    "total_data": 28,
+    "matched_data": 28,
+    "matched_data_percent": 100.0,
+    "total_functions": 8,
+    "matched_functions": 8,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
-     "name": "initSoftReset",
+     "name": "__sinit_softReset.cpp",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN14SoftResetStateC1Ev",
      "size": 80,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "setSoftResetFade",
+     "name": "_Z16setSoftResetFadeP14SoftResetStatel",
      "size": 60,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "updateSoftReset",
+     "name": "_Z15updateSoftResetP14SoftResetState",
      "size": 104,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "runResetFade",
+     "name": "_Z12runResetFadeP14SoftResetState",
      "size": 224,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "checkResetCombo",
+     "name": "_Z15checkResetComboP14SoftResetState",
      "size": 104,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "startResetFade",
+     "name": "_Z14startResetFadeP14SoftResetState",
      "size": 84,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "func_02005fe0",
+     "name": "_ZN14SoftResetStateD1Ev",
      "size": 4,
      "fuzzy_match_percent": 100.0
     }
@@ -8626,52 +8636,23 @@
    }
   },
   {
-   "name": "main/unk_0202f1b4",
+   "name": "main/unk_02047c84",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 12,
-    "matched_code": 12,
+    "total_code": 36,
+    "matched_code": 36,
     "matched_code_percent": 100.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
+    "total_data": 24,
+    "matched_data": 24,
+    "matched_data_percent": 100.0,
     "total_functions": 1,
     "matched_functions": 1,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
-     "name": "func_0202f1b4",
-     "size": 12,
-     "fuzzy_match_percent": 100.0
-    }
-   ],
-   "metadata": {
-    "complete": true,
-    "progress_categories": [
-     "game",
-     "main"
-    ]
-   }
-  },
-  {
-   "name": "main/unk_02031be4",
-   "measures": {
-    "fuzzy_match_percent": 100.0,
-    "total_code": 12,
-    "matched_code": 12,
-    "matched_code_percent": 100.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
-    "total_functions": 1,
-    "matched_functions": 1,
-    "matched_functions_percent": 100.0
-   },
-   "functions": [
-    {
-     "name": "func_02031be4",
-     "size": 12,
+     "name": "__sinit_unk_02047c84.cpp",
+     "size": 36,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -8935,12 +8916,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN10inYanaUnit10moveToListEPPS_",
+     "name": "_ZN14clYanaCtrlBase10moveToListEPPS_",
      "size": 76,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN10inYanaUnit6detachEv",
+     "name": "_ZN14clYanaCtrlBase6detachEv",
      "size": 40,
      "fuzzy_match_percent": 100.0
     },
@@ -10449,14 +10430,14 @@
    "name": "sdk/sdk/os_arena",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 300,
-    "matched_code": 300,
+    "total_code": 824,
+    "matched_code": 824,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 3,
-    "matched_functions": 3,
+    "total_functions": 7,
+    "matched_functions": 7,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -10466,12 +10447,32 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "OS_InitArenaEx",
+     "size": 108,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_GetInitArenaHi",
+     "size": 228,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_GetInitArenaLo",
+     "size": 168,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "OS_SetArenaHi",
      "size": 20,
      "fuzzy_match_percent": 100.0
     },
     {
      "name": "OS_SetArenaLo",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_EnableMainExArena",
      "size": 20,
      "fuzzy_match_percent": 100.0
     }
@@ -10664,14 +10665,14 @@
    "name": "sdk/sdk/fs_command_default",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 2456,
-    "matched_code": 2456,
+    "total_code": 2464,
+    "matched_code": 2464,
     "matched_code_percent": 100.0,
     "total_data": 36,
     "matched_data": 36,
     "matched_data_percent": 100.0,
-    "total_functions": 11,
-    "matched_functions": 11,
+    "total_functions": 12,
+    "matched_functions": 12,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -10729,6 +10730,11 @@
      "name": "FSi_OpenFileDirectCommand",
      "size": 40,
      "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "FSi_CloseFileCommand",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
@@ -10743,14 +10749,14 @@
    "name": "sdk/sdk/fs_rom",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 712,
-    "matched_code": 712,
+    "total_code": 728,
+    "matched_code": 728,
     "matched_code_percent": 100.0,
     "total_data": 92,
     "matched_data": 92,
     "matched_data_percent": 100.0,
-    "total_functions": 8,
-    "matched_functions": 8,
+    "total_functions": 10,
+    "matched_functions": 10,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -10765,8 +10771,18 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "FSi_WriteDummyCallback",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "FSi_RomArchiveProc",
      "size": 108,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "FSi_ReadDummyCallback",
+     "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -10807,14 +10823,14 @@
    "name": "sdk/sdk/pm",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 240,
-    "matched_code": 240,
+    "total_code": 336,
+    "matched_code": 336,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 6,
-    "matched_functions": 6,
+    "total_functions": 10,
+    "matched_functions": 10,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -10846,6 +10862,26 @@
     {
      "name": "PMi_ExecuteList",
      "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "PM_PrependPreSleepCallback",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "PM_AppendPostSleepCallback",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "PM_DeletePreSleepCallback",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "PM_DeletePostSleepCallback",
+     "size": 24,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -10890,14 +10926,14 @@
    "name": "sdk/os/os_spinLock",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 756,
-    "matched_code": 756,
+    "total_code": 948,
+    "matched_code": 948,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 15,
-    "matched_functions": 15,
+    "total_functions": 18,
+    "matched_functions": 18,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -10919,6 +10955,11 @@
     {
      "name": "OSi_DoUnlockByWord",
      "size": 116,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_UnlockByWord",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -10975,6 +11016,16 @@
      "name": "OS_ReadOwnerOfLockWord",
      "size": 8,
      "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_GetLockID",
+     "size": 104,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_ReleaseLockID",
+     "size": 72,
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
@@ -10989,17 +11040,22 @@
    "name": "sdk/os/os_context",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 144,
-    "matched_code": 144,
+    "total_code": 276,
+    "matched_code": 276,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
+    {
+     "name": "OS_InitContext",
+     "size": 132,
+     "fuzzy_match_percent": 100.0
+    },
     {
      "name": "OS_SaveContext",
      "size": 76,
@@ -11057,14 +11113,14 @@
    "name": "sdk/os/os_thread",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 2168,
-    "matched_code": 2168,
+    "total_code": 2176,
+    "matched_code": 2176,
     "matched_code_percent": 100.0,
     "total_data": 52,
     "matched_data": 16,
     "matched_data_percent": 30.76923076923077,
-    "total_functions": 24,
-    "matched_functions": 24,
+    "total_functions": 25,
+    "matched_functions": 25,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -11186,6 +11242,11 @@
     {
      "name": "OS_EnableScheduler",
      "size": 52,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_SetThreadDestructor",
+     "size": 8,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -11492,20 +11553,25 @@
    "name": "sdk/os/os_exception",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 400,
-    "matched_code": 400,
+    "total_code": 532,
+    "matched_code": 532,
     "matched_code_percent": 100.0,
     "total_data": 172,
     "matched_data": 136,
     "matched_data_percent": 79.06976744186046,
-    "total_functions": 4,
-    "matched_functions": 4,
+    "total_functions": 5,
+    "matched_functions": 5,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "OS_InitException",
      "size": 112,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_ExceptionHandler",
+     "size": 132,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -11727,14 +11793,14 @@
    "name": "sdk/card/card_common",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 912,
-    "matched_code": 912,
+    "total_code": 944,
+    "matched_code": 944,
     "matched_code_percent": 100.0,
     "total_data": 1568,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 14,
-    "matched_functions": 14,
+    "total_functions": 16,
+    "matched_functions": 16,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -11759,8 +11825,18 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "CARD_IsEnabled",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "CARD_CheckEnabled",
      "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CARD_Enable",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -11821,14 +11897,14 @@
    "name": "sdk/card/card_rom",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1768,
-    "matched_code": 1768,
+    "total_code": 1792,
+    "matched_code": 1792,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 11,
-    "matched_functions": 11,
+    "total_functions": 13,
+    "matched_functions": 13,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -11886,6 +11962,16 @@
      "name": "CARD_Init",
      "size": 100,
      "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CARD_WaitRomAsync",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CARDi_GetRomAccessor",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
@@ -11900,14 +11986,14 @@
    "name": "sdk/card/card_pullOut",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 444,
-    "matched_code": 444,
+    "total_code": 460,
+    "matched_code": 460,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 5,
-    "matched_functions": 5,
+    "total_functions": 6,
+    "matched_functions": 6,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -11919,6 +12005,11 @@
     {
      "name": "CARDi_PulledOutCallback",
      "size": 84,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CARD_IsPulledOut",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12180,14 +12271,14 @@
    "name": "nns/snd/main",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 252,
-    "matched_code": 252,
+    "total_code": 264,
+    "matched_code": 264,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 4,
-    "matched_functions": 4,
+    "total_functions": 5,
+    "matched_functions": 5,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12210,6 +12301,11 @@
      "name": "BeginSleep",
      "size": 56,
      "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "EndSleep",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
@@ -12224,14 +12320,14 @@
    "name": "nns/snd/player",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 2376,
-    "matched_code": 2376,
+    "total_code": 2404,
+    "matched_code": 2404,
     "matched_code_percent": 100.0,
     "total_data": 1164,
     "matched_data": 1164,
     "matched_data_percent": 100.0,
-    "total_functions": 35,
-    "matched_functions": 35,
+    "total_functions": 37,
+    "matched_functions": 37,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12258,6 +12354,11 @@
     {
      "name": "NNS_SndPlayerPause",
      "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "NNS_SndHandleInit",
+     "size": 12,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12328,6 +12429,11 @@
     {
      "name": "NNS_SndPlayerReadGlobalVariable",
      "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "NNS_SndPlayerWriteGlobalVariable",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12423,14 +12529,14 @@
    "name": "nns/snd/stream",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1392,
-    "matched_code": 1392,
+    "total_code": 1568,
+    "matched_code": 1568,
     "matched_code_percent": 100.0,
     "total_data": 140,
     "matched_data": 140,
     "matched_data_percent": 100.0,
-    "total_functions": 14,
-    "matched_functions": 14,
+    "total_functions": 15,
+    "matched_functions": 15,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12492,6 +12598,11 @@
     {
      "name": "AlarmCallback",
      "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "StrmCallback",
+     "size": 176,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12567,14 +12678,14 @@
    "name": "nns/snd/sndarc",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1840,
-    "matched_code": 1840,
+    "total_code": 1856,
+    "matched_code": 1856,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 20,
-    "matched_functions": 20,
+    "total_functions": 21,
+    "matched_functions": 21,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12591,6 +12702,11 @@
     {
      "name": "NNS_SndArcSetCurrent",
      "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "NNS_SndArcGetCurrent",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12765,14 +12881,14 @@
    "name": "nns/snd/sndarc_loader",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1952,
-    "matched_code": 1952,
+    "total_code": 2060,
+    "matched_code": 2060,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 15,
-    "matched_functions": 15,
+    "total_functions": 16,
+    "matched_functions": 16,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12794,6 +12910,11 @@
     {
      "name": "NNSi_SndArcLoadFile",
      "size": 160,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "LoadSeq",
+     "size": 108,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -12913,14 +13034,14 @@
    "name": "nns/snd/sndarc_stream",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 5664,
-    "matched_code": 5664,
+    "total_code": 6092,
+    "matched_code": 6092,
     "matched_code_percent": 100.0,
     "total_data": 1504,
     "matched_data": 1504,
     "matched_data_percent": 100.0,
-    "total_functions": 33,
-    "matched_functions": 33,
+    "total_functions": 39,
+    "matched_functions": 39,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -12965,6 +13086,11 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "NNS_SndStrmHandleInit",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "NNS_SndStrmHandleRelease",
      "size": 24,
      "fuzzy_match_percent": 100.0
@@ -13000,6 +13126,16 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "ForceStopStrm",
+     "size": 152,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "ShutdownPlayer",
+     "size": 100,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "AllocChannel",
      "size": 56,
      "fuzzy_match_percent": 100.0
@@ -13032,6 +13168,11 @@
     {
      "name": "FreeCommandBuffer",
      "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "DisposeCallback",
+     "size": 156,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -13080,8 +13221,18 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "CloseMemoryStream",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "ReadMemoryStream",
      "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CancelMemoryStream",
+     "size": 4,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -13298,20 +13449,30 @@
    "name": "sdk/ctrdg/src/ctrdg",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 728,
-    "matched_code": 728,
+    "total_code": 792,
+    "matched_code": 792,
     "matched_code_percent": 100.0,
     "total_data": 20,
     "matched_data": 20,
     "matched_data_percent": 100.0,
-    "total_functions": 8,
-    "matched_functions": 8,
+    "total_functions": 10,
+    "matched_functions": 10,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "CTRDGi_InitCommon",
      "size": 56,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CTRDG_IsOptionCartridge",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CTRDGi_IsAgbCartridgeAtInit",
+     "size": 24,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -13362,20 +13523,25 @@
    "name": "sdk/ctrdg/src/ctrdg_task",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 380,
-    "matched_code": 380,
+    "total_code": 400,
+    "matched_code": 400,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "CTRDGi_InitTaskThread",
      "size": 140,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CTRDGi_InitTaskInfo",
+     "size": 20,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -13503,14 +13669,14 @@
    "name": "sdk/gx/src/gx_bgcnt",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1072,
-    "matched_code": 1072,
+    "total_code": 1136,
+    "matched_code": 1136,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 14,
-    "matched_functions": 14,
+    "total_functions": 16,
+    "matched_functions": 16,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -13560,8 +13726,18 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "G2S_GetBG0CharPtr",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "G2_GetBG1CharPtr",
      "size": 52,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "G2S_GetBG1CharPtr",
+     "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -14152,20 +14328,25 @@
    "name": "sdk/os/src/os_tick",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 352,
-    "matched_code": 352,
+    "total_code": 368,
+    "matched_code": 368,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 4,
-    "matched_functions": 4,
+    "total_functions": 5,
+    "matched_functions": 5,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "OS_InitTick",
      "size": 120,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_IsTickAvailable",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -14303,14 +14484,14 @@
    "name": "sdk/rtc/src/external",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1752,
-    "matched_code": 1752,
+    "total_code": 1792,
+    "matched_code": 1792,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 5,
-    "matched_functions": 5,
+    "total_functions": 7,
+    "matched_functions": 7,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -14337,6 +14518,16 @@
     {
      "name": "RtcBCD2HEX",
      "size": 112,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "RtcGetResultCallback",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "RtcWaitBusy",
+     "size": 24,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -14469,14 +14660,14 @@
    "name": "sdk/spi/src/mic",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1228,
-    "matched_code": 1228,
+    "total_code": 1268,
+    "matched_code": 1268,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 9,
-    "matched_functions": 9,
+    "total_functions": 11,
+    "matched_functions": 11,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -14524,6 +14715,16 @@
      "name": "MicStopAutoSampling",
      "size": 40,
      "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "MicGetResultCallback",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "MicWaitBusy",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
@@ -14538,14 +14739,14 @@
    "name": "sdk/sdk/fs_overlay",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1564,
-    "matched_code": 1564,
+    "total_code": 1580,
+    "matched_code": 1580,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 11,
-    "matched_functions": 11,
+    "total_functions": 12,
+    "matched_functions": 12,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -14592,6 +14793,11 @@
     {
      "name": "FS_EndOverlay",
      "size": 240,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "FS_UnloadOverlayImage",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     },
     {
@@ -14646,17 +14852,22 @@
    "name": "msl/buffer_io",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 184,
-    "matched_code": 184,
+    "total_code": 188,
+    "matched_code": 188,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
+    {
+     "name": "__convert_from_newlines",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
     {
      "name": "__prep_buffer",
      "size": 48,
@@ -14738,20 +14949,25 @@
    "name": "sdk/os/os_emulator",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 8,
-    "matched_code": 8,
+    "total_code": 32,
+    "matched_code": 32,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 1,
-    "matched_functions": 1,
+    "total_functions": 2,
+    "matched_functions": 2,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "OS_IsRunOnEmulator",
      "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_GetConsoleType",
+     "size": 24,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -14767,20 +14983,30 @@
    "name": "sdk/os/os_ownerInfo",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 132,
-    "matched_code": 132,
+    "total_code": 180,
+    "matched_code": 180,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 1,
-    "matched_functions": 1,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
+     "name": "OS_GetMacAddress",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "OS_GetOwnerInfo",
      "size": 132,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OS_GetOwnerRtcOffset",
+     "size": 20,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -14796,17 +15022,22 @@
    "name": "sdk/os/os_vramExclusive",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 188,
-    "matched_code": 188,
+    "total_code": 196,
+    "matched_code": 196,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
+    {
+     "name": "OsCountZeroBits",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
     {
      "name": "OSi_InitVramExclusive",
      "size": 52,
@@ -15439,20 +15670,65 @@
    "name": "sdk/os/os_irqTable",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 136,
-    "matched_code": 136,
+    "total_code": 268,
+    "matched_code": 268,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 1,
-    "matched_functions": 1,
+    "total_functions": 10,
+    "matched_functions": 10,
     "matched_functions_percent": 100.0
    },
    "functions": [
     {
+     "name": "OS_IrqDummy",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "OSi_IrqCallback",
      "size": 136,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqDma0",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqDma1",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqDma2",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqDma3",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqTimer0",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqTimer1",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqTimer2",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "OSi_IrqTimer3",
+     "size": 16,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -15468,17 +15744,32 @@
    "name": "sdk/msl/console_io",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 132,
-    "matched_code": 132,
+    "total_code": 196,
+    "matched_code": 196,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 6,
+    "matched_functions": 6,
     "matched_functions_percent": 100.0
    },
    "functions": [
+    {
+     "name": "sys_writec",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "sys_readc",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "sys_exit",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
     {
      "name": "__read_console",
      "size": 80,
@@ -15487,6 +15778,11 @@
     {
      "name": "__write_console",
      "size": 52,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__close_console",
+     "size": 8,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -15502,14 +15798,14 @@
    "name": "sdk/card/card_backup",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 1040,
-    "matched_code": 1040,
+    "total_code": 1072,
+    "matched_code": 1072,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 3,
-    "matched_functions": 3,
+    "total_functions": 5,
+    "matched_functions": 5,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -15524,8 +15820,18 @@
      "fuzzy_match_percent": 100.0
     },
     {
+     "name": "CARD_GetBackupSectorSize",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
      "name": "CARD_IdentifyBackup",
      "size": 312,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "CARD_WaitBackupAsync",
+     "size": 12,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -15541,14 +15847,14 @@
    "name": "sdk/MSL_ARM/Src/abort_exit_ARM",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 112,
-    "matched_code": 112,
+    "total_code": 408,
+    "matched_code": 408,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 2,
-    "matched_functions": 2,
+    "total_functions": 3,
+    "matched_functions": 3,
     "matched_functions_percent": 100.0
    },
    "functions": [
@@ -15560,6 +15866,11 @@
     {
      "name": "exit",
      "size": 76,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__exit",
+     "size": 296,
      "fuzzy_match_percent": 100.0
     }
    ],
@@ -15658,318 +15969,1226 @@
    }
   },
   {
+   "name": "sdk/gx/g3imm",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 140,
+    "matched_code": 140,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "G3_LoadMtx44",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "G3_LoadMtx43",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "G3_MultMtx44",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "G3_MultMtx43",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "G3_MultMtx33",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_dtoi",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 76,
+    "matched_code": 76,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_dtoi",
+     "size": 76,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_dtou",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 88,
+    "matched_code": 88,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_dtou",
+     "size": 88,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_mul",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 868,
+    "matched_code": 868,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_mul",
+     "size": 868,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_div",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 952,
+    "matched_code": 952,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_div",
+     "size": 952,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_ftoi",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 52,
+    "matched_code": 52,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_ftoi",
+     "size": 52,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_mul",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 480,
+    "matched_code": 480,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 4,
+    "matched_functions": 4,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_mul",
+     "size": 408,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__f_result_INF",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__f_result_x_NaN",
+     "size": 8,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__f_result_invalid",
+     "size": 52,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_div",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 1348,
+    "matched_code": 1348,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_div",
+     "size": 1348,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/fx/fx",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 4,
+    "matched_code": 4,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "FX_Init",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/os/os_tcm",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 20,
+    "matched_code": 20,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "OS_GetDTCMAddress",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/mi/mi_wram",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 16,
+    "matched_code": 16,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "MI_SetWramBank",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/dgt/hash2",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 1076,
+    "matched_code": 1076,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 4,
+    "matched_functions": 4,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "DGT_Hash2Reset",
+     "size": 80,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "DGT_Hash2SetSource",
+     "size": 340,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "DGT_Hash2GetDigest",
+     "size": 508,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "DGT_Hash2CalcHmac",
+     "size": 148,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/dgt/hmac",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 440,
+    "matched_code": 440,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "HmacCalc",
+     "size": 440,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/signal",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 304,
+    "matched_code": 304,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "raise",
+     "size": 304,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_ll_div",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 520,
+    "matched_code": 520,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 4,
+    "matched_functions": 4,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ll_mod",
+     "size": 16,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ll_sdiv",
+     "size": 432,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ll_udiv",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ull_mod",
+     "size": 60,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/ieee_status",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 4,
+    "matched_code": 4,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_fp_init",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/CompressedNumbers",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 280,
+    "matched_code": 280,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_Z20__DecodeSignedNumberPcPl",
+     "size": 140,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z22__DecodeUnsignedNumberPcPm",
+     "size": 140,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/ExceptionHandler",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 4932,
+    "matched_code": 4932,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 12,
+    "matched_functions": 12,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_Z12BinarySearchP19ExceptionTableIndexmPc",
+     "size": 100,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z19FindExceptionRecordPcP13ExceptionInfo",
+     "size": 264,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z13CurrentActionPK14ActionIterator",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z10NextActionP14ActionIterator",
+     "size": 904,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z11UnwindStackP12ThrowContextP13ExceptionInfoPc",
+     "size": 2224,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z23FindMostRecentExceptionP12ThrowContextP13ExceptionInfo",
+     "size": 340,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z17IsInSpecificationPcP16ex_specification",
+     "size": 132,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z16HandleUnexpectedP12ThrowContextP13ExceptionInfoP16ex_specificationPc",
+     "size": 96,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z20FindExceptionHandlerP12ThrowContextP13ExceptionInfoPl",
+     "size": 476,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z14SetupCatchInfoP12ThrowContextll",
+     "size": 92,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z14__ThrowHandlerP12ThrowContext",
+     "size": 236,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__end__catch",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/StaticInitializers",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 112,
+    "matched_code": 112,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "__call_static_initializers",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__destroy_global_chain",
+     "size": 68,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/cxxabi_alloc",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 744,
+    "matched_code": 744,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 6,
+    "matched_functions": 6,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ZN26@unnamed@cxxabi_alloc_cpp@17DestroyArrayRangeEPhS0_mPFvPvE",
+     "size": 92,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__cxa_vec_newinit",
+     "size": 188,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__cxa_vec_ctor",
+     "size": 176,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__cxa_vec_dtor",
+     "size": 144,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__cxa_vec_cleanup",
+     "size": 92,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__cxa_vec_delete",
+     "size": 52,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/cxxabi_rtti",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 168,
+    "matched_code": 168,
+    "matched_code_percent": 100.0,
+    "total_data": 48,
+    "matched_data": 48,
+    "matched_data_percent": 100.0,
+    "total_functions": 8,
+    "matched_functions": 8,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ZNSt9type_infoD2Ev",
+     "size": 4,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv117__class_type_infoD1Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv117__class_type_infoD0Ev",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv117__class_type_infoD2Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv120__si_class_type_infoD1Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv120__si_class_type_infoD0Ev",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv121__vmi_class_type_infoD1Ev",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZN10__cxxabiv121__vmi_class_type_infoD0Ev",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/MWException",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 512,
+    "matched_code": 512,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ZSt9dthandlerv",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZSt9duhandlerv",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZSt9terminatev",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__register_global_object",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__throw_catch_compare",
+     "size": 432,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/ExceptionHandlerTS",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 456,
+    "matched_code": 456,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 6,
+    "matched_functions": 6,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_Z15__PopStackFrameP12ThrowContextP13ExceptionInfo",
+     "size": 92,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z16__SetupFrameInfoP12ThrowContextP13ExceptionInfo",
+     "size": 160,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z20__FindExceptionTableP13ExceptionInfoPc",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z16__SkipUnwindInfoPc",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_Z17__TransferControlP12ThrowContextP13ExceptionInfoPc",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "__rethrow",
+     "size": 76,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/__NITRO_eabi_init",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 12,
+    "matched_code": 12,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_ExitProcess",
+     "size": 12,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/dgt/sha1s-arm4cw",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 640,
+    "matched_code": 640,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "DGTi_hash2_arm4_small",
+     "size": 640,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_add",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 792,
+    "matched_code": 792,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_add",
+     "size": 792,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_itod",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 124,
+    "matched_code": 124,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_itod",
+     "size": 64,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_d_utod",
+     "size": 60,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_d_sub",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 948,
+    "matched_code": 948,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_sub",
+     "size": 948,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_add",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 548,
+    "matched_code": 548,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_add",
+     "size": 548,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_cmp",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 256,
+    "matched_code": 256,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_d_fgt",
+     "size": 152,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_f_feq",
+     "size": 104,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_itof",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 72,
+    "matched_code": 72,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_itof",
+     "size": 72,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "msl/runtime/_f_sub",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 632,
+    "matched_code": 632,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "_f_sub",
+     "size": 632,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
+   "name": "sdk/card/card_spi",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 900,
+    "matched_code": 900,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "CARDi_IdentifyBackupCore",
+     "size": 900,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "main"
+    ]
+   }
+  },
+  {
    "name": "main/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
-    "total_code": 25036,
+    "total_code": 3500,
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 179,
+    "total_functions": 28,
     "matched_functions": 0,
     "matched_functions_percent": 0.0
    },
    "functions": [
     {
-     "name": "__sinit_02047c2c",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "__sinit_02047c84",
-     "size": 36,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "__sinit_02047ca8",
-     "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202efa4",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202f388",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0202fee0",
-     "size": 176,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02030530",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203105c",
-     "size": 108,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020320b0",
-     "size": 152,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02032148",
-     "size": 100,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02032394",
-     "size": 156,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02033048",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02033068",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02035250",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036864",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020368b8",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036ad4",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036af0",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036b0c",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036b28",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02036b44",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02038050",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020380dc",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020380ec",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020380fc",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203810c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203811c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203812c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203813c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203814c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020385a0",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02038708",
-     "size": 104,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02038770",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039030",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039038",
-     "size": 132,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039154",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039668",
-     "size": 108,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020396d4",
-     "size": 228,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020397b8",
-     "size": 168,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039888",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203989c",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039964",
-     "size": 132,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039b9c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039ef8",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039f98",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02039fac",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203a08c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
      "name": "func_0203a438",
      "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203cf14",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203de48",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203debc",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203e630",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203e6e0",
-     "size": 80,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203e730",
-     "size": 340,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203e884",
-     "size": 508,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203ea80",
-     "size": 148,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203eb14",
-     "size": 440,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203ece0",
-     "size": 640,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203ff90",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0203ffa0",
-     "size": 24,
      "fuzzy_match_percent": 0.0
     },
     {
@@ -16103,468 +17322,8 @@
      "fuzzy_match_percent": 0.0
     },
     {
-     "name": "func_02040da0",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02040db8",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02040dd0",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02040de8",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
      "name": "func_02040e00",
      "size": 140,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02041564",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02041574",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020418ec",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02041914",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02041a40",
-     "size": 900,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204209c",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020421e8",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020428dc",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020428e8",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02042b4c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02042cd0",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02042cf8",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043394",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020435d0",
-     "size": 296,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043760",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043904",
-     "size": 304,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043a34",
-     "size": 792,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043d4c",
-     "size": 76,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043d98",
-     "size": 88,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043df0",
-     "size": 64,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043e30",
-     "size": 60,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02043e6c",
-     "size": 868,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020441e8",
-     "size": 948,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204459c",
-     "size": 540,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020447b8",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020447c0",
-     "size": 152,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02044858",
-     "size": 104,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020448cc",
-     "size": 952,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02044c84",
-     "size": 52,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02044cb8",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02044d00",
-     "size": 480,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02044eec",
-     "size": 632,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045164",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045174",
-     "size": 432,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045324",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045330",
-     "size": 60,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045774",
-     "size": 1348,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045cb8",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045cbc",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045cd0",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045ce4",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045d78",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045d80",
-     "size": 140,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045e0c",
-     "size": 140,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045e98",
-     "size": 100,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02045efc",
-     "size": 264,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046004",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046020",
-     "size": 904,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020463a8",
-     "size": 2216,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046c50",
-     "size": 8,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046c58",
-     "size": 340,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046dac",
-     "size": 132,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046e30",
-     "size": 96,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02046e90",
-     "size": 476,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204706c",
-     "size": 92,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020470c8",
-     "size": 236,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020471b4",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020471dc",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047208",
-     "size": 68,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204724c",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047294",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020472a8",
-     "size": 188,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "__cxa_vec_ctor",
-     "size": 176,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047414",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204745c",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020474a4",
-     "size": 72,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020474ec",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047500",
-     "size": 52,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047534",
-     "size": 4,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047538",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204754c",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047568",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204757c",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047590",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020475ac",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020475c0",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020475dc",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020475e8",
-     "size": 12,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020475f4",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204760c",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_0204762c",
-     "size": 432,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020477dc",
-     "size": 92,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047838",
-     "size": 160,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020478d8",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020478f8",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047928",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_02047958",
-     "size": 76,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_020479a4",
-     "size": 12,
      "fuzzy_match_percent": 0.0
     }
    ],

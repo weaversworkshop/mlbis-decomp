@@ -5344,6 +5344,678 @@
       "confidence": "certain",
       "note": "CodeWarrior FP runtime, prebuilt Mathlib member _d_div.o; .text byte-identical to ROM (2026-11-12 sweep of all 156 Mathlib archives).",
       "header": "runtime"
+    },
+    {
+      "addr": "0x0202efa4",
+      "sdk_name": "EndSleep",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0202f1b4",
+      "sdk_name": "NNS_SndHandleInit",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0202fee0",
+      "sdk_name": "StrmCallback",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02030530",
+      "sdk_name": "NNS_SndArcGetCurrent",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203105c",
+      "sdk_name": "LoadSeq",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02031be4",
+      "sdk_name": "NNS_SndStrmHandleInit",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020320b0",
+      "sdk_name": "ForceStopStrm",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02032148",
+      "sdk_name": "ShutdownPlayer",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02032394",
+      "sdk_name": "DisposeCallback",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02033048",
+      "sdk_name": "CloseMemoryStream",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02033068",
+      "sdk_name": "CancelMemoryStream",
+      "library": "snd",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02035250",
+      "sdk_name": "FX_Init",
+      "library": "fx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02036864",
+      "sdk_name": "G2S_GetBG0CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020368b8",
+      "sdk_name": "G2S_GetBG1CharPtr",
+      "library": "gx",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038050",
+      "sdk_name": "OS_IrqDummy",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020385a0",
+      "sdk_name": "OS_UnlockByWord",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038708",
+      "sdk_name": "OS_GetLockID",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02038770",
+      "sdk_name": "OS_ReleaseLockID",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039038",
+      "sdk_name": "OS_InitContext",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039668",
+      "sdk_name": "OS_InitArenaEx",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020396d4",
+      "sdk_name": "OS_GetInitArenaHi",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020397b8",
+      "sdk_name": "OS_GetInitArenaLo",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039888",
+      "sdk_name": "OS_EnableMainExArena",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203989c",
+      "sdk_name": "OS_GetDTCMAddress",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039964",
+      "sdk_name": "OSi_ExceptionHandler",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02039b9c",
+      "sdk_name": "OS_IsTickAvailable",
+      "library": "os",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203a08c",
+      "sdk_name": "MI_SetWramBank",
+      "library": "mi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203cf14",
+      "sdk_name": "FSi_CloseFileCommand",
+      "library": "fs",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203de48",
+      "sdk_name": "FSi_WriteDummyCallback",
+      "library": "fs",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203debc",
+      "sdk_name": "FSi_ReadDummyCallback",
+      "library": "fs",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203e6e0",
+      "sdk_name": "DGT_Hash2Reset",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203e730",
+      "sdk_name": "DGT_Hash2SetSource",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203e884",
+      "sdk_name": "DGT_Hash2GetDigest",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203ea80",
+      "sdk_name": "DGT_Hash2CalcHmac",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203eb14",
+      "sdk_name": "HmacCalc",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203ffa0",
+      "sdk_name": "MicWaitBusy",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02040da0",
+      "sdk_name": "PM_PrependPreSleepCallback",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02040db8",
+      "sdk_name": "PM_AppendPostSleepCallback",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02040dd0",
+      "sdk_name": "PM_DeletePreSleepCallback",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02040de8",
+      "sdk_name": "PM_DeletePostSleepCallback",
+      "library": "spi",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02041574",
+      "sdk_name": "RtcWaitBusy",
+      "library": "rtc",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020418ec",
+      "sdk_name": "CARD_IsEnabled",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02041914",
+      "sdk_name": "CARD_Enable",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020421e8",
+      "sdk_name": "CARD_WaitBackupAsync",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020428dc",
+      "sdk_name": "CARD_WaitRomAsync",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02042b4c",
+      "sdk_name": "CARD_IsPulledOut",
+      "library": "card",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02042cd0",
+      "sdk_name": "CTRDG_IsOptionCartridge",
+      "library": "ctrdg",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02042cf8",
+      "sdk_name": "CTRDGi_IsAgbCartridgeAtInit",
+      "library": "ctrdg",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020435d0",
+      "sdk_name": "__exit",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043760",
+      "sdk_name": "__convert_from_newlines",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043904",
+      "sdk_name": "raise",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045164",
+      "sdk_name": "_ll_mod",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045174",
+      "sdk_name": "_ll_sdiv",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045324",
+      "sdk_name": "_ll_udiv",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045330",
+      "sdk_name": "_ull_mod",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045cb8",
+      "sdk_name": "_fp_init",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045cbc",
+      "sdk_name": "sys_writec",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045cd0",
+      "sdk_name": "sys_readc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045ce4",
+      "sdk_name": "sys_exit",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045d78",
+      "sdk_name": "__close_console",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045d80",
+      "sdk_name": "_Z20__DecodeSignedNumberPcPl",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045e0c",
+      "sdk_name": "_Z22__DecodeUnsignedNumberPcPm",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045e98",
+      "sdk_name": "_Z12BinarySearchP19ExceptionTableIndexmPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02045efc",
+      "sdk_name": "_Z19FindExceptionRecordPcP13ExceptionInfo",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046004",
+      "sdk_name": "_Z13CurrentActionPK14ActionIterator",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046020",
+      "sdk_name": "_Z10NextActionP14ActionIterator",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020463a8",
+      "sdk_name": "_Z11UnwindStackP12ThrowContextP13ExceptionInfoPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046c58",
+      "sdk_name": "_Z23FindMostRecentExceptionP12ThrowContextP13ExceptionInfo",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046dac",
+      "sdk_name": "_Z17IsInSpecificationPcP16ex_specification",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046e30",
+      "sdk_name": "_Z16HandleUnexpectedP12ThrowContextP13ExceptionInfoP16ex_specificationPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02046e90",
+      "sdk_name": "_Z20FindExceptionHandlerP12ThrowContextP13ExceptionInfoPl",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204706c",
+      "sdk_name": "_Z14SetupCatchInfoP12ThrowContextll",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020470c8",
+      "sdk_name": "_Z14__ThrowHandlerP12ThrowContext",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020471b4",
+      "sdk_name": "__end__catch",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020471dc",
+      "sdk_name": "__call_static_initializers",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047208",
+      "sdk_name": "__destroy_global_chain",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204724c",
+      "sdk_name": "_ZN26@unnamed@cxxabi_alloc_cpp@17DestroyArrayRangeEPhS0_mPFvPvE",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020472a8",
+      "sdk_name": "__cxa_vec_newinit",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047414",
+      "sdk_name": "__cxa_vec_dtor",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020474a4",
+      "sdk_name": "__cxa_vec_cleanup",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047500",
+      "sdk_name": "__cxa_vec_delete",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047534",
+      "sdk_name": "_ZNSt9type_infoD2Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047538",
+      "sdk_name": "_ZN10__cxxabiv117__class_type_infoD1Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204754c",
+      "sdk_name": "_ZN10__cxxabiv117__class_type_infoD0Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047568",
+      "sdk_name": "_ZN10__cxxabiv117__class_type_infoD2Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204757c",
+      "sdk_name": "_ZN10__cxxabiv120__si_class_type_infoD1Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047590",
+      "sdk_name": "_ZN10__cxxabiv120__si_class_type_infoD0Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020475ac",
+      "sdk_name": "_ZN10__cxxabiv121__vmi_class_type_infoD1Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020475c0",
+      "sdk_name": "_ZN10__cxxabiv121__vmi_class_type_infoD0Ev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020475dc",
+      "sdk_name": "_ZSt9dthandlerv",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020475e8",
+      "sdk_name": "_ZSt9duhandlerv",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020475f4",
+      "sdk_name": "_ZSt9terminatev",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204760c",
+      "sdk_name": "__register_global_object",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204762c",
+      "sdk_name": "__throw_catch_compare",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020477dc",
+      "sdk_name": "_Z15__PopStackFrameP12ThrowContextP13ExceptionInfo",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047838",
+      "sdk_name": "_Z16__SetupFrameInfoP12ThrowContextP13ExceptionInfo",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020478d8",
+      "sdk_name": "_Z20__FindExceptionTableP13ExceptionInfoPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020478f8",
+      "sdk_name": "_Z16__SkipUnwindInfoPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047928",
+      "sdk_name": "_Z17__TransferControlP12ThrowContextP13ExceptionInfoPc",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02047958",
+      "sdk_name": "__rethrow",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020479a4",
+      "sdk_name": "_ExitProcess",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0203ece0",
+      "sdk_name": "DGTi_hash2_arm4_small",
+      "library": "dgt",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043a34",
+      "sdk_name": "_d_add",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043df0",
+      "sdk_name": "_d_itod",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02043e30",
+      "sdk_name": "_d_utod",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020441e8",
+      "sdk_name": "_d_sub",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204459c",
+      "sdk_name": "_f_add",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020447c0",
+      "sdk_name": "_d_fgt",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02044858",
+      "sdk_name": "_f_feq",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02044cb8",
+      "sdk_name": "_f_itof",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02044eec",
+      "sdk_name": "_f_sub",
+      "library": "msl",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02041a40",
+      "sdk_name": "CARDi_IdentifyBackupCore",
+      "library": "card",
+      "confidence": "certain"
     }
   ],
   "objdiff_units": [
@@ -6001,6 +6673,131 @@
       "prebuilt": "mathlib/_d_div.o",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "msl/runtime/_d_div"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/fx/src/fx.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/fx/fx"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_tcm.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/os/os_tcm"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/mi/src/mi_wram.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/mi/mi_wram"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/dgt/src/hash2.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/dgt/hash2"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/dgt/src/hmac.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/dgt/hmac"
+    },
+    {
+      "source": "lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_Common/Src/signal.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/signal"
+    },
+    {
+      "prebuilt": "mathlib/_ll_div.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_ll_div"
+    },
+    {
+      "prebuilt": "mathlib/ieee_status.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/ieee_status"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(RISC_Common)/CompressedNumbers.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/CompressedNumbers"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(RISC_Common)/ExceptionHandler.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/ExceptionHandler"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(RISC_Common)/StaticInitializers.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/StaticInitializers"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(Runtime_Common)/cxxabi/cxxabi_alloc.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/cxxabi_alloc"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(Runtime_Common)/cxxabi/cxxabi_rtti.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/cxxabi_rtti"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/(Runtime_Common)/MWException.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/MWException"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/Runtime_ARM/(Common_Source)/ExceptionHandlerTS.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/ExceptionHandlerTS"
+    },
+    {
+      "object": "build/lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/Runtime_ARM/(Common_Source)/__NITRO_eabi_init.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/__NITRO_eabi_init"
+    },
+    {
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/dgt/sha1s-arm4cw",
+      "object": "build/lib/NitroSDK/libraries/dgt/asm/sha1s-arm4cw.o"
+    },
+    {
+      "prebuilt": "mathlib/_d_add.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_add"
+    },
+    {
+      "prebuilt": "mathlib/_d_itod.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_itod"
+    },
+    {
+      "prebuilt": "mathlib/_d_sub.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_d_sub"
+    },
+    {
+      "prebuilt": "mathlib/_f_add.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_add"
+    },
+    {
+      "prebuilt": "mathlib/_f_cmp.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_cmp"
+    },
+    {
+      "prebuilt": "mathlib/_f_itof.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_itof"
+    },
+    {
+      "prebuilt": "mathlib/_f_sub.o",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/runtime/_f_sub"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/card/src/card_spi.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "sdk/card/card_spi"
     }
   ]
 }

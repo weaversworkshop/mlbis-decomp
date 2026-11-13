@@ -5,9 +5,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-import is_interleaved
-from common import BUILD, CONFIG, die, load_json
-from is_interleaved import read_relocs, word_symbols
+from common import BUILD, CONFIG, die, load_json, read_relocs, word_symbols
 
 DELINK_CODE = re.compile(r"start:0x(?P<s>[0-9a-fA-F]+)\s+end:0x(?P<e>[0-9a-fA-F]+)\s+kind:code")
 
@@ -139,7 +137,6 @@ def main():
         comps[uf.find(n)].append(n)
 
     match, home = load_match(args.report)
-    affil = is_interleaved.affiliation()
 
     def done(m):
         return match.get(m, 0) >= 100.0
@@ -154,29 +151,26 @@ def main():
             continue
         shared = sorted({d for m in members for d in fn_data[m] if d in grouping_data},
                         key=lambda d: -len(grouping_data[d]))
-        sdk = sorted({affil[m] for m in members if m in affil})
-        clusters.append((funcs[members[0]][0], members, opent, shared, sdk))
+        clusters.append((funcs[members[0]][0], members, opent, shared))
 
     clusters.sort()
     print(f"=== module '{args.module}': {len(clusters)} candidate TU(s) "
           f"(mode: {'calls+data' if args.calls else 'data-only'}, "
           f"shared-window {args.min_shared}-{args.max_shared}, span<=0x{args.max_span:x}) ===")
     print("    legend: [x]=matched 100%  [~]=partial  [ ]=todo   |homes shown for matched|\n")
-    for addr0, members, opent, shared, sdk in clusters:
+    for addr0, members, opent, shared in clusters:
         tot = sum(funcs[m][1] for m in members)
         ndone = len(members) - len(opent)
-        sdk_s = f"   SDK-affiliated: {', '.join(sdk)}" if sdk else ""
         print(f"@0x{addr0:08x}  {len(members)} fn ({ndone} done / {len(opent)} todo), "
-              f"0x{tot:x} bytes   shared: {', '.join(shared[:4]) if shared else '(call-graph only)'}{sdk_s}")
+              f"0x{tot:x} bytes   shared: {', '.join(shared[:4]) if shared else '(call-graph only)'}")
         homes = sorted({home[m] for m in members if done(m) and m in home})
         for m in members:
             a, s = funcs[m]
             pct = match.get(m)
             mk = "[x]" if (pct is not None and pct >= 100) else ("[~]" if pct else "[ ]")
             hm = f"  @{home.get(m)}" if done(m) else ""
-            af = "  *SDK*" if m in affil else ""
             dl = sorted(d for d in fn_data[m] if d in grouping_data)
-            print(f"    {mk} 0x{a:08x} {m:28} 0x{s:<4x}{hm}{af}"
+            print(f"    {mk} 0x{a:08x} {m:28} 0x{s:<4x}{hm}"
                   f"{('  -> ' + ', '.join(dl)) if dl else ''}")
         if len(homes) > 1:
             print(f"      ^ {len(homes)} matched members live in SEPARATE files -> consolidate into one TU")

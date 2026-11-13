@@ -28,7 +28,7 @@ export MWCIncludes := $(INCLUDE_DIR)
 export LM_LICENSE_FILE := $(abspath $(LICENSE))
 
 # -DSDK_TS: BIS's SDK target (overlay-digest + mmap sizes). See memory/project_sdk_drift.
-MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -nowraplines -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
+MWC_FLAGS := -proc arm946e -O4,p -ipa file -interworking -inline on -sym on -enum int -lang=c99 -Cpp_exceptions off -gccext,on -gccinc -msgstyle gcc -nowraplines -char signed -DSDK_ARM9 -DSDK_FINALROM -DSDK_THREAD_INFINITY -DSDK_CODE_ARM -DSDK_TS -DSDK_4M -i $(INCLUDE_DIR) -i $(SHIM_INCLUDE) -i $(SDK_INCLUDE) -i $(NNS_INCLUDE) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -include ansi_prefix.ARM.h
 
 # rwildcard (recursive $(wildcard)) walked ~2.4k lib files on EVERY make invocation
 # and cost ~0.5s of the 0.8s parse. One `find` per tree does the same job ~4x faster;
@@ -40,22 +40,26 @@ rfind = $(shell $(FIND) $(1) -name '$(2)' 2>/dev/null)
 # ONE walk of lib/, partitioned with $(filter); four separate finds cost four spawns.
 LIB_ALL_C    := $(call rfind,lib,*.c)
 LIB_C_FILES  := $(filter-out lib/NitroSDK/% lib/mw-libraries/% lib/NitroSystem/%,$(LIB_ALL_C))
-# Whole library surface (NitroSDK + NitroSystem + DS2.0 MSL) for tu_diff content-match.
+# Whole library surface (NitroSDK + NitroSystem + DS2.0 MSL).
 MSL := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C
 SDK_C_FILES  := $(filter lib/NitroSDK/libraries/% lib/NitroSystem/% \
                          lib/mw-libraries/ARM_EABI_Support_DS2.0/% lib/syscall/%,$(LIB_ALL_C))
 
-# DS2.0's MSL tree lacks <ctime>; borrow it from ARM_EABI_Support for these 6 only.
-MSL_CTIME_FB := lib/mw-libraries/ARM_EABI_Support/msl/MSL_C/MSL_Common/Include
-MSL_NEEDS_CTIME := $(MSL)/MSL_Common/Src/printf.c $(MSL)/MSL_Common/Src/scanf.c \
-            $(MSL)/MSL_Common/Src/time.c $(MSL)/MSL_Common/Src/char_io.c \
-            $(MSL)/MSL_Common/Src/direct_io.c $(MSL)/MSL_Common/Src/mbstring.c
-$(MSL_NEEDS_CTIME:%.c=$(BUILD_DIR)/%.o): EXTRA_CFLAGS += -i $(MSL_CTIME_FB)
-
-# Can't compile standalone: alloc.c (needs _MSL_HEAP_* prefix); wchar.
-SDK_SKIP := $(MSL)/MSL_Common/Src/alloc.c \
-            $(wildcard $(MSL)/MSL_Common/Src/w*.c) \
-            lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_Extras/MSL_Common/Src/extras.c
+# MSL + Runtime build with the vendor library config, not the game flags (notes/msl_build.md).
+MSL_ROOT := lib/mw-libraries/ARM_EABI_Support_DS2.0
+MSL_GEN  := $(BUILD_DIR)/mslgen
+MSL_INC  := -i $(MSL_GEN) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -i $(SDK_INCLUDE) \
+            -i $(MSL)/MSL_Common_Embedded/Math/Include \
+            -i $(MSL_ROOT)/msl/MSL_Extras/MSL_Common/Include -i $(MSL_ROOT)/msl/MSL_Extras/MSL_ARM/Include
+MSL_BASE := -proc arm946e -interworking -sym off -opt level=4,speed -iso_templates on -ipa file \
+            -Cpp_exceptions on -gccinc -msgstyle gcc -nowraplines
+MSL_FLAGS := $(MSL_BASE) -char signed -include PREFIX_NITRO.h $(MSL_INC)
+RT := $(MSL_ROOT)/Runtime
+RT_FLAGS = $(MSL_BASE) $(MSL_INC) -i $(MSL_ROOT)/msl/MSL_C++/MSL_Common/Include \
+           -i $(MSL_ROOT)/msl/MSL_C++/MSL_ARM/Include -i "$(RT)/(Runtime_Common)" \
+           -i "$(RT)/(Runtime_Common)/MWRuntime" -i "$(RT)/(Runtime_Common)/cxxabi" \
+           -i "$(RT)/(RISC_Common)" -i "$(RT)/Runtime_ARM/(Common_Source)"
+SDK_SKIP := $(foreach f,$(SDK_C_FILES),$(if $(findstring /ARM7/,$f)$(findstring /wl_arm7/,$f),$f))
 # Runtime helpers live in dirs with '(' that break recipe shells; compiled via find in `sdk`.
 SDK_RUNTIME  := $(filter lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime/%,$(LIB_ALL_C))
 SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
@@ -74,7 +78,8 @@ SRC_ALL   := $(shell $(FIND) arm9/src \( -name '*.c' -o -name '*.cpp' \) 2>/dev/
 C_FILES   := $(filter %.c,$(SRC_ALL)) $(LIB_C_FILES) $(SDK_DIFF_FILES)
 CXX_FILES := $(filter %.cpp,$(SRC_ALL))
 OBJ_FILES := $(C_FILES:%.c=$(BUILD_DIR)/%.o) $(CXX_FILES:%.cpp=$(BUILD_DIR)/%.o)
-SDK_OBJ_FILES := $(SDK_C_FILES:%.c=$(BUILD_DIR)/%.o)
+DGT_ASM_OBJ := $(addprefix $(BUILD_DIR)/lib/NitroSDK/libraries/dgt/asm/,sha1-arm4cw.o sha1s-arm4cw.o)
+SDK_OBJ_FILES := $(SDK_C_FILES:%.c=$(BUILD_DIR)/%.o) $(DGT_ASM_OBJ)
 
 DSD_CONFIG_DEPS := $(shell $(FIND) config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
@@ -85,7 +90,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-sweep sdk-sweep-all sdk-check sdk-audit offsets offsets-apply
+.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-propose sdk-audit offsets offsets-apply
 
 # A failing compile under -j printed its diagnostics, then make kept echoing the
 # in-flight jobs after it. Defer the failure: record it, let the others finish, and
@@ -125,9 +130,9 @@ sdk: $(FX_CONST_H)
 	@mkdir -p $(BUILD_DIR)
 	@echo "Compiling $(words $(SDK_C_FILES)) library .c files (+ MSL Runtime)..."
 	@$(MAKE) -k $(SDK_OBJ_FILES) 2> $(BUILD_DIR)/sdk_build.log; \
-	  find lib/mw-libraries/ARM_EABI_Support_DS2.0/Runtime -name '*.c' ! -name '__NITRO_eabi_init.c' | while IFS= read -r c; do \
-	    o="$(BUILD_DIR)/$${c%.c}.o"; mkdir -p "$$(dirname "$$o")"; \
-	    $(MWCCARM) $(MWC_FLAGS) -i $(MSL)/MSL_Common_Embedded/Math/Include -c -o "$$o" "$$c" 2>> $(BUILD_DIR)/sdk_build.log || true; \
+	  find $(RT) \( -name '*.c' -o -name '*.cpp' \) | while IFS= read -r c; do \
+	    o="$(BUILD_DIR)/$${c%.*}.o"; mkdir -p "$$(dirname "$$o")"; \
+	    $(MWCCARM) $(RT_FLAGS) -c -o "$$o" "$$c" 2>> $(BUILD_DIR)/sdk_build.log || echo "Error 1: $$c" >> $(BUILD_DIR)/sdk_build.log; \
 	  done; \
 	  ok=$$($(FIND) $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | wc -l); \
 	  fail=$$(grep -c "Error 1" $(BUILD_DIR)/sdk_build.log 2>/dev/null || echo 0); \
@@ -238,31 +243,14 @@ obj-match: delinks
 check-relocs: delinks
 	python $(SCRIPTS)/check_relocs.py
 
-# SDK provenance (need `make sdk` first). sweep=DISCOVERY (tu_diff), check=VERIFY (sdk_equiv).
-# GAP picks the gap (default main_7; itcm_1/dtcm_1 for TCM-resident SDK).
-#   make sdk-sweep [GAP=itcm_1]  |  make sdk-sweep-all
-#   make sdk-check FUNC="func_xxxx ..." [GAP=itcm_1] [SDK_EQUIV_ARGS=-v]
+# SDK identity proposals (need `make sdk` first): make sdk-propose [GAP=itcm_1] [SDK_PROPOSE_ARGS="-v --apply"]
 GAP ?= main_7
-GAP_O = $(BUILD_DIR)/delinks/_dsd_gap@$(GAP).o
-sdk-sweep: delinks
-	@python $(SCRIPTS)/tu_diff.py --all --new --gap-o $(GAP_O)
+sdk-propose: delinks
+	@python $(SCRIPTS)/sdk_propose.py --gap $(GAP) $(SDK_PROPOSE_ARGS)
 
-sdk-sweep-all: delinks
-	@for g in $(BUILD_DIR)/delinks/_dsd_gap@*.o; do \
-		out=$$(python $(SCRIPTS)/tu_diff.py --all --new --gap-o "$$g" 2>/dev/null); \
-		echo "$$out" | grep -qF '[NEW' && { echo "##### $$g #####"; echo "$$out"; } || true; \
-	done
-
-# sdk-audit: which SDK .c fail to compile (tu_diff blind spots).
+# sdk-audit: which SDK .c fail to compile (blind spots).
 sdk-audit:
 	@python $(SCRIPTS)/sdk_compile_audit.py --reasons
-
-FUNC ?=
-SDK_EQUIV_ARGS ?=
-sdk-check: delinks
-	@test -n "$(FUNC)" || { echo 'usage: make sdk-check FUNC="func_xxxx [func_yyyy ...]" [SDK_EQUIV_ARGS=-v]'; exit 2; }
-	@test -n "$$($(FIND) $(BUILD_DIR)/lib -name '*.o' 2>/dev/null | head -1)" || { echo "No SDK objects in $(BUILD_DIR)/lib -- run 'make sdk' first."; exit 2; }
-	@python $(SCRIPTS)/sdk_equiv.py $(FUNC) --gap-o $(GAP_O) $(SDK_EQUIV_ARGS)
 
 # Mermaid call graph (game-only by default). Scope via CALLGRAPH_ARGS, e.g.
 #   make callgraph CALLGRAPH_ARGS="--root func_0200907c --undone"
@@ -272,8 +260,8 @@ callgraph: all delinks
 	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
 
 # Per-file overrides: MWCC_OVERRIDE (compiler), EXTRA_CFLAGS (defines).
-$(BUILD_DIR)/lib/NitroSDK/libraries/mi/src/mi_memory.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
-$(BUILD_DIR)/lib/NitroSDK/libraries/init/src/crt0.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS
+$(BUILD_DIR)/lib/NitroSDK/%.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS -DSDK_PATCH3
+$(BUILD_DIR)/lib/NitroSDK/libraries/dgt/%.o: EXTRA_CFLAGS += -include nitro.h
 
 # Game TUs = sp2p3 (SDK stays sp1p2). b138 == b139 output project-wide (verified
 # 2026-07-24); sp2p3 (2008-06) predates JP ship, sp2p4 (2009-06) does not.
@@ -331,11 +319,17 @@ $(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.c
 	@mkdir -p $(@D)
 	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -i $(dir $<) -i $(dir $<)../include $(EXTRA_CFLAGS) -c -o $@ $<
 
+$(BUILD_DIR)/lib/NitroSDK/%.o: lib/NitroSDK/%.s
+	@mkdir -p $(@D)
+	$(dir $(MWCCARM))mwasmarm.exe -proc arm5TE -16 -gccinc -i lib/NitroSDK/include -o $@ $<
+
 $(BUILD_DIR)/lib/NitroSystem/%.o: lib/NitroSystem/%.c
 	@mkdir -p $(@D)
 	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -DNNS_FINALROM -i $(dir $<) -i $(dir $<)../include -i $(dir $<)../../include $(EXTRA_CFLAGS) -c -o $@ $<
 
-# MSL C runtime: the double-precision math sources need the fdlibm include dir.
-$(BUILD_DIR)/lib/mw-libraries/%.o: lib/mw-libraries/%.c
+$(MSL_GEN)/PREFIX_NITRO.h: $(SCRIPTS)/gen_msl_headers.py
+	python $< $(MSL_GEN)
+
+$(BUILD_DIR)/lib/mw-libraries/%.o: lib/mw-libraries/%.c | $(MSL_GEN)/PREFIX_NITRO.h
 	@mkdir -p $(@D)
-	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MWC_FLAGS) -i $(MSL)/MSL_Common_Embedded/Math/Include $(EXTRA_CFLAGS) -c -o $@ $<
+	$(or $(MWCC_OVERRIDE),$(MWCCARM)) $(MSL_FLAGS) $(EXTRA_CFLAGS) -c -o $@ $<

@@ -155,16 +155,18 @@ class Elf:
         return self._funcs
 
     def _asm_extent(self, sym):
-        if sym["size"] or not sym["shndx"] or sym["shndx"] >= len(self.sections):
+        if not sym["shndx"] or sym["shndx"] >= len(self.sections):
             return sym
         sec = self.sections[sym["shndx"]]
         if not sec["flags"] & SHF_EXECINSTR:
             return sym
+        if sym["size"]:
+            return dict(sym, type=STT_FUNC, asm=True, size=min(sym["size"], sec["size"] - sym["value"]))
         ends = [s["value"] for s in self.symbols
                 if s["shndx"] == sym["shndx"] and s["name"] and not s["name"].startswith("$")
                 and s["value"] > sym["value"]]
         end = min(ends, default=sec["size"])
-        return dict(sym, type=STT_FUNC, size=end - sym["value"])
+        return dict(sym, type=STT_FUNC, asm=True, size=end - sym["value"])
 
     def data_objects(self):
         """name -> (section_class, symbol, comdat)."""
@@ -372,8 +374,19 @@ def run_unit(unit, cache, claimed, verbose):
     base = Elf(ROOT / base_path)
     tfuncs = tgt.functions()
     fns, missing, gaps = [], [], set()
-    bfuncs = sorted(((n, s) for n, syms in base.functions().items() for s in syms),
+    bfuncs = sorted(((n, dict(s)) for n, syms in base.functions().items() for s in syms),
                     key=lambda kv: kv[1]["value"])
+    # hand-asm interior label the target has no symbol for: part of the entry before it
+    named = {(s["shndx"], s["value"]) for n, s in bfuncs if n in tfuncs}
+    for name, sym in bfuncs:
+        if sym.get("asm") and (sym["shndx"], sym["value"]) not in named:
+            heads = [p for _, p in bfuncs if p["shndx"] == sym["shndx"] and p is not sym
+                     and p["value"] + p["size"] == sym["value"]]
+            for p in heads:
+                p["size"] += sym["size"]
+            if heads:
+                sym["size"] = 0
+    bfuncs = [kv for kv in bfuncs if kv[1]["size"]]
     for name, sym in bfuncs:
         cands = tfuncs.get(name)
         if not cands:
