@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import argparse
+import bisect
 import re
 import sys
 from pathlib import Path
 
 from common import CONFIG, INCLUDE, ROOT
 
-MERGE_SYM_RE = re.compile(r"^(?P<name>\w+)\s+.*\baddr:0x(?P<addr>[0-9a-fA-F]+)\b")
+MERGE_SYM_RE = re.compile(r"^(?P<name>[\w$]+)\s+.*\baddr:0x(?P<addr>[0-9a-fA-F]+)\b")
 REBASE_SYM_RE = re.compile(r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:)0x(?P<addr>[0-9a-fA-F]+)"
                            r"(?P<tail>.*?)\s*$")
 
@@ -261,9 +262,147 @@ def rebase(args):
         print("DRY RUN -- pass --apply to write the dsd config.")
 
 
+PLACE_SECTIONS = (".bss", ".sbss", ".data", ".sdata", ".rodata")
+
+
+def place(args):
+    import json
+    from collections import Counter
+    from obj_match import Elf, STT_OBJECT
+
+    sym_path = CONFIG / "symbols.txt"
+    lines = sym_path.read_text(encoding="utf-8").splitlines()
+    by_name, by_addr = {}, {}
+    for line in lines:
+        m = MERGE_SYM_RE.match(line)
+        if m and "kind:function" not in line:
+            a = int(m.group("addr"), 16)
+            by_name.setdefault(m.group("name"), []).append(a)
+            by_addr[a] = m.group("name")
+    data_addrs = sorted(by_addr)
+    rom_relocs = {}
+    rel_re = re.compile(r"from:0x([0-9a-fA-F]+)\b.*?\bto:0x([0-9a-fA-F]+)\b(?:\s+add:(-?0x[0-9a-fA-F]+))?")
+    for line in (CONFIG / "relocs.txt").read_text(encoding="utf-8").splitlines():
+        if (m := rel_re.search(line)):
+            rom_relocs[int(m.group(1), 16)] = int(m.group(2), 16) + (int(m.group(3), 16) if m.group(3) else 0)
+
+    units = json.loads((ROOT / "objdiff.json").read_text(encoding="utf-8"))["units"]
+    units = [u for u in units if (u["name"] in args.unit if args.unit else not u["name"].startswith("main/"))]
+
+    renames, adds, issues = {}, {}, []
+    for u in units:
+        obj = ROOT / u["base_path"]
+        if not obj.is_file():
+            continue
+        elf = Elf(obj)
+        secs = {}
+        for s in elf.symbols:
+            if (s["type"] != STT_OBJECT or not s["size"] or not s["name"] or s["name"][0] in "@."
+                    or not 0 < s["shndx"] < len(elf.sections)):
+                continue
+            sname = elf.sections[s["shndx"]]["name"]
+            if sname.startswith(PLACE_SECTIONS):
+                secs.setdefault(s["shndx"], []).append(s)
+        bases, bad = {}, set()
+
+        def settle(sh, votes, why):
+            if len(votes) > 1:
+                issues.append(f"CONFLICT {u['name']} {elf.sections[sh]['name']}: {why} disagree on base "
+                              + ", ".join(f"0x{b:08x}x{n}" for b, n in votes.items()))
+                bad.add(sh)
+            elif votes:
+                bases[sh] = next(iter(votes))
+
+        for sh, objs in secs.items():
+            settle(sh, Counter(by_name[o["name"]][0] - o["value"] for o in objs
+                               if len(by_name.get(o["name"], ())) == 1), "named anchors")
+        # pointers inside placed data pin the sections they point into
+        while True:
+            votes = {}
+            for sh in list(bases):
+                for off, (_, _, si, add) in elf.relocs.get(sh, {}).items():
+                    hit = rom_relocs.get(bases[sh] + off)
+                    dst = elf.symbols[si] if si < len(elf.symbols) else None
+                    if hit is None or add is None or not dst or dst["shndx"] not in secs:
+                        continue
+                    if dst["shndx"] in bases or dst["shndx"] in bad:
+                        continue
+                    votes.setdefault(dst["shndx"], Counter())[hit - dst["value"] - add] += 1
+            if not votes:
+                break
+            for sh, v in votes.items():
+                settle(sh, v, "data pointers")
+        for sh, objs in secs.items():
+            if sh not in bases:
+                continue
+            sname, base = elf.sections[sh]["name"], bases[sh]
+            for o in sorted(objs, key=lambda o: o["value"]):
+                a, name = base + o["value"], o["name"]
+                cur = by_addr.get(a)
+                if cur == name:
+                    pass
+                elif cur is None:
+                    adds[a] = (name, "kind:bss" if "bss" in sname else "kind:data(any)", u["name"])
+                elif re.fullmatch(r"data_[0-9a-f]{8}", cur):
+                    renames[a] = (cur, name, u["name"])
+                else:
+                    issues.append(f"CONFLICT {u['name']}: {name} @ 0x{a:08x} but symbols.txt has {cur}")
+                    continue
+                i = bisect.bisect_right(data_addrs, a)
+                inside = []
+                while i < len(data_addrs) and data_addrs[i] < a + o["size"]:
+                    inside.append(by_addr[data_addrs[i]])
+                    i += 1
+                if inside:
+                    issues.append(f"SPLIT {u['name']}: {name} @ 0x{a:08x} size 0x{o['size']:x} contains "
+                                  f"{' '.join(inside)} -> data_syms.py merge {cur or name} {' '.join(inside)}")
+
+    for a, (old, new, unit) in sorted(renames.items()):
+        print(f"rename 0x{a:08x} {old} -> {new}  ({unit})")
+    for a, (name, kind, unit) in sorted(adds.items()):
+        print(f"add    0x{a:08x} {name} {kind}  ({unit})")
+    for msg in issues:
+        print(msg)
+    print(f"{len(renames)} renames, {len(adds)} adds, {len(issues)} issues")
+    if not args.apply:
+        print("DRY RUN -- pass --apply to write symbols.txt + sdk_mappings.json.")
+        return
+
+    out = []
+    for line in lines:
+        m = MERGE_SYM_RE.match(line)
+        a = int(m.group("addr"), 16) if m else None
+        if m and a in renames and "kind:function" not in line:
+            line = renames[a][1] + line[len(m.group("name")):]
+        out.append(line)
+    for a, (name, kind, _) in sorted(adds.items()):
+        new = f"{name} {kind} addr:0x{a:08x}"
+        j = next((k for k, l in enumerate(out) if (m := MERGE_SYM_RE.match(l))
+                  and "kind:function" not in l and int(m.group("addr"), 16) > a), len(out))
+        out.insert(j, new)
+    sym_path.write_text("\n".join(out) + "\n", encoding="utf-8")
+
+    mpath = ROOT / "config" / "sdk_mappings.json"
+    data = json.loads(mpath.read_text(encoding="utf-8"))
+    maps = data["mappings"]
+    for a, name, unit in ([(a, n, u) for a, (_, n, u) in renames.items()]
+                          + [(a, n, u) for a, (n, _, u) in adds.items()]):
+        entry = {"addr": f"0x{a:08x}", "sdk_name": name, "library": "data", "confidence": "certain",
+                 "note": f"{unit} (placed from section base: data_syms.py place)"}
+        lower = [i for i, e in enumerate(maps) if int(e["addr"], 16) < a]
+        maps.insert(max(lower, key=lambda i: int(maps[i]["addr"], 16)) + 1 if lower else 0, entry)
+    mpath.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    print("applied; then: rm -f build/delinks/.stamp && make progress")
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
+
+    p = sub.add_parser("place", help="name/add a unit's data objects from its .o section layout")
+    p.add_argument("--unit", action="append", help="objdiff unit (repeatable; default: all non-main/)")
+    p.add_argument("--apply", action="store_true")
+    p.set_defaults(fn=place)
 
     p = sub.add_parser("merge", help="fold data_* symbols into BASE (symbols.txt + relocs.txt)")
     p.add_argument("base", help="base symbol to keep (becomes the array)")

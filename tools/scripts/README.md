@@ -83,7 +83,8 @@ imports `patch()`.
 Reloc-aware byte match of every `objdiff.json` unit vs the delinked target: words compared with relocated
 bits masked, each reloc compared as (kind, symbol, addend), section-relative relocs and reloc-less branches
 resolved to symbols first. **100.00% = identical after linking**; any real diff caps at 99.99%. Also scores
-homed data objects. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
+homed data objects; a duplicated data name (same `static` in two TUs) is scored against every same-named
+target and the best unclaimed one kept. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
 sized to the next symbol or section end.
 `obj_match.py [--config objdiff.json] [--out -|FILE] [--unit main/X ...] [--text] [-v]`
 - `make progress` (piped into `build_todo`), `make obj-match [UNIT=main/X] [OBJ_MATCH_ARGS=-v]`.
@@ -131,6 +132,13 @@ Catalog of every named gap data symbol per section: address, extent (distance to
 count across all modules; flags 0-ref and "small, few refs" symbols (likely fake delinker aliases).
 `data_catalog.py [--gap asm/_dsd_gap@main_7.s] [-o main_7_data.md] [--query NAME|0xADDR]`
 - Main module only; `-o` is repo-root relative. `build_todo` imports its parsers.
+- `--owners [--report om.json]`: owner census of unhomed objects → `build/main_7_owners.md`. Per object:
+  nearest homed (code-bearing) neighbours, the `.text` window they bracket, window∩referencers, all refs
+  (code unit / `` `sym`@unit `` from data / `ovNNN`, interior `+0x..`). Runs obj_match if no report.
+  Spans skip `__sinit_*` (`.init`) and any function emitted by >1 unit (header inlines, thunks).
+  `**INVERTED**` = neighbours' `.text` order contradicts layout: a mis-homed/mis-identified neighbour.
+- `--dump NAME|0xADDR [--width 1|2|4] [--per-line N]`: ROM contents as a C initializer; reloc'd words
+  print as `&sym + 0x..`, leftover bytes as a trailing comment.
 
 ---
 
@@ -183,6 +191,13 @@ Checks/annotates trailing `// +0xNN` on named members in `arm9/include/main` and
 
 ### data_syms.py
 Fixes dsd's data-symbol splits. **Config-only and dry-run unless `--apply`.**
+- `place [--unit U ...]` (default: every non-`main/` unit): places a unit's `.o` data objects in main's
+  `symbols.txt`. A section's ROM base comes from its uniquely-named placed objects, then iteratively from
+  reloc pairs inside placed data (`.rela.data` vs `relocs.txt`); every object is then renamed (`data_x`),
+  added (pool interior, no dsd symbol) or confirmed. Reports `SPLIT` (symbols inside an object → `merge`)
+  and `CONFLICT` (anchors disagree — never guessed). `--apply` writes `symbols.txt` + `sdk_mappings.json`;
+  then `rm -f build/delinks/.stamp && make progress`. Run after `sdk-propose --apply` until 0 changes.
+  `@NNNN` (anonymous) objects are skipped; `name$NNNN` function statics are placed.
 - `merge BASE ELEM... [--elem-size N] [--config-dir D]`: drop ELEM symbols, re-point relocs `to:<elem>` →
   `to:<base> add:<off>`. Refuses if ELEMs aren't after BASE, cross modules, or leave an unmerged symbol between.
 - `merge-source BASE ELEM... --elem-size N [--addr-from F] [--src-root D] [--globals H]`: source side — size

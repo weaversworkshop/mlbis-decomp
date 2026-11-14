@@ -75,15 +75,14 @@ public:
 
     clScriptSystem();  // C2 0x02015ebc
     virtual ~clScriptSystem();  // D1 0x02015ee8 D0 0x02015eec D2 0x02015f00
-
     virtual void setOpInfo(EventOpInfo *);  // 0x02015f04
+    virtual s32 getVar(EventContext *, u32) = 0;
 };
 
 class clGlobalEvent : public clScriptSystem {
 public:    
     clGlobalEvent();  // C1 0x02016160
     virtual ~clGlobalEvent();  // D1 0x02016190 D0 0x020161a4 D2 0x020161c0
-    
     virtual s32  getVar(EventContext *, u32);  // 0x02017614
     virtual u32  execCustom(EventContext *, EventInstruction *);  // 0x02017600
     virtual s32  getCustomVariable(EventContext *, u32);  // 0x02017608

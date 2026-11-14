@@ -5,7 +5,7 @@ polygonIdCounter kind:data(any) addr:0x027e0024
 lightDir kind:data(any) addr:0x027e0028
 oamShapeSizes kind:data(any) addr:0x027e0034
 oamShapes kind:data(any) addr:0x027e004c
-data_027e007c kind:data(any) addr:0x027e007c
+OS_IRQTable kind:data(any) addr:0x027e007c
 data_027e00e0 kind:bss addr:0x027e00e0
 data_027e00e4 kind:bss addr:0x027e00e4
 data_027e00e8 kind:bss addr:0x027e00e8

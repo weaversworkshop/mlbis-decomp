@@ -20,6 +20,7 @@ public:
 
     clTask(u8, u32, u32);  // C2 0x0201a39c
     virtual ~clTask();  // D1 0x0201a49c D0 0x0201a508 D2 0x0201a588
+    virtual void run(void) = 0;
 
     void disable(void);  // 0x0201a5f4
     void enable(void);  // 0x0201a610
@@ -39,6 +40,7 @@ public:
 
     clVBlankTask(u8, u32, u32);  // C1 0x0201a69c
     virtual ~clVBlankTask();  // D1 0x0201a794 D0 0x0201a800 D2 0x0201a880
+    virtual void func_ov008_02064558(void) = 0;
 
     void enable(void);  // 0x0201a8ec
 };

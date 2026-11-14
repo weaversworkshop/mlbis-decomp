@@ -17,6 +17,8 @@ CAND_DIRS = ["build/lib", "build/prebuilt"]
 PLACEHOLDER = re.compile(r"^(func|data)_(ov\d+_)?[0-9a-f]{8}$|^\.L_")
 LOCAL = re.compile(r"^@\d+$|\$\d+$|^const 0x|^__\w+__$|^SDK_")
 IDENT = re.compile(r"^[A-Za-z_]\w*$")
+DATA_IDENT = re.compile(r"^[A-Za-z_][\w$]*$")
+DATA_LOCAL = re.compile(r"^@\d+$|^const 0x|^__\w+__$|^SDK_")
 
 
 def is_placeholder(name):
@@ -155,8 +157,8 @@ def main():
                         renames.setdefault(tname, sname)
                 for (_, tk), (_, bk) in zip(ttoks[a], btoks):
                     if (tk and bk and tk[0] == bk[0] == "abs32" and tk[2] == bk[2] == 0
-                            and tk[1].startswith("data_") and IDENT.match(bk[1])
-                            and not LOCAL.search(bk[1])):
+                            and tk[1].startswith("data_") and DATA_IDENT.match(bk[1])
+                            and not DATA_LOCAL.search(bk[1])):
                         votes[tk[1]].add(bk[1])
 
     bylen = defaultdict(list)

@@ -5,6 +5,7 @@ import json
 import struct
 import sys
 from bisect import bisect_right
+from collections import Counter
 from pathlib import Path
 
 import common
@@ -55,6 +56,8 @@ class Elf:
         self._sec_syms = None
         self._funcs = None
         self._data_objs = None
+        self._data_cands = None
+        self._sec_base = {}
         self._map_syms = None
 
     def _cstr(self, off):
@@ -183,6 +186,33 @@ class Elf:
                     self._data_objs[sym["name"]] = (cls, sym, sym["bind"] == STB_COMDAT)
         return self._data_objs
 
+    def data_candidates(self):
+        """name -> [(section_class, symbol, comdat)]: every same-named object (duplicate statics)."""
+        if self._data_cands is None:
+            self._data_cands = {}
+            for sym in self.symbols:
+                if sym["type"] != STT_OBJECT or not sym["name"] or not sym["size"]:
+                    continue
+                if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
+                    continue
+                cls = next((c for c in DATA_SECTIONS
+                            if self.sections[sym["shndx"]]["name"].startswith(c)), None)
+                if cls:
+                    self._data_cands.setdefault(sym["name"], []).append(
+                        (cls, sym, sym["bind"] == STB_COMDAT))
+        return self._data_cands
+
+    def abs_addr(self, sym):
+        """Absolute address of a section-relative symbol, the section base voted by unique names."""
+        sh = sym["shndx"]
+        if sh not in self._sec_base:
+            votes = Counter(a - s["value"] for s in self.symbols
+                            if s["shndx"] == sh and s["name"] and s["name"] not in _SYM_DUPS
+                            and (a := sym_addr(s["name"])) is not None)
+            self._sec_base[sh] = votes.most_common(1)[0][0] if votes else None
+        base = self._sec_base[sh]
+        return None if base is None else base + sym["value"]
+
 
 def norm_kind(rtype):
     if rtype in CALL_RELOCS:
@@ -243,6 +273,7 @@ def tokenize(elf, sym, is_code=True):
 
 _SYM_ADDRS = None
 _SYM_SORTED = None
+_SYM_DUPS = set()
 
 
 def _load_symbols():
@@ -250,10 +281,11 @@ def _load_symbols():
     if _SYM_ADDRS is not None:
         return
     _SYM_ADDRS = {}
-    if common.SYMBOLS.exists():
-        for sym in read_symbols():
-            _SYM_ADDRS.setdefault(sym.name, sym.addr)
-    _SYM_SORTED = sorted((a, n) for n, a in _SYM_ADDRS.items())
+    allsyms = read_symbols() if common.SYMBOLS.exists() else []
+    for sym in allsyms:
+        _SYM_ADDRS.setdefault(sym.name, sym.addr)
+    _SYM_SORTED = sorted({(s.addr, s.name) for s in allsyms})
+    _SYM_DUPS.update(n for n, c in Counter(s.name for s in allsyms).items() if c > 1)
 
 
 def sym_addr(name):
@@ -408,31 +440,39 @@ def run_unit(unit, cache, claimed, verbose):
             "size": tsym["size"],
             "fuzzy_match_percent": pct,
         })
-    tdata = tgt.data_objects()
+    tdata = tgt.data_candidates()
     objs, missing_data = [], []
     for name, (cls, bsym, comdat) in sorted(base.data_objects().items(),
                                             key=lambda kv: kv[1][1]["value"]):
-        hit = tdata.get(name)
-        if hit is None:
+        hits = tdata.get(name)
+        if not hits:
             if not comdat:
                 missing_data.append(name)
             continue
-        tcls, tsym, _ = hit
-        # target size is an extent (distance to next symbol): score the common prefix
-        ttoks = tokenize(tgt, tsym, is_code=False)
         btoks = tokenize(base, bsym, is_code=False)
-        k = min(len(ttoks), len(btoks))
-        pct, obj_gaps = compare(ttoks[:k], btoks[:k])
+        scored = []
+        for tcls, tsym, _ in hits:
+            # target size is an extent (distance to next symbol): score the common prefix
+            ttoks = tokenize(tgt, tsym, is_code=False)
+            k = min(len(ttoks), len(btoks))
+            pct, obj_gaps = compare(ttoks[:k], btoks[:k])
+            addr = sym_addr(name) if len(hits) == 1 else tgt.abs_addr(tsym)
+            inside = interior_syms(addr, bsym["size"]) if addr else []
+            status = data_status(tgt, tsym, bsym, pct, addr, inside)
+            key = (tgt_path, "data", tsym["shndx"], tsym["value"])
+            rank = (status in ("ok", "pad"), key not in claimed, pct)
+            scored.append((rank, tcls, tsym, pct, obj_gaps, addr, inside, status, key))
+        _, tcls, tsym, pct, obj_gaps, addr, inside, status, key = max(scored, key=lambda r: r[0])
+        if len(hits) > 1 and status in ("ok", "pad"):
+            claimed.add(key)
         gaps.update(obj_gaps)
-        addr = sym_addr(name)
-        inside = interior_syms(addr, bsym["size"]) if addr else []
         objs.append({
             "name": name,
             "address": addr or tsym["value"],
             "size": tsym["size"],
             "source_size": bsym["size"],
             "section": tcls,
-            "status": data_status(tgt, tsym, bsym, pct, addr, inside),
+            "status": status,
             "comdat": comdat,
             "interior": inside,
             "fuzzy_match_percent": pct,

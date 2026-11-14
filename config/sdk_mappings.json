@@ -5102,6 +5102,13 @@
       "note": "data global; literal-pool alignment of matched SDK funcs"
     },
     {
+      "addr": "0x0204ff4c",
+      "sdk_name": "fsi_def_digest_key",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/fs_overlay (placed from section base: data_syms.py place)"
+    },
+    {
       "addr": "0x02055cc0",
       "sdk_name": "GXi_DmaId",
       "library": "data",
@@ -5121,6 +5128,34 @@
       "library": "data",
       "confidence": "certain",
       "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
+    },
+    {
+      "addr": "0x02062650",
+      "sdk_name": "PMi_LCDCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/pm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062654",
+      "sdk_name": "PMi_DispOffCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/pm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062658",
+      "sdk_name": "PMi_SleepEndFlag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/pm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206265c",
+      "sdk_name": "sAmpSwitch",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/pm (placed from section base: data_syms.py place)"
     },
     {
       "addr": "0x02062660",
@@ -5144,11 +5179,32 @@
       "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
     },
     {
+      "addr": "0x020626c0",
+      "sdk_name": "CARDi_EnableFlag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "card_common .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020626e0",
+      "sdk_name": "cardi_arg",
+      "library": "data",
+      "confidence": "certain",
+      "note": "card_common .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
       "addr": "0x0205c29c",
       "sdk_name": "sRootList",
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205e6cc",
+      "sdk_name": "sFreeList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/player (same-named static as snd_command's) .bss (pool offset proven by the unit's 100% functions)"
     },
     {
       "addr": "0x0205e6d8",
@@ -5165,11 +5221,25 @@
       "note": "data global; literal-pool alignment of matched SDK funcs"
     },
     {
+      "addr": "0x0205efa4",
+      "sdk_name": "bInitialized$2866",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/stream (placed from section base: data_syms.py place)"
+    },
+    {
       "addr": "0x0205efa8",
       "sdk_name": "sStrmList",
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x0205efb4",
+      "sdk_name": "buffer$2982",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/stream (placed from section base: data_syms.py place)"
     },
     {
       "addr": "0x0205eff4",
@@ -5214,6 +5284,62 @@
       "confidence": "certain"
     },
     {
+      "addr": "0x020605e4",
+      "sdk_name": "OSi_RescheduleCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605e8",
+      "sdk_name": "OSi_CurrentThreadPtr",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605ec",
+      "sdk_name": "OSi_IsThreadInitialized",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605f0",
+      "sdk_name": "OSi_SystemStackBuffer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605f4",
+      "sdk_name": "killThreadStatus",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605f8",
+      "sdk_name": "exitThreadStatus",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020605fc",
+      "sdk_name": "OSi_StackForDestructor",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x02060600",
+      "sdk_name": "OSi_ThreadIdCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_thread .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
       "addr": "0x02060604",
       "sdk_name": "OSi_ThreadInfo",
       "library": "os",
@@ -5242,6 +5368,13 @@
       "note": "os_exception .bss global (anchored via OSi_ExContext)"
     },
     {
+      "addr": "0x02060870",
+      "sdk_name": "OSi_ExceptionHookStack",
+      "library": "data",
+      "confidence": "certain",
+      "note": "os_exception .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
       "addr": "0x02060890",
       "sdk_name": "OSi_ExContext",
       "library": "data",
@@ -5253,6 +5386,62 @@
       "sdk_name": "sFreeList",
       "library": "snd",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x020609a4",
+      "sdk_name": "sFinishedTag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609a8",
+      "sdk_name": "sReserveList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609ac",
+      "sdk_name": "sReserveListEnd",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609b0",
+      "sdk_name": "sFreeListEnd",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609b4",
+      "sdk_name": "sWaitingCommandListQueueRead",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609b8",
+      "sdk_name": "sWaitingCommandListQueueWrite",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609bc",
+      "sdk_name": "sWaitingCommandListCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
+      "addr": "0x020609c0",
+      "sdk_name": "sCurrentTag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "snd_command .bss (pool offset proven by the unit's 100% functions)"
     },
     {
       "addr": "0x020609c4",
@@ -5302,6 +5491,13 @@
       "note": "data global; literal-pool alignment of matched SDK funcs"
     },
     {
+      "addr": "0x02062960",
+      "sdk_name": "cardi_thread_stack",
+      "library": "data",
+      "confidence": "certain",
+      "note": "card_common .bss (pool offset proven by the unit's 100% functions)"
+    },
+    {
       "addr": "0x02062fac",
       "sdk_name": "CTRDGi_Work",
       "library": "data",
@@ -5309,11 +5505,67 @@
       "note": "data global; literal-pool alignment of matched SDK funcs"
     },
     {
+      "addr": "0x02062fc0",
+      "sdk_name": "isInitialized$8485",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fc4",
+      "sdk_name": "CTRDGi_Lock",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fc8",
+      "sdk_name": "isInitialized$8473",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fcc",
+      "sdk_name": "ctrdg_already_pullout",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fd0",
+      "sdk_name": "skipCheck",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fd4",
+      "sdk_name": "isCartridgePullOut",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fd8",
+      "sdk_name": "CTRDG_UserCallback",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
+    },
+    {
       "addr": "0x02062fe0",
       "sdk_name": "headerBuf",
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x020630a0",
+      "sdk_name": "CTRDGTaskList$8481",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
     },
     {
       "addr": "0x027e0000",
@@ -6246,6 +6498,853 @@
       "sdk_name": "CARDi_IdentifyBackupCore",
       "library": "card",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x0204b118",
+      "sdk_name": "cAdpcmIndexTable",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204b128",
+      "sdk_name": "cAdpcmStepSizeTable",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204f3e4",
+      "sdk_name": "sTexPlttStartAddrTable",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0204f3f4",
+      "sdk_name": "sTexStartAddrTable",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055cbc",
+      "sdk_name": "sIsDispOn",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055cc4",
+      "sdk_name": "OSi_IrqCallbackInfoIndex",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055cd4",
+      "sdk_name": "OSi_ConsoleTypeCache",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055ce0",
+      "sdk_name": "fsi_digest_key_ptr",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055ce4",
+      "sdk_name": "fsi_digest_key_len",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/fs_overlay (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02055cec",
+      "sdk_name": "DGTi_Hash2ProcessMessageBlockFunc",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055cf0",
+      "sdk_name": "DGTi_Hash2ResultArray",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/dgt/hash2 (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02055d00",
+      "sdk_name": "DGTi_Hash2SampleArray",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/dgt/hash2 (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02055d10",
+      "sdk_name": "DGTi_Hash2RepeatCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/dgt/hash2 (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02055e08",
+      "sdk_name": "cardi_rom_header_addr",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055e0c",
+      "sdk_name": "__files",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055ef0",
+      "sdk_name": "_ZTISt9type_info",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055ef8",
+      "sdk_name": "_ZTIN10__cxxabiv121__vmi_class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055f04",
+      "sdk_name": "_ZTIN10__cxxabiv120__si_class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055f10",
+      "sdk_name": "_ZTIN10__cxxabiv117__class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055f1c",
+      "sdk_name": "_ZTSSt9type_info",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055f5c",
+      "sdk_name": "_ZTSN10__cxxabiv117__class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055f80",
+      "sdk_name": "_ZTSN10__cxxabiv120__si_class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055fa8",
+      "sdk_name": "_ZTSN10__cxxabiv121__vmi_class_type_infoE",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/cxxabi_rtti COMDAT RTTI (decoded: _ZTI -> name ptr -> _ZTS string)"
+    },
+    {
+      "addr": "0x02055fd0",
+      "sdk_name": "_ZSt8thandler",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02055fd4",
+      "sdk_name": "_ZSt8uhandler",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/runtime/MWException (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205c298",
+      "sdk_name": "sRootListInitialized",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205c2c0",
+      "sdk_name": "sCurDriverInfo",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205c2c4",
+      "sdk_name": "sDriverInfoFirstFlag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/main (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205c2c8",
+      "sdk_name": "sDriverInfoCommandTag",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/main (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205c2cc",
+      "sdk_name": "initialized$3472",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/main (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205c2d0",
+      "sdk_name": "sPreSleepCallback",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205c2dc",
+      "sdk_name": "sPostSleepCallback",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205c300",
+      "sdk_name": "sDriverInfo",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/main (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205e6c0",
+      "sdk_name": "sCaptureLock",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205e6c4",
+      "sdk_name": "sAlarmLock",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/resource_mgr (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205e6c8",
+      "sdk_name": "sChannelLock",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/resource_mgr (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205e6e4",
+      "sdk_name": "sSeqPlayer",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f074",
+      "sdk_name": "sIsThreadCreated",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f078",
+      "sdk_name": "sCurEffectInfo",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/capture (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f07c",
+      "sdk_name": "sMesgQ",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f09c",
+      "sdk_name": "sMesgBuf",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/capture (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f0bc",
+      "sdk_name": "sCapParam",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f110",
+      "sdk_name": "sEffectInfoBuffer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/capture (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f1b0",
+      "sdk_name": "sThread",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/capture (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f270",
+      "sdk_name": "sThreadStack",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/capture (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f670",
+      "sdk_name": "sCurrent",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f6b0",
+      "sdk_name": "initialized$3435",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/sndarc_stream (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f6b4",
+      "sdk_name": "sPrepareThread",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/sndarc_stream (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f6b8",
+      "sdk_name": "sDecodeBuffer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "nns/snd/sndarc_stream (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0205f6c8",
+      "sdk_name": "sDecodeBufferMutex",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f6e0",
+      "sdk_name": "sLoadCommandBuffer",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f860",
+      "sdk_name": "sStrmThread",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060320",
+      "sdk_name": "sDecodeBufferArea",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060520",
+      "sdk_name": "sDispMode",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060540",
+      "sdk_name": "sSubBGExtPltt",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060544",
+      "sdk_name": "sOBJExtPlttLCDCBlk",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060548",
+      "sdk_name": "sOBJExtPltt",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206054c",
+      "sdk_name": "sBGExtPlttLCDCOffset",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060550",
+      "sdk_name": "sBGExtPlttLCDCBlk",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060554",
+      "sdk_name": "sBGExtPltt",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060558",
+      "sdk_name": "sSubOBJExtPltt",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/src/gx_load2d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206055c",
+      "sdk_name": "sClrImg",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060560",
+      "sdk_name": "sTexLCDCBlk1",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060564",
+      "sdk_name": "sTexPlttLCDCBlk",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060568",
+      "sdk_name": "sTexPltt",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206056c",
+      "sdk_name": "sClrImgLCDCBlk",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060570",
+      "sdk_name": "sTex",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060574",
+      "sdk_name": "sTexLCDCBlk2",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060578",
+      "sdk_name": "sSzTexBlk1",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/gx/gx_load3d (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206057c",
+      "sdk_name": "OSi_IrqCallbackInfo",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060614",
+      "sdk_name": "OSi_IdleThread",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020606d4",
+      "sdk_name": "OSi_LauncherThread",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060794",
+      "sdk_name": "OSi_IdleThreadStack",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/os_thread (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206085c",
+      "sdk_name": "OSi_Initialized",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060860",
+      "sdk_name": "OSi_MainExArenaEnabled",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/os_arena (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060910",
+      "sdk_name": "OSi_TimerReserved",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060914",
+      "sdk_name": "OSi_UseTick",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060918",
+      "sdk_name": "OSi_NeedResetTimer",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_tick (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206091c",
+      "sdk_name": "OSi_TickCounter",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_tick (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060924",
+      "sdk_name": "OSi_UseVAlarm",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060928",
+      "sdk_name": "OSi_PreviousVCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_valarm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206092c",
+      "sdk_name": "OSi_VFrameCount",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_valarm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060930",
+      "sdk_name": "OSi_VAlarmQueue",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_valarm (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060938",
+      "sdk_name": "OSi_IsResetOccurred",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206093a",
+      "sdk_name": "OSi_IsInitReset",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/os/src/os_reset (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206093c",
+      "sdk_name": "OSi_vramExclusive",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060940",
+      "sdk_name": "OSi_vramLockId",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060954",
+      "sdk_name": "MIi_GXDmaParams",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060974",
+      "sdk_name": "initialized$1263",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/snd/snd_main (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02060978",
+      "sdk_name": "sSndMutex",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02060a00",
+      "sdk_name": "sSharedWork",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020624e0",
+      "sdk_name": "SNDi_SharedWork",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020624e4",
+      "sdk_name": "FifoCtrlInit",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062568",
+      "sdk_name": "arc_list",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062578",
+      "sdk_name": "is_init",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206257c",
+      "sdk_name": "fsi_card_lock_id",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062580",
+      "sdk_name": "fsi_default_dma_no",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/sdk/fs_rom (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062584",
+      "sdk_name": "fsi_ovt9",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206258c",
+      "sdk_name": "fsi_ovt7",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206262c",
+      "sdk_name": "micInitialized",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062630",
+      "sdk_name": "micWork",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062678",
+      "sdk_name": "rtcInitialized",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206267a",
+      "sdk_name": "rtcTickInitialized",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/rtc/src/external (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x0206267c",
+      "sdk_name": "rtcInitialTotalTicks",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/rtc/src/external (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062684",
+      "sdk_name": "rtcWork",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062d60",
+      "sdk_name": "cardi_rom_base",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062d80",
+      "sdk_name": "rom_stat",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062fa0",
+      "sdk_name": "CARDi_IsPulledOutFlag",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02062fa4",
+      "sdk_name": "CARD_UserCallback",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/card/card_pullOut (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02062fa8",
+      "sdk_name": "CTRDGi_EnableFlag",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02063188",
+      "sdk_name": "ctrdgi_task_work",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0206318c",
+      "sdk_name": "ctrdgi_task_list",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020631b0",
+      "sdk_name": "ctrdg_task_stack",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/ctrdg/src/ctrdg_task (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020635b0",
+      "sdk_name": "__console_exit",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020635b4",
+      "sdk_name": "__stdio_exit",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/MSL_ARM/Src/abort_exit_ARM (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020635b8",
+      "sdk_name": "__atexit_curr_func",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/MSL_ARM/Src/abort_exit_ARM (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020635bc",
+      "sdk_name": "__aborting",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/MSL_ARM/Src/abort_exit_ARM (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020635c0",
+      "sdk_name": "__atexit_funcs",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020636c0",
+      "sdk_name": "__cs_id",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020636e4",
+      "sdk_name": "__cs_ref",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02063708",
+      "sdk_name": "__cs",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020637e0",
+      "sdk_name": "stderr_buff",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/ansi_files (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020638e0",
+      "sdk_name": "stdout_buff",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/ansi_files (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x020639e0",
+      "sdk_name": "stdin_buff",
+      "library": "data",
+      "confidence": "certain",
+      "note": "msl/ansi_files (placed from section base: data_syms.py place)"
+    },
+    {
+      "addr": "0x02063ae0",
+      "sdk_name": "signal_funcs",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x02063afc",
+      "sdk_name": "__global_destructor_chain",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x027e007c",
+      "sdk_name": "OS_IRQTable",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x0205f674",
+      "sdk_name": "waveArcHeader$3136",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020605dc",
+      "sdk_name": "isInitialized$8487",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020625f0",
+      "sdk_name": "initial$8536",
+      "library": "data",
+      "confidence": "certain"
+    },
+    {
+      "addr": "0x020625f4",
+      "sdk_name": "tpState",
+      "library": "data",
+      "confidence": "certain",
+      "note": "sdk/spi/tp (placed from section base: data_syms.py place)"
     }
   ],
   "objdiff_units": [

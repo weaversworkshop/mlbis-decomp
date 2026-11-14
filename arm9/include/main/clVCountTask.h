@@ -21,6 +21,7 @@ public:
 
     clVCountTask(s32 priority, u8 id, u32 param3, u32 arg);  // C1 0x0201e5ec
     virtual ~clVCountTask();  // D1 0x0201e700 D0 0x0201e76c D2 0x0201e7ec
+    virtual void func_ov003_02072638(void) = 0;
 
     void disable(void);  // 0x0201e858
     void enable(void);  // 0x0201e884

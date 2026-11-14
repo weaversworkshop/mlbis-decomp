@@ -54,7 +54,8 @@ def parse_data(report):
     out = {}
     for unit in report.get("units", []):
         for o in unit.get("objects", []):
-            prev = out.get(o["name"])
+            key = (o["name"], o.get("address"))
+            prev = out.get(key)
             comdat = o.get("comdat", False)
             if comdat and prev:
                 # a real owner wins; otherwise tally the emitting TUs
@@ -62,7 +63,7 @@ def parse_data(report):
                     continue
                 prev["tus"] += 1
                 continue
-            out[o["name"]] = {
+            out[key] = {
                 "unit": unit["name"],
                 "status": o.get("status"),
                 "source_size": o.get("source_size"),
@@ -214,10 +215,10 @@ def render_data(entries, status, refs, notes=False):
         by_sec.setdefault(e["section"], []).append(e)
 
     total = len(entries)
-    scored = [e for e in entries if e["name"] in status]
-    homed = [e for e in scored if not status[e["name"]]["comdat"]]
-    comdat = [e for e in scored if status[e["name"]]["comdat"]]
-    done = [e for e in homed if status[e["name"]]["status"] in DATA_DONE]
+    scored = [e for e in entries if (e["name"], e["addr"]) in status]
+    homed = [e for e in scored if not status[(e["name"], e["addr"])]["comdat"]]
+    comdat = [e for e in scored if status[(e["name"], e["addr"])]["comdat"]]
+    done = [e for e in homed if status[(e["name"], e["addr"])]["status"] in DATA_DONE]
 
     lines = ["", "## Data objects", ""]
     if not status:
@@ -226,14 +227,14 @@ def render_data(entries, status, refs, notes=False):
         lines.append("")
     lines.append(f"- Homed:   {len(homed)}/{total} data symbols")
     lines.append(f"- Matched: {len(done)}/{len(homed)} homed "
-                 f"({sum(1 for e in done if status[e['name']]['status'] == 'pad')} "
+                 f"({sum(1 for e in done if status[(e['name'], e['addr'])]['status'] == 'pad')} "
                  f"via alignment padding)")
-    cdone = [e for e in comdat if status[e["name"]]["status"] in DATA_DONE]
+    cdone = [e for e in comdat if status[(e["name"], e["addr"])]["status"] in DATA_DONE]
     if comdat:
         lines.append(f"- COMDAT:  {len(cdone)}/{len(comdat)} byte-verified "
                      "(C++ RTTI, emitted by every TU touching the class, so `[~]`"
                      " not `[x]`: emitting it is not ownership)")
-    todo = [e for e in scored if status[e["name"]]["status"] not in DATA_DONE]
+    todo = [e for e in scored if status[(e["name"], e["addr"])]["status"] not in DATA_DONE]
     if todo and not notes:
         lines.append(f"- Needs attention: {len(todo)} object(s) ; per-object reasons "
                      "with `make progress DATA_NOTES=1`; the `[ ]` rows below mark them")
@@ -244,7 +245,7 @@ def render_data(entries, status, refs, notes=False):
         lines.append("| Symbol | Owner | Issue |")
         lines.append("| --- | --- | --- |")
         for e in todo:
-            st = status[e["name"]]
+            st = status[(e["name"], e["addr"])]
             who = "_COMDAT_" if st["comdat"] else st["unit"]
             lines.append(f"| `{e['name']}` | {who} | {data_note(st)} |")
     lines.append("")
@@ -262,7 +263,7 @@ def render_data(entries, status, refs, notes=False):
         for i, e in enumerate(rows):
             nxt = rows[i + 1]["addr"] if i + 1 < len(rows) else None
             extent = nxt - e["addr"] if nxt else e["space"]
-            st = status.get(e["name"])
+            st = status.get((e["name"], e["addr"]))
             check = " "
             if st and st["status"] in DATA_DONE:
                 check = "~" if st["comdat"] else "x"
