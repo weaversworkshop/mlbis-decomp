@@ -18,9 +18,6 @@ extern "C" {
 
 extern void func_01ff8228(void *, u32, u32);
 
-extern s32 getGameVar(u16, clGlobalEvent *, EventContext *);
-extern void setGameVar(u16, s32, clGlobalEvent *, EventContext *);
-
 // --- Variable Definitions --- //
 
 const u8 argSizes[12] = { 1, 2, 4, 1, 2, 4, 2, 4, 4, 2, 0, 0 };  // 0x0204ac2c

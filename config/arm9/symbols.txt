@@ -987,7 +987,7 @@ NNS_SndInit kind:function(arm,size=0x88) addr:0x0202eea8
 NNS_SndMain kind:function(arm,size=0x30) addr:0x0202ef30
 NNS_SndSetMasterVolume kind:function(arm,size=0xc) addr:0x0202ef60
 BeginSleep kind:function(arm,size=0x38) addr:0x0202ef6c local
-EndSleep kind:function(arm,size=0xc) addr:0x0202efa4
+EndSleep kind:function(arm,size=0xc) addr:0x0202efa4 local
 NNS_SndLockChannel kind:function(arm,size=0x48) addr:0x0202efb0
 NNS_SndUnlockChannel kind:function(arm,size=0x30) addr:0x0202eff8
 NNS_SndUnlockCapture kind:function(arm,size=0x1c) addr:0x0202f028
@@ -1028,7 +1028,7 @@ InsertPlayerList kind:function(arm,size=0x50) addr:0x0202f7b4
 InsertPrioList kind:function(arm,size=0x54) addr:0x0202f804
 ForceStopSeq kind:function(arm,size=0x38) addr:0x0202f858
 AllocSeqPlayer kind:function(arm,size=0x68) addr:0x0202f890
-ShutdownPlayer kind:function(arm,size=0x84) addr:0x0202f8f8
+ShutdownPlayer kind:function(arm,size=0x84) addr:0x0202f8f8 local
 PlayerHeapDisposeCallback kind:function(arm,size=0x50) addr:0x0202f97c
 SetPlayerPriority kind:function(arm,size=0x60) addr:0x0202f9cc
 NNS_SndStrmInit kind:function(arm,size=0x78) addr:0x0202fa2c
@@ -1040,12 +1040,12 @@ NNS_SndStrmStop kind:function(arm,size=0x1c) addr:0x0202fd20
 NNS_SndStrmSetVolume kind:function(arm,size=0x6c) addr:0x0202fd3c
 NNS_SndStrmSetChannelVolume kind:function(arm,size=0x54) addr:0x0202fda8
 NNS_SndStrmSetChannelPan kind:function(arm,size=0x30) addr:0x0202fdfc
-ForceStopStrm kind:function(arm,size=0x74) addr:0x0202fe2c
+ForceStopStrm kind:function(arm,size=0x74) addr:0x0202fe2c local
 ShutdownStrm kind:function(arm,size=0x30) addr:0x0202fea0
 AlarmCallback kind:function(arm,size=0x10) addr:0x0202fed0
-StrmCallback kind:function(arm,size=0xb0) addr:0x0202fee0
+StrmCallback kind:function(arm,size=0xb0) addr:0x0202fee0 local
 BeginSleep kind:function(arm,size=0x4c) addr:0x0202ff90 local
-EndSleep kind:function(arm,size=0x70) addr:0x0202ffdc
+EndSleep kind:function(arm,size=0x70) addr:0x0202ffdc local
 NNSi_SndCaptureInit kind:function(arm,size=0x18) addr:0x0203004c
 NNSi_SndCaptureMain kind:function(arm,size=0x88) addr:0x02030064
 NNSi_SndCaptureStop kind:function(arm,size=0xf0) addr:0x020300ec
@@ -1090,7 +1090,7 @@ LoadSeq kind:function(arm,size=0x6c) addr:0x0203105c
 LoadBank kind:function(arm,size=0x6c) addr:0x020310c8
 LoadWaveArc kind:function(arm,size=0x6c) addr:0x02031134
 LoadWaveArcTable kind:function(arm,size=0x108) addr:0x020311a0
-DisposeCallback kind:function(arm,size=0x58) addr:0x020312a8
+DisposeCallback kind:function(arm,size=0x58) addr:0x020312a8 local
 SeqDisposeCallback kind:function(arm,size=0x28) addr:0x02031300
 BankDisposeCallback kind:function(arm,size=0x30) addr:0x02031328
 WaveArcDisposeCallback kind:function(arm,size=0x30) addr:0x02031358
@@ -1119,8 +1119,8 @@ AllocPlayer kind:function(arm,size=0x8c) addr:0x02031d30
 FreePlayer kind:function(arm,size=0x2c) addr:0x02031dbc
 PrepareStrm kind:function(arm,size=0x270) addr:0x02031de8
 StopStrm kind:function(arm,size=0x58) addr:0x02032058
-ForceStopStrm kind:function(arm,size=0x98) addr:0x020320b0
-ShutdownPlayer kind:function(arm,size=0x64) addr:0x02032148
+ForceStopStrm kind:function(arm,size=0x98) addr:0x020320b0 local
+ShutdownPlayer kind:function(arm,size=0x64) addr:0x02032148 local
 AllocChannel kind:function(arm,size=0x38) addr:0x020321ac
 FreeChannel kind:function(arm,size=0x24) addr:0x020321e4
 CreateThread kind:function(arm,size=0x60) addr:0x02032208
@@ -1128,8 +1128,8 @@ RemoveCommandByPlayer kind:function(arm,size=0x70) addr:0x02032268
 ReadCommandBuffer kind:function(arm,size=0x50) addr:0x020322d8
 AllocCommandBuffer kind:function(arm,size=0x40) addr:0x02032328
 FreeCommandBuffer kind:function(arm,size=0x2c) addr:0x02032368
-DisposeCallback kind:function(arm,size=0x9c) addr:0x02032394
-StrmCallback kind:function(arm,size=0x138) addr:0x02032430
+DisposeCallback kind:function(arm,size=0x9c) addr:0x02032394 local
+StrmCallback kind:function(arm,size=0x138) addr:0x02032430 local
 OnDataEnd kind:function(arm,size=0x144) addr:0x02032568
 MakeWaveData kind:function(arm,size=0x828) addr:0x020326ac
 SetupStreamFunction kind:function(arm,size=0x80) addr:0x02032ed4
@@ -1474,7 +1474,7 @@ MI_DmaFill32Async kind:function(arm,size=0xc4) addr:0x0203a1f8
 MI_DmaCopy32Async kind:function(arm,size=0x98) addr:0x0203a2bc
 MI_WaitDma kind:function(arm,size=0x68) addr:0x0203a354
 MI_StopDma kind:function(arm,size=0x7c) addr:0x0203a3bc
-func_0203a438 kind:function(arm,size=0x28) addr:0x0203a438
+MI_StopAllDma kind:function(arm,size=0x28) addr:0x0203a438
 MIi_CheckAnotherAutoDMA kind:function(arm,size=0x84) addr:0x0203a460
 MIi_CheckDma0SourceAddress kind:function(arm,size=0x54) addr:0x0203a4e4
 MI_HBlankDmaCopy16 kind:function(arm,size=0x60) addr:0x0203a538
@@ -1666,43 +1666,43 @@ MicStartAutoSampling kind:function(arm,size=0x104) addr:0x0203fe64
 MicStopAutoSampling kind:function(arm,size=0x28) addr:0x0203ff68
 MicGetResultCallback kind:function(arm,size=0x10) addr:0x0203ff90
 MicWaitBusy kind:function(arm,size=0x18) addr:0x0203ffa0
-func_0203ffb8 kind:function(arm,size=0x20) addr:0x0203ffb8
-func_0203ffd8 kind:function(arm,size=0x40) addr:0x0203ffd8
-func_02040018 kind:function(arm,size=0x50) addr:0x02040018
-func_02040068 kind:function(arm,size=0x5c) addr:0x02040068
-func_020400c4 kind:function(arm,size=0xc) addr:0x020400c4
-func_020400d0 kind:function(arm,size=0x30) addr:0x020400d0
-func_02040100 kind:function(arm,size=0x98) addr:0x02040100
-func_02040198 kind:function(arm,size=0x94) addr:0x02040198
-func_0204022c kind:function(arm,size=0xc0) addr:0x0204022c
-func_020402ec kind:function(arm,size=0x8c) addr:0x020402ec
-func_02040378 kind:function(arm,size=0x84) addr:0x02040378
-func_020403fc kind:function(arm,size=0x44) addr:0x020403fc
-func_02040440 kind:function(arm,size=0x64) addr:0x02040440
-func_020404a4 kind:function(arm,size=0x34) addr:0x020404a4
-func_020404d8 kind:function(arm,size=0x88) addr:0x020404d8
-func_02040560 kind:function(arm,size=0x34) addr:0x02040560
-func_02040594 kind:function(arm,size=0x54) addr:0x02040594
-func_020405e8 kind:function(arm,size=0x4c) addr:0x020405e8
-func_02040634 kind:function(arm,size=0x3c) addr:0x02040634
-func_02040670 kind:function(arm,size=0x18) addr:0x02040670
-func_02040688 kind:function(arm,size=0x30) addr:0x02040688
-func_020406b8 kind:function(arm,size=0x1c) addr:0x020406b8
-func_020406d4 kind:function(arm,size=0x60) addr:0x020406d4
+PMi_Lock kind:function(arm,size=0x20) addr:0x0203ffb8
+PMi_WaitBusy_forUsual kind:function(arm,size=0x40) addr:0x0203ffd8
+PMi_WaitBusy_forPowerOff kind:function(arm,size=0x50) addr:0x02040018
+PMi_WaitBusy_forLCDOn kind:function(arm,size=0x5c) addr:0x02040068
+PMi_DummyCallback kind:function(arm,size=0xc) addr:0x020400c4
+PMi_CallCallbackAndUnlock kind:function(arm,size=0x30) addr:0x020400d0
+PM_Init kind:function(arm,size=0x98) addr:0x02040100
+PMi_CommonCallback kind:function(arm,size=0x94) addr:0x02040198
+PMi_TryToSendPxiDataTillSuccess kind:function(arm,size=0xc0) addr:0x0204022c
+PMi_SendSleepStart kind:function(arm,size=0x8c) addr:0x020402ec
+PM_SendUtilityCommandAsync kind:function(arm,size=0x84) addr:0x02040378
+PM_SendUtilityCommand kind:function(arm,size=0x44) addr:0x020403fc
+PMi_SetLEDAsync kind:function(arm,size=0x64) addr:0x02040440
+PMi_SetLED kind:function(arm,size=0x34) addr:0x020404a4
+PM_SetBackLightAsync kind:function(arm,size=0x88) addr:0x020404d8
+PM_SetBackLight kind:function(arm,size=0x34) addr:0x02040560
+PM_ForceToPowerOffAsync kind:function(arm,size=0x54) addr:0x02040594
+PMi_ForceToPowerOff kind:function(arm,size=0x4c) addr:0x020405e8
+PM_ForceToPowerOff kind:function(arm,size=0x3c) addr:0x02040634
+PM_SetAmp kind:function(arm,size=0x18) addr:0x02040670
+PMi_SetAmp kind:function(arm,size=0x30) addr:0x02040688
+PM_SetAmpGain kind:function(arm,size=0x1c) addr:0x020406b8
+PM_GetBackLight kind:function(arm,size=0x60) addr:0x020406d4
 PMi_SendPxiData kind:function(arm,size=0x2c) addr:0x02040734
-func_02040760 kind:function(arm,size=0x30c) addr:0x02040760
-func_02040a6c kind:function(arm,size=0x218) addr:0x02040a6c
+PM_GoSleepMode kind:function(arm,size=0x30c) addr:0x02040760
+PMi_SetLCDPower kind:function(arm,size=0x218) addr:0x02040a6c
 PM_SetLCDPower kind:function(arm,size=0x20) addr:0x02040c84
 PM_GetLCDPower kind:function(arm,size=0x1c) addr:0x02040ca4
 PMi_PrependList kind:function(arm,size=0x14) addr:0x02040cc0
 PMi_AppendList kind:function(arm,size=0x4c) addr:0x02040cd4
-func_02040d20 kind:function(arm,size=0x58) addr:0x02040d20
+PMi_DeleteList kind:function(arm,size=0x58) addr:0x02040d20
 PMi_ExecuteList kind:function(arm,size=0x28) addr:0x02040d78
 PM_PrependPreSleepCallback kind:function(arm,size=0x18) addr:0x02040da0
 PM_AppendPostSleepCallback kind:function(arm,size=0x18) addr:0x02040db8
 PM_DeletePreSleepCallback kind:function(arm,size=0x18) addr:0x02040dd0
 PM_DeletePostSleepCallback kind:function(arm,size=0x18) addr:0x02040de8
-func_02040e00 kind:function(arm,size=0x8c) addr:0x02040e00
+PMi_LCDOnAvoidReset kind:function(arm,size=0x8c) addr:0x02040e00
 RTC_Init kind:function(arm,size=0x6c) addr:0x02040e8c
 RTC_GetTimeAsync kind:function(arm,size=0x74) addr:0x02040ef8
 RTC_GetTime kind:function(arm,size=0x38) addr:0x02040f6c
@@ -2196,7 +2196,7 @@ data_02055d54 kind:data(any) addr:0x02055d54
 data_02055d6c kind:data(any) addr:0x02055d6c
 data_02055d84 kind:data(any) addr:0x02055d84
 data_02055dc0 kind:data(any) addr:0x02055dc0
-data_02055e04 kind:data(any) addr:0x02055e04
+PMi_WaitBusy kind:data(any) addr:0x02055e04
 data_02055e08 kind:data(any) addr:0x02055e08
 data_02055e0c kind:data(any) addr:0x02055e0c
 data_02055ef0 kind:data(any) addr:0x02055ef0
@@ -2341,10 +2341,10 @@ data_020625f0 kind:bss addr:0x020625f0
 data_0206260c kind:bss addr:0x0206260c
 data_0206262c kind:bss addr:0x0206262c
 data_02062630 kind:bss addr:0x02062630
-data_0206264c kind:bss addr:0x0206264c
-data_02062660 kind:bss addr:0x02062660
-data_02062664 kind:bss addr:0x02062664
-data_02062668 kind:bss addr:0x02062668
+PMi_IsInit kind:bss addr:0x0206264c
+PMi_PostSleepCallbackList kind:bss addr:0x02062660
+PMi_PreSleepCallbackList kind:bss addr:0x02062664
+PMi_Work kind:bss addr:0x02062668
 data_02062678 kind:bss addr:0x02062678
 data_02062684 kind:bss addr:0x02062684
 data_020626c0 kind:bss addr:0x020626c0

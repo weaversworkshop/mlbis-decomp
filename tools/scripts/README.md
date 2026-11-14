@@ -30,7 +30,7 @@ missing file is silent. Called by the compile rule (`FIXDEP`).
 ### gen_objdiff.py
 Prints `objdiff.json`. Game units come from each `arm9/src` file's `// objdiff-target:` comment; SDK units
 from `objdiff_units` in `config/sdk_mappings.json` (a `"prebuilt"` entry points at an archive member
-extracted to `build/prebuilt/`, `notes/prebuilt_units.md`). A game file without the comment is warned about and
+extracted to `build/prebuilt/`). A game file without the comment is warned about and
 **never diffed**. Driven by the `objdiff.json` make target (gated on a clean compile).
 
 ### setup_tools.py
@@ -145,8 +145,7 @@ pairs them. Runs inside `make diff`/`make progress`; standalone `make sync-names
 - Ctors/dtors tag each ABI variant: `clFS(...);  // C2 0x0201a9e0`, `~clFS();  // D0 0x.. D1 0x.. D2 0x..`.
 - Thunks anchor on the method they enter, tagged `Thn<N>` (`_ZThn<N>_`), `Tv0_n<K>` (`_ZTv0_n<K>_`, vcall at
   vptr-K) or `Tvn<N>_n<K>` (`_ZTvn<N>_n<K>_`): `virtual void f();  // 0x02025908 Thn12 0x02025ba4 Thn24 0x02025ccc`;
-  on dtor lines prefix the code: `Tv0_n48_D1 0x02025c2c`. `K` depends on the virtual base's declaration order
-  (LESSONS mwcc-vcall-slot-order-is-declaration-order).
+  on dtor lines prefix the code: `Tv0_n48_D1 0x02025c2c`. `K` depends on the virtual base's declaration order.
 - Data: anchor a global-scope definition/extern: `TPData bufs[2];  // 0x0205bac4`; a multi-line
   initializer may carry it on its closing `};` line instead. Vtables/RTTI/VTTs (`_ZTV/I/S/T`) are
   manual (`map-cpp-tu`); a VTT nobody references is dead-stripped from the ROM (clDfxSh/Vr/Ex).
@@ -233,7 +232,7 @@ Batch-scores source variants of one function: each is spliced into a copy of the
 
 ### rank_diff.py
 Register-coloring rank diff for rotation residues: rebuilds webs/interference from the final asm and infers
-mwcc's color-pop order (`notes/rank_diff.md`).
+mwcc's color-pop order.
 `rank_diff.py <symbol> [--mine X.o] [--target X.o] [-v] [--brief]`, `rank_diff.py --validate [--limit N]`
 - "RANK FLIPS" = pairs the target forces A-before-B but yours forces B-before-A; fix those, the rest cascades.
 - `-v` adds target-only forced edges; `--brief` prints `<flips> <webs differing>`; `--validate` re-checks the

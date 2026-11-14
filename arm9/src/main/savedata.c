@@ -50,10 +50,6 @@ typedef struct {
     u8 pad_1fc0[0x40];
 } SaveData;
 
-// --- Extern Functions --- //
-
-extern s32 getGameVar(u16, void *, void *);
-
 // --- Variable Definitions --- // (replace with real data later)
 
 SaveData saveData;  // 0x02058f84

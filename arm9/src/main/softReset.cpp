@@ -10,14 +10,11 @@
 
 extern "C" {
 
+#include <nitro.h>
+
 #include "main/frameSync.h"
 
 #define RESET_COMBO (PAD_BUTTON_L | PAD_BUTTON_R | PAD_BUTTON_START | PAD_BUTTON_SELECT)
-
-// --- Extern Functions --- //
-
-extern void func_02040670(u32);
-extern u32 _u32_div_f(u32);
 
 } // extern "C"
 
@@ -81,7 +78,7 @@ void runResetFade(SoftResetState * softReset) {
         GXS_SetMasterBrightness(brightness);
 
         if (softReset->fadeTimer == 0) {
-            func_02040670(0);
+            PM_SetAmp(PM_AMP_OFF);
             OS_ResetSystem(softReset->resetParam);
         }
 

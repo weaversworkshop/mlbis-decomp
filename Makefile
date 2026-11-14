@@ -45,7 +45,7 @@ MSL := lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C
 SDK_C_FILES  := $(filter lib/NitroSDK/libraries/% lib/NitroSystem/% \
                          lib/mw-libraries/ARM_EABI_Support_DS2.0/% lib/syscall/%,$(LIB_ALL_C))
 
-# MSL + Runtime build with the vendor library config, not the game flags (notes/msl_build.md).
+# MSL + Runtime build with the vendor library config, not the game flags.
 MSL_ROOT := lib/mw-libraries/ARM_EABI_Support_DS2.0
 MSL_GEN  := $(BUILD_DIR)/mslgen
 MSL_INC  := -i $(MSL_GEN) -i $(MSL_INCLUDE) -i $(MSL_ARM_INCLUDE) -i $(SDK_INCLUDE) \
@@ -69,7 +69,7 @@ SDK_C_FILES  := $(filter-out $(SDK_SKIP) $(SDK_RUNTIME),$(SDK_C_FILES))
 # Safe because "source" appears only inside objdiff_units (123 keys, 123 units).
 SDK_DIFF_FILES := $(shell sed -n 's/.*"source"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json)
 
-# Prebuilt units (objdiff_units "prebuilt"): CW runtime members with no source, see notes/prebuilt_units.md.
+# Prebuilt units (objdiff_units "prebuilt"): CW runtime members with no source.
 AR      := arm-none-eabi-ar
 MATHLIB := lib/mw-libraries/ARM_EABI_Support/Mathlib/lib_ds_2.0_sp1/FP_fastI_v5t_LE.a
 PREBUILT_OBJ := $(addprefix $(BUILD_DIR)/prebuilt/,$(shell sed -n 's/.*"prebuilt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' config/sdk_mappings.json))
@@ -90,7 +90,7 @@ SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-propose sdk-audit offsets offsets-apply
+.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-propose sdk-audit sdk-patch sdk-patch-update offsets offsets-apply
 
 # A failing compile under -j printed its diagnostics, then make kept echoing the
 # in-flight jobs after it. Defer the failure: record it, let the others finish, and
@@ -121,6 +121,35 @@ MAKEFLAGS += -j$(JOBS)
 $(FX_CONST_H): $(FX_CONST_GEN) $(FX_CONST_CSV)
 	@mkdir -p $(@D)
 	python $(FX_CONST_GEN) $(FX_CONST_CSV) $@
+
+# docs/RUNBOOK.md "Editing SDK source"
+SDK_PATCH         := patches/NitroSDK.patch
+SDK_PATCH_STAMP   := $(BUILD_DIR)/.sdk-patch.mk
+SDK_PATCH_APPLIED := $(BUILD_DIR)/.sdk-patch.applied
+SDK_GIT_APPLY     := git -C lib/NitroSDK apply --whitespace=nowarn
+
+ifneq ($(wildcard $(SDK_PATCH)),)
+-include $(SDK_PATCH_STAMP)
+compile-ok sdk: | $(SDK_PATCH_STAMP)
+endif
+
+sdk-patch: $(SDK_PATCH_STAMP)
+
+$(SDK_PATCH_STAMP): $(SDK_PATCH)
+	@mkdir -p $(@D); p=../../$(SDK_PATCH); a=../../$(SDK_PATCH_APPLIED); \
+	if $(SDK_GIT_APPLY) --check -R $$p 2>/dev/null; then :; \
+	elif [ -f $(SDK_PATCH_APPLIED) ] && $(SDK_GIT_APPLY) --check -R $$a 2>/dev/null; then \
+	  $(SDK_GIT_APPLY) -R $$a && $(SDK_GIT_APPLY) $$p && echo "sdk-patch: re-applied updated $(SDK_PATCH)" || exit 1; \
+	elif $(SDK_GIT_APPLY) --check $$p 2>/dev/null; then \
+	  $(SDK_GIT_APPLY) $$p && echo "sdk-patch: applied $(SDK_PATCH)" || exit 1; \
+	else echo "sdk-patch: !! $(SDK_PATCH) does not fit lib/NitroSDK (local edits? run 'make sdk-patch-update' to keep them)"; exit 1; fi; \
+	cp $(SDK_PATCH) $(SDK_PATCH_APPLIED) && echo "# sdk-patch stamp" > $@
+
+sdk-patch-update:
+	@mkdir -p $(dir $(SDK_PATCH)) $(BUILD_DIR)
+	git -C lib/NitroSDK diff --output=../../$(SDK_PATCH)
+	@cp $(SDK_PATCH) $(SDK_PATCH_APPLIED) && echo "# sdk-patch stamp" > $(SDK_PATCH_STAMP)
+	@echo "sdk-patch: wrote $(SDK_PATCH) ($$(grep -c '^diff --git' $(SDK_PATCH)) files)"
 
 $(BUILD_DIR)/prebuilt/mathlib/%.o: $(MATHLIB)
 	@mkdir -p $(@D)
@@ -220,7 +249,7 @@ progress: all sync-names
 
 progress-py: progress          # deprecated alias
 
-# objdiff-format report scored by obj_match, for decmp.dev (notes/decmp.md).
+# objdiff-format report scored by obj_match, for decmp.dev.
 REPORT ?= progress/report.json
 report: all sync-names
 	@$(MAKE) --no-print-directory delinks
@@ -260,7 +289,7 @@ callgraph: all delinks
 	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/call_graph.py $(TARGET) --report - $(CALLGRAPH_FLAGS) $(CALLGRAPH_ARGS)
 
 # Per-file overrides: MWCC_OVERRIDE (compiler), EXTRA_CFLAGS (defines).
-$(BUILD_DIR)/lib/NitroSDK/%.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS -DSDK_PATCH3
+$(BUILD_DIR)/lib/NitroSDK/%.o: EXTRA_CFLAGS := -DSP1P3_BUG_FOR_CONDITIONAL_ASM_INSTRUCTIONS -DSDK_PATCH3 -DNULL=0
 $(BUILD_DIR)/lib/NitroSDK/libraries/dgt/%.o: EXTRA_CFLAGS += -include nitro.h
 
 # Game TUs = sp2p3 (SDK stays sp1p2). b138 == b139 output project-wide (verified

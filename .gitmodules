@@ -1,6 +1,7 @@
 [submodule "lib/NitroSDK"]
 	path = lib/NitroSDK
 	url = https://github.com/ntrtwl/NitroSDK
+	ignore = dirty
 [submodule "lib/mw-libraries"]
 	path = lib/mw-libraries
 	url = https://github.com/mid-kid/mw-libraries.git

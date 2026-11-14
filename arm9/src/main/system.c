@@ -2,13 +2,11 @@
 
 #include "globals.h"
 
+#include <nitro.h>
+
 #include "main/system.h"
 
 #include "main/heap.h"
-
-// --- Extern Functions --- //
-
-extern void OS_EnableMainExArena(void);
 
 // --- Variable Definitions --- //
 

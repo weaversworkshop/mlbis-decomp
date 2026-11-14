@@ -75,6 +75,17 @@ typedef struct {
 extern GameState gameState;
 
 #ifdef __cplusplus
+class clGlobalEvent;
+struct EventContext;
+#else
+typedef struct clGlobalEvent clGlobalEvent;
+typedef struct EventContext EventContext;
+#endif
+
+u32 getGameVar(u16, clGlobalEvent *, EventContext *);  // 0x020058bc
+void setGameVar(u16, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
+
+#ifdef __cplusplus
 } // extern "C"
 #endif
 

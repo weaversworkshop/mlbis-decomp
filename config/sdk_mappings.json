@@ -3220,6 +3220,13 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203a438",
+      "sdk_name": "MI_StopAllDma",
+      "library": "mi",
+      "confidence": "certain",
+      "note": "sdk_propose byte match, adjacent in mi_dma.o"
+    },
+    {
       "addr": "0x0203a460",
       "sdk_name": "MIi_CheckAnotherAutoDMA",
       "library": "mi",
@@ -3584,8 +3591,7 @@
       "library": "snd",
       "header": "nitro/snd/common/command.h",
       "confidence": "certain",
-      "match": "floor-regalloc",
-      "note": "FLOOR 97.86%: register-allocation diff in the FIFO-retry loop; survived SDK_FINALROM/THREAD_INFINITY/CODE_ARM. Identity correct. NOT fixable via -ipa program (yields an empty object)."
+      "note": "matches with -DNULL=0 (integer NULL)"
     },
     {
       "addr": "0x0203b5cc",
@@ -4357,10 +4363,185 @@
       "note": "tu_diff content+pool match"
     },
     {
+      "addr": "0x0203ffb8",
+      "sdk_name": "PMi_Lock",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x0203ffd8",
+      "sdk_name": "PMi_WaitBusy_forUsual",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040018",
+      "sdk_name": "PMi_WaitBusy_forPowerOff",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040068",
+      "sdk_name": "PMi_WaitBusy_forLCDOn",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020400c4",
+      "sdk_name": "PMi_DummyCallback",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020400d0",
+      "sdk_name": "PMi_CallCallbackAndUnlock",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040100",
+      "sdk_name": "PM_Init",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040198",
+      "sdk_name": "PMi_CommonCallback",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x0204022c",
+      "sdk_name": "PMi_TryToSendPxiDataTillSuccess",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020402ec",
+      "sdk_name": "PMi_SendSleepStart",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040378",
+      "sdk_name": "PM_SendUtilityCommandAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020403fc",
+      "sdk_name": "PM_SendUtilityCommand",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040440",
+      "sdk_name": "PMi_SetLEDAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020404a4",
+      "sdk_name": "PMi_SetLED",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020404d8",
+      "sdk_name": "PM_SetBackLightAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040560",
+      "sdk_name": "PM_SetBackLight",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040594",
+      "sdk_name": "PM_ForceToPowerOffAsync",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020405e8",
+      "sdk_name": "PMi_ForceToPowerOff",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040634",
+      "sdk_name": "PM_ForceToPowerOff",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040670",
+      "sdk_name": "PM_SetAmp",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040688",
+      "sdk_name": "PMi_SetAmp",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020406b8",
+      "sdk_name": "PM_SetAmpGain",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x020406d4",
+      "sdk_name": "PM_GetBackLight",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
       "addr": "0x02040734",
       "sdk_name": "PMi_SendPxiData",
       "library": "spi",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02040760",
+      "sdk_name": "PM_GoSleepMode",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
+    },
+    {
+      "addr": "0x02040a6c",
+      "sdk_name": "PMi_SetLCDPower",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
     },
     {
       "addr": "0x02040c84",
@@ -4385,6 +4566,13 @@
       "sdk_name": "PMi_AppendList",
       "library": "spi",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02040d20",
+      "sdk_name": "PMi_DeleteList",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
     },
     {
       "addr": "0x02040d78",
@@ -4919,6 +5107,41 @@
       "library": "data",
       "confidence": "certain",
       "note": "data global; literal-pool alignment of matched SDK funcs"
+    },
+    {
+      "addr": "0x02055e04",
+      "sdk_name": "PMi_WaitBusy",
+      "library": "data",
+      "confidence": "certain",
+      "note": "pm.c wait-routine pointer; name from NitroSDK 4_2-patch-plus9 pm.o"
+    },
+    {
+      "addr": "0x0206264c",
+      "sdk_name": "PMi_IsInit",
+      "library": "data",
+      "confidence": "certain",
+      "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
+    },
+    {
+      "addr": "0x02062660",
+      "sdk_name": "PMi_PostSleepCallbackList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
+    },
+    {
+      "addr": "0x02062664",
+      "sdk_name": "PMi_PreSleepCallbackList",
+      "library": "data",
+      "confidence": "certain",
+      "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
+    },
+    {
+      "addr": "0x02062668",
+      "sdk_name": "PMi_Work",
+      "library": "data",
+      "confidence": "certain",
+      "note": "pm.c static; name from NitroSDK 4_2-patch-plus9 pm.o"
     },
     {
       "addr": "0x0205c29c",
@@ -5584,6 +5807,13 @@
       "sdk_name": "PM_DeletePostSleepCallback",
       "library": "spi",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02040e00",
+      "sdk_name": "PMi_LCDOnAvoidReset",
+      "library": "spi",
+      "confidence": "certain",
+      "note": "byte-identical to pm.o in NitroSDK 4_2-patch-plus9 libspi.a"
     },
     {
       "addr": "0x02041574",

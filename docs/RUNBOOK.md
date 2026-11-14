@@ -14,6 +14,8 @@ Task-oriented reference. See [README](../README.md) for setup.
 | `make link` | relink every module from delinked objects, byte-compare vs ROM |
 | `make sdk` | compile every NitroSDK/NitroSystem `.c` into `build/` |
 | `make sdk-propose` | propose SDK names for unassigned functions and data (`SDK_PROPOSE_ARGS=--apply` writes them) |
+| `make sdk-patch` | apply `patches/NitroSDK.patch` to `lib/NitroSDK` if it isn't applied (every `make` does this first) |
+| `make sdk-patch-update` | regenerate the patch from the `lib/NitroSDK` working tree |
 | `make sync-names` | harvest mangled names from compiled `.o` into `symbols.txt` |
 | `make check-relocs` | find branches missing a relocation |
 | `make clean` / `distclean` | drop compiled output / drop everything |
@@ -86,6 +88,18 @@ read `-v` to tell which.
 
 Then: add to `mappings` in `config/sdk_mappings.json`, **also add the source to
 `objdiff_units`** (mapped ≠ matched), run `apply_sdk_mappings.py`, `make delinks`, `make progress`.
+
+### Editing SDK source
+
+`lib/NitroSDK` stays pinned to upstream. Our changes (the ROM uses a newer SDK revision than
+upstream has) live in `patches/NitroSDK.patch`.
+
+- Edit files under `lib/NitroSDK` directly, then run `make sdk-patch-update` and commit the
+  patch. Never commit inside the submodule or `git add lib/NitroSDK`.
+- The patch is applied automatically on a fresh clone or after pulling an updated patch.
+- If the build stops with `sdk-patch: !!`, your SDK tree has edits that conflict with the patch.
+  Keep them with `make sdk-patch-update`, or drop them with `git -C lib/NitroSDK checkout .`.
+- `git status` hides the modified submodule on purpose (`ignore = dirty` in `.gitmodules`).
 
 ## Relinking
 

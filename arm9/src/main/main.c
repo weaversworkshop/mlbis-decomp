@@ -14,8 +14,6 @@
 extern void func_01ff85a4(void);
 extern void func_01ff8b50(void);
 
-extern void FX_Init(void);
-
 // --- Function Definitions --- //
 
 // MATCHED 100%

@@ -12,10 +12,10 @@ This project uses NO AI for any actual decompilation work. All C/C++ functions a
 
 | | |
 |---|---|
-| `main_7` functions matched | **1672 / 1869** |
-| game code | 923/1119 matched (82.48%) |
-| SDK / NitroSystem | 749 / 750 |
-| data objects homed | 190 / 504 (183 verified byte-exact, + 86 RTTI COMDAT) |
+| `main_7` functions matched | **1856 / 1869** |
+| game code | 931/942 matched (98.83%) |
+| SDK / NitroSystem | 925 / 925 |
+| data objects homed | 207 / 501 (200 verified byte-exact, + 88 RTTI COMDAT) |
 | Relink vs ROM | 134 modules byte-exact, main 9 bytes off (35 bytes total) |
 
 `make progress` regenerates the live per-function and per-data-object tables (`main_7_todo.md`).
@@ -26,7 +26,7 @@ Submodules (`git submodule update --init --recursive`):
 
 | Submodule | Source |
 |---|---|
-| `lib/NitroSDK` | [ntrtwl/NitroSDK](https://github.com/ntrtwl/NitroSDK) |
+| `lib/NitroSDK` | [ntrtwl/NitroSDK](https://github.com/ntrtwl/NitroSDK) + `patches/NitroSDK.patch` (applied by `make`) |
 | `lib/NitroSystem` | [ntrtwl/NitroSystem](https://github.com/ntrtwl/NitroSystem) |
 | `lib/mw-libraries` | [mid-kid/mw-libraries](https://github.com/mid-kid/mw-libraries) (MSL C) |
 
@@ -80,6 +80,7 @@ config/arm9/                 dsd config: config.yaml, symbols.txt, relocs.txt, d
 config/sdk_mappings.json     ROM addr -> SDK symbol map + objdiff units
 docs/                        committed documentation
 lib/                         NitroSDK, NitroSystem, mw-libraries (submodules)
+patches/                     local edits to submodules, applied automatically by make
 rom/  extract/               your ROM + dsd extraction (gitignored)
 tools/scripts/               Python helpers
 tools/dsd.pin                pinned dsd commit (built by `make tools`)

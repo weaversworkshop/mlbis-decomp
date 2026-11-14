@@ -126,8 +126,6 @@ GameState gameState;  // 0x02055fe4
 #define BITSET_CLR(ptr,idx) ((ptr)[(idx) >> 5] &= ~(1 << ((idx) & 0x1f)))
 
 void initGameState(void);  // 0x020057fc
-u32 getGameVar(u32, clGlobalEvent *, EventContext *);  // 0x020058bc
-void setGameVar(u32, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
 u8 * getMessageText(u32, u32);  // 0x02005ca4
 u8 * getItemNameText(s32);  // 0x02005cbc
 
@@ -523,7 +521,7 @@ void initGameState() {
 }
 
 // MATCHED 100%
-u32 getGameVar(u32 id, clGlobalEvent * sys, EventContext * ctx) {
+u32 getGameVar(u16 id,clGlobalEvent * sys, EventContext * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
         return BITSET_GET(gameState.field0e4, idx);
@@ -558,7 +556,7 @@ u32 getGameVar(u32 id, clGlobalEvent * sys, EventContext * ctx) {
 }
 
 // MATCHED 100%
-void setGameVar(u32 id, s32 value, clGlobalEvent * sys, EventContext * ctx) {
+void setGameVar(u16 id,s32 value, clGlobalEvent * sys, EventContext * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
         if (value != 0) {
