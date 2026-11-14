@@ -458,7 +458,7 @@ def run_unit(unit, cache, claimed, verbose):
             pct, obj_gaps = compare(ttoks[:k], btoks[:k])
             addr = sym_addr(name) if len(hits) == 1 else tgt.abs_addr(tsym)
             inside = interior_syms(addr, bsym["size"]) if addr else []
-            status = data_status(tgt, tsym, bsym, pct, addr, inside)
+            status = data_status(tgt, tsym, bsym, pct, addr, inside) if cls == tcls else "section"
             key = (tgt_path, "data", tsym["shndx"], tsym["value"])
             rank = (status in ("ok", "pad"), key not in claimed, pct)
             scored.append((rank, tcls, tsym, pct, obj_gaps, addr, inside, status, key))

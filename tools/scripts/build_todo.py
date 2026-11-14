@@ -199,6 +199,7 @@ DATA_NOTE = {
     "zeros": "**zero tail too long for alignment**: undeclared trailing content",
     "short": "**ROM tail is non-zero**: undeclared trailing content",
     "diff": "**content differs**",
+    "section": "**wrong section** (e.g. missing initializer: source .bss vs ROM .data)",
 }
 
 

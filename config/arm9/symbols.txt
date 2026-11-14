@@ -1874,7 +1874,7 @@ data_02047a1c kind:data(any) addr:0x02047a1c
 data_02047a44 kind:data(any) addr:0x02047a44
 data_02047a58 kind:data(any) addr:0x02047a58
 __sinit_softReset.cpp kind:function(arm,size=0x2c) addr:0x02047c2c
-__sinit_sndEmitter.cpp kind:function(arm,size=0x2c) addr:0x02047c58
+__sinit_sndEmitterPool.cpp kind:function(arm,size=0x2c) addr:0x02047c58
 __sinit_unk_02047c84.cpp kind:function(arm,size=0x24) addr:0x02047c84
 __sinit_clPaf.cpp kind:function(arm,size=0x94) addr:0x02047ca8
 data_02047d3c kind:data(any) addr:0x02047d3c
@@ -1974,7 +1974,7 @@ data_0204ffd3 kind:data(any) addr:0x0204ffd3
 data_0204ffd5 kind:data(any) addr:0x0204ffd5
 data_0204ffe0 kind:data(any) addr:0x0204ffe0
 .p__sinit_softReset.cpp kind:data(word) addr:0x0204ffe8
-.p__sinit_sndEmitter.cpp kind:data(word) addr:0x0204ffec
+.p__sinit_sndEmitterPool.cpp kind:data(word) addr:0x0204ffec
 .p__sinit_unk_02047c84.cpp kind:data(word) addr:0x0204fff0
 .p__sinit_clPaf.cpp kind:data(word) addr:0x0204fff4
 _ZTS6clTask kind:data(any) addr:0x02050000
@@ -2221,9 +2221,6 @@ data_020564f8 kind:bss addr:0x020564f8
 softResetState kind:bss addr:0x02056504
 sndWaveArcHeader kind:bss addr:0x02056520
 sndDriverInfo kind:bss addr:0x02056560
-data_02056f48 kind:bss addr:0x02056f48
-data_02057480 kind:bss addr:0x02057480
-data_02057498 kind:bss addr:0x02057498
 sndEmitterList kind:bss addr:0x02058920
 sndEmitterNext kind:bss addr:0x02058928
 sndEmitterRequests kind:bss addr:0x0205892c

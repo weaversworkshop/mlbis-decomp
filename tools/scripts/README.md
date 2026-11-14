@@ -84,7 +84,8 @@ Reloc-aware byte match of every `objdiff.json` unit vs the delinked target: word
 bits masked, each reloc compared as (kind, symbol, addend), section-relative relocs and reloc-less branches
 resolved to symbols first. **100.00% = identical after linking**; any real diff caps at 99.99%. Also scores
 homed data objects; a duplicated data name (same `static` in two TUs) is scored against every same-named
-target and the best unclaimed one kept. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
+target and the best unclaimed one kept. A source/target section-class mismatch (`.bss` vs `.data`, e.g. a
+missing initializer) is status `section`, never a pass. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
 sized to the next symbol or section end.
 `obj_match.py [--config objdiff.json] [--out -|FILE] [--unit main/X ...] [--text] [-v]`
 - `make progress` (piped into `build_todo`), `make obj-match [UNIT=main/X] [OBJ_MATCH_ARGS=-v]`.

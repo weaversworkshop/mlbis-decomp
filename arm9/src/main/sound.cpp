@@ -162,8 +162,6 @@ extern SndVoice sndVoices[SND_VOICE_COUNT];  // 0x01ff986c
 
 extern NNSSndStrmThread sndStrmThread;  // 0x01ff9c7c
 
-extern SNDDriverInfo sndDriverInfo[];  // 0x02056560
-
 // --- Variable Definitions --- //
 
 SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
@@ -173,6 +171,7 @@ char sndHeapName[12] = "SoundHeap";  // 0x02050088
 char sndArcPath[24] = "sound/sound_data.sdat";  // 0x02050094
 
 static SNDWaveArc sndWaveArcHeader;  // 0x02056520
+SNDDriverInfo sndDriverInfo[2];  // 0x02056560
 
 // --- Function Declarations --- //
 

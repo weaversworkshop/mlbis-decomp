@@ -43,10 +43,10 @@ from:0x02077520 kind:load to:0x0205afa8 module:main
 from:0x02077528 kind:load to:0x02055fe4 add:0x400 module:main
 from:0x0207752c kind:load to:0x02055fe4 add:0x500 module:main
 from:0x02077530 kind:load to:0x02055fe4 module:main
-from:0x02077548 kind:load to:0x02056f48 module:main
+from:0x02077548 kind:load to:0x02056560 add:0x9e8 module:main
 from:0x020775a4 kind:arm_call to:0x020743a0 module:overlay(12)
 from:0x020775fc kind:load to:0x02064f08 module:overlay(8)
-from:0x02077600 kind:load to:0x02056f48 module:main
+from:0x02077600 kind:load to:0x02056560 add:0x9e8 module:main
 from:0x02077740 kind:load to:0x02064f08 module:overlay(8)
 from:0x020777bc kind:arm_call to:0x02017728 module:main
 from:0x020777cc kind:arm_call to:0x01ff8228 module:itcm
