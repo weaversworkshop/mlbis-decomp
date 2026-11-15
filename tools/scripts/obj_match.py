@@ -405,7 +405,7 @@ def run_unit(unit, cache, claimed, verbose):
         tgt = cache[tgt_path] = Elf(ROOT / tgt_path)
     base = Elf(ROOT / base_path)
     tfuncs = tgt.functions()
-    fns, missing, gaps = [], [], set()
+    fns, missing, gaps, proven = [], [], set(), set()
     bfuncs = sorted(((n, dict(s)) for n, syms in base.functions().items() for s in syms),
                     key=lambda kv: kv[1]["value"])
     # hand-asm interior label the target has no symbol for: part of the entry before it
@@ -433,6 +433,8 @@ def run_unit(unit, cache, claimed, verbose):
         if pct == 100.0:
             claimed.add((tgt_path, tsym["value"]))
         gaps.update(fn_gaps)
+        if pct == 100.0:
+            proven.update(fn_gaps)
         fns.append({
             "name": name,
             "address": tsym["value"],
@@ -442,13 +444,8 @@ def run_unit(unit, cache, claimed, verbose):
         })
     tdata = tgt.data_candidates()
     objs, missing_data = [], []
-    for name, (cls, bsym, comdat) in sorted(base.data_objects().items(),
-                                            key=lambda kv: kv[1][1]["value"]):
-        hits = tdata.get(name)
-        if not hits:
-            if not comdat:
-                missing_data.append(name)
-            continue
+
+    def score(name, cls, bsym, comdat, hits, source_name=None):
         btoks = tokenize(base, bsym, is_code=False)
         scored = []
         for tcls, tsym, _ in hits:
@@ -463,10 +460,12 @@ def run_unit(unit, cache, claimed, verbose):
             rank = (status in ("ok", "pad"), key not in claimed, pct)
             scored.append((rank, tcls, tsym, pct, obj_gaps, addr, inside, status, key))
         _, tcls, tsym, pct, obj_gaps, addr, inside, status, key = max(scored, key=lambda r: r[0])
-        if len(hits) > 1 and status in ("ok", "pad"):
+        if (len(hits) > 1 or source_name) and status in ("ok", "pad"):
             claimed.add(key)
         gaps.update(obj_gaps)
-        objs.append({
+        if pct == 100.0:
+            proven.update(obj_gaps)
+        row = {
             "name": name,
             "address": addr or tsym["value"],
             "size": tsym["size"],
@@ -476,7 +475,37 @@ def run_unit(unit, cache, claimed, verbose):
             "comdat": comdat,
             "interior": inside,
             "fuzzy_match_percent": pct,
-        })
+        }
+        if source_name:
+            row["source_name"] = source_name
+        objs.append(row)
+
+    for name, (cls, bsym, comdat) in sorted(base.data_objects().items(),
+                                            key=lambda kv: kv[1][1]["value"]):
+        hits = tdata.get(name)
+        if not hits:
+            if not comdat:
+                missing_data.append(name)
+            continue
+        score(name, cls, bsym, comdat, hits)
+
+    # anonymous `@N` objects (string literals, dtor-chain nodes, static tables) have no name to pair by:
+    # take the target name a 100%-matching function/object relocates to at the same position
+    anon = {n: v for n, v in base.data_objects().items() if n.startswith("@")}
+    done = set()
+    while True:
+        pairs = {}
+        for tname, bname in proven:
+            if bname in anon and bname not in done and tname in tdata:
+                pairs.setdefault(bname, set()).add(tname)
+        todo = [(b, next(iter(t))) for b, t in sorted(pairs.items()) if len(t) == 1]
+        if not todo:
+            break
+        for bname, tname in todo:
+            done.add(bname)
+            cls, bsym, comdat = anon[bname]
+            score(tname, cls, bsym, comdat, tdata[tname], source_name=bname)
+    gaps = {g for g in gaps if g[1] not in done}
     return {"name": unit["name"], "functions": fns, "objects": objs,
             "missing": missing, "missing_data": missing_data,
             "gaps": sorted(gaps)}

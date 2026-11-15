@@ -28,18 +28,16 @@ typedef struct {
     UnkStruct_0200bce8_24 out;  // +0xc
 } UnkStruct_0200bce8;
 
-// --- Extern Data Variables --- //
-
-extern u32 data_0204a4cc[];  // 0x0204a4cc
-extern u32 data_0204a4dc[];  // 0x0204a4dc
-extern u32 data_0204a4ec[];  // 0x0204a4ec
-
 // --- Extern Functions --- //
 
 extern void func_01ff82ac(void *, void *, u32);
 extern void func_01ff8380(void *, void *, u32);
 
 // --- Variable Definitions --- //
+
+const u32 data_0204a4cc[4] = { 0x11111111, 0x22222222, 0x44444444, 0x88888888 };
+const u32 data_0204a4dc[4] = { 0x00001111, 0x00002222, 0x00004444, 0x00008888 };
+const u32 data_0204a4ec[4] = { 0x11110000, 0x22220000, 0x44440000, 0x88880000 };
 
 // --- Function Declarations --- //
 
@@ -775,7 +773,7 @@ void func_0200d0d8(u32 * param1, u16 param2, u16 param3, s32 param4, u16 param5,
             if (col < lim) {
                 do {
                     u32 inv = 0xffffffff;
-                    u32 * tbl = m1 ? data_0204a4dc : data_0204a4cc;
+                    const u32 * tbl = m1 ? data_0204a4dc : data_0204a4cc;
                     s16 j = 0;
 
                     do {
@@ -934,7 +932,7 @@ void func_0200d63c(u32 * param1, s32 param2, u16 param3, s32 param4, u16 param5,
         do {
             for (local38 = 0; local38 < (s32)local10; local38 += 4) {
                 u32 * p = local34 + local28 * local38;
-                u32 * local00 = (param4 & 1) ? data_0204a4dc : data_0204a4cc;
+                const u32 * local00 = (param4 & 1) ? data_0204a4dc : data_0204a4cc;
 
                 for (local30 = 0; local30 < 4; p += local0c, local30++) {
                     u32 mask = local00[local30];

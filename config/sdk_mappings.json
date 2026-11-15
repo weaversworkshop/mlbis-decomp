@@ -8034,6 +8034,11 @@
       "name": "msl/signal"
     },
     {
+      "source": "lib/mw-libraries/ARM_EABI_Support_DS2.0/msl/MSL_C/MSL_ARM/Src/critical_regions_NITRO.c",
+      "target": "build/delinks/_dsd_gap@main_7.o",
+      "name": "msl/critical_regions_NITRO"
+    },
+    {
       "prebuilt": "mathlib/_ll_div.o",
       "target": "build/delinks/_dsd_gap@main_7.o",
       "name": "msl/runtime/_ll_div"

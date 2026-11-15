@@ -68,7 +68,7 @@ from:0x0206ab1c kind:arm_call to:0x0201a138 module:main
 from:0x0206ab4c kind:arm_call to:0x020296c4 module:main
 from:0x0206ab78 kind:arm_call to:0x0201a138 module:main
 from:0x0206ab9c kind:arm_call to:0x0202a608 module:main
-from:0x0206abb0 kind:load to:0x02055af0 module:main
+from:0x0206abb0 kind:load to:0x02055ae8 add:0x8 module:main
 from:0x0206abb4 kind:load to:0x0205c1b0 module:main
 from:0x0206abb8 kind:load to:0x02055a70 add:0x8 module:main
 from:0x0206abbc kind:load to:0x0204ac68 module:main

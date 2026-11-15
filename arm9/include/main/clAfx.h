@@ -10,6 +10,10 @@
 #include "main/clRfx.h"
 #include "main/clRfxFileMan.h"
 
+extern "C" {
+    #include "main/palAnim.h"
+}
+
 class clAfx : public clRfx {
 public:
 
@@ -18,7 +22,7 @@ public:
     virtual RfxPlttHeader * getPlttHeader(u16);  // 0x020224c4
     virtual void onNodePos(RfxNode *);  // 0x020224cc
     virtual u32 func_020224d0(void);  // 0x020224d0
-    virtual void func_020224d8(void (*)(void), GXRgb, s32, s32);  // 0x020224d8
+    virtual void func_020224d8(BlendFunc, GXRgb, s32, s32);  // 0x020224d8
     virtual GXRgb getBlendColor(void);  // 0x020224dc
     virtual nsObjSys::clOamMan * getOamMan(void);  // 0x020224e4
     virtual nsObjSys::clCellAnime * func_020224ec(s32);  // 0x020224ec

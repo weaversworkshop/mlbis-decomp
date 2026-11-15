@@ -6,9 +6,9 @@
 
 #include "main/clCellAnime.h"
 #include "main/clGameMain.h"
-
 #include "main/heap.h"
 #include "main/sound.h"
+#include "main/texVram.h"
 
 extern "C" {
 
@@ -25,10 +25,6 @@ extern "C" {
 #define MES_SCREEN_SIZE (MES_SCREEN_COLS * MES_SCREEN_ROWS * sizeof(u16))
 
 #define MES_ICON_RES ((YanaRes *)mesIconRes)
-
-// --- Extern Data Variables --- //
-
-extern u8 data_0205c25c[];
 
 // --- Extern Functions --- //
 
@@ -2948,7 +2944,7 @@ void clMesIcon::loadObjChars(u32 screen, u32 addr) {
 
 // MATCHED 100%
 void func_02014070(nsObjSys::clVramManByteBase *man, u32 size, u32 param3, u32 param4) {
-    u32 base = (1 << data_0205c25c[man->manBank]);
+    u32 base = (1 << objCharUnitShift[man->manBank]);
     man->clVramManByteBase::alloc(MATH_ROUNDUP(size, base), param3, param4);
 }
 

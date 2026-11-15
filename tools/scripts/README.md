@@ -98,6 +98,9 @@ sized to the next symbol or section end.
   `add:`); `diff`. COMDAT objects (bind 13, RTTI) are byte-checked but never owned.
 - Duplicate target names: a pair already matched by another unit is never reused; if two units compile the
   same static, the loser's row is dropped.
+- Anonymous `@N` objects (string literals, dtor-chain nodes, static tables) pair through relocs: when a
+  100%-matching function/object relocates to `@N` where the target has `data_x`, `@N` is scored as `data_x`
+  (row carries `source_name`); iterated, so `@N` tables reached only from other `@N` data pair too.
 
 ### decmp_report.py
 objdiff-schema report for decmp.dev from obj_match scores. Denominator = every function/data object in

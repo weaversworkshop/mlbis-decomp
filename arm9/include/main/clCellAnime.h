@@ -171,7 +171,6 @@ void queuePush(nsObjSys::clCellAnime *, nsObjSys::clCellAnime * &, nsObjSys::clC
 
 }
 
-extern u32 texBankAddrs[4];  // 0x0205c234
 extern nsObjSys::clCellAnime * charLoadQueue[2];
 extern nsObjSys::clCellAnime * plttLoadQueue[2];
 

@@ -4,8 +4,10 @@
 
 #include "main/clCellAnime.h"
 
+#include "main/clObjPltVramMan.h"
 #include "main/cellObjSize.h"
 #include "main/clPaf.h"
+#include "main/texVram.h"
 
 extern "C" {
 
@@ -18,11 +20,6 @@ extern "C" {
 #define TEX_PLTT_SLOT_SIZE 0x4000
 
 typedef void (*CharCopyFunc)(u32 *, u32 *, u32, u32);
-
-typedef struct {
-    u16 * ext;  // +0x0
-    u16 * std;  // +0x4
-} PlttBufs;
 
 typedef struct {
     nsObjSys::clCellAnime * head;  // +0x0
@@ -48,11 +45,6 @@ typedef struct {
 
 extern const u8 texPlttBaseShift[8];  // 0x0204ac70
 extern const u8 texPlttSizeShift[8];  // 0x0204ac80
-
-extern u8 * texPlttBuf;  // 0x0205c230
-extern u32 texPlttBankAddrs[6];  // 0x0205c244
-
-extern PlttBufs objPlttBufs[2];  // 0x0205c268
 
 // --- Extern Functions --- //
 

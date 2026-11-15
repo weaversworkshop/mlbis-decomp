@@ -8,12 +8,12 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "main/palAnim.h"
 #include "main/uiUtil.h"
 
-// --- Extern Data Variables --- //
+// --- Variable Definitions --- //
 
-typedef void (* ColorBlendFunc)(void);
-extern ColorBlendFunc colorBlendFuncs[4];  // 0x02054ff8
+BlendFunc colorBlendFuncs[4] = { colorLerp, colorAddSaturation, colorSubSaturation, colorLuminanceBlend };  // 0x02054ff8
 
 } // extern "C"
 
@@ -38,7 +38,7 @@ u32 clAfx::func_020224d0() {
 }
 
 // MATCHED 100%
-void clAfx::func_020224d8(void (* param1)(void), GXRgb param2, s32 param3, s32 param4) {}
+void clAfx::func_020224d8(BlendFunc param1, GXRgb param2, s32 param3, s32 param4) {}
 
 // MATCHED 100%
 GXRgb clAfx::getBlendColor() {

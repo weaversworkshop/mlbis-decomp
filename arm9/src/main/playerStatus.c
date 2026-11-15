@@ -7,32 +7,7 @@
 #include "main/backup.h"
 #include "main/clGameMain.h"
 
-// --- Extern Data Variables --- //
-
-extern LevelStats * sLevelTable[];  // 0x020526ec
-extern BadgeInfo sBadgeInfo[];  // 0x020526f8
-extern BadgeComboInfo sBadgeCombo[];  // 0x02052778
-extern ItemInfo sItemInfo[];  // 0x020527f8
-extern ItemInfo sKeyItemInfo[];  // 0x02052a68
-extern GearInfo sGearInfo[];  // 0x02053b30
-
-extern s8 data_020526bc[];
-extern s8 data_020526c0[];
-extern s16 sStartLvBowser[];  // 0x020526c4
-extern s16 sStartGearSlotsLuigi[];  // 0x020526c6
-extern s16 sStartGearSlotsBowser[];  // 0x020526c8
-extern u16 sStartBadgeLuigi[];  // 0x020526ca
-extern s16 sStartGearSlotsMario[];  // 0x020526cc
-extern u16 sStartBadgeMario[];  // 0x020526ce
-extern s16 sStartLvLuigi[];  // 0x020526d0
-extern s16 sStartLvMario[];  // 0x020526d2
-extern u16 sStartGearMario[][4];  // 0x020526d4
-extern u16 sStartGearLuigi[][4];  // 0x020526dc
-extern u16 sStartGearBowser[][4];  // 0x020526e4
-
-extern s8 data_0205af84[];
-extern s8 data_0205af88[];
-extern s8 data_0205af8c[];
+#include "data/playerStatus.h"
 
 // --- Extern Functions --- //
 
@@ -42,6 +17,10 @@ extern void func_01ff8228(void *, u32, u32);
 
 const s8 sGearSlotsBowser[4] = { 1, 2, 3, 3 };  // 0x0204ac40
 const s8 sGearSlotsBros[8] = { 1, 2, 3, 3, 3, 3 };  // 0x0204ac44
+
+s8 data_0205af84[4];
+s8 data_0205af88[4];
+s8 data_0205af8c[4];
 
 // --- Function Declarations --- //
 

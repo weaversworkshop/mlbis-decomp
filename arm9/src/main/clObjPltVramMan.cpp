@@ -24,7 +24,9 @@ extern void func_01ff8380(void *, void *, u32);
 
 // --- Variable Definitions --- //
 
+u8 objCharUnitShift[4];  // 0x0205c25c
 nsObjSys::clOamMan * oamManTable[2];  // 0x0205c260
+PlttBufs objPlttBufs[2];  // 0x0205c268
 
 // --- Function Declarations --- //
 

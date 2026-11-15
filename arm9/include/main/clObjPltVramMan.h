@@ -11,6 +11,14 @@ extern "C" {
     #include <nitro.h>
 }
 
+typedef struct {
+    u16 * ext;  // +0x0
+    u16 * std;  // +0x4
+} PlttBufs;
+
+extern u8 objCharUnitShift[4];
+extern PlttBufs objPlttBufs[2];
+
 namespace nsObjSys {
 
 class clObjPltVramMan : public clVramManBase {
