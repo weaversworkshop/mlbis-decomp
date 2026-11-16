@@ -1,24 +1,31 @@
 #!/usr/bin/env python3
 import json
+import re
 import sys
 
-from common import ROOT, SDK_MAPPINGS, game_sources, load_json, objdiff_target
+from common import ROOT, SDK_MAPPINGS, game_sources, load_json, objdiff_targets
+from split_tcm import objdiff_base
+
+GAP_RE = re.compile(r"_dsd_gap@(\w+)\.o$")
 
 
 def game_units():
     units = []
     for path in game_sources():
         rel = path.relative_to(ROOT).with_suffix("").as_posix()
-        target = objdiff_target(path)
-        if target is None:
+        targets = objdiff_targets(path)
+        if not targets:
             print(f"gen_objdiff: {path.relative_to(ROOT).as_posix()} has no "
                   f"'// objdiff-target:' comment -- it will NOT be diffed", file=sys.stderr)
             continue
-        units.append({
-            "name": rel[len("arm9/src/"):],
-            "target_path": target,
-            "base_path": f"build/{rel}.o",
-        })
+        name = rel[len("arm9/src/"):]
+        for i, target in enumerate(targets):
+            gap = GAP_RE.search(target)
+            units.append({
+                "name": name if i == 0 else f"{name}@{gap.group(1) if gap else i}",
+                "target_path": target,
+                "base_path": objdiff_base(f"build/{rel}.o", target, i == 0),
+            })
     return units
 
 
@@ -35,10 +42,11 @@ def sdk_units():
             units.append({"name": e["name"], "target_path": e["target"],
                           "base_path": e["object"]})
             continue
+        name = e.get("name") or "sdk/" + e["source"][len("lib/"):-len(".c")]
         units.append({
-            "name": e.get("name") or "sdk/" + e["source"][len("lib/"):-len(".c")],
+            "name": name,
             "target_path": e["target"],
-            "base_path": f"build/{e['source'][:-len('.c')]}.o",
+            "base_path": objdiff_base(f"build/{e['source'][:-len('.c')]}.o", e["target"], "@" not in name),
         })
     return units
 

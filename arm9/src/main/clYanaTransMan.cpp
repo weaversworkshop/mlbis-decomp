@@ -21,8 +21,8 @@ extern GXVRamTexPltt data_027e00e4;  // 0x027e00e4
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Function Declarations --- //
 
@@ -269,9 +269,9 @@ void clYanaTransMan::submit(YanaTransEntry * srcEntry) {
 void doCopy(YanaTransEntry * entry) {
     u32 size = entry->raw.size;
     if (entry->src < entry->dst) {
-        func_01ff8380((u16 *)entry->src, (u16 *)entry->dst, size);
+        cpu_copy32_rev((u16 *)entry->src, (u16 *)entry->dst, size);
     } else {
-        func_01ff82ac((u16 *)entry->src, (u16 *)entry->dst, size);
+        cpu_copy32_fwd((u16 *)entry->src, (u16 *)entry->dst, size);
     }
 }
 
@@ -286,9 +286,9 @@ void doCopyStrided(YanaTransEntry * entry) {
 
     for (s32 i = 0; i < rows; i++) {
         if (src < dst) {
-            func_01ff8380(src, dst, rowBytes);
+            cpu_copy32_rev(src, dst, rowBytes);
         } else {
-            func_01ff82ac(src, dst, rowBytes);
+            cpu_copy32_fwd(src, dst, rowBytes);
         }
 
         dst = (u16 *)((u8 *)dst + dstStride);
@@ -372,9 +372,9 @@ void doObjExtPltt(YanaTransEntry * entry) {
         u16 * dst = (u16 *)entry->dst;
         u32 size = entry->raw.size;
         if (src < dst) {
-            func_01ff8380(src, dst, size);
+            cpu_copy32_rev(src, dst, size);
         } else {
-            func_01ff82ac(src, dst, size);
+            cpu_copy32_fwd(src, dst, size);
         }
 
         GX_SetBankForOBJExtPltt(pltt);
@@ -385,9 +385,9 @@ void doObjExtPltt(YanaTransEntry * entry) {
         u16 * dst = (u16 *)entry->dst;
         u32 size = entry->raw.size;
         if (src < dst) {
-            func_01ff8380(src, dst, size);
+            cpu_copy32_rev(src, dst, size);
         } else {
-            func_01ff82ac(src, dst, size);
+            cpu_copy32_fwd(src, dst, size);
         }
 
         GX_SetBankForSubOBJExtPltt(pltt);

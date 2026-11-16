@@ -8,8 +8,8 @@
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Function Definitions --- //
 #ifndef IDE_PARSE
@@ -109,12 +109,12 @@ asm void copy_rect(void * src, void * dst, s32 rows, s32 width, s32 srcStride, s
     mov r0, r9
     bhs @copy_forward
     mov r1, r8
-    bl func_01ff8380
+    bl cpu_copy32_rev
     add sp, sp, #0x8
     ldmia sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
 @copy_forward:
     mov r1, r8
-    bl func_01ff82ac
+    bl cpu_copy32_fwd
     add sp, sp, #0x8
     ldmia sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
 @strided:

@@ -23,8 +23,8 @@ typedef struct {
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Variable Definitions --- //
 
@@ -291,9 +291,9 @@ void sndEmitFlushQueue(u32 slot) {
 
             if (j <= 0) {
                 if (req < copyPtr) {
-                    func_01ff8380(req, &copy, sizeof(copy));
+                    cpu_copy32_rev(req, &copy, sizeof(copy));
                 } else {
-                    func_01ff82ac(req, &copy, sizeof(copy));
+                    cpu_copy32_fwd(req, &copy, sizeof(copy));
                 }
 
                 req->id = -1;

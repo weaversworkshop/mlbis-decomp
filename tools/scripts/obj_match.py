@@ -2,6 +2,7 @@
 import argparse
 import difflib
 import json
+import re
 import struct
 import sys
 from bisect import bisect_right
@@ -9,7 +10,7 @@ from collections import Counter
 from pathlib import Path
 
 import common
-from common import ROOT, read_symbols
+from common import ROOT, compiled_object, resident_symbols
 
 SHT_SYMTAB, SHT_REL, SHT_RELA, SHT_NOBITS = 2, 9, 4, 8
 STT_NOTYPE, STT_OBJECT, STT_FUNC, STT_SECTION = 0, 1, 2, 3
@@ -22,6 +23,27 @@ CALL_RELOCS = {1, 27, 28, 29}
 ABS32_RELOCS = {2}
 REL32_RELOCS = {3}
 BRANCH_MASK = ~0xFFFFFF & 0xFFFFFFFF
+TCM_MODULES = ("itcm", "dtcm")
+GAP_MODULE_RE = re.compile(r"_dsd_gap@(\w+?)_\d+\.o$")
+
+
+def section_tcm(secname):
+    for mod in TCM_MODULES:
+        if secname == "." + mod or secname.startswith("." + mod + "."):
+            return mod
+    return None
+
+
+def section_class(secname):
+    tcm = section_tcm(secname)
+    if tcm:
+        secname = secname[len(tcm) + 1:]
+    return next((c for c in DATA_SECTIONS if secname.startswith(c)), None)
+
+
+def target_tcm(target_path):
+    m = GAP_MODULE_RE.search(target_path)
+    return m.group(1) if m and m.group(1) in TCM_MODULES else None
 
 
 def die(msg):
@@ -180,8 +202,7 @@ class Elf:
                     continue
                 if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
                     continue
-                sec = self.sections[sym["shndx"]]["name"]
-                cls = next((c for c in DATA_SECTIONS if sec.startswith(c)), None)
+                cls = section_class(self.sections[sym["shndx"]]["name"])
                 if cls and sym["name"] not in self._data_objs:
                     self._data_objs[sym["name"]] = (cls, sym, sym["bind"] == STB_COMDAT)
         return self._data_objs
@@ -195,8 +216,7 @@ class Elf:
                     continue
                 if sym["shndx"] == 0 or sym["shndx"] >= len(self.sections):
                     continue
-                cls = next((c for c in DATA_SECTIONS
-                            if self.sections[sym["shndx"]]["name"].startswith(c)), None)
+                cls = section_class(self.sections[sym["shndx"]]["name"])
                 if cls:
                     self._data_cands.setdefault(sym["name"], []).append(
                         (cls, sym, sym["bind"] == STB_COMDAT))
@@ -281,7 +301,7 @@ def _load_symbols():
     if _SYM_ADDRS is not None:
         return
     _SYM_ADDRS = {}
-    allsyms = read_symbols() if common.SYMBOLS.exists() else []
+    allsyms = resident_symbols()
     for sym in allsyms:
         _SYM_ADDRS.setdefault(sym.name, sym.addr)
     _SYM_SORTED = sorted({(s.addr, s.name) for s in allsyms})
@@ -393,7 +413,7 @@ def data_status(tgt, tsym, bsym, pct, addr, inside):
 
 
 def run_unit(unit, cache, claimed, verbose):
-    tgt_path, base_path = unit["target_path"], unit["base_path"]
+    tgt_path, base_path = unit["target_path"], compiled_object(unit["base_path"])
     for p in (tgt_path, base_path):
         if not (ROOT / p).is_file():
             if verbose:
@@ -406,8 +426,17 @@ def run_unit(unit, cache, claimed, verbose):
     base = Elf(ROOT / base_path)
     tfuncs = tgt.functions()
     fns, missing, gaps, proven = [], [], set(), set()
-    bfuncs = sorted(((n, dict(s)) for n, syms in base.functions().items() for s in syms),
-                    key=lambda kv: kv[1]["value"])
+    # one object can span modules (`#pragma section ITCM`): each unit scores only its target's part
+    tcm = target_tcm(tgt_path)
+    # a unit whose FIRST target is a TCM module lives there whole (Autoload object); `x@itcm_1` units do not
+    whole = tcm is not None and "@" not in unit["name"]
+
+    def ours(sym):
+        st = section_tcm(base.sections[sym["shndx"]]["name"])
+        return st in (None, tcm) if whole else st == tcm
+
+    bfuncs = sorted(((n, dict(s)) for n, syms in base.functions().items() for s in syms
+                     if ours(s)), key=lambda kv: kv[1]["value"])
     # hand-asm interior label the target has no symbol for: part of the entry before it
     named = {(s["shndx"], s["value"]) for n, s in bfuncs if n in tfuncs}
     for name, sym in bfuncs:
@@ -482,6 +511,8 @@ def run_unit(unit, cache, claimed, verbose):
 
     for name, (cls, bsym, comdat) in sorted(base.data_objects().items(),
                                             key=lambda kv: kv[1][1]["value"]):
+        if not ours(bsym):
+            continue
         hits = tdata.get(name)
         if not hits:
             if not comdat:
@@ -491,7 +522,7 @@ def run_unit(unit, cache, claimed, verbose):
 
     # anonymous `@N` objects (string literals, dtor-chain nodes, static tables) have no name to pair by:
     # take the target name a 100%-matching function/object relocates to at the same position
-    anon = {n: v for n, v in base.data_objects().items() if n.startswith("@")}
+    anon = {n: v for n, v in base.data_objects().items() if n.startswith("@") and ours(v[1])}
     done = set()
     while True:
         pairs = {}
@@ -528,6 +559,7 @@ def main():
             die(f"no unit matched {sorted(want)}")
 
     cache, claimed, out_units, missing_any, gaps_any = {}, set(), [], [], []
+    unit_target = {}
     for unit in units:
         res = run_unit(unit, cache, claimed, args.verbose)
         if res is None:
@@ -538,14 +570,16 @@ def main():
             gaps_any.append((res["name"], res["gaps"]))
         out_units.append({"name": res["name"], "functions": res["functions"],
                           "objects": res["objects"]})
+        unit_target[res["name"]] = unit["target_path"]
 
     # a same-named static compiled by two units: drop the loser's phantom row
-    exact_addrs = {f["address"] for u in out_units for f in u["functions"]
-                   if f["fuzzy_match_percent"] == 100.0}
+    # addresses are target-section offsets: key by target too
+    exact_addrs = {(unit_target[u["name"]], f["address"]) for u in out_units
+                   for f in u["functions"] if f["fuzzy_match_percent"] == 100.0}
     for u in out_units:
         u["functions"] = [f for f in u["functions"]
                           if f["fuzzy_match_percent"] == 100.0
-                          or f["address"] not in exact_addrs]
+                          or (unit_target[u["name"]], f["address"]) not in exact_addrs]
 
     if args.text:
         for u in out_units:

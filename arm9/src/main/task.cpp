@@ -10,42 +10,53 @@ extern "C" {
 
 // --- Variable Definitions --- //
 
-TaskManager taskMgr;  // 0x0205ba70
+u8 vblCount;  // 0x0205ba70
+u8 taskCount;  // 0x0205ba71
+clTask * taskCur;  // 0x0205ba74
+clTask * taskHead;  // 0x0205ba84
+clTask * taskNext;  // 0x0205ba78
+clVBlankTask * vblHead;  // 0x0205ba88
+clVBlankTask * vblCur;  // 0x0205ba7c
+clVBlankTask * vblNext;  // 0x0205ba80
+
+// --- Function Declarations --- //
+
+void deleteVBlankTask(clVBlankTask *);  // 0x0201a9a4
 
 // --- Function Definitions --- //
 
 // MATCHED 100%
 clTask::clTask(u8 priority, u32 param2, u32 param3) {
-    clTask * task = taskMgr.taskHead;
+    clTask * task = taskHead;
 
     if (task == NULL) {
-        taskMgr.taskHead = this;
-        this->next = NULL;
+        taskHead = this;
         this->prev = NULL;
+        this->next = NULL;
     } else {
         while (TRUE) {
             if (task->priority > priority) {
-                if (task->next == NULL) {
-                    taskMgr.taskHead = this;
-                    this->next = NULL;
+                if (task->prev == NULL) {
+                    taskHead = this;
+                    this->prev = NULL;
                 } else {
-                    task->next->prev = this;
-                    this->next = task->next;
+                    task->prev->next = this;
+                    this->prev = task->prev;
                 }
 
-                this->prev = task;
-                task->next = this;
-                break;
-            }
-
-            if (task->prev == NULL) {
-                task->prev = this;
                 this->next = task;
-                this->prev = NULL;
+                task->prev = this;
                 break;
             }
 
-            task = task->prev;
+            if (task->next == NULL) {
+                task->next = this;
+                this->prev = task;
+                this->next = NULL;
+                break;
+            }
+
+            task = task->next;
         }
     }
 
@@ -58,29 +69,29 @@ clTask::clTask(u8 priority, u32 param2, u32 param3) {
     this->counter = 0;
     this->numRuns = 0;
 
-    taskMgr.taskCount++;
+    taskCount++;
 }
 
 // MATCHED 100%
 clTask::~clTask() {
-    if (this->prev != NULL) {
-        this->prev->next = this->next;
-    }
-
-    if (this->next == NULL) {
-        taskMgr.taskHead = this->prev;
-    } else {
+    if (this->next != NULL) {
         this->next->prev = this->prev;
     }
 
-    taskMgr.taskCount--;
-
-    if (taskMgr.taskCur == this) {
-        taskMgr.taskCur = NULL;
+    if (this->prev == NULL) {
+        taskHead = this->next;
+    } else {
+        this->prev->next = this->next;
     }
 
-    if (taskMgr.taskNext == this) {
-        taskMgr.taskNext = this->prev;
+    taskCount--;
+
+    if (taskCur == this) {
+        taskCur = NULL;
+    }
+
+    if (taskNext == this) {
+        taskNext = this->next;
     }
 }
 
@@ -98,7 +109,7 @@ void clTask::enable() {
 
 // MATCHED 100%
 void disableAllTasks() {
-    clTask * task = taskMgr.taskHead;
+    clTask * task = taskHead;
 
     while (task != NULL) {
         u8 r0 = task->priority;
@@ -106,52 +117,52 @@ void disableAllTasks() {
             task->enabled = 0;
             task->hasRan = 1;
         }
-        task = task->prev;
+        task = task->next;
     }
 }
 
 // MATCHED 100%
 void resetTasks() {
-    taskMgr.taskCount = 0;
-    taskMgr.taskHead = NULL;
-    taskMgr.taskCur = NULL;
-    taskMgr.taskNext = NULL;
+    taskCount = 0;
+    taskHead = NULL;
+    taskCur = NULL;
+    taskNext = NULL;
 }
 
 // MATCHED 100%
 clVBlankTask::clVBlankTask(u8 param1, u32 param2, u32 param3) {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
-    clVBlankTask * task = taskMgr.vblHead;
+    clVBlankTask * task = vblHead;
 
     if (task == NULL) {
-        taskMgr.vblHead = this;
-        this->next = NULL;
+        vblHead = this;
         this->prev = NULL;
+        this->next = NULL;
     } else {
         while (TRUE) {
             if (task->priority > param1) {
-                if (task->next == NULL) {
-                    taskMgr.vblHead = this;
-                    this->next = NULL;
+                if (task->prev == NULL) {
+                    vblHead = this;
+                    this->prev = NULL;
                 } else {
-                    task->next->prev = this;
-                    this->next = task->next;
+                    task->prev->next = this;
+                    this->prev = task->prev;
                 }
 
-                this->prev = task;
-                task->next = this;
-                break;
-            }
-
-            if (task->prev == NULL) {
-                task->prev = this;
                 this->next = task;
-                this->prev = NULL;
+                task->prev = this;
                 break;
             }
 
-            task = task->prev;
+            if (task->next == NULL) {
+                task->next = this;
+                this->prev = task;
+                this->next = NULL;
+                break;
+            }
+
+            task = task->next;
         }
     }
 
@@ -162,31 +173,31 @@ clVBlankTask::clVBlankTask(u8 param1, u32 param2, u32 param3) {
     this->hasRan = 1;
     this->numRuns = 0;
 
-    taskMgr.vblCount++;
+    vblCount++;
 
     OS_EnableIrqMask(mask);
 }
 
 // MATCHED 100%
 clVBlankTask::~clVBlankTask() {
-    if (this->prev != NULL) {
-        this->prev->next = this->next;
-    }
-
-    if (this->next == NULL) {
-        taskMgr.vblHead = this->prev;
-    } else {
+    if (this->next != NULL) {
         this->next->prev = this->prev;
     }
 
-    taskMgr.vblCount--;
-
-    if (taskMgr.vblCur == this) {
-        taskMgr.vblCur = NULL;
+    if (this->prev == NULL) {
+        vblHead = this->next;
+    } else {
+        this->prev->next = this->next;
     }
 
-    if (taskMgr.vblNext == this) {
-        taskMgr.vblNext = this->prev;
+    vblCount--;
+
+    if (vblCur == this) {
+        vblCur = NULL;
+    }
+
+    if (vblNext == this) {
+        vblNext = this->next;
     }
 }
 
@@ -203,14 +214,14 @@ void clVBlankTask::enable() {
 // MATCHED 100%
 void disableAllVBlankTasks() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
-    clVBlankTask * task = taskMgr.vblHead;
+    clVBlankTask * task = vblHead;
 
     while (task != NULL) {
         if (task->priority != 0 &&  task->priority != 0xff) {
             task->enabled = 0;
             task->hasRan = 1;
         }
-        task = task->prev;
+        task = task->next;
     }
 
     OS_EnableIrqMask(mask);
@@ -220,10 +231,10 @@ void disableAllVBlankTasks() {
 void resetVBlankTasks() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
-    taskMgr.vblCount = 0;
-    taskMgr.vblHead = NULL;
-    taskMgr.vblCur = NULL;
-    taskMgr.vblNext = NULL;
+    vblCount = 0;
+    vblHead = NULL;
+    vblCur = NULL;
+    vblNext = NULL;
 
     OS_EnableIrqMask(mask);
 }

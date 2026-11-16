@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@itcm_1.o
 
 #include "globals.h"
 
@@ -122,47 +123,45 @@ typedef struct {
 
 enum SndStreamState { SND_STREAM_IDLE, SND_STREAM_PLAYING };
 
-// --- Extern Data Variables --- //
-
-extern s8 sndDriverInfoIdx;  // 0x01ff9438
-extern u8 sndForceCenterX;  // 0x01ff943c
-extern u8 sndAltIdx;  // 0x01ff9444
-extern u8 sndForceCenterY;  // 0x01ff9448
-extern u32 sndHeapSlot0Size;  // 0x01ff944c
-extern u32 sndHeapSlot1Size;  // 0x01ff9450
-extern s16 sndAltVoiceId[2];  // 0x01ff9454
-extern s16 sndSeqNo[2];  // 0x1ff9460
-extern u32 sndHeapSysSize;  // 0x01ff9458
-extern SndRequestHead sndRequestHead;  // 0x01ff9464
-extern SndHeap sndHeapSys;  // 0x01ff9468
-extern u32 sndCommandTag;  // 0x01ff946c
-extern SndVoiceList sndVoiceList;  // 0x01ff9470
-extern SndHeap sndHeapSlot0;  // 0x01ff9474
-extern SndLoadNodeHead sndLoadNodeHead;  // 0x01ff9478
-extern char * sndHeapBuffer;  // 0x01ff947c
-extern SndHeap sndHeapSlot1;  // 0x01ff9480
-extern u32 sndDriverInfoDirty;  // 0x01ff9484
-extern u32 sndLoadBudget;  // 0x01ff9488
-extern SndLoadNodeTail sndLoadNodeTail;  // 0x01ff948c
-extern SndRequestTail sndRequestTail;  // 0x01ff9494
-extern SndCurrent sndCurrent;  // 0x01ff949c
-extern NNSSndHandle sndSeqHandle[2];  // 0x01ff94a4
-extern u32 sndTempoRatio[2];  // 0x01ff94ac
-extern SndFade sndFade[2];  // 0x01ff94b4
-extern SndLoadedData sndLoadedData[2];  // 0x01ff94d4
-extern SndLoader sndLoader;  // 0x01ff9504
-extern SndLoadSlot sndLoadSlots[SND_LOAD_COUNT];  // 0x01ff9538
-extern SndBankSlot sndBankSlots[SND_BANK_COUNT];  // 0x01ff9598
-
-extern NNSSndArc sndArc;  // 0x01ff9618
-
-extern SndRequest sndRequests[SND_REQ_COUNT];  // 0x01ff96ac
-
-extern SndVoice sndVoices[SND_VOICE_COUNT];  // 0x01ff986c
-
-extern NNSSndStrmThread sndStrmThread;  // 0x01ff9c7c
-
 // --- Variable Definitions --- //
+
+#include <nitro/itcm_begin.h>
+u8 sndAltIdx;  // 0x01ff9444
+s8 sndDriverInfoIdx;  // 0x01ff9438
+u8 sndForceCenterX;  // 0x01ff943c
+u8 sndForceCenterY;  // 0x01ff9448
+u8 sndEchoMode;  // 0x01ff9440
+SndLoadNodeHead sndLoadNodeHead;  // 0x01ff9478
+u32 sndDriverInfoDirty;  // 0x01ff9484
+SndHeap sndHeapSlot1;  // 0x01ff9480
+u32 sndCommandTag;  // 0x01ff946c
+SndHeap sndHeapSys;  // 0x01ff9468
+u32 sndHeapSlot0Size;  // 0x01ff944c
+u32 sndHeapSlot1Size;  // 0x01ff9450
+u32 sndLoadBudget;  // 0x01ff9488
+SndHeap sndHeapSlot0;  // 0x01ff9474
+char * sndHeapBuffer;  // 0x01ff947c
+SndRequestHead sndRequestHead;  // 0x01ff9464
+SndVoiceList sndVoiceList;  // 0x01ff9470
+s16 sndSeqNo[2];  // 0x01ff9460
+s16 sndAltVoiceId[2];  // 0x01ff9454
+u32 sndHeapSysSize;  // 0x01ff9458
+u32 sndLastVBlank;  // 0x01ff945c
+SndLoadNodeTail sndLoadNodeTail;  // 0x01ff948c
+SndRequestTail sndRequestTail;  // 0x01ff9494
+SndCurrent sndCurrent;  // 0x01ff949c
+NNSSndHandle sndSeqHandle[2];  // 0x01ff94a4
+u32 sndTempoRatio[2];  // 0x01ff94ac
+SndFade sndFade[2];  // 0x01ff94b4
+SndLoadedData sndLoadedData[2];  // 0x01ff94d4
+SndLoader sndLoader;  // 0x01ff9504
+SndLoadSlot sndLoadSlots[SND_LOAD_COUNT];  // 0x01ff9538
+SndBankSlot sndBankSlots[SND_BANK_COUNT];  // 0x01ff9598
+NNSSndArc sndArc;  // 0x01ff9618
+SndRequest sndRequests[SND_REQ_COUNT];  // 0x01ff96ac
+SndVoice sndVoices[SND_VOICE_COUNT];  // 0x01ff986c
+NNSSndStrmThread sndStrmThread;  // 0x01ff9c7c
+#include <nitro/itcm_end.h>
 
 SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
 s16 sndStackVolumeDrop[32] = { 27, 27, 40, 60, 80, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
@@ -181,7 +180,6 @@ void sndPlaySeq(u32, u8, u32);  // 0x02006398
 void sndRestartSeq(u32, BOOL);  // 0x0200650c
 void sndStop(u32);  // 0x02006624
 void sndStopSlot(u32, u8);  // 0x02006688
-void sndPauseSlot(BOOL, u32);  // 0x020066e0
 void sndStartFade(u32, s32);  // 0x02006700
 u32 sndGetStatus(void);  // 0x02006810
 u32 sndGetSeqNos(void);  // 0x020068ac
@@ -194,7 +192,6 @@ void sndLoadSeqArc(u32, u32);  // 0x02006d84
 void sndPlayAlt(s16, s16, s16, s16, s8, s16);  // 0x02006e84
 void sndPlayAltOwned(SndVoiceList *, s16, s16, s16, s16, s8, s16);  // 0x02006ed0
 void sndLoadPrograms(u16 *, BOOL, u32);  // 0x02006f4c
-void sndStopAlt(s16);  // 0x0200709c
 void sndPlayStreamById(u16, s16, s16, s16, s8);  // 0x02007108
 void sndPlayStreamOwned(SndVoiceList *, u16, s16, s16, s16, s8);  // 0x0200711c
 void sndStopStreamById(s8, u32);  // 0x02007158
@@ -261,6 +258,32 @@ u16 sndGetTrackCount(u32);  // 0x0200a358
 } // extern "C"
 
 // --- Function Definitions --- //
+
+// MATCHED 100%
+#include <nitro/itcm_begin.h>
+void sndTick() {
+    u32 vblankCount = OS_GetVBlankCount();
+    u32 frames = vblankCount - sndLastVBlank;
+
+    sndLastVBlank = vblankCount;
+
+    if (frames > 5) {
+        frames = 5;
+    }
+
+    sndReadDriverInfo();
+
+    while (frames > 0) {
+        NNS_SndMain();
+        frames--;
+    }
+
+    sndWaitLoading();
+    sndUpdateVoices();
+    sndUpdateFades();
+    sndEmitUpdate();
+}
+#include <nitro/itcm_end.h>
 
 // MATCHED 100%
 void sndInit(BOOL loadSymbols, u32 totalSize, u32 slot0Size, u32 slot1Size) {

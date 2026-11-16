@@ -14,6 +14,7 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/system.h"
 
 #include "data/clMesWin.h"
@@ -25,13 +26,6 @@ extern "C" {
 #define MES_SCREEN_SIZE (MES_SCREEN_COLS * MES_SCREEN_ROWS * sizeof(u16))
 
 #define MES_ICON_RES ((YanaRes *)mesIconRes)
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
-
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Declarations --- //
 
@@ -242,7 +236,7 @@ u32 clMesWin::calcBufferSize(u16 count, u32 charSizeMain, u32 charSizeSub, u8 si
 
 // MATCHED 100%
 void clMesWin::assignBuffers(MesWinSlot * buf) {
-    func_01ff8228(buf, 0, this->bufSize);
+    cpu_fill32(buf, 0, this->bufSize);
 
     u8 * ptr = (u8 *)&buf[this->windowCount];
 
@@ -564,9 +558,9 @@ void clMesWin::updateList(MesWinSlot * window) {
 
             u32 size = window->charSize;
             if (window->charsBack < window->chars) {
-                func_01ff8380(window->charsBack, window->chars, size);
+                cpu_copy32_rev(window->charsBack, window->chars, size);
             } else {
-                func_01ff82ac(window->charsBack, window->chars, size);
+                cpu_copy32_fwd(window->charsBack, window->chars, size);
             }
 
             this->windows[(s16)window->slot].dirty = 1;
@@ -650,7 +644,7 @@ void clMesWin::stepClear(MesWinSlot * window) {
     switch (window->clearStep) {
         case 1: {
             u32 * dst = (this->singleBuf[window->params.screen] == 0) ? window->charsBack : window->chars;
-            func_01ff8228(dst, 0, window->charSize);
+            cpu_fill32(dst, 0, window->charSize);
             window->clearStep++;
             break;
         }
@@ -663,9 +657,9 @@ void clMesWin::stepClear(MesWinSlot * window) {
             if (this->singleBuf[window->params.screen] == 0) {
                 u32 size = window->charSize;
                 if (window->charsBack < window->chars) {
-                    func_01ff8380(window->charsBack, window->chars, size);
+                    cpu_copy32_rev(window->charsBack, window->chars, size);
                 } else {
-                    func_01ff82ac(window->charsBack, window->chars, size);
+                    cpu_copy32_fwd(window->charsBack, window->chars, size);
                 }
             }
 
@@ -1128,9 +1122,9 @@ void clMesWin::copyRect(MesWinSlot * window, u8 x, u8 y, u8 w, u8 h) {
                 u32 * src = &window->charsBack[offset];
 
                 if (src < dst) {
-                    func_01ff8380(src, dst, bytes);
+                    cpu_copy32_rev(src, dst, bytes);
                 } else {
-                    func_01ff82ac(src, dst, bytes);
+                    cpu_copy32_fwd(src, dst, bytes);
                 }
 
                 offset += pitch;
@@ -1267,9 +1261,9 @@ s16 clMesWin::create(MesWinParams * params, s16 idx) {
     windowParams = &window->params;
 
     if (params < windowParams) {
-        func_01ff8380(params, windowParams, sizeof(MesWinParams));
+        cpu_copy32_rev(params, windowParams, sizeof(MesWinParams));
     } else {
-        func_01ff82ac(params, windowParams, sizeof(MesWinParams));
+        cpu_copy32_fwd(params, windowParams, sizeof(MesWinParams));
     }
 
     windowParams->width = w-1;
@@ -1362,10 +1356,10 @@ bool clMesWin::destroy(s16 idx) {
         return false;
     }
 
-    func_01ff8228(window->chars, 0, window->charSize);
+    cpu_fill32(window->chars, 0, window->charSize);
 
     if (this->singleBuf[window->params.screen] == 0) {
-        func_01ff8228(window->charsBack, 0, window->charSize);
+        cpu_fill32(window->charsBack, 0, window->charSize);
     }
 
     window->chars = NULL;
@@ -1409,13 +1403,13 @@ void clMesWin::rebuildScreen(u8 screen) {
 
     if (screen == 0) {
         if (this->screenMain != NULL) {
-            func_01ff8228(this->screenMain, 0, 0x780);
+            cpu_fill32(this->screenMain, 0, 0x780);
         }
 
         window = this->listMain.next;
     } else {
         if (this->screenSub != NULL) {
-            func_01ff8228(this->screenSub, 0, 0x780);
+            cpu_fill32(this->screenSub, 0, 0x780);
         }
 
         window = this->listSub.next;
@@ -1699,7 +1693,7 @@ void clMesWin::drawFrameTex(MesWinSlot * window, u32 * chars) {
         p = chars + pitch * frame->topH * 8 + frame->cornerW;
 
         for (y = (h - (frame->topH + frame->bottomH)) * 8; y > 0; y--) {
-            func_01ff8228(p, fill, bytes);
+            cpu_fill32(p, fill, bytes);
             p += pitch;
         }
     }
@@ -1754,16 +1748,16 @@ void clMesWin::drawFrameBG(MesWinSlot * window, u32 * chars) {
         for (i = frame->cornerW; i > 0; i--) {
             tile = this->frameTiles + *left++;
             if (tile < dst) {
-                func_01ff8380(tile, dst, 0x20);
+                cpu_copy32_rev(tile, dst, 0x20);
             } else {
-                func_01ff82ac(tile, dst, 0x20);
+                cpu_copy32_fwd(tile, dst, 0x20);
             }
 
             tile = this->frameTiles + *right++;
             if (tile < dst + offA) {
-                func_01ff8380(tile, dst + offA, 0x20);
+                cpu_copy32_rev(tile, dst + offA, 0x20);
             } else {
-                func_01ff82ac(tile, dst + offA, 0x20);
+                cpu_copy32_fwd(tile, dst + offA, 0x20);
             }
 
             dst += 8;
@@ -1788,16 +1782,16 @@ void clMesWin::drawFrameBG(MesWinSlot * window, u32 * chars) {
         for (i = frame->cornerW; i > 0; i--) {
             tile = this->frameTiles + *left++;
             if (tile < dst + offB) {
-                func_01ff8380(tile, dst + offB, 0x20);
+                cpu_copy32_rev(tile, dst + offB, 0x20);
             } else {
-                func_01ff82ac(tile, dst + offB, 0x20);
+                cpu_copy32_fwd(tile, dst + offB, 0x20);
             }
 
             tile = this->frameTiles + *right++;
             if (tile < dst + offC) {
-                func_01ff8380(tile, dst + offC, 0x20);
+                cpu_copy32_rev(tile, dst + offC, 0x20);
             } else {
-                func_01ff82ac(tile, dst + offC, 0x20);
+                cpu_copy32_fwd(tile, dst + offC, 0x20);
             }
 
             dst += 8;
@@ -1818,9 +1812,9 @@ void clMesWin::drawFrameBG(MesWinSlot * window, u32 * chars) {
             for (i = frame->edgeH[0]; i > 0; i--) {
                 tile = this->frameTiles + *left++;
                 if (tile < dst) {
-                    func_01ff8380(tile, dst, 0x20);
+                    cpu_copy32_rev(tile, dst, 0x20);
                 } else {
-                    func_01ff82ac(tile, dst, 0x20);
+                    cpu_copy32_fwd(tile, dst, 0x20);
                 }
 
                 dst += 8;
@@ -1843,9 +1837,9 @@ void clMesWin::drawFrameBG(MesWinSlot * window, u32 * chars) {
             for (i = frame->edgeH[0]; i > 0; i--) {
                 tile = this->frameTiles + *left++;
                 if (tile < dst) {
-                    func_01ff8380(tile, dst, 0x20);
+                    cpu_copy32_rev(tile, dst, 0x20);
                 } else {
-                    func_01ff82ac(tile, dst, 0x20);
+                    cpu_copy32_fwd(tile, dst, 0x20);
                 }
 
                 dst += 8;
@@ -1868,16 +1862,16 @@ void clMesWin::drawFrameBG(MesWinSlot * window, u32 * chars) {
                 for (i = frame->cornerW; i > 0; i--) {
                     tile = this->frameTiles + *left++;
                     if (tile < dst) {
-                        func_01ff8380(tile, dst, 0x20);
+                        cpu_copy32_rev(tile, dst, 0x20);
                     } else {
-                        func_01ff82ac(tile, dst, 0x20);
+                        cpu_copy32_fwd(tile, dst, 0x20);
                     }
 
                     tile = this->frameTiles + *right++;
                     if (tile < dst + offA) {
-                        func_01ff8380(tile, dst + offA, 0x20);
+                        cpu_copy32_rev(tile, dst + offA, 0x20);
                     } else {
-                        func_01ff82ac(tile, dst + offA, 0x20);
+                        cpu_copy32_fwd(tile, dst + offA, 0x20);
                     }
 
                     dst += 8;
@@ -2121,7 +2115,7 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
         u32 * dst = chars + (pitch * top + inset) * 8;
         
         for (s16 n = window->rows + 1 - (top + bottom); n > 0; n--) {
-            func_01ff8228(dst, fill, sz);
+            cpu_fill32(dst, fill, sz);
             dst += (u16)(pitch * 8);
         }
     }
@@ -3165,9 +3159,9 @@ void clMesIcon::freePltt(BOOL sub) {
 
 // MATCHED 100%
 clMesIcon::clMesIcon(BOOL useTex) {
-    func_01ff8228(&this->objManMain, 0, sizeof(this->objManMain));
-    func_01ff8228(&this->objManSub, 0, sizeof(this->objManSub));
-    func_01ff8228(this->texMan, 0, sizeof(this->texMan));
+    cpu_fill32(&this->objManMain, 0, sizeof(this->objManMain));
+    cpu_fill32(&this->objManSub, 0, sizeof(this->objManSub));
+    cpu_fill32(this->texMan, 0, sizeof(this->texMan));
 
     this->useTex = FALSE;
 

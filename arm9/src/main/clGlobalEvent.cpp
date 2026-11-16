@@ -9,14 +9,10 @@
 
 extern "C" {
 
-#include "main/rng.h"
-
-
 #include <nitro.h>
 
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
+#include "itcm/cpu_mem.h"
+#include "main/rng.h"
 
 // --- Variable Definitions --- //
 
@@ -35,7 +31,7 @@ void initContext(EventContext *, u8 *);  // 0x02017728
 
 // MATCHED 100%
 clScriptSystem::clScriptSystem() {
-    func_01ff8228(&this->vars[6], 0, 2 * sizeof(u32));
+    cpu_fill32(&this->vars[6], 0, 2 * sizeof(u32));
 }
 
 // MATCHED 100%
@@ -150,7 +146,7 @@ u32 rewindInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
 
 // MATCHED 100%
 clGlobalEvent::clGlobalEvent() {
-    func_01ff8228(this->vars, 0, sizeof(this->vars));
+    cpu_fill32(this->vars, 0, sizeof(this->vars));
 }
 
 // MATCHED 100%
@@ -712,7 +708,7 @@ bool evalCompare(s32 op, s32 lhs, s32 rhs) {
 void initContext(EventContext * ctx, u8 * code) {
     ctx->pc = code;
 
-    func_01ff8228(ctx->locals, 0, sizeof(ctx->locals));
+    cpu_fill32(ctx->locals, 0, sizeof(ctx->locals));
 
     ctx->flags = 0;
     ctx->sp = 0;

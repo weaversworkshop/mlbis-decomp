@@ -4,14 +4,11 @@
 
 #include "main/playerStatus.h"
 
+#include "itcm/cpu_mem.h"
 #include "main/backup.h"
 #include "main/clGameMain.h"
 
 #include "data/playerStatus.h"
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
 
 // --- Variable Definitions --- //
 
@@ -53,7 +50,7 @@ void initParty(u32 preset) {
     u32 slot;
     PlayerStatus * p;
 
-    func_01ff8228(&gameState.party, 0, sizeof(PartyStatus));
+    cpu_fill32(&gameState.party, 0, sizeof(PartyStatus));
 
     startBadge = 0;
     u16 startGear[4] = { 0, 0, 0, 0 };

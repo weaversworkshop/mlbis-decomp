@@ -8,16 +8,14 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
+
 // --- Extern Data Variables --- //
 
 extern RfxKeySeg keySeg;
 extern RfxStack rfxStack;
 
 extern MtxFx44 animeMtx;
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
 
 // --- Function Declarations --- //
 
@@ -115,7 +113,7 @@ void clOfx::beginDraw() {
     node->pos.y = 0;
     node->pos.z = 0;
     
-    func_01ff8228(&node->mtx + 1, 0, sizeof(OfxNode) - sizeof(MtxFx43));
+    cpu_fill32(&node->mtx + 1, 0, sizeof(OfxNode) - sizeof(MtxFx43));
 }
 
 // MATCHED 100%

@@ -13,7 +13,7 @@
 void waitFrameSync() {
     systemState.frameTimer.syncPending = 1;
 
-    s32 vcount = reg_GX_VCOUNT;
+    s32 vcount = GX_GetVCount();
     systemState.frameTimer.syncVCount = vcount;
 
     if (systemState.frameTimer.syncVCount < systemState.frameTimer.lastSyncVCount) {
@@ -31,7 +31,7 @@ void waitFrameSync() {
 
     OS_WaitIrq(TRUE, OS_IE_V_COUNT);
 
-    systemState.frameTimer.lastSyncVCount = reg_GX_VCOUNT;
+    systemState.frameTimer.lastSyncVCount = GX_GetVCount();
     systemState.frameTimer.prevFrameSkips = systemState.frameTimer.frameSkips;
     systemState.frameTimer.frameSkips = 0;
 }

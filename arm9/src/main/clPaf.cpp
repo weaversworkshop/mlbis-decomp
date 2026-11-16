@@ -8,6 +8,7 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/cpu_mem16.h"
 #include "main/palAnim.h"
 
@@ -16,10 +17,6 @@ extern "C" {
 extern RfxKeySeg keySeg;
 extern u8 rfxNodeBuf[0x1000];
 extern RfxStack rfxStack;
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
 
 // --- Variable Definitions --- //
 
@@ -80,7 +77,7 @@ u32 clPaf::unk_virtual2() {
 
 // MATCHED 100%
 void clPaf::beginDraw() {
-    func_01ff8228(rfxStack.cur, 0, 0xe);
+    cpu_fill32(rfxStack.cur, 0, 0xe);
 }
 
 // MATCHED 100%

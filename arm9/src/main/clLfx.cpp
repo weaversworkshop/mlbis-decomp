@@ -8,6 +8,7 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/palAnim.h"
 
 // --- Extern Data Variables --- //
@@ -16,12 +17,6 @@ extern RfxKeySeg keySeg;
 extern RfxStack rfxStack;
 
 extern LfxNode lfxNode;  // 0x027e1190
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
 
 // --- Function Declarations --- //
 
@@ -103,7 +98,7 @@ u32 clLfx::unk_virtual2() {
 void clLfx::beginDraw() {
     RfxNode * node = rfxStack.cur;
     MTX_Identity33((MtxFx33 *)SDK_AUTOLOAD_DTCM_START);
-    func_01ff82ac(SDK_AUTOLOAD_DTCM_START, &node->mtx, sizeof(MtxFx33));
+    cpu_copy32_fwd(SDK_AUTOLOAD_DTCM_START, &node->mtx, sizeof(MtxFx33));
 
     node->pos.x = this->originX * 16;
     node->pos.y = this->originY * 16;
@@ -297,9 +292,9 @@ void scrollTiles4bpp(u32 * tiles, u32 wTiles, u32 hTiles, s32 rows) {
         if (count > 0) {
             u32 * shifted = &tiles[offset];
             if (shifted < tiles) {
-                func_01ff8380(shifted, tiles, count * sizeof(u32));
+                cpu_copy32_rev(shifted, tiles, count * sizeof(u32));
             } else {
-                func_01ff82ac(shifted, tiles, count * sizeof(u32));
+                cpu_copy32_fwd(shifted, tiles, count * sizeof(u32));
             }
         }
     }
@@ -311,9 +306,9 @@ void scrollTiles4bpp(u32 * tiles, u32 wTiles, u32 hTiles, s32 rows) {
         if (count > 0) {
             u32 * shifted = &tiles[offset];
             if (tiles < shifted) {
-                func_01ff8380(tiles, shifted, count * sizeof(u32));
+                cpu_copy32_rev(tiles, shifted, count * sizeof(u32));
             } else {
-                func_01ff82ac(tiles, shifted, count * sizeof(u32));
+                cpu_copy32_fwd(tiles, shifted, count * sizeof(u32));
             }
         }
     }
@@ -346,7 +341,7 @@ void lfxLayerInit(LfxLayer * layer, u32 * bitmap, u16 wTiles, u16 hTiles, u16 * 
     layer->scrollCount = 0;
     layer->framesRemaining = 0;
 
-    func_01ff8228(bitmap, 0, wTiles * hTiles * 32);
+    cpu_fill32(bitmap, 0, wTiles * hTiles * 32);
 }
 
 // MATCHED 100%

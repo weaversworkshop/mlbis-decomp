@@ -1,65 +1,65 @@
 {
  "measures": {
-  "fuzzy_match_percent": 8.183256612498466,
+  "fuzzy_match_percent": 8.334365250995278,
   "total_code": 3343290,
-  "matched_code": 265570,
-  "matched_code_percent": 7.943373144417625,
+  "matched_code": 270622,
+  "matched_code_percent": 8.094481782914434,
   "total_data": 1803032,
-  "matched_data": 102268,
-  "matched_data_percent": 5.672001384334831,
-  "total_functions": 12135,
-  "matched_functions": 1860,
-  "matched_functions_percent": 15.327564894932015,
-  "complete_code": 221970,
-  "complete_code_percent": 6.639268504975638,
-  "complete_data": 90468,
-  "complete_data_percent": 5.017548218778147,
-  "total_units": 208,
-  "complete_units": 204
+  "matched_data": 106700,
+  "matched_data_percent": 5.917809556347308,
+  "total_functions": 12115,
+  "matched_functions": 1891,
+  "matched_functions_percent": 15.608749484110607,
+  "complete_code": 227022,
+  "complete_code_percent": 6.790377143472448,
+  "complete_data": 94900,
+  "complete_data_percent": 5.263356390790624,
+  "total_units": 217,
+  "complete_units": 213
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 5.2612794629427,
-    "total_code": 3238984,
-    "matched_code": 162392,
-    "matched_code_percent": 5.013670953607675,
+    "fuzzy_match_percent": 5.368287787555968,
+    "total_code": 3238500,
+    "matched_code": 165832,
+    "matched_code_percent": 5.120642272657094,
     "total_data": 1803032,
-    "matched_data": 102268,
-    "matched_data_percent": 5.672001384334831,
-    "total_functions": 11200,
-    "matched_functions": 935,
-    "matched_functions_percent": 8.348214285714286,
-    "complete_code": 120852,
-    "complete_code_percent": 3.7311700212165295,
-    "complete_data": 39124,
-    "complete_data_percent": 2.1699004787491294,
-    "total_units": 55,
-    "complete_units": 51
+    "matched_data": 106700,
+    "matched_data_percent": 5.917809556347308,
+    "total_functions": 11178,
+    "matched_functions": 954,
+    "matched_functions_percent": 8.53462157809984,
+    "complete_code": 124292,
+    "complete_code_percent": 3.837949668056199,
+    "complete_data": 43556,
+    "complete_data_percent": 2.415708650761606,
+    "total_units": 60,
+    "complete_units": 56
    }
   },
   {
    "id": "sdk",
    "name": "SDK",
    "measures": {
-    "fuzzy_match_percent": 98.9185665254156,
-    "total_code": 104306,
-    "matched_code": 103178,
-    "matched_code_percent": 98.9185665254156,
+    "fuzzy_match_percent": 100.0,
+    "total_code": 104790,
+    "matched_code": 104790,
+    "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 935,
-    "matched_functions": 925,
-    "matched_functions_percent": 98.93048128342247,
-    "complete_code": 103430,
-    "complete_code_percent": 99.16016336548233,
+    "total_functions": 937,
+    "matched_functions": 937,
+    "matched_functions_percent": 100.0,
+    "complete_code": 105042,
+    "complete_code_percent": 100.24048096192385,
     "complete_data": 51552,
     "complete_data_percent": 0.0,
-    "total_units": 155,
-    "complete_units": 155
+    "total_units": 159,
+    "complete_units": 159
    }
   },
   {
@@ -88,22 +88,22 @@
    "id": "itcm",
    "name": "itcm",
    "measures": {
-    "fuzzy_match_percent": 0.0,
+    "fuzzy_match_percent": 100.0,
     "total_code": 5052,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
+    "matched_code": 5052,
+    "matched_code_percent": 100.0,
     "total_data": 4544,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
-    "total_functions": 51,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0,
-    "complete_code": 0,
-    "complete_code_percent": 0.0,
-    "complete_data": 0,
-    "complete_data_percent": 0.0,
-    "total_units": 0,
-    "complete_units": 0
+    "matched_data": 4432,
+    "matched_data_percent": 97.53521126760563,
+    "total_functions": 31,
+    "matched_functions": 31,
+    "matched_functions_percent": 100.0,
+    "complete_code": 5052,
+    "complete_code_percent": 100.0,
+    "complete_data": 4432,
+    "complete_data_percent": 97.53521126760563,
+    "total_units": 9,
+    "complete_units": 9
    }
   },
   {
@@ -3057,6 +3057,168 @@
  ],
  "units": [
   {
+   "name": "itcm/cpu_mem",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 892,
+    "matched_code": 892,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "cpu_fill32",
+     "size": 132,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "cpu_copy32_fwd",
+     "size": 212,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "cpu_copy32_rev",
+     "size": 220,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "cpu_copy16_fwd",
+     "size": 160,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "cpu_copy16_rev",
+     "size": 168,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "itcm"
+    ]
+   }
+  },
+  {
+   "name": "itcm/mainLoop",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 1908,
+    "matched_code": 1908,
+    "matched_code_percent": 100.0,
+    "total_data": 8,
+    "matched_data": 8,
+    "matched_data_percent": 100.0,
+    "total_functions": 10,
+    "matched_functions": 10,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "vblankIntr",
+     "size": 192,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "runTasks",
+     "size": 464,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "runVBlankTasks",
+     "size": 188,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "runVCountTasks",
+     "size": 328,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "vcountIntr",
+     "size": 280,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "bootGame",
+     "size": 104,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "mainLoop",
+     "size": 184,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "enterSleep",
+     "size": 80,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "vblankUpdate",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "vcountUpdate",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "itcm"
+    ]
+   }
+  },
+  {
+   "name": "itcm/uncomp",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 552,
+    "matched_code": 552,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 3,
+    "matched_functions": 3,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "uncompReadHeader",
+     "size": 164,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "uncompRecord8",
+     "size": 172,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "uncompRecord16",
+     "size": 216,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "itcm"
+    ]
+   }
+  },
+  {
    "name": "main/backup",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -5192,6 +5354,29 @@
    }
   },
   {
+   "name": "main/clObjPltVramMan@itcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 1048,
+    "matched_data": 1048,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "itcm"
+    ]
+   }
+  },
+  {
    "name": "main/clOfx",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -6027,7 +6212,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "initVCountTaskMgr",
+     "name": "initVCountTaskMgmt",
      "size": 128,
      "fuzzy_match_percent": 100.0
     },
@@ -7545,7 +7730,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "sndEmitUpdate",
+     "name": "_Z13sndEmitUpdatev",
      "size": 128,
      "fuzzy_match_percent": 100.0
     },
@@ -8307,6 +8492,35 @@
     "progress_categories": [
      "game",
      "main"
+    ]
+   }
+  },
+  {
+   "name": "main/sound@itcm_1",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 88,
+    "matched_code": 88,
+    "matched_code_percent": 100.0,
+    "total_data": 3376,
+    "matched_data": 3376,
+    "matched_data_percent": 100.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "sndTick",
+     "size": 88,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "itcm"
     ]
    }
   },
@@ -17382,302 +17596,155 @@
    }
   },
   {
-   "name": "itcm/_undecompiled",
+   "name": "sdk/os/os_irqHandler@itcm_1",
    "measures": {
-    "fuzzy_match_percent": 0.0,
-    "total_code": 3924,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
+    "fuzzy_match_percent": 100.0,
+    "total_code": 484,
+    "matched_code": 484,
+    "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 41,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0
+    "total_functions": 2,
+    "matched_functions": 2,
+    "matched_functions_percent": 100.0
    },
    "functions": [
     {
-     "name": "func_01ff8000",
-     "size": 164,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff80a4",
-     "size": 172,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8150",
-     "size": 216,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8228",
-     "size": 132,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff82ac",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff82d8",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff82f0",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8300",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8310",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8320",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8330",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8340",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8350",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8360",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8370",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8380",
-     "size": 52,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff83b4",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff83cc",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff83dc",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff83ec",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff83fc",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff840c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff841c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff842c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff843c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff844c",
-     "size": 16,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff845c",
-     "size": 160,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff84fc",
-     "size": 168,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff85a4",
-     "size": 192,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8664",
-     "size": 464,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8834",
-     "size": 188,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff88f0",
-     "size": 328,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8a38",
-     "size": 280,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8b50",
+     "name": "OS_IrqHandler",
      "size": 104,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
-     "name": "func_01ff8bb8",
-     "size": 184,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8c70",
-     "size": 80,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8cc0",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8cec",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8d18",
-     "size": 88,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8d70",
-     "size": 104,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_01ff8dd8",
+     "name": "OS_IrqHandler_ThreadSwitch",
      "size": 380,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
-    "complete": false,
+    "complete": true,
     "progress_categories": [
-     "game",
+     "sdk",
      "itcm"
     ]
    }
   },
   {
-   "name": "itcm/_undecompiled_sdk",
+   "name": "sdk/os/src/os_reset@itcm_1",
    "measures": {
-    "fuzzy_match_percent": 0.0,
-    "total_code": 1128,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
+    "fuzzy_match_percent": 100.0,
+    "total_code": 668,
+    "matched_code": 668,
+    "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 0.0,
-    "total_functions": 10,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
    },
    "functions": [
     {
      "name": "OSi_DoResetSystem",
      "size": 52,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "OSi_DoBoot",
      "size": 204,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "OSi_CpuClear32",
      "size": 28,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "OSi_ReloadRomData",
      "size": 168,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "OSi_ReadCardRom32",
      "size": 216,
-     "fuzzy_match_percent": 0.0
-    },
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "itcm"
+    ]
+   }
+  },
+  {
+   "name": "sdk/mi/src/mi_dma@itcm_1",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 312,
+    "matched_code": 312,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 4,
+    "matched_functions": 4,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
     {
      "name": "MIi_DmaSetParams",
      "size": 64,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "MIi_DmaSetParams_wait",
      "size": 112,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "MIi_DmaSetParams_noInt",
      "size": 36,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     },
     {
      "name": "MIi_DmaSetParams_wait_noInt",
      "size": 100,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "MI_SendGXCommand",
-     "size": 148,
-     "fuzzy_match_percent": 0.0
+     "fuzzy_match_percent": 100.0
     }
    ],
    "metadata": {
-    "complete": false,
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "itcm"
+    ]
+   }
+  },
+  {
+   "name": "sdk/mi/src/mi_dma_gxcommand@itcm_1",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 148,
+    "matched_code": 148,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 0.0,
+    "total_functions": 1,
+    "matched_functions": 1,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "MI_SendGXCommand",
+     "size": 148,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
     "progress_categories": [
      "sdk",
      "itcm"

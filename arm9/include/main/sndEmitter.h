@@ -68,6 +68,7 @@ public:
 };
 
 void sndEmitInit(void);  // 0x0200a600
+void sndEmitUpdate(void);  // 0x0200a61c
 
 #endif // __cplusplus
 

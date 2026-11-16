@@ -6,13 +6,10 @@
 
 #include <nitro.h>
 
+#include "itcm/mainLoop.h"
+
 #include "main/system.h"
 #include "main/task.h"
-
-// --- Extern Functions --- //
-
-extern void func_01ff85a4(void);
-extern void func_01ff8b50(void);
 
 // --- Function Definitions --- //
 
@@ -25,7 +22,7 @@ void main() {
 
     FX_Init();
 
-    OS_SetIrqFunction(OS_IE_V_BLANK, func_01ff85a4);
+    OS_SetIrqFunction(OS_IE_V_BLANK, vblankIntr);
     OS_EnableIrqMask(OS_IE_V_BLANK);
     OS_EnableIrq();
 
@@ -49,5 +46,5 @@ void main() {
     systemState.frameTimer.field24 = 1;
     systemState.frameTimer.field28 = 0;
 
-    func_01ff8b50();
+    bootGame();
 }

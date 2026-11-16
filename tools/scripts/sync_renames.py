@@ -44,8 +44,15 @@ DATA_ANCHOR_RE = re.compile(
 )
 # Multi-line initializer: `T name[N] = {` ... `};  // 0xADDR` -- anchor accepted on the closing line.
 DATA_OPEN_RE = re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*=\s*\{")
+STRIPPED_RE = re.compile(
+    r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?(?P<name>[A-Za-z_]\w*)"
+    r"\s*\([^;{]*\)\s*(?:const\s*)?[;{].*//.*\bstripped\b"
+)
+FNPTR_RE = re.compile(
+    r"\(\s*\*\s*(?:const\s+)?(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\])*\s*\)\s*\("
+)
 TRAIL_ANCHOR_RE = re.compile(r"//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
-OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+(?P<bind>[gl])\s+O\s+\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
+OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+(?P<bind>[gl])\s+O\s+(?:\.[id]tcm)?\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
 ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
 CTOR_CODE_RE = re.compile(r"[CD][0-9]$")
@@ -137,6 +144,7 @@ def is_userish(name):
 
 def load_anchors(verbose):
     raw = defaultdict(list)
+    stripped = set()
     idents = {}
     mod_by_addr = {}
     for d in ANCHOR_DIRS:
@@ -152,9 +160,18 @@ def load_anchors(verbose):
                 cls = stack[-1][0] if stack else ""
                 for am in ANCHOR_MOD_RE.finditer(line):
                     mod_by_addr[int(am.group("addr"), 16)] = am.group("mod")
+                if sm := STRIPPED_RE.search(line):
+                    stripped.add((sm.group("scope") or cls, sm.group("name")))
                 cd = CTORDTOR_DECL_RE.search(line)
                 eff = cd and (cd.group("scope") or cls)
-                if eff and cd.group("name") == eff:
+                fp = None if stack else FNPTR_RE.search(line)
+                if fp:
+                    code = line.split("//", 1)[0]
+                    if (tm := TRAIL_ANCHOR_RE.search(line)) and ";" in code:
+                        raw[("", fp.group("name"))].append((int(tm.group("addr"), 16), loc))
+                    elif pending is None and "=" in code and code.count("{") > code.count("}"):
+                        pending = (fp.group("name"), loc, depth)
+                elif eff and cd.group("name") == eff:
                     for tag, code, addr in CTOR_DTOR_CODE_RE.findall(cd.group("rest")):
                         key = f"{code}/{tag}" if tag else code
                         raw[(eff, key)].append((int(addr, 16), loc))
@@ -200,7 +217,7 @@ def load_anchors(verbose):
     if verbose:
         print(f"  {len(anchors)} address anchor(s) from source, "
               f"{len(mod_by_addr)} module-qualified", file=sys.stderr)
-    return anchors, conflicts, idents, mod_by_addr
+    return anchors, conflicts, idents, mod_by_addr, stripped
 
 
 def resolve_anchor(anchors, by_name, scope, simple, idents):
@@ -340,7 +357,7 @@ def resolve_module(addr, mod, tables, resident, mod_by_addr):
 
 
 def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
-                   verbose):
+                   stripped, verbose):
     syms = dump_symbols(o_paths, verbose, lambda n: ("", n) in anchors)
     if not syms or mod not in tables:
         return 0, [], set(), 0
@@ -357,10 +374,10 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
         if addr is None:
             addr = resolve_anchor(anchors, by_name, scope, simple, idents)
         tgt = None if addr is None else resolve_module(addr, mod, tables, resident, mod_by_addr)
-        resolved.append((addr, tgt, simple, full, is_def))
+        resolved.append((addr, tgt, scope, simple, full, is_def))
 
     names_at = defaultdict(set)
-    for addr, tgt, _, full, _ in resolved:
+    for addr, tgt, _, _, full, _ in resolved:
         if tgt is not None:
             names_at[(tgt, addr)].add(full)
     ambiguous = {k for k, ns in names_at.items() if len(ns) > 1}
@@ -373,8 +390,10 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
         return any(full in tables[m].present for m in [mod] + resident if m in tables)
 
     changed, unplaced, unanchored = [], [], []
-    for addr, tgt, simple, full, is_def in resolved:
+    for addr, tgt, scope, simple, full, is_def in resolved:
         if tgt is None:
+            if addr is None and (scope, simple) in stripped:
+                continue
             # An unanchored extern (SDK link symbol) is expected; an anchored address nobody owns is not.
             if (is_userish(simple) or "/T" in simple) and not known(full) and (is_def or addr is not None):
                 unplaced.append((full, addr, simple))
@@ -415,7 +434,7 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args()
 
-    anchors, conflicts, idents, mod_by_addr = load_anchors(args.verbose)
+    anchors, conflicts, idents, mod_by_addr, stripped = load_anchors(args.verbose)
     modules, resident = load_config_modules()
     by_mod = sources_by_module()
     tables = load_tables(modules, resident + sorted(set(mod_by_addr.values())), {})
@@ -429,7 +448,7 @@ def main():
         load_tables(modules, [mod], tables)
         n, unplaced, ambiguous, unanchored = process_module(
             mod, by_mod[mod], tables, resident, anchors, idents,
-            mod_by_addr, args.verbose)
+            mod_by_addr, stripped, args.verbose)
         total_changed += n
         total_unplaced += len(unplaced)
         total_ambiguous += len(ambiguous)

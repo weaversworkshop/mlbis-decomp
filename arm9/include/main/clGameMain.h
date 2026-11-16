@@ -43,10 +43,13 @@ typedef struct {
     u8 field37c[2][7];
     u8 pad_38a[0x2];
     PartyStatus party;  // +0x38c
-    u8 : 2;  // +0x4cc
-    u8 field4cc_2 : 1;
-    u8 field4cc_3 : 2; // current save slot (0/1) ?? 
-    u8 : 3;
+    struct {
+        u8 field4cc_0 : 1;  // +0x4cc
+        u8 : 1;
+        u8 field4cc_2 : 1;
+        u8 field4cc_3 : 2; // current save slot (0/1) ?? 
+        u8 : 3;
+    };
     u8 field4cd;
     u8 field4ce;
     u8 pad_4cf[0x1];

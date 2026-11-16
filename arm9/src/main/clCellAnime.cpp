@@ -48,8 +48,8 @@ extern const u8 texPlttSizeShift[8];  // 0x0204ac80
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Variable Definitions --- //
 
@@ -1392,7 +1392,7 @@ u32 clCellAnime::func_0202d084() {
 // MATCHED 100%
 asm void copyChars(u32 *, u32 *, u32, u32) {
     stmdb sp!, {lr}
-    bl func_01ff8380
+    bl cpu_copy32_rev
     ldmia sp!, {lr}
     bx lr
 }
@@ -1676,9 +1676,9 @@ void clCellAnime::loadPltt() {
 
             u16 * dst = (u16 *)addr;
             if (src < dst) {
-                func_01ff8380(src, dst, size);
+                cpu_copy32_rev(src, dst, size);
             } else {
-                func_01ff82ac(src, dst, size);
+                cpu_copy32_fwd(src, dst, size);
             }
 
             switch (restoreKind) {
@@ -1774,9 +1774,9 @@ u16 * clCellAnime::getPlttBuf() {
             u32 size = this->getPlttSize();
             u16 * src = (u16 *)(this->plttData+1);
             if (src < buf) {
-                func_01ff8380(src, buf, size);
+                cpu_copy32_rev(src, buf, size);
             } else {
-                func_01ff82ac(src, buf, size);
+                cpu_copy32_fwd(src, buf, size);
             }
             this->plttDirty = 1;
         }

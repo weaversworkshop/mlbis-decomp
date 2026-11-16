@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@itcm_1.o
 
 #include "globals.h"
 
@@ -9,20 +10,15 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/heap.h"
 #include "main/system.h"
 
-// --- Extern Data Variables --- //
-
-extern GXOamAttr data_01ffa168[];  // 0x01ffa168
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
-
 // --- Variable Definitions --- //
+
+#include <nitro/itcm_begin.h>
+GXOamAttr data_01ffa168[128];  // 0x01ffa168
+#include <nitro/itcm_end.h>
 
 u8 objCharUnitShift[4];  // 0x0205c25c
 nsObjSys::clOamMan * oamManTable[2];  // 0x0205c260
@@ -833,14 +829,14 @@ void clOamMan::flush(GXOamAttr * dst, u32 clear) {
         GXOamAttr * src = this->oam;
 
         if (this->oamFixedEnd != src) {
-            func_01ff82ac(src, out, (u8*)this->oamFixedEnd - (u8*)src);
+            cpu_copy32_fwd(src, out, (u8*)this->oamFixedEnd - (u8*)src);
             out += (this->oamFixedEnd - src);
         }
 
         OamRun * run = this->runs;
         OamRun * runEnd = this->runEnd;
         while (run != runEnd) {
-            func_01ff82ac(src + run->start, out, run->count * sizeof(GXOamAttr));
+            cpu_copy32_fwd(src + run->start, out, run->count * sizeof(GXOamAttr));
 
             out += run->count;
             run++;
@@ -848,7 +844,7 @@ void clOamMan::flush(GXOamAttr * dst, u32 clear) {
 
         s32 filled = out - data_01ffa168;
         if (filled < 0x80) {
-            func_01ff82ac(src + filled, out, (0x80 - filled) * sizeof(GXOamAttr));
+            cpu_copy32_fwd(src + filled, out, (0x80 - filled) * sizeof(GXOamAttr));
         }
 
         scatterAffine(this->affine, this->affineEnd, data_01ffa168);
@@ -858,20 +854,20 @@ void clOamMan::flush(GXOamAttr * dst, u32 clear) {
         }
 
         if (data_01ffa168 < dst) {
-            func_01ff8380(data_01ffa168, dst, 0x400);
+            cpu_copy32_rev(data_01ffa168, dst, 0x400);
         } else {
-            func_01ff82ac(data_01ffa168, dst, 0x400);
+            cpu_copy32_fwd(data_01ffa168, dst, 0x400);
         }
     } else if (dst != NULL && dst != this->oam) {
         if (this->oam < dst) {
-            func_01ff8380(this->oam, dst, 0x400);
+            cpu_copy32_rev(this->oam, dst, 0x400);
         } else {
-            func_01ff82ac(this->oam, dst, 0x400);
+            cpu_copy32_fwd(this->oam, dst, 0x400);
         }
     }
 
     if (clear != 0) {
-        func_01ff8228(this->oam, 0x200, 0x400);
+        cpu_fill32(this->oam, 0x200, 0x400);
     }
 }
 

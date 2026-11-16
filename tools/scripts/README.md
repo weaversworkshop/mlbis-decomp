@@ -28,10 +28,17 @@ missing file is silent. Called by the compile rule (`FIXDEP`).
 `fix_deps.py FILE.d...`
 
 ### gen_objdiff.py
-Prints `objdiff.json`. Game units come from each `arm9/src` file's `// objdiff-target:` comment; SDK units
+Prints `objdiff.json`. Game units come from each `arm9/src` file's `// objdiff-target:` comment (a file with
+`#pragma section ITCM` code carries a second line for the ITCM gap → second unit `main/x@itcm_1`); SDK units
 from `objdiff_units` in `config/sdk_mappings.json` (a `"prebuilt"` entry points at an archive member
 extracted to `build/prebuilt/`). A game file without the comment is warned about and
 **never diffed**. Driven by the `objdiff.json` make target (gated on a clean compile).
+
+### split_tcm.py
+Writes objdiff base objects into `build/split/` for every unit whose object has TCM sections or a
+code-flagged data-only section (`x.o` main part, `x@itcm_1.o` TCM part; the list is the `build/split/`
+base paths in `objdiff.json`, chosen by `objdiff_base()`), patching section headers only; `make all` runs it, and
+`split_tcm.py --keep main|itcm|dtcm SRC DST` does one object. See `notes/itcm.md` "Split objects".
 
 ### setup_tools.py
 Builds dsd via `cargo install` at the commit in `tools/dsd.pin` (Rust ≥ 1.85). Currency is decided by
@@ -87,6 +94,10 @@ homed data objects; a duplicated data name (same `static` in two TUs) is scored 
 target and the best unclaimed one kept. A source/target section-class mismatch (`.bss` vs `.data`, e.g. a
 missing initializer) is status `section`, never a pass. Untyped size-0 global symbols in an executable section (hand-asm archive members) are
 sized to the next symbol or section end.
+A unit scores only the part of its object in its target's module: `.itcm*`/`.dtcm*` sections pair with an
+`_dsd_gap@itcm_*`/`dtcm_*` target, everything else with a non-TCM one (one source = two units, `name@itcm_1`);
+a unit whose first/only target is a TCM gap (no `@` in its name) is placed there whole, `.text` and pragma'd
+variables alike (an Autoload object, e.g. `arm9/src/itcm/*`).
 `obj_match.py [--config objdiff.json] [--out -|FILE] [--unit main/X ...] [--text] [-v]`
 - `make progress` (piped into `build_todo`), `make obj-match [UNIT=main/X] [OBJ_MATCH_ARGS=-v]`.
 - Output: objdiff-report-shaped JSON plus `objects` (data status) and per-function `section`. Exit 0; 2 on
@@ -117,7 +128,8 @@ The committed `progress/report.json` is what `.github/workflows/progress.yml` up
 Writes `<target>_todo.md`: per gap function address, lines, distinct `data_*` refs, unit, match %, game/SDK
 kind, plus a data-objects section from obj_match `objects`.
 `obj_match.py | build_todo.py main_7 --report - [--sort match|address|globals|lines] [--desc] [--data-notes] [--out-md F] [--asm F]`
-- `make progress` (`TODO_ARGS`; `DATA_NOTES=1` → `--data-notes`), `make progress-objdiff` (no data section).
+- `make progress` (`TODO_ARGS`; `DATA_NOTES=1` → `--data-notes`) writes one per `TODO_TARGETS` (`main_7 itcm_1`);
+  `make progress-objdiff` (no data section).
 - Default sort is match descending; other keys ascending; `--desc` flips. Ties by address.
 - "In progress" counts game functions only; SDK membership from `config/sdk_mappings.json`.
 - `asm_smell --sweep` reads its "matched" set from this file — fresh only after `make progress`.
@@ -168,6 +180,7 @@ pairs them. Runs inside `make diff`/`make progress`; standalone `make sync-names
 - Module: the file's `// objdiff-target: …_dsd_gap@<mod>_N.o` picks whose `symbols.txt` is edited; misses fall
   back to main/itcm/dtcm. Overlays are never guessed — name them: `// ov122 0x0206d9b4`.
 - `// +0xNN` is a struct offset (see `struct_offsets`), never an anchor.
+- `// stripped` on a declaration = function absent from the ROM (dead-stripped); silences its `UNPLACED`.
 - Reports: `UNPLACED` (semantic name, no address; or anchor nobody owns), `CONFLICT` (same key, different
   addresses), `ambiguous` (one address, two names), `duplicate anchor`, `NOANCHOR` (named in
   `symbols.txt` but its declaration lacks the anchor; prints the address to add). `--strict` exits 1 on
@@ -219,11 +232,12 @@ Normalized instruction diff of one function: compiled `.o` vs delinked target.
 `fn_diff.py <symbol> [--mine X.o] [--target X.o] [--target-symbol NAME] [--pool] [--context N] [--frame]`
 - Exit 0 match / 1 diff / 2 error. Empty extractions are refused, so a match is never vacuous.
 - Without `--mine` searches `build/arm9/src/**/*.o`, then `build/scratch/**/*.o`.
+- Without `--target`: main gap, else the first ITCM/DTCM gap defining the symbol (prints `note: target is …`).
   A `func_<addr>` no object defines falls back to the mangled C++ method embedding it
   (`_ZN5clLfx13func_02027d30ElPt`), used on both sides when the target carries it (synced names).
 - Branch targets become instruction deltas (`b <T+12>`), so a wrong-block jump is a diff; `bl`/`blx`/`bx`
   stay `<T>` (relocs).
-- `--target-symbol` for a mangled name vs a still-`func_<addr>` target. `--pool` includes literal pools.
+- `--target-symbol` for a mangled name vs a still-`func_<addr>` target. `--pool` includes literal pools: words compare by value, relocs as `<R>`; reloc vs plain word resolves via the symbol address when known, else counts equal with a note (link symbols like `SDK_OVERLAY_*_ID`), as `obj_match` does.
 - `--frame` prints the spill-slot table by first use: slot order is reverse first-assignment order; adjacent
   same-kind slots = one shared variable.
 

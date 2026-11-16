@@ -10,14 +10,9 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
+#include "itcm/uncomp.h"
 #include "main/system.h"
-
-// --- Extern Functions --- //
-
-extern void func_01ff8000(u8 **, u32 *, u32 *);
-extern void func_01ff80a4(u8 **, void **);
-extern void func_01ff8150(u8 **, void **);
-extern void func_01ff8228(void *, u32, u32);
 
 // --- Variable Definitions --- //
 
@@ -31,7 +26,6 @@ FSManager fsManager;  // 0x0205ba8c
 // --- Function Declarations --- //
 
 u32 fsChunkSize(FSChunkTable *, u32); // 0x0201ade4
-BOOL fsInit(u32, void *, u32); // 0x0201b28c
 BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4
 
 // --- Function Definitions --- //
@@ -92,7 +86,7 @@ void clFS::run() {
     if (systemState.frameTimer.frameSkips == 0) {
         bool idle = true;
 
-        if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+        if (GX_GetVCount() >= this->vcountBusyStart && GX_GetVCount() <= (s16)GX_LCD_SIZE_Y) {
             idle = false;
         }
 
@@ -129,7 +123,7 @@ void clFS::run() {
         if (systemState.frameTimer.frameSkips == 0) {
             bool idle = true;
 
-            if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+            if (GX_GetVCount() >= this->vcountBusyStart && GX_GetVCount() <= (s16)GX_LCD_SIZE_Y) {
                 idle = false;
             }
 
@@ -356,7 +350,7 @@ BOOL fsUnloadOverlay(FSOverlayID id, MIProcessor target) {
 }
 
 // MATCHED 100%
-BOOL fsInit(u32 dmaNo, void * p_mem, u32 size) {
+u32 fsInit(u32 dmaNo, void * p_mem, u32 size) {
     fsManager.dmaNo = dmaNo;
 
     FS_Init(dmaNo);
@@ -646,8 +640,8 @@ clFSEx::clFSEx(u8 priority, u32 param2, u16 count, u16 numSlots, u32 dmaNo, u32 
     this->freeList = NULL;
     this->reqPoolEnd = (u8*)this->reqPool + count * sizeof(FSFileReqEx) * sizeof(FSFileReqEx);
 
-    func_01ff8228(this->reqPool, 0, count * sizeof(FSFileReqEx));
-    func_01ff8228(&this->externTable, 0, 2 * sizeof(u32));
+    cpu_fill32(this->reqPool, 0, count * sizeof(FSFileReqEx));
+    cpu_fill32(&this->externTable, 0, 2 * sizeof(u32));
 
     FSFileReqEx * ptr = this->reqPool;
     while (count != 0) {
@@ -851,7 +845,7 @@ void clDAP::run() {
     if (systemState.frameTimer.frameSkips == 0) {
         bool idle = true;
 
-        if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+        if (GX_GetVCount() >= this->vcountBusyStart && GX_GetVCount() <= (s16)GX_LCD_SIZE_Y) {
             idle = false;
         }
 
@@ -883,7 +877,7 @@ void clDAP::run() {
         if (systemState.frameTimer.frameSkips == 0) {
             bool ready = true;
 
-            if (reg_GX_VCOUNT >= this->vcountBusyStart && reg_GX_VCOUNT <= (s16)GX_LCD_SIZE_Y) {
+            if (GX_GetVCount() >= this->vcountBusyStart && GX_GetVCount() <= (s16)GX_LCD_SIZE_Y) {
                 ready = false;
             }
 
@@ -899,7 +893,7 @@ u32 clDAP::beginJob(FSFileReqEx * req) {
     req->dst = req->buf;
 
     u32 local;
-    func_01ff8000(&req->dst, &local, &req->totalSize);
+    uncompReadHeader(&req->dst, &local, &req->totalSize);
 
     req->recordsLeft = local;
     req->streamState = DPP_PREPARED;
@@ -941,9 +935,9 @@ void clDAP::pumpJobs() {
     this->head->dst += 2;
 
     if (this->head->dstCur >= (void *)HW_PLTT && this->head->dstCur < (void *)HW_OAM_END) {
-        func_01ff8150(&this->head->dst, &this->head->dstCur);
+        uncompRecord16(&this->head->dst, &this->head->dstCur);
     } else {
-        func_01ff80a4(&this->head->dst, &this->head->dstCur);
+        uncompRecord8(&this->head->dst, &this->head->dstCur);
     }
 
     this->head->streamState = DPP_COPYING;
@@ -984,7 +978,7 @@ u32 clDPP::readStreamHeader(FSFileReqEx * req, s16 slot) {
     this->readSync(req, 0);
 
     u32 recordsLeft;
-    func_01ff8000(&req->dst, &recordsLeft, &req->totalSize);
+    uncompReadHeader(&req->dst, &recordsLeft, &req->totalSize);
 
     req->offset = req->dst - (u8*)arr;
     req->remaining = size - req->offset;
@@ -1217,7 +1211,7 @@ void clDPP::selectCopyFn(FSFileReqEx * req) {
         inGraphicsRAM = true;
     }
 
-    this->copyFn = (inGraphicsRAM) ? func_01ff8150 : func_01ff80a4;
+    this->copyFn = (inGraphicsRAM) ? uncompRecord16 : uncompRecord8;
     req->streamState = DPP_COPYING;
 }
 

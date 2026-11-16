@@ -36,8 +36,11 @@ typedef struct {
 } TouchpadStruct;
 
 typedef struct {
-    u16 pad_00_00 : 8;  // +0x0
-    u16 syncPending : 1;
+    struct {
+        u16 field00_0 : 8;  // +0x0
+        u16 syncPending : 1;
+        u16 : 7;
+    };
     s16 lastSyncVCount;  // +0x2
     u16 syncVCount;  // +0x4
     s16 frameScanlines;  // +0x6
@@ -62,7 +65,6 @@ typedef struct {
     InputState inputState;  // +0x0
     TouchpadStruct touchpad;  // +0x14
     GXOamAttr oamBuffers[2][128];  // +0x1c
-    // GXOamAttr subOamBuffer[128];  // +0x41c
     FrameTimer frameTimer;  // +0x81c
 } SystemState;
 

@@ -195,6 +195,7 @@ u32 fsChunkCount(FSChunkTable *); // 0x0201adbc
 u16 * fsChunkPtr(FSChunkTable *, u16); // 0x0201add4
 BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
 BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
+u32 fsInit(u32, void *, u32); // 0x0201b28c
 
 #ifdef __cplusplus
 } // extern "C"

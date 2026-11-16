@@ -13,6 +13,7 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/cpu_mem16.h"
 #include "main/savedata.h"
 
@@ -97,8 +98,6 @@ FS_EXTERN_OVERLAY(OVY_138);
 FS_EXTERN_OVERLAY(OVY_139);
 
 // --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
 
 extern void func_ov004_020cad58(UnkStruct_ov004_020cad58 *);
 extern void func_ov007_0210fdc0(UnkStruct_ov007_0210fdc0 *);
@@ -505,13 +504,13 @@ void clGameMain::setMode(u16 newMode) {
 
 // MATCHED 100%
 void initGameState() {
-    func_01ff8228(gameState.field000, 0, sizeof(gameState.field000));
-    func_01ff8228(gameState.field040, 0, sizeof(gameState.field040));
-    func_01ff8228(gameState.field054, 0, sizeof(gameState.field054));
-    func_01ff8228(gameState.field05c, 0, sizeof(gameState.field05c));
-    func_01ff8228(gameState.field0e4, 0, sizeof(gameState.field0e4));
+    cpu_fill32(gameState.field000, 0, sizeof(gameState.field000));
+    cpu_fill32(gameState.field040, 0, sizeof(gameState.field040));
+    cpu_fill32(gameState.field054, 0, sizeof(gameState.field054));
+    cpu_fill32(gameState.field05c, 0, sizeof(gameState.field05c));
+    cpu_fill32(gameState.field0e4, 0, sizeof(gameState.field0e4));
     MI_CpuFill8(gameState.field2e4, 0, sizeof(gameState.field2e4));
-    func_01ff8228(gameState.field37c, 0, sizeof(gameState.field37c));
+    cpu_fill32(gameState.field37c, 0, sizeof(gameState.field37c));
     cpu_fill16(gameState.field4e8, 0, sizeof(gameState.field4e8));
 
     initParty(0);

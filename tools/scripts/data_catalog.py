@@ -4,7 +4,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from common import CONFIG, ROOT, read_symbols
+from common import CONFIG, ROOT, read_symbols, resident_symbols
 
 LABEL_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_$]*):")
 SECTION_RE = re.compile(r"^\s*\.section\s+(\.[A-Za-z0-9_]+)")
@@ -19,7 +19,7 @@ DIRECTIVE_SIZES = ((4, (".word", ".long", ".4byte")),
 def parse_symbols():
     """name -> ascending data addresses (same-named statics in different TUs repeat a name)."""
     out = {}
-    for s in read_symbols():
+    for s in resident_symbols():
         if s.kind != "function":
             out.setdefault(s.name, []).append(s.addr)
     return {n: sorted(a) for n, a in out.items()}

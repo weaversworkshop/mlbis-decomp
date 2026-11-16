@@ -10,9 +10,7 @@ extern "C" {
 
 #include <nitro.h>
 
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
+#include "itcm/cpu_mem.h"
 
 // --- Function Declarations --- //
 
@@ -53,7 +51,7 @@ void clGenFileMan::init(GenFileEntry * entries, u32 bytes, u16 ownsTable) {
     this->ownsTable = ownsTable;
     this->capacity = MATH_GetMostSignificantBit(bytes / sizeof(GenFileEntry));
 
-    func_01ff8228(this->entries, 0, this->capacity * sizeof(GenFileEntry));
+    cpu_fill32(this->entries, 0, this->capacity * sizeof(GenFileEntry));
 }
 
 // MATCHED 100%
@@ -128,7 +126,7 @@ void clGenFileMan::clear() {
         slot++;
     }
 
-    func_01ff8228(this->entries, 0, this->capacity * sizeof(GenFileEntry));
+    cpu_fill32(this->entries, 0, this->capacity * sizeof(GenFileEntry));
 }
 
 // MATCHED 100%
@@ -169,7 +167,7 @@ RfxTexHeader * func_020222a4(RfxGenPools * param1, u32 param2) {
             }
         }
 
-        func_01ff8228(entries, 0, sizeof(param1->entriesA));
+        cpu_fill32(entries, 0, sizeof(param1->entriesA));
 
         for (s32 i = 0; i < 128; i++) {
             u32 * data = (u32*)saved[i];
@@ -199,7 +197,7 @@ RfxPlttHeader * func_020223b0(RfxGenPools * param1, u32 param2) {
             }
         }
 
-        func_01ff8228(entries, 0, sizeof(param1->entriesB));
+        cpu_fill32(entries, 0, sizeof(param1->entriesB));
 
         for (s32 i = 0; i < 128; i++) {
             u32 * data = (u32*)saved[i];

@@ -8,6 +8,7 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
 #include "main/vecmath.h"
 #include "main/vecUtil.h"
 
@@ -23,10 +24,6 @@ extern MtxFx44 animeMtx;  // 0x027e1120
 
 extern s32 stripVtxCount;  // 0x027e1160
 extern DfxTexInfo texInfo;  // 0x027e1164
-
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
 
 // --- Variable Definitions --- //
 
@@ -166,7 +163,7 @@ void clDfx::beginDraw() {
     node->pos.y = this->originY * 16;
     node->pos.z = this->originZ * 16;
     
-    func_01ff8228(&node->mtx + 1, 0, sizeof(DfxNode) - sizeof(MtxFx43));
+    cpu_fill32(&node->mtx + 1, 0, sizeof(DfxNode) - sizeof(MtxFx43));
 
     G3_MtxMode(GX_MTXMODE_TEXTURE);
     G3_Scale(0x10000, 0x10000, 0x10000);

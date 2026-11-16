@@ -4,13 +4,7 @@
 
 #include "main/cpu_mem16.h"
 
-// --- Extern Functions --- //
-
-extern void func_01ff8228(void *, u32, u32);
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
-extern void func_01ff845c(u16 *, u16 *, u32);
-extern void func_01ff845c(u16 *, u16 *, u32);
+#include "itcm/cpu_mem.h"
 
 // --- Function Definitions --- //
 
@@ -27,7 +21,7 @@ void cpu_fill16(u16 * src, u16 value, u32 size) {
             src[(size & ~1) / 2] = value;
         }
 
-        func_01ff8228(src, value | (value << 16), size & ~2);
+        cpu_fill32(src, value | (value << 16), size & ~2);
     }
 }
 
@@ -38,9 +32,9 @@ void cpu_copy16(u16 * src, u16 * dst, u32 size) {
 
         if ((((u32)src ^ (u32)dst) & 2) != 0) {
             if (dst < src) {
-                func_01ff845c(src, dst, size);
+                cpu_copy16_fwd(src, dst, size);
             } else {
-                func_01ff84fc(src, dst, size);
+                cpu_copy16_rev(src, dst, size);
             }
         } else if (dst < src) {
             if (((u32)dst & 2) != 0) {
@@ -49,7 +43,7 @@ void cpu_copy16(u16 * src, u16 * dst, u32 size) {
                 *dst++ = src[0];
             }
 
-            func_01ff82ac(newSrc, dst, size & ~2);
+            cpu_copy32_fwd(newSrc, dst, size & ~2);
 
             if((size & 2) != 0) {
                 dst[size/2-1] = newSrc[size/2-1];
@@ -62,10 +56,10 @@ void cpu_copy16(u16 * src, u16 * dst, u32 size) {
             }
 
             if (((u32)dst & 2) != 0) {
-                func_01ff8380(&newSrc[1], &dst[1], size-2);
+                cpu_copy32_rev(&newSrc[1], &dst[1], size-2);
                 dst[0] = newSrc[0];
             } else {
-                func_01ff8380(newSrc, dst, size);
+                cpu_copy32_rev(newSrc, dst, size);
             }
         }
     }

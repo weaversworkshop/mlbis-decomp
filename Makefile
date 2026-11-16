@@ -85,19 +85,31 @@ DSD_CONFIG_DEPS := $(shell $(FIND) config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
 
 TARGET ?= main_7
+TODO_TARGETS ?= $(sort $(TARGET) itcm_1)
 
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
 SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 
-.PHONY: tools link delink-config all compile-ok clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-propose sdk-audit sdk-patch sdk-patch-update offsets offsets-apply
+.PHONY: tools link delink-config all compile-ok split-tcm clean distclean errors diff objdiff delinks progress progress-py progress-objdiff report obj-match callgraph check-relocs sdk-rename sync-names sdk sdk-propose sdk-audit sdk-patch sdk-patch-update offsets offsets-apply
 
 # A failing compile under -j printed its diagnostics, then make kept echoing the
 # in-flight jobs after it. Defer the failure: record it, let the others finish, and
 # report from this recipe so the errors are the LAST thing on screen. Direct
 # single-object builds are unaffected (DEFER_ERRORS is target-specific to `all`).
 all: DEFER_ERRORS := 1
-all: compile-ok objdiff.json
+all: compile-ok split-tcm objdiff.json
+
+# notes/itcm.md "Split objects"
+SPLIT_TCM := python $(SCRIPTS)/split_tcm.py
+split-tcm: objdiff.json | compile-ok
+	@$(SPLIT_TCM)
+$(BUILD_DIR)/split/%@itcm_1.o: $(BUILD_DIR)/%.o
+	@$(SPLIT_TCM) --keep itcm $< $@
+$(BUILD_DIR)/split/%@dtcm_1.o: $(BUILD_DIR)/%.o
+	@$(SPLIT_TCM) --keep dtcm $< $@
+$(BUILD_DIR)/split/%.o: $(BUILD_DIR)/%.o
+	@$(SPLIT_TCM) --keep main $< $@
 
 # Gate: every object is a prerequisite, so this runs only once they have all been
 # attempted. Deferred failures land in <obj>.o.err -- report them and fail here, which
@@ -209,7 +221,7 @@ $(DELINKS_DIR)/.stamp: $(DSD) $(DSD_CONFIG_DEPS) $(SDK_MAPPINGS)
 	@touch $@
 
 objdiff: objdiff.json
-objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py | compile-ok
+objdiff.json: $(C_FILES) $(CXX_FILES) $(SDK_MAPPINGS) $(SCRIPTS)/gen_objdiff.py $(SCRIPTS)/split_tcm.py | compile-ok
 	python $(SCRIPTS)/gen_objdiff.py > $@
 
 # sync-names harvests mwcc's mangled names from the compiled game .o into
@@ -244,7 +256,8 @@ TODO_ARGS = $(if $(DATA_NOTES),--data-notes,)
 progress: all sync-names
 	@$(MAKE) --no-print-directory offsets-apply
 	@$(MAKE) --no-print-directory delinks
-	python $(SCRIPTS)/obj_match.py | python $(SCRIPTS)/build_todo.py $(TARGET) --report - $(TODO_ARGS)
+	python $(SCRIPTS)/obj_match.py --out $(BUILD_DIR)/obj_match.json
+	@$(foreach t,$(TODO_TARGETS),python $(SCRIPTS)/build_todo.py $(t) --report $(BUILD_DIR)/obj_match.json $(TODO_ARGS) &&) true
 	@python $(SCRIPTS)/asm_smell.py --sweep
 
 progress-py: progress          # deprecated alias

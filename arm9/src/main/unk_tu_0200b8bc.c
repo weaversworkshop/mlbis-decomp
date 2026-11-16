@@ -30,8 +30,8 @@ typedef struct {
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Variable Definitions --- //
 
@@ -113,9 +113,9 @@ void func_0200bb1c(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_24 * param2) 
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
-        func_01ff8380(param1, &local, sizeof(local));
+        cpu_copy32_rev(param1, &local, sizeof(local));
     } else {
-        func_01ff82ac(param1, &local, sizeof(local));
+        cpu_copy32_fwd(param1, &local, sizeof(local));
     }
 
     while (local.field04[0] != '\0') {
@@ -123,9 +123,9 @@ void func_0200bb1c(UnkStruct_0200b8bc * param1, UnkStruct_0200b8bc_24 * param2) 
     }
 
     if (&local.unkStruct24 < param2) {
-        func_01ff8380(&local.unkStruct24, param2, sizeof(UnkStruct_0200b8bc_24));
+        cpu_copy32_rev(&local.unkStruct24, param2, sizeof(UnkStruct_0200b8bc_24));
     } else {
-        func_01ff82ac(&local.unkStruct24, param2, sizeof(UnkStruct_0200b8bc_24));
+        cpu_copy32_fwd(&local.unkStruct24, param2, sizeof(UnkStruct_0200b8bc_24));
     }
 }
 
@@ -134,9 +134,9 @@ u16 func_0200bbb0(UnkStruct_0200b8bc * param1) {
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
-        func_01ff8380(param1, &local, sizeof(local));
+        cpu_copy32_rev(param1, &local, sizeof(local));
     } else {
-        func_01ff82ac(param1, &local, sizeof(local));
+        cpu_copy32_fwd(param1, &local, sizeof(local));
     }
 
     local.field1c_21 = 1;
@@ -153,9 +153,9 @@ u16 func_0200bc48(UnkStruct_0200b8bc * param1) {
     UnkStruct_0200b8bc local;
 
     if (param1 < &local) {
-        func_01ff8380(param1, &local, sizeof(local));
+        cpu_copy32_rev(param1, &local, sizeof(local));
     } else {
-        func_01ff82ac(param1, &local, sizeof(local));
+        cpu_copy32_fwd(param1, &local, sizeof(local));
     }
 
     local.field1c_21 = 1;

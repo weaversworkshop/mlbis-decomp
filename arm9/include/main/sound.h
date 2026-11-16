@@ -86,10 +86,13 @@ struct SndVoiceList {
 extern "C" {
 #endif
 
+void sndTick(void);  // 0x01ff8d18
+
 void sndInit(BOOL, u32, u32, u32);  // 0x02005fe4
 void sndShutdown(BOOL);  // 0x02006274
 void sndPlaySeqNoStop(u32, u8, u32);  // 0x02006464
 void sndRestartSlot(u32, BOOL, BOOL);  // 0x02006594
+void sndPauseSlot(BOOL, u32);  // 0x020066e0
 void sndStartFadeSlot(u32, s32, u32);  // 0x0200677c
 u32 sndGetSlotStatus(u32);  // 0x02006864
 void sndPlayById(u32, s16, s16, s16, s8, s16);  // 0x02006964
@@ -97,6 +100,7 @@ BOOL sndPlayByIdOwned(SndVoiceList *, u32, s16, s16, s16, s8, s16);  // 0x02006a
 void sndStopOwned(SndVoiceList *, u32);  // 0x02006bc0
 void sndSetListPosition(SndVoiceList *, s16, s16);  // 0x02006cf8
 void sndLoadGroup(u32, u32);  // 0x02006d14
+void sndStopAlt(s16);  // 0x0200709c
 
 #ifdef __cplusplus
 } // extern "C"

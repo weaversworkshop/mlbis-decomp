@@ -45,6 +45,14 @@ def read_symbols(path=SYMBOLS):
     return out
 
 
+def resident_symbols():
+    out = []
+    for path in (SYMBOLS, CONFIG / "itcm" / "symbols.txt", CONFIG / "dtcm" / "symbols.txt"):
+        if path.exists():
+            out += read_symbols(path)
+    return out
+
+
 def word_symbols(path=SYMBOLS):
     return [s for s in read_symbols(path) if re.fullmatch(r"\w+", s.name)]
 
@@ -77,9 +85,23 @@ def game_sources():
     return sorted(p for ext in ("*.c", "*.cpp") for p in SRC.rglob(ext))
 
 
-def objdiff_target(path):
+def objdiff_targets(path):
+    out = []
     for line in Path(path).read_text(encoding="utf-8", errors="replace").splitlines():
         m = OBJDIFF_TARGET_RE.match(line)
-        if m:
-            return m.group(1)
-    return None
+        if m and m.group(1) not in out:
+            out.append(m.group(1))
+    return out
+
+
+SPLIT_OBJ_RE = re.compile(r"^build/split/(.+?)(?:@\w+)?\.o$")
+
+
+def compiled_object(base_path):
+    m = SPLIT_OBJ_RE.match(base_path)
+    return f"build/{m.group(1)}.o" if m else base_path
+
+
+def objdiff_target(path):
+    targets = objdiff_targets(path)
+    return targets[0] if targets else None

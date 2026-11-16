@@ -47,8 +47,8 @@ typedef struct {
 
 // --- Extern Functions --- //
 
-extern void func_01ff82ac(void *, void *, u32);
-extern void func_01ff8380(void *, void *, u32);
+extern void cpu_copy32_fwd(void *, void *, u32);
+extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Function Declarations --- //
 
@@ -90,9 +90,9 @@ s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u
 
     if (pal != NULL && srcPal != NULL && srcPal != pal) {
         if (srcPal < pal) {
-            func_01ff8380(srcPal, pal, palCount * sizeof(u16));
+            cpu_copy32_rev(srcPal, pal, palCount * sizeof(u16));
         } else {
-            func_01ff82ac(srcPal, pal, palCount * sizeof(u16));
+            cpu_copy32_fwd(srcPal, pal, palCount * sizeof(u16));
         }
     }
 
@@ -363,9 +363,9 @@ s16 * palAnimCrossFade(s16 * args, s32 time, u16 * dst, s32 count, u16 * pal) {
     s16 * next = palAnimKeySeg(args, &time, &dur, &fromIdx, &toIdx);
 
     if (pal < buf) {
-        func_01ff8380(pal, buf, sizeof(buf));
+        cpu_copy32_rev(pal, buf, sizeof(buf));
     } else {
-        func_01ff82ac(pal, buf, sizeof(buf));
+        cpu_copy32_fwd(pal, buf, sizeof(buf));
     }
 
     u16 * a = &buf[fromIdx];

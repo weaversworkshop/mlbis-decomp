@@ -4,19 +4,22 @@
 
 #include "main/clVCountTask.h"
 
+#include "itcm/mainLoop.h"
+
 extern "C" {
 
 #include <nitro.h>
-
-// --- Extern Functions --- //    
-
-extern void func_01ff8a38(void);
 
 }
 
 // --- Variable Definitions --- //
 
-VCountTaskManager vcountTaskManager;
+u8 vcountCount;  // 0x0205bad4
+clVCountTask * vcountHead;  // 0x0205badc
+clVCountTask * vcountCur;  // 0x0205bae8
+clVCountTask * vcountNext;  // 0x0205bad8
+void (*vcountHook)(void);  // 0x0205bae0
+s32 vcountHookLine;  // 0x0205bae4
 
 // --- Function Definitions --- //
 
@@ -24,19 +27,19 @@ VCountTaskManager vcountTaskManager;
 clVCountTask::clVCountTask(s32 priority, u8 id, u32 param3, u32 arg) {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
-    clVCountTask * task = vcountTaskManager.next;
+    clVCountTask * task = vcountHead;
     if (task == NULL) {
-        vcountTaskManager.next = this;
-        vcountTaskManager.prev = this;
+        vcountHead = this;
+        vcountNext = this;
         this->prev = NULL;
         this->next = NULL;
     } else {
         while (TRUE) {
-            if (task->priority > priority || (task->priority == priority && task->id > id)) {
+            if (task->line > priority || (task->line == priority && task->priority > id)) {
                 clVCountTask * prev = task->prev;
 
                 if (prev == NULL) {
-                    vcountTaskManager.next = this;
+                    vcountHead = this;
                     this->prev = NULL;
                 } else {
                     prev->next = this;
@@ -62,14 +65,14 @@ clVCountTask::clVCountTask(s32 priority, u8 id, u32 param3, u32 arg) {
     }
 
     this->arg = arg;
-    this->priority = priority;
+    this->line = priority;
     this->field14 = 0;
-    this->id = id;
+    this->priority = id;
     this->enabled = 0;
-    this->pending = 1;
-    this->field18 = 0;
+    this->hasRan = 1;
+    this->numRuns = 0;
 
-    vcountTaskManager.count++;
+    vcountCount++;
 
     OS_EnableIrqMask(mask);
 }
@@ -81,19 +84,19 @@ clVCountTask::~clVCountTask() {
     }
 
     if (this->prev == NULL) {
-        vcountTaskManager.next = this->next;
+        vcountHead = this->next;
     } else {
         this->prev->next = this->next;
     } 
 
-    vcountTaskManager.count--;
+    vcountCount--;
 
-    if (vcountTaskManager.cursor == this) {
-        vcountTaskManager.cursor = NULL;
+    if (vcountCur == this) {
+        vcountCur = NULL;
     }
 
-    if (vcountTaskManager.prev == this) {
-        vcountTaskManager.prev = this->next;
+    if (vcountNext == this) {
+        vcountNext = this->next;
     }
 }
 
@@ -102,7 +105,7 @@ void clVCountTask::disable() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
     this->enabled = 0;
-    this->pending = 1;
+    this->hasRan = 1;
 
     OS_EnableIrqMask(mask);
 }
@@ -112,7 +115,7 @@ void clVCountTask::enable() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
     this->enabled = 1;
-    this->pending = 1;
+    this->hasRan = 1;
 
     OS_EnableIrqMask(mask);
 }
@@ -121,11 +124,11 @@ void clVCountTask::enable() {
 void disableVCountTasks() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
-    clVCountTask * next = vcountTaskManager.next;
+    clVCountTask * next = vcountHead;
     while (next != 0) {
-        if (next->id != 0 && next->id != (u8)-1) {
+        if (next->priority != 0 && next->priority != (u8)-1) {
             next->enabled = 0;
-            next->pending = 1;
+            next->hasRan = 1;
         }
 
         next = next->next;
@@ -135,19 +138,19 @@ void disableVCountTasks() {
 }
 
 // MATCHED 100%
-void initVCountTaskMgr() {
+void initVCountTaskMgmt() {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
-    vcountTaskManager.count = 0;
-    vcountTaskManager.next = NULL;
-    vcountTaskManager.cursor = NULL;
-    vcountTaskManager.prev = NULL;
-    vcountTaskManager.field0c = 0;
+    vcountCount = 0;
+    vcountHead = NULL;
+    vcountCur = NULL;
+    vcountNext = NULL;
+    vcountHook = 0;
 
     GX_VCountEqIntr(FALSE);
 
     OS_DisableIrqMask(OS_IE_V_COUNT);
-    OS_SetIrqFunction(OS_IE_V_COUNT, func_01ff8a38);
+    OS_SetIrqFunction(OS_IE_V_COUNT, vcountIntr);
     GX_SetVCountEqVal(GX_LCD_SIZE_Y);
 
     GX_VCountEqIntr(TRUE);
@@ -162,4 +165,10 @@ void deleteVCountTask(clVCountTask * task) {
         delete task;
         OS_EnableIrqMask(mask);
     }
+}
+
+// not in ROM; seems required to keep vcountHookLine pooled
+void setVcountHook(void (*hook)(void), s32 line) {  // stripped
+    vcountHook = hook;
+    vcountHookLine = line;
 }
