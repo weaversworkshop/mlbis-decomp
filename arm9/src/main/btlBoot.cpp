@@ -7,6 +7,7 @@
 #include "main/clGameMain.h"
 #include "main/fs.h"
 #include "main/heap.h"
+#include "main/sound.h"
 
 extern "C" {
 

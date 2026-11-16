@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@dtcm_1.o
 
 #include "globals.h"
 
@@ -12,23 +13,17 @@ extern "C" {
 #include "main/vecmath.h"
 #include "main/vecUtil.h"
 
-// --- Extern Data Variables --- //
-
-extern s32 polygonIdCounter;  // 0x027e0024
-extern VecFx32 lightDir;  // 0x027e0028
-
-extern RfxKeySeg keySeg;  // 0x027e00ec
-extern RfxStack rfxStack;
-
-extern MtxFx44 animeMtx;  // 0x027e1120
-
-extern s32 stripVtxCount;  // 0x027e1160
-extern DfxTexInfo texInfo;  // 0x027e1164
-
 // --- Variable Definitions --- //
 
 static MtxFx33 lightMtx;  // 0x0205bb24
 static MtxFx43 texMtx;  // 0x0205bb48
+
+#include <nitro/dtcm_begin.h>
+s32 polygonIdCounter = 1;  // 0x027e0024
+VecFx32 lightDir = { -1, -2, -4 };  // 0x027e0028
+s32 stripVtxCount;  // 0x027e1160
+DfxTexInfo texInfo;  // 0x027e1164
+#include <nitro/dtcm_end.h>
 
 // --- Function Declarations --- //
 
@@ -156,7 +151,7 @@ u32 clDfx::unk_virtual2() {
 void clDfx::beginDraw() {
     DfxNode * node = (DfxNode *)rfxStack.cur;
 
-    copy36(&this->rot, SDK_AUTOLOAD_DTCM_START);
+    copy36(&this->rot, &identityMtx);
     copy36(&this->rot, node);
 
     node->pos.x = this->originX * 16;

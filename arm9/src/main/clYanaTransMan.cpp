@@ -4,6 +4,8 @@
 
 #include "main/clYanaTransMan.h"
 
+#include "dtcm/yanaWork.h"
+
 #include "main/clCellAnime.h"
 #include "main/heap.h"
 
@@ -13,11 +15,6 @@ extern "C" {
 
 #include "main/tile_convert.h"
 #include "main/uiUtil.h"
-
-// --- Extern Data Variables --- //
-
-extern GXVRamTex data_027e00e0;  // 0x027e00e0
-extern GXVRamTexPltt data_027e00e4;  // 0x027e00e4
 
 // --- Extern Functions --- //
 
@@ -75,8 +72,8 @@ void clYanaTransMan::flush() {
         u32 tail = this->tail;
         if (head != tail) {
             if (this->texMode != 0) {
-                data_027e00e0 = GX_ResetBankForTex();
-                data_027e00e4 = GX_ResetBankForTexPltt();
+                savedTexBank = GX_ResetBankForTex();
+                savedTexPlttBank = GX_ResetBankForTexPltt();
             }
     
             while (head != tail) {
@@ -89,8 +86,8 @@ void clYanaTransMan::flush() {
             }
 
             if (this->texMode != 0) {
-                GX_SetBankForTex(data_027e00e0);
-                GX_SetBankForTexPltt(data_027e00e4);
+                GX_SetBankForTex(savedTexBank);
+                GX_SetBankForTexPltt(savedTexPlttBank);
             }
 
             this->head = head;

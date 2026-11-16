@@ -86,6 +86,8 @@ struct SndVoiceList {
 extern "C" {
 #endif
 
+extern u8 sndEchoMode;
+
 void sndTick(void);  // 0x01ff8d18
 
 void sndInit(BOOL, u32, u32, u32);  // 0x02005fe4

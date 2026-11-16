@@ -13,7 +13,7 @@ from common import INCLUDE as INCLUDE_ROOT, READELF, ROOT, SRC as SRC_ROOT
 
 BUILD = common.BUILD / "offsets"
 CACHE = BUILD / "cache.json"
-DEFAULT_DIRS = ["arm9/include/main", "arm9/src/main"]
+DEFAULT_DIRS = ["arm9/include/main", "arm9/src/main", "arm9/include/dtcm", "arm9/src/dtcm"]
 SENTINEL = 0xffffffff
 
 AGG_OPEN_RE = re.compile(r"\b(?:class|struct|union)\s+(?P<name>[A-Za-z_]\w*)"
@@ -488,7 +488,7 @@ def main():
         if p.is_dir():
             for pat in ("*.h", "*.c", "*.cpp"):
                 targets += sorted(p.rglob(pat))
-        else:
+        elif p.exists() or a.paths:
             targets.append(p)
 
     probed = pending = 0

@@ -4,15 +4,13 @@
 
 #include "main/yanaCtrl.h"
 
+#include "dtcm/yanaWork.h"
+
 #include "main/heap.h"
 
 extern "C" {
 
 #include <nitro.h>
-
-// --- Extern Data Variables --- //
-
-extern clYanaUnitSys * data_027e00e8;
 
 // --- Function Declarations --- //
 
@@ -42,7 +40,7 @@ void inYanaUnit::operator delete(void * block) {
 
 // MATCHED 100%
 clYanaUnitSys * findOwner(void * addr) {
-    clYanaUnitSys * sys = data_027e00e8;
+    clYanaUnitSys * sys = unitSysHead;
     while (TRUE) {
         if (sys == NULL) {
             return NULL;

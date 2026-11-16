@@ -56,6 +56,7 @@ typedef struct {
     u16 field4c;
     u16 field4e;
     u16 field50;
+    u16 field52[7];
 } LfxNode;
 
 class clLfx : public clAfx {

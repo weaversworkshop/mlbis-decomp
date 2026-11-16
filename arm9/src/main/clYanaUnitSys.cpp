@@ -4,15 +4,13 @@
 
 #include "main/clYanaUnitSys.h"
 
+#include "dtcm/yanaWork.h"
+
 #include "main/heap.h"
 
 extern "C" {
 
 #include <nitro.h>
-
-// --- Extern Data Variables --- //
-
-extern clYanaUnitSys * data_027e00e8;  // 0x027e00e8
 
 } // extern "C"
 
@@ -50,7 +48,7 @@ void clYanaUnitSys::init(u32 unitSize, s32 unitCount, void * buf, s32 heapId) {
 
 // MATCHED 100%
 void clYanaUnitSys::link() {
-    clYanaUnitSys * sentinel = (clYanaUnitSys *)((u8 *)&data_027e00e8 - 4);
+    clYanaUnitSys * sentinel = (clYanaUnitSys *)((u8 *)&unitSysHead - 4);
     clYanaUnitSys * oldHead = sentinel->next;
     if (oldHead != NULL) {
         oldHead->prev = this;

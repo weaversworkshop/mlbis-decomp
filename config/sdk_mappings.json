@@ -5568,13 +5568,6 @@
       "note": "sdk/ctrdg/ctrdg_proc (placed from section base: data_syms.py place)"
     },
     {
-      "addr": "0x027e0000",
-      "sdk_name": "SDK_AUTOLOAD_DTCM_START",
-      "library": "data",
-      "confidence": "certain",
-      "note": "data global; literal-pool alignment of matched SDK funcs"
-    },
-    {
       "addr": "0x027e11f0",
       "sdk_name": "OSi_IrqThreadQueue",
       "library": "data",
@@ -8164,6 +8157,16 @@
       "source": "lib/NitroSDK/libraries/mi/src/mi_dma_gxcommand.c",
       "target": "build/delinks/_dsd_gap@itcm_1.o",
       "name": "sdk/mi/src/mi_dma_gxcommand@itcm_1"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_irqTable.c",
+      "target": "build/delinks/_dsd_gap@dtcm_1.o",
+      "name": "sdk/os/os_irqTable@dtcm_1"
+    },
+    {
+      "source": "lib/NitroSDK/libraries/os/src/os_irqHandler.c",
+      "target": "build/delinks/_dsd_gap@dtcm_1.o",
+      "name": "sdk/os/os_irqHandler@dtcm_1"
     }
   ]
 }

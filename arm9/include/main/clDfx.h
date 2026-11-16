@@ -125,6 +125,8 @@ public:
     DfxTexInfo * resolveTexture(u16, DfxNode *);  // 0x02025430    
 };
 
+extern DfxTexInfo texInfo;
+
 #endif // __cplusplus
 
 #endif

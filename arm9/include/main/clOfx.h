@@ -24,9 +24,9 @@ typedef struct {
     u8 h;  // +0x1
 } OamShapeSize;
 
-extern OamShapeSize oamShapeSizes[12];  // 0x027e0034
-extern GXOamShape oamShapes[12];  // 0x027e004c
-extern OfxOamParams oamParams;  // 0x027e1180
+extern OamShapeSize oamShapeSizes[12];
+extern GXOamShape oamShapes[12];
+extern OfxOamParams oamParams;
 
 }
 

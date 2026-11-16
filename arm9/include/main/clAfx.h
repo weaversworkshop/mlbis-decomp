@@ -34,6 +34,8 @@ public:
     void runColorBlendTrack(s32, u16 *);  // 0x0202273c
 };
 
+extern MtxFx44 animeMtx;
+
 #endif // __cplusplus
 
 #endif

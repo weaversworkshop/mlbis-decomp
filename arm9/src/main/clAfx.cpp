@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@dtcm_1.o
 
 #include "globals.h"
 
@@ -14,6 +15,10 @@ extern "C" {
 // --- Variable Definitions --- //
 
 BlendFunc colorBlendFuncs[4] = { colorLerp, colorAddSaturation, colorSubSaturation, colorLuminanceBlend };  // 0x02054ff8
+
+#include <nitro/dtcm_begin.h>
+MtxFx44 animeMtx;  // 0x027e1120
+#include <nitro/dtcm_end.h>
 
 } // extern "C"
 

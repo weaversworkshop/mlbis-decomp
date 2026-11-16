@@ -11,6 +11,7 @@ from pathlib import Path
 
 import common
 from common import ROOT, compiled_object, resident_symbols
+from patch_lcf import LINK_SYMS
 
 SHT_SYMTAB, SHT_REL, SHT_RELA, SHT_NOBITS = 2, 9, 4, 8
 STT_NOTYPE, STT_OBJECT, STT_FUNC, STT_SECTION = 0, 1, 2, 3
@@ -37,7 +38,7 @@ def section_tcm(secname):
 def section_class(secname):
     tcm = section_tcm(secname)
     if tcm:
-        secname = secname[len(tcm) + 1:]
+        secname = secname[len(tcm) + 1:] or (".data" if tcm == "dtcm" else "")
     return next((c for c in DATA_SECTIONS if secname.startswith(c)), None)
 
 
@@ -337,10 +338,23 @@ def const_vs_symbol(word, key):
     """True/False if a plain word provably equals/differs from an abs32 reloc's target; None if unknown."""
     if key[0] != "abs32":
         return None
-    addr = sym_addr(key[1])
+    addr = key_addr(key)
+    return None if addr is None else addr == word
+
+
+def key_addr(key):
+    addr = LINK_SYMS.get(key[1])
     if addr is None:
+        addr = sym_addr(key[1])
+    return None if addr is None else addr + key[2]
+
+
+def link_alias(kx, ky):
+    """True/False if a source link-symbol reloc provably hits/misses the target reloc's address."""
+    if ky[1] not in LINK_SYMS or kx[0] != "abs32" or ky[0] != "abs32":
         return None
-    return addr + key[2] == word
+    addr = sym_addr(kx[1])
+    return None if addr is None else addr + kx[2] == key_addr(ky)
 
 
 def pair_canon(x, y):
@@ -350,6 +364,9 @@ def pair_canon(x, y):
     if kx and ky:
         if kx[1] == ky[1]:
             return (x[0], kx[0], kx[2], kx[1]), (y[0], ky[0], ky[2], ky[1]), None
+        alias = link_alias(kx, ky)
+        if alias is not None:
+            return (x[0], kx[0]), (y[0], ky[0]) if alias else (y[0], ky[0], ky[1]), None
         return (x[0], kx[0]), (y[0], ky[0]), (kx[1], ky[1])
     if kx and ky is None and y is not None and x[0] == 0:
         proved = const_vs_symbol(y[0], kx)

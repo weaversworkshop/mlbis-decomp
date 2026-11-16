@@ -8,6 +8,8 @@
 #include "main/clYanaAnim.h"
 #include "main/yanaCtrl.h"
 
+#include "dtcm/yanaWork.h"
+
 extern "C" {
     #include <nitro.h>
 }
@@ -29,13 +31,6 @@ typedef struct {
     u8 pad_00[0x20];
     RfxNode * cur;  // +0x20
 } RfxStack;
-
-typedef struct {
-    s32 key;  // +0x0
-    s32 nextKey;  // +0x4
-    s32 t;  // +0x8
-    s32 dur;  // +0xc
-} RfxKeySeg;
 
 class clRfx : public clYanaCtrlBase, public clYanaAnim {
 public:
@@ -62,6 +57,8 @@ public:
     void runSubTrackSeg(s32, u16 *);  // 0x02021570
     void runExtTracks(s32, u16 *);  // 0x020217c4
 };
+
+extern RfxStack rfxStack;
 
 s32 evalRow(u16 *, u32, u32, u32, u32);  // 0x02020ba8
 void applyRows(RfxNode *, u16 *, s32, s32, s32, s32, s32);  // 0x02020d90

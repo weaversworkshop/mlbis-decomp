@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@dtcm_1.o
 
 #include "globals.h"
 
@@ -10,12 +11,21 @@ extern "C" {
 
 #include "itcm/cpu_mem.h"
 
-// --- Extern Data Variables --- //
+// --- Variable Definitions --- //
 
-extern RfxKeySeg keySeg;
-extern RfxStack rfxStack;
-
-extern MtxFx44 animeMtx;
+#include <nitro/dtcm_begin.h>
+OamShapeSize oamShapeSizes[12] = {
+    {8, 8}, {16, 16}, {32, 32}, {64, 64},
+    {16, 8}, {32, 8}, {32, 16}, {64, 32},
+    {8, 16}, {8, 32}, {16, 32}, {32, 64},
+};  // 0x027e0034
+GXOamShape oamShapes[12] = {
+    GX_OAM_SHAPE_8x8, GX_OAM_SHAPE_16x16, GX_OAM_SHAPE_32x32, GX_OAM_SHAPE_64x64,
+    GX_OAM_SHAPE_16x8, GX_OAM_SHAPE_32x8, GX_OAM_SHAPE_32x16, GX_OAM_SHAPE_64x32,
+    GX_OAM_SHAPE_8x16, GX_OAM_SHAPE_8x32, GX_OAM_SHAPE_16x32, GX_OAM_SHAPE_32x64,
+};  // 0x027e004c
+OfxOamParams oamParams;  // 0x027e1180
+#include <nitro/dtcm_end.h>
 
 // --- Function Declarations --- //
 
@@ -106,7 +116,7 @@ u32 clOfx::unk_virtual2() {
 void clOfx::beginDraw() {
     OfxNode * node = (OfxNode *)rfxStack.cur;
 
-    copy36(&this->rot, SDK_AUTOLOAD_DTCM_START);
+    copy36(&this->rot, &identityMtx);
     copy36(&this->rot, node);
 
     node->pos.x = 0;

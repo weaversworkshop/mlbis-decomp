@@ -5,17 +5,17 @@
   "matched_code": 270622,
   "matched_code_percent": 8.094481782914434,
   "total_data": 1803032,
-  "matched_data": 106700,
-  "matched_data_percent": 5.917809556347308,
+  "matched_data": 111308,
+  "matched_data_percent": 6.173379063710461,
   "total_functions": 12115,
   "matched_functions": 1891,
   "matched_functions_percent": 15.608749484110607,
   "complete_code": 227022,
   "complete_code_percent": 6.790377143472448,
-  "complete_data": 94900,
-  "complete_data_percent": 5.263356390790624,
-  "total_units": 217,
-  "complete_units": 213
+  "complete_data": 99508,
+  "complete_data_percent": 5.5189258981537765,
+  "total_units": 225,
+  "complete_units": 221
  },
  "categories": [
   {
@@ -27,17 +27,17 @@
     "matched_code": 165832,
     "matched_code_percent": 5.120642272657094,
     "total_data": 1803032,
-    "matched_data": 106700,
-    "matched_data_percent": 5.917809556347308,
+    "matched_data": 111308,
+    "matched_data_percent": 6.173379063710461,
     "total_functions": 11178,
     "matched_functions": 954,
     "matched_functions_percent": 8.53462157809984,
     "complete_code": 124292,
     "complete_code_percent": 3.837949668056199,
-    "complete_data": 43556,
-    "complete_data_percent": 2.415708650761606,
-    "total_units": 60,
-    "complete_units": 56
+    "complete_data": 43888,
+    "complete_data_percent": 2.434122078809472,
+    "total_units": 65,
+    "complete_units": 61
    }
   },
   {
@@ -56,10 +56,10 @@
     "matched_functions_percent": 100.0,
     "complete_code": 105042,
     "complete_code_percent": 100.24048096192385,
-    "complete_data": 51552,
+    "complete_data": 55828,
     "complete_data_percent": 0.0,
-    "total_units": 159,
-    "complete_units": 159
+    "total_units": 162,
+    "complete_units": 162
    }
   },
   {
@@ -115,17 +115,17 @@
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 4608,
-    "matched_data": 0,
-    "matched_data_percent": 0.0,
+    "matched_data": 4608,
+    "matched_data_percent": 100.0,
     "total_functions": 0,
     "matched_functions": 0,
     "matched_functions_percent": 0.0,
     "complete_code": 0,
     "complete_code_percent": 0.0,
-    "complete_data": 0,
-    "complete_data_percent": 0.0,
-    "total_units": 0,
-    "complete_units": 0
+    "complete_data": 4608,
+    "complete_data_percent": 100.0,
+    "total_units": 8,
+    "complete_units": 8
    }
   },
   {
@@ -3057,6 +3057,29 @@
  ],
  "units": [
   {
+   "name": "dtcm/yanaWork",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 4160,
+    "matched_data": 4160,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "dtcm"
+    ]
+   }
+  },
+  {
    "name": "itcm/cpu_mem",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -3495,6 +3518,29 @@
     "progress_categories": [
      "game",
      "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clAfx@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 64,
+    "matched_data": 64,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "dtcm"
     ]
    }
   },
@@ -4067,6 +4113,29 @@
     "progress_categories": [
      "game",
      "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clDfx@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 48,
+    "matched_data": 48,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "dtcm"
     ]
    }
   },
@@ -4747,6 +4816,29 @@
     "progress_categories": [
      "game",
      "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clLfx@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 96,
+    "matched_data": 96,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "dtcm"
     ]
    }
   },
@@ -5501,6 +5593,29 @@
    }
   },
   {
+   "name": "main/clOfx@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 88,
+    "matched_data": 88,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "dtcm"
+    ]
+   }
+  },
+  {
    "name": "main/clOfxSys",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -6059,6 +6174,29 @@
     "progress_categories": [
      "game",
      "main"
+    ]
+   }
+  },
+  {
+   "name": "main/clRfx@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 36,
+    "matched_data": 36,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "dtcm"
     ]
    }
   },
@@ -17748,6 +17886,52 @@
     "progress_categories": [
      "sdk",
      "itcm"
+    ]
+   }
+  },
+  {
+   "name": "sdk/os/os_irqTable@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 100,
+    "matched_data": 100,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "dtcm"
+    ]
+   }
+  },
+  {
+   "name": "sdk/os/os_irqHandler@dtcm_1",
+   "measures": {
+    "fuzzy_match_percent": 0.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 0.0,
+    "total_data": 16,
+    "matched_data": 16,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 0.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
+     "dtcm"
     ]
    }
   },

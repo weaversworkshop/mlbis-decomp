@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@dtcm_1.o
 
 #include "globals.h"
 
@@ -11,12 +12,11 @@ extern "C" {
 #include "itcm/cpu_mem.h"
 #include "main/palAnim.h"
 
-// --- Extern Data Variables --- //
+// --- Variable Definitions --- //
 
-extern RfxKeySeg keySeg;
-extern RfxStack rfxStack;
-
-extern LfxNode lfxNode;  // 0x027e1190
+#include <nitro/dtcm_begin.h>
+LfxNode lfxNode;  // 0x027e1190
+#include <nitro/dtcm_end.h>
 
 // --- Function Declarations --- //
 
@@ -97,8 +97,8 @@ u32 clLfx::unk_virtual2() {
 // MATCHED 100%
 void clLfx::beginDraw() {
     RfxNode * node = rfxStack.cur;
-    MTX_Identity33((MtxFx33 *)SDK_AUTOLOAD_DTCM_START);
-    cpu_copy32_fwd(SDK_AUTOLOAD_DTCM_START, &node->mtx, sizeof(MtxFx33));
+    MTX_Identity33(&identityMtx);
+    cpu_copy32_fwd(&identityMtx, &node->mtx, sizeof(MtxFx33));
 
     node->pos.x = this->originX * 16;
     node->pos.y = this->originY * 16;

@@ -20,7 +20,7 @@ extern "C" {
 
 // --- Variable Definitions --- //
 
-SoftResetState softResetState;
+SoftResetState softResetState;  // 0x02056504
 
 // --- Function Definitions --- //
 

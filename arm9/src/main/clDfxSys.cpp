@@ -4,15 +4,13 @@
 
 #include "main/clDfxSys.h"
 
+#include "main/clDfx.h"
+
 extern "C" {
 
 #include <nitro.h>
 
 #include "main/vramBank.h"
-
-// --- Extern Data Variables --- //
-
-extern DfxTexInfo texInfo;
 
 // --- Variable Definitions --- //
 

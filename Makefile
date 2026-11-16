@@ -85,7 +85,7 @@ DSD_CONFIG_DEPS := $(shell $(FIND) config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
 
 TARGET ?= main_7
-TODO_TARGETS ?= $(sort $(TARGET) itcm_1)
+TODO_TARGETS ?= $(sort $(TARGET) itcm_1 dtcm_1)
 
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py

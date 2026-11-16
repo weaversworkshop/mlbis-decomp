@@ -12,12 +12,6 @@ extern "C" {
 #include "main/cpu_mem16.h"
 #include "main/palAnim.h"
 
-// --- Extern Data Variables --- //
-
-extern RfxKeySeg keySeg;
-extern u8 rfxNodeBuf[0x1000];
-extern RfxStack rfxStack;
-
 // --- Variable Definitions --- //
 
 BlendFunc pafBlendFuncs[4] = { colorLerp, colorAddSaturation, colorSubSaturation, colorLuminanceBlend };  // 0x020558fc

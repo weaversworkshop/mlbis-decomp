@@ -26,7 +26,7 @@ struct SoftResetState {
     InputState input;  // +0x8
 };
 
-extern SoftResetState softResetState;  // 0x02056504
+extern SoftResetState softResetState;
 
 void setSoftResetFade(SoftResetState *, s32);  // 0x02005da0
 void updateSoftReset(SoftResetState *);  // 0x02005ddc

@@ -1,4 +1,5 @@
 // objdiff-target: build/delinks/_dsd_gap@main_7.o
+// objdiff-target: build/delinks/_dsd_gap@dtcm_1.o
 
 #include "globals.h"
 
@@ -10,10 +11,11 @@ extern "C" {
 
 // --- Struct Definitions --- //
 
-// --- Extern Data Variables --- //
+// --- Variable Definitions --- //
 
-extern u8 rfxNodeBuf[0x1000];  // 0x027e00fc
-extern RfxStack rfxStack;  // 0x027e10fc
+#include <nitro/dtcm_begin.h>
+RfxStack rfxStack;  // 0x027e10fc
+#include <nitro/dtcm_end.h>
 
 // --- Function Declarations --- //
 
@@ -438,7 +440,7 @@ void clRfx::runSubTracks(s32 t, u16 * cmd) {
                     applyRows(*cur, cmd, numRows, numKeys, key, 0, 0);
                 }
 
-                copy36(SDK_AUTOLOAD_DTCM_START, *cur);
+                copy36(&identityMtx, *cur);
                 this->runTrack(elapsed, sub);
             }
 
@@ -550,7 +552,7 @@ void clRfx::runSubTrackSeg(s32 t, u16 * cmd) {
                     applyRows(*cur, cmd, numRows, numKeys, key, elapsed, segDur);
                 }
 
-                copy36(SDK_AUTOLOAD_DTCM_START, *cur);
+                copy36(&identityMtx, *cur);
                 this->runTrack(elapsed, sub);
             }
 
@@ -621,7 +623,7 @@ void clRfx::runExtTracks(s32 t, u16 * cmd) {
                         applyRows(*cur, cmd, numRows, numKeys, key, 0, 0);
                     }
 
-                    copy36(SDK_AUTOLOAD_DTCM_START, *cur);
+                    copy36(&identityMtx, *cur);
 
                     saved = this->script;
                     this->script = ext;

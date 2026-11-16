@@ -603,7 +603,6 @@ from:0x02080734 kind:load to:0x020a0000 module:overlays(124,130)
 from:0x02080964 kind:load to:0x020d0004 module:overlays(55,101)
 from:0x02080a2c kind:load to:0x020c0000 module:overlay(17)
 from:0x02080ab8 kind:load to:0x020f0004 module:overlay(4)
-from:0x02081bac kind:load to:0x027e0004 module:dtcm
 from:0x02082138 kind:load to:0x02050000 module:main
 from:0x0208214c kind:load to:0x0205fd4c add:0x2b4 module:main
 from:0x020821ec kind:load to:0x02080000 module:overlay(3)
