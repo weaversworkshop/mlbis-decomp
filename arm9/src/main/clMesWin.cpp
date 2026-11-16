@@ -2621,10 +2621,29 @@ void clMesWin::formatNumber(MesWinSlot * window, u8 slot, u8 digits, BOOL padded
 }
 
 // NONMATCHING 84.01% -- else branch has function param setup interleaved ; (r3 < 0x100) checks don't output lo/hi instructions as expected
+static inline UnkStruct_0200b8bc_10 * lookupFont(UnkStruct_0200b8bc_10 ** fonts, u16 idx, u16 & code) {
+    if (code < 0x100) {
+        return fonts[idx * 2];
+    }
+    code -= 0x100;
+    return fonts[idx * 2 + 1];
+}
+
 BOOL clMesWin::printNumber(MesWinSlot * window) {
     UnkStruct_0200b8bc_10 ** fonts;
     UnkStruct_0200b8bc_10 * font;
     UnkStruct_02013640 size;
+    u8 single;
+    u16 local1c;
+    u8 r11;
+    u16 fontIdx;
+    u8 r2;
+    u32 * chars;
+    u16 glyph;
+    u16 r0;
+    u16 tmp;
+    u32 * glyphData;
+    u32 r14;
 
     u8 slot = window->params.numbers == NULL ? 0 : window->numSlot - 1;
 
@@ -2642,40 +2661,29 @@ BOOL clMesWin::printNumber(MesWinSlot * window) {
         window->text.field08_0 = spaceW + 1 + window->text.field1c_17 + window->text.field08_0;
         window->text.field20_20 = spaceW;
     } else {
-        u8 single = this->singleBuf[window->params.screen];
+        single = this->singleBuf[window->params.screen];
 
+        r14 = window->text.field1c_10;
         u8 local18 = window->text.field14_10;
-
-        u8 r11 = window->text.field0c_0;
-        u32 r14 = window->text.field1c_10;
-        u16 fontIdx = window->text.field18_0;
-
-        u32 * chars = (single == 0) ? window->charsBack : window->chars;
-
-        u8 r2 = window->text.field14_0;
-        u16 local1c = window->text.field0c_9;
+        r11 = window->text.field0c_0;
+        chars = (single == 0) ? window->charsBack : window->chars;
+        r2 = window->text.field14_0;
         u16 r1 = window->text.field08_10;
-        u16 r0 = window->text.field08_0;
+        local1c = window->text.field0c_9;
+        r0 = window->text.field08_0;
+        fontIdx = window->text.field18_0;
 
         fonts = window->text.field10;
 
-        u16 glyph = c;
-        if (c < 0x100) {
-            font = fonts[fontIdx * 2];
-        } else {
-            font = fonts[fontIdx * 2 + 1];
-            glyph -= 0x100;
-        }
+        glyph = c;
+        font = lookupFont(fonts, fontIdx, glyph);
 
         s32 gylphInfo = ((u16 *)PTR_10(font, font->field04))[glyph];
 
-        if (c < 0x100) {
-            font = fonts[fontIdx * 2];
-        } else {
-            font = fonts[fontIdx * 2 + 1];
-        }
+        tmp = c;
+        font = lookupFont(fonts, fontIdx, tmp);
 
-        u32 * glyphData = PTR_10(font, WORD_10(font, (u8)gylphInfo + 2));
+        glyphData = PTR_10(font, WORD_10(font, (u8)gylphInfo + 2));
 
         size.struct18.field00 = func_0200c330(r0, r1, r2, gylphInfo >> 8, local1c, (u32)chars, glyphData, r11, r14, local18);
         size.s20.field00 = size.struct18.field00;
@@ -2703,6 +2711,7 @@ BOOL clMesWin::printNumber(MesWinSlot * window) {
 
     return (*(u8 *)window->nums[slot].pos == 0);
 }
+
 
 // MATCHED 100%
 u32 clMesWin::callbackNumber(clMesWin * self, UnkStruct_0200b8bc * text, BOOL draw) {

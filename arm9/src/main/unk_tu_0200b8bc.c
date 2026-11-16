@@ -530,70 +530,74 @@ u32 func_0200c4b8(UnkStruct_0200b8bc * param1, UnkStruct_0200bce8_24 * param2, B
     return ret;
 }
 
+#pragma optimization_level 2
+#pragma opt_common_subs off
 
-
+// MATCHED 100%
 void func_0200cb30(u32 * param1, u16 param2, u16 param3, u16 param4, u32 * param5, u8 param6, u8 param7) {
-    u32 inv;
+    s16 col;
     s16 cnt;
-    u32 c2;
-    u32 c1;
-    s16 col0;
-    u16 w4;
+    u32 * dst;
+    s16 k;
     u16 lim;
-    u32 * src;
+    u32 shr;
+    u32 c2;
+    s16 col0;
+    u32 c1;
+    u32 shl;
+    u32 inv;
+    u16 w4;
+    s16 k2;
+    s16 col2;
     UnkStruct_0200cb30 hdr;
 
     hdr.field00 = param5[0];
 
-    u32 w = ((hdr.field00 & 0xf0) << 12) >> 16;
-    src = param5+1 + ((hdr.field00 & 0xff000000) >> 24);
-    u32 * dst = param1 + ((param2 & 0xfff8) + (param3 & 0xfff8) * param4);
-    u32 shl = (u16)((param2 & 7) << 2);
-    param3 = param3 & 7;
-    u32 t = param6 * w;
+    u32 w = (u16)((hdr.field00 & 0xf0) >> 4);
     u16 h = hdr.field00 & 15;
-    lim = param3 + h * 4;
+    param5 = param5 + 1 + ((hdr.field00 & 0xff000000) >> 24);
+    u32 t = param6 * w;
     u32 t2 = h * t;
-    src = src + t2;
-    u32 shr = (u16)(32 - shl);
-    cnt = (u16)(w << 2) & 0xfff8;
-
+    shl = (u16)((param2 & 7) << 2);
+    shr = (u16)(32 - shl);
+    param5 = param5 + t2;
+    dst = param1 + ((param2 & 0xfff8) + (param3 & 0xfff8) * param4);
+    param3 = param3 & 7;
+    lim = param3 + h * 4;
     w4 = w << 2;
+    cnt = w4 & 0xfff8;
 
     if (cnt > 0) {
         c1 = param7;
         col0 = (s16)param3;
 
         do {
-            s16 col = col0;
+            col = col0;
 
             if (col < lim) {
                 inv = 0xffffffff;
 
                 do {
-                    s16 k = 0;
+                    k = 0;
 
                     do {
                         u16 idx = (col & 0xfff8) * param4 + (col & 7);
-                        u32 * d = &dst[idx];
-
                         col = col + 1;
-
                         u32 mask = data_0204a4cc[k];
-                        u32 bits = (src[0] & mask) >> k;
+                        u32 bits = (param5[0] & mask) >> k;
+                        u32 * q = dst + idx;
                         u32 comb = bits * c1;
                         u32 m15 = bits * 16 - bits;
-
-                        dst[idx] = dst[idx] & (inv ^ (m15 << shl));
-                        d[8] = d[8] & (inv ^ (m15 >> shr));
-                        u32 val = comb + ((src[1] & mask) >> k);
+                        dst[idx] &= (inv ^ (m15 << shl));
+                        q[8] &= (inv ^ (m15 >> shr));
+                        u32 val = comb + ((param5[1] & mask) >> k);
                         dst[idx] = dst[idx] + (val << shl);
-                        d[8] = d[8] + (val >> shr);
+                        q[8] += (val >> shr);
 
-                        k = k + 1;
+                        k++;
                     } while (k < 4);
 
-                    src += 2;
+                    param5 += 2;
                 } while (col < lim);
             }
 
@@ -603,83 +607,99 @@ void func_0200cb30(u32 * param1, u16 param2, u16 param3, u16 param4, u32 * param
     }
 
     if (w4 & 4) {
-        s16 col = (s16)param3;
+        col2 = (s16)param3;
 
-        if (col < lim) {
+        if (col2 < lim) {
             c2 = param7;
 
             do {
-                s16 k = 0;
                 inv = 0xffffffff;
+                k2 = 0;
 
                 do {
-                    u16 idx = (col & 0xfff8) * param4 + (col & 7);
-                    u32 bits = (src[0] & data_0204a4dc[k]) >> k;
+                    u16 idx = (col2 & 0xfff8) * param4 + (col2 & 7);
+                    col2 = col2 + 1;
+                    u32 bits = (param5[0] & data_0204a4dc[k2]) >> k2;
+                    u32 * q = dst + idx;
                     u32 m15 = bits * 16 - bits;
-
                     dst[idx] = dst[idx] & (inv ^ (m15 << shl));
+                    q[8] = q[8] & (inv ^ (m15 >> shr));
                     u32 comb = bits * c2;
-                    dst[idx + 8] = dst[idx + 8] & (inv ^ (m15 >> shr));
-                    col = col + 1;
-                    u32 val = comb + ((src[0] & data_0204a4ec[k]) >> (k + 16));
+                    u32 val = comb + ((param5[0] & data_0204a4ec[k2]) >> (k2 + 16));
                     dst[idx] = dst[idx] + (val << shl);
-                    dst[idx + 8] = dst[idx + 8] + (val >> shr);
+                    q[8] = q[8] + (val >> shr);
+                    k2 = k2 + 1;
+                } while (k2 < 4);
 
-                    k = k + 1;
-                } while (k < 4);
-
-                src += 1;
-            } while (col < lim);
+                param5 += 1;
+            } while (col2 < lim);
         }
     }
 }
 
-
+// MATCHED 100%
 void func_0200ce04(u32 * param1, s32 param2, u16 param3, u16 param4, u32 * param5, u8 param6, u8 param7) {
-    u16 w4;
+    u32 * p;
+    s16 k;
+    u32 shr;
+    u32 shl;
+    s16 cnt;
+    s16 col;
+    u32 * dst;
     u16 lim;
-    u32 * src;
+    u32 c1;
+    u32 rowbase2;
+    s16 col0;
+    u32 rowbase;
+    u16 w4;
+    s16 col2;
+    u32 inv;
+    u32 * p2;
+    s16 k2;
+    u32 c2;
+    u32 inv2;
     UnkStruct_0200cb30 hdr;
 
     hdr.field00 = param5[0];
 
-    u32 w = ((hdr.field00 & 0xf0) << 12) >> 16;
-    u32 shl = (u16)((param2 & 7) << 2);
-    u32 * dst = param1 + (param2 >> 3);
-    u32 h = hdr.field00 & 15;
-    src = param5 + 1 + ((hdr.field00 & 0xff000000) >> 24);
-    lim = param3 + h * 4;
-    u32 shr = (u16)(32 - shl);
+    u32 w = (u16)((hdr.field00 & 0xf0) >> 4);
+    shl = (u16)((param2 & 7) << 2);
+    u16 h = hdr.field00 & 15;
+    param5 = param5 + 1 + ((hdr.field00 & 0xff000000) >> 24);
     u32 t = param6 * w;
     u32 t2 = h * t;
-    src = src + t2;
-    s16 cnt = (u16)(w << 2) & 0xfff8;
+    shr = (u16)(32 - shl);
+    param5 = param5 + t2;
+    dst = param1 + (param2 >> 3);
+    lim = param3 + h * 4;
+    cnt = (u16)(w << 2) & 0xfff8;
     w4 = w << 2;
 
     if (cnt > 0) {
-        u32 c1 = param7;
-        s16 col0 = (s16)param3;
+        c1 = param7;
+        col0 = (s16)param3;
 
         do {
-            s16 col = col0;
+            col = col0;
 
             if (col < lim) {
-                volatile u32 rowbase = col * param4;
-                u32 inv = 0xffffffff;
+                rowbase = col * param4;
+                inv = 0xffffffff;
 
                 do {
-                    u32 * p = dst + rowbase;
-                    s16 k = 0;
+                    p = dst + rowbase;
+                    k = 0;
 
                     do {
                         u32 mask = data_0204a4cc[k];
-                        u32 bits = (src[0] & mask) >> k;
+                        u32 bits = (param5[0] & mask) >> k;
                         u32 m15 = bits * 16 - bits;
                         u32 comb = bits * c1;
 
                         p[0] = p[0] & (inv ^ (m15 << shl));
                         p[1] = p[1] & (inv ^ (m15 >> shr));
-                        u32 val = comb + ((src[1] & mask) >> k);
+                        u32 val = (param5[1] & mask) >> k;
+                        val = val + comb;
                         p[0] = p[0] + (val << shl);
                         p[1] = p[1] + (val >> shr);
 
@@ -687,7 +707,7 @@ void func_0200ce04(u32 * param1, s32 param2, u16 param3, u16 param4, u32 * param
                         k = k + 1;
                     } while (k < 4);
 
-                    src += 2;
+                    param5 += 2;
                     rowbase += param4 * 4;
                     col = col + 4;
                 } while (col < lim);
@@ -699,123 +719,156 @@ void func_0200ce04(u32 * param1, s32 param2, u16 param3, u16 param4, u32 * param
     }
 
     if (w4 & 4) {
-        s16 col = (s16)param3;
+        col2 = (s16)param3;
 
-        if (col < lim) {
-            u32 c2 = param7;
-            volatile u32 rowbase = col * param4;
+        if (col2 < lim) {
+            c2 = param7;
+            rowbase2 = col2 * param4;
 
             do {
-                u32 * p = dst + rowbase;
-                s16 k = 0;
-                u32 inv = 0xffffffff;
+                p2 = dst + rowbase2;
+                k2 = 0;
+                inv2 = 0xffffffff;
 
                 do {
-                    u32 bits = (src[0] & data_0204a4dc[k]) >> k;
+                    u32 bits = (param5[0] & data_0204a4dc[k2]) >> k2;
                     u32 m15 = bits * 16 - bits;
 
-                    p[0] = p[0] & (inv ^ (m15 << shl));
+                    p2[0] = p2[0] & (inv2 ^ (m15 << shl));
                     u32 comb = bits * c2;
-                    p[1] = p[1] & (inv ^ (m15 >> shr));
-                    u32 val = comb + ((src[0] & data_0204a4ec[k]) >> (k + 16));
-                    p[0] = p[0] + (val << shl);
-                    p[1] = p[1] + (val >> shr);
+                    p2[1] = p2[1] & (inv2 ^ (m15 >> shr));
+                    u32 val = (param5[0] & data_0204a4ec[k2]) >> (k2 + 16);
+                    val = val + comb;
+                    p2[0] = p2[0] + (val << shl);
+                    p2[1] = p2[1] + (val >> shr);
 
-                    p += param4;
-                    k = k + 1;
-                } while (k < 4);
+                    p2 += param4;
+                    k2 = k2 + 1;
+                } while (k2 < 4);
 
-                src += 1;
-                col = col + 4;
-                rowbase += param4 * 4;
-            } while (col < lim);
+                param5 += 1;
+                col2 = col2 + 4;
+                rowbase2 += param4 * 4;
+            } while (col2 < lim);
         }
     }
 }
 
-
+// MATCHED 100%
 void func_0200d0d8(u32 * param1, u16 param2, u16 param3, s32 param4, u16 param5, u32 * param6, u8 param7, u8 param8) {
-    u16 w4;
-    u16 lim;
-    UnkStruct_0200cb30 hdr;
-
-    hdr.field00 = param6[0];
-
-    u32 w = ((hdr.field00 & 0xf0) << 12) >> 16;
-    u32 shl = (u16)((param2 & 7) << 2);
-    u32 t = param7 * w;
-    u16 h = hdr.field00 & 15;
-    u16 cnt0 = (u16)(w << 2) & 0xfff8;
-    u32 t2 = h * t;
-    u32 shr = (u16)(32 - shl);
     u32 * dst;
-    s32 vstep = param4 >> 1;
+    s16 x;
+    u32 mask;
+    u8 sh;
+    u32 inv;
     s16 cnt;
+    s16 col;
+    u32 hdr;
+    s16 j;
+    u16 idx2;
+    s16 col0;
+    s32 m1b;
+    s32 m1;
+    u32 c1;
+    u32 shr;
+    u32 m2;
+    s32 xbound;
+    s32 vstep;
+    u32 stride;
+    u32 shl;
+    u32 w4;
+    s16 j2;
+    u16 idxb;
+    u16 lim;
+    u32 c2;
+    u32 cnt0;
+    u32 m2b;
+    const u32 * tbl;
+    u32 * q;
+    s16 col2;
 
-    param1 = param1 + ((param2 & 0xfff8) + (param3 & 0xfff8) * param5);
+    shl = (u16)((param2 & 7) << 2);
+    hdr = param6[0];
+    stride = param5;
+    u16 h = hdr & 15;
+    u32 w = (u16)((hdr & 0xf0) >> 4);
+    u32 t = param7 * w;
+    shr = (u16)(32 - shl);
+    u32 t2 = h * t;
+    param6 = param6 + 1 + ((hdr & 0xff000000) >> 24) + t2;
+    param1 = param1 + ((param2 & 0xfff8) + (param3 & 0xfff8) * stride);
     param3 = param3 & 7;
-    w4 = w << 2;
-    param6 = param6 + 1 + ((hdr.field00 & 0xff000000) >> 24) + t2;
-    lim = param3 + ((h * 4) << vstep);
+    vstep = param4 >> 1;
     dst = param1;
+    lim = param3 + ((h * 4) << vstep);
+    cnt0 = (u16)(w * 4) & 0xfff8;
     cnt = cnt0;
+    w4 = (u16)(w * 4);
 
     if (cnt > 0) {
-        u32 c1 = param8;
-        s16 col0 = (s16)param3;
-        u32 m1 = param4 & 1;
-        u32 m2 = param4 & 2;
-        s32 xbound = m1 << 3;
+        c1 = param8;
+        col0 = (s16)param3;
+        m1 = param4 & 1;
+        m2 = param4 & 2;
+        xbound = m1 << 3;
 
         do {
-            s16 col = col0;
+            col = col0;
 
             if (col < lim) {
+                inv = 0xffffffff;
+
                 do {
-                    u32 inv = 0xffffffff;
-                    const u32 * tbl = m1 ? data_0204a4dc : data_0204a4cc;
-                    s16 j = 0;
+                    tbl = m1 ? data_0204a4dc : data_0204a4cc;
+                    j = 0;
 
                     do {
-                    u16 idx = (col & 0xfff8) * param5 + (col & 7);
-                    u32 * p = dst + idx;
+                        u16 idx = (col & 0xfff8) * stride + (col & 7);
+                        col = col + 1;
+                        mask = tbl[j];
+                        sh = j;
+                        x = 0;
 
-                    col = col + 1;
+                        if (x <= xbound) {
+                            idx2 = (col & 0xfff8) * stride + (col & 7);
 
-                    u32 mask = tbl[j];
-                    u8 sh = j;
-                    s16 x;
+                            do {
+                                u32 bits = (param6[0] & mask) >> sh;
+                                u32 comb = bits * c1 + ((param6[1] & mask) >> sh);
 
-                    for (x = 0; x <= xbound; x += 8) {
-                        u16 idx2 = (col & 0xfff8) * param5 + (col & 7);
-                        u32 bits = (param6[0] & mask) >> sh;
-                        u32 comb = bits * c1 + ((param6[1] & mask) >> sh);
+                                if (m1) {
+                                    bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
+                                    bits |= (bits << 4);
 
-                        if (m1) {
-                            bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
-                            bits = bits | (bits << 4);
-                            comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
-                            comb = comb | (comb << 4);
+                                    comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
+                                    comb |= (comb << 4);
+                                }
+
+                                u32 m15 = bits * 16 - bits;
+                                u32 cm0 = inv ^ (m15 << shl);
+                                u32 cm1 = inv ^ (m15 >> shr);
+                                u32 * r = dst + idx + x;
+
+                                (dst + idx)[x] = (dst + idx)[x] & cm0;
+                                r[8] = r[8] & cm1;
+                                (dst + idx)[x] = (dst + idx)[x] + (comb << shl);
+                                r[8] = r[8] + (comb >> shr);
+
+                                if (m2) {
+                                    u32 k = x + idx2;
+                                    u32 * r2 = dst + k;
+
+                                    dst[k] = dst[k] & cm0;
+                                    r2[8] = r2[8] & cm1;
+                                    dst[k] = dst[k] + (comb << shl);
+                                    r2[8] = r2[8] + (comb >> shr);
+                                }
+
+                                mask = mask << 16;
+                                sh = sh + 16;
+                                x = x + 8;
+                            } while (x <= xbound);
                         }
-
-                        u32 m15 = bits * 16 - bits;
-                        u32 cm0 = inv ^ (m15 << shl);
-                        u32 cm1 = inv ^ (m15 >> shr);
-
-                        p[x] = p[x] & cm0;
-                        p[x + 8] = p[x + 8] & cm1;
-                        p[x] = p[x] + (comb << shl);
-                        p[x + 8] = p[x + 8] + (comb >> shr);
-
-                        if (m2) {
-                            dst[idx2 + x] = dst[idx2 + x] & cm0;
-                            dst[idx2 + x + 8] = dst[idx2 + x + 8] & cm1;
-                            dst[idx2 + x] = dst[idx2 + x] + (comb << shl);
-                            dst[idx2 + x + 8] = dst[idx2 + x + 8] + (comb >> shr);
-                        }
-
-                        sh = sh + 16;
-                    }
 
                         col = col + vstep;
                         j = j + 1;
@@ -831,199 +884,254 @@ void func_0200d0d8(u32 * param1, u16 param2, u16 param3, s32 param4, u16 param5,
     }
 
     if (w4 & 4) {
-        u32 m1 = param4 & 1;
-        u32 * q = param1 + (cnt0 << m1);
-        s16 col = (s16)param3;
+        m1b = param4 & 1;
+        q = param1 + (cnt0 << m1b);
+        col2 = (s16)param3;
 
-        if (col < lim) {
-            u32 c2 = param8;
-            u32 m2 = param4 & 2;
-            u32 inv = 0xffffffff;
+        if (col2 < lim) {
+            c2 = param8;
+            m2b = param4 & 2;
 
             do {
-                s16 j = 0;
+                j2 = 0;
+                u32 inv2 = 0xffffffff;
 
                 do {
-                u16 idx = (col & 0xfff8) * param5 + (col & 7);
+                    idxb = (col2 & 0xfff8) * stride + (col2 & 7);
+                    col2 = col2 + 1;
+                    u32 v = param6[0];
+                    u32 bits = (v & data_0204a4dc[j2]) >> j2;
+                    u32 comb = bits * c2 + ((v & data_0204a4ec[j2]) >> (j2 + 16));
 
-                col = col + 1;
+                    if (m1b) {
+                        bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
+                        bits |= (bits << 4);
 
-                u32 bits = (param6[0] & data_0204a4dc[j]) >> j;
-                u32 comb = bits * c2;
+                        comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
+                        comb |= (comb << 4);
+                    }
 
-                    comb = comb + ((param6[0] & data_0204a4ec[j]) >> (j + 16));
+                    u32 m15 = bits * 16 - bits;
+                    u32 cm0 = inv2 ^ (m15 << shl);
+                    u32 cm1 = inv2 ^ (m15 >> shr);
+                    u32 * r = q + idxb;
 
-                if (m1) {
-                    bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
-                    bits = bits | (bits << 4);
-                    comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
-                    comb = comb | (comb << 4);
-                }
+                    q[idxb] = q[idxb] & cm0;
+                    r[8] = r[8] & cm1;
+                    q[idxb] = q[idxb] + (comb << shl);
+                    r[8] = r[8] + (comb >> shr);
 
-                u32 m15 = bits * 16 - bits;
-                u32 cm0 = inv ^ (m15 << shl);
-                u32 cm1 = inv ^ (m15 >> shr);
+                    if (m2b) {
+                        u16 idx3 = (col2 & 0xfff8) * stride + (col2 & 7);
+                        col2 = col2 + 1;
+                        u32 * r3 = q + idx3;
 
-                q[idx] = q[idx] & cm0;
-                q[idx + 8] = q[idx + 8] & cm1;
-                q[idx] = q[idx] + (comb << shl);
-                q[idx + 8] = q[idx + 8] + (comb >> shr);
+                        q[idx3] = q[idx3] & cm0;
+                        r3[8] = r3[8] & cm1;
+                        q[idx3] = q[idx3] + (comb << shl);
+                        r3[8] = r3[8] + (comb >> shr);
+                    }
 
-                if (m2) {
-                    u16 idx3 = (col & 0xfff8) * param5 + (col & 7);
-
-                    col = col + 1;
-
-                    q[idx3] = q[idx3] & cm0;
-                    q[idx3 + 8] = q[idx3 + 8] & cm1;
-                    q[idx3] = q[idx3] + (comb << shl);
-                    q[idx3 + 8] = q[idx3 + 8] + (comb >> shr);
-                }
-
-                    j = j + 1;
-                } while (j < 4);
+                    j2 = j2 + 1;
+                } while (j2 < 4);
 
                 param6 += 1;
-            } while (col < lim);
+            } while (col2 < lim);
         }
     }
 }
 
-
+// MATCHED 100%
 void func_0200d63c(u32 * param1, s32 param2, u16 param3, s32 param4, u16 param5, u32 * param6, u8 param7, u8 param8) {
-    u16 local14;    // sp+0x14
-    s16 local3c;    // sp+0x3c
-    u32 local0c;    // sp+0x0c
-    u32 * local34;  // sp+0x34
-    s16 local30;    // sp+0x30
-    u16 local28;    // sp+0x28
-    u16 local10;    // sp+0x10
-    
-    u32 shl = (u16)((param2 & 7) * 4);
-
-    local0c = param5 << (param4 >> 1);
-
-    local28 = local0c;
-
-    u32 shr = (u16)(32 - shl);
-
-    u32 w = ((param6[0] & 0xf0) << 12) >> 16;
-
+    u32 hdr;
+    u32 * p;
     s16 x;
+    u32 mask;
+    u32 shl;
+    u32 local40;
+    u8 sh;
+    s32 local3c;
+    s16 local38;
+    u32 bits;
+    u32 shr;
+    const u32 * local00;
+    u32 * local34;
+    s16 local30;
+    u32 local2c;
+    u32 local28;
+    u32 inv2;
+    u32 inv;
+    s32 m1;
+    u32 c;
+    u32 m2;
+    u32 local18;
+    u32 stride;
+    s32 local14;
+    s32 local10;
+    u32 * p2;
+    u32 local0c;
+    s16 j;
+    u32 * local08;
+    u32 c2;
+    u32 bitsb;
+    s16 local04;
+    u32 m2b;
+    s32 m1b;
 
-    u32 off = (param3 * param5);
-
-    off += param2 >> 3;
-
-    local10 = (u16)((param6[0] & 0xf) * 4);
-
-    param1 += off;
-
-    param6 = &param6[1] + (param6[0] & 0xf) * (param7 * w) + ((param6[0] & 0xff000000) >> 24);
-
+    local40 = param5;
+    hdr = param6[0];
+    u32 off = param3 * local40;
+    u32 w = (u16)((hdr & 0xf0) >> 4);
+    shl = (u16)((param2 & 7) << 2);
+    local0c = local40 << (param4 >> 1);
+    u32 t = param7 * w;
+    shr = (u16)(32 - shl);
+    u16 h = hdr & 15;
+    u32 t2 = h * t;
+    local28 = (u16)local0c;
+    param6 = param6 + 1 + ((hdr & 0xff000000) >> 24) + t2;
+    u32 off2 = off + (param2 >> 3);
+    param1 = param1 + off2;
     local34 = param1;
-
+    local10 = (u16)(h * 4);
     local14 = (u16)(w * 4);
-
-    local3c = (u16)(w * 4) & 0xfff8;
+    local3c = (s16)(local14 & 0xfff8);
 
     if (local3c > 0) {
-        s16 local38;
+        c = param8;
+        m1 = param4 & 1;
+        m2 = param4 & 2;
+
         do {
-            for (local38 = 0; local38 < (s32)local10; local38 += 4) {
-                u32 * p = local34 + local28 * local38;
-                const u32 * local00 = (param4 & 1) ? data_0204a4dc : data_0204a4cc;
+            local38 = 0;
 
-                for (local30 = 0; local30 < 4; p += local0c, local30++) {
-                    u32 mask = local00[local30];
-                    u8 sh = local30;
+            if (local38 < local10) {
+                local18 = local38;
+                inv = 0xffffffff;
 
-                    for (x = 0; x <= (param4 & 1); x++) {
-                        u32 bits = (param6[0] & mask) >> sh;
-                        u32 comb = bits * param8 + ((param6[1] & mask) >> sh);
+                do {
+                    p = local34 + local18;
+                    local00 = m1 ? data_0204a4dc : data_0204a4cc;
+                    local30 = 0;
 
-                        if (param4 & 1) {
-                            bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
-                            bits |= (bits << 4);
+                    do {
+                        mask = local00[local30];
+                        sh = local30;
+                        x = 0;
 
-                            comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
-                            comb |= (comb << 4);
+                        if (x <= m1) {
+                            u32 * q = p + local40;
+
+                            do {
+                                bits = (param6[0] & mask) >> sh;
+                                u32 comb = bits * c + ((param6[1] & mask) >> sh);
+
+                                if (m1) {
+                                    bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
+                                    bits |= (bits << 4);
+
+                                    comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
+                                    comb |= (comb << 4);
+                                }
+
+                                u32 m15 = bits * 16 - bits;
+                                u32 cm0 = inv ^ (m15 << shl);
+                                u32 cm1 = inv ^ (m15 >> shr);
+                                u32 * r = p + x;
+
+                                p[x] = p[x] & cm0;
+                                r[1] = r[1] & cm1;
+                                p[x] = p[x] + (comb << shl);
+                                r[1] = r[1] + (comb >> shr);
+
+                                if (m2) {
+                                    u32 * r2 = q + x;
+
+                                    q[x] = q[x] & cm0;
+                                    r2[1] = r2[1] & cm1;
+                                    q[x] = q[x] + (comb << shl);
+                                    r2[1] = r2[1] + (comb >> shr);
+                                }
+
+                                mask = mask << 16;
+                                sh = sh + 16;
+                                x = x + 1;
+                            } while (x <= m1);
                         }
 
-                        u32 cm0 = 0xffffffff ^ ((bits * 16 - bits) << shl);
-                        u32 cm1 = 0xffffffff ^ ((bits * 16 - bits) >> shr);
+                        p += local0c;
+                        local30 = local30 + 1;
+                    } while (local30 < 4);
 
-                        p[x] &= cm0;
-                        p[x + 1] &= cm1;
-
-                        p[x] += (comb << shl);
-                        p[x + 1] += (comb >> shr);
-
-                        if (param4 & 2) {
-                            p[param5 + x] &= cm0;
-                            p[param5 + x+1] &= cm1;
-
-                            p[param5 + x] += (comb << shl);
-                            p[param5 + x+1] += (comb >> shr);
-                        }
-                        
-                        sh = sh + 16;
-                        mask <<= 16;
-                    }
-                }
-
-                param6 += 2;
+                    param6 += 2;
+                    local18 += local28 * 4;
+                    local38 = local38 + 4;
+                } while (local38 < local10);
             }
 
-            local34++;
-            local3c -= 8;
+            local34 += 1;
+            local3c = (s16)(local3c - 8);
         } while (local3c > 0);
     }
 
     if (local14 & 4) {
-        u32 * local08 = &param1[(local14 >> 3) << (param4 & 1)];
-        s16 local04;
-        w = param5;
+        m1b = param4 & 1;
+        local08 = param1 + ((local14 >> 3) << m1b);
+        local04 = 0;
 
-        for (local04 = 0; local04 < (s32)local10; param6++, local04 += 4) {
-            u32 * p = &local08[local28 * local04];
+        if (local04 < local10) {
+            local2c = local04;
+            m2b = param4 & 2;
+            c2 = param8;
+            stride = param5;
 
-            s16 j;
+            do {
+                inv2 = 0xffffffff;
+                j = 0;
+                p2 = local08 + local2c;
 
-            for (j = 0; j < 4; j++) {
-                u32 bits = (param6[0] & data_0204a4dc[j]) >> j;
-                u32 comb = bits * param8 + ((param6[0] & data_0204a4ec[j]) >> (j + 16));
+                do {
+                    u32 v = param6[0];
+                    bitsb = (v & data_0204a4dc[j]) >> j;
+                    u32 comb = bitsb * c2 + ((v & data_0204a4ec[j]) >> (j + 16));
 
-                if (param4 & 1) {
-                    bits = (bits & 15) + ((bits & 0xf0) << 4) + ((bits & 0xf00) << 8) + ((bits & 0xf000) << 12);
-                    bits |= (bits << 4);
+                    if (m1b) {
+                        bitsb = (bitsb & 15) + ((bitsb & 0xf0) << 4) + ((bitsb & 0xf00) << 8) + ((bitsb & 0xf000) << 12);
+                        bitsb |= (bitsb << 4);
 
-                    comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
-                    comb |= (comb << 4);
-                }
+                        comb = (comb & 15) + ((comb & 0xf0) << 4) + ((comb & 0xf00) << 8) + ((comb & 0xf000) << 12);
+                        comb |= (comb << 4);
+                    }
 
-                u32 cm0 = 0xffffffff ^ ((bits * 16 - bits) << shl);
-                u32 cm1 = 0xffffffff ^ ((bits * 16 - bits) >> shr);
+                    u32 m15 = bitsb * 16 - bitsb;
+                    u32 cm0 = inv2 ^ (m15 << shl);
+                    u32 cm1 = inv2 ^ (m15 >> shr);
 
-                p[0] &= cm0;
-                p[1] &= cm1;
+                    p2[0] = p2[0] & cm0;
+                    p2[1] = p2[1] & cm1;
+                    p2[0] = p2[0] + (comb << shl);
+                    p2[1] = p2[1] + (comb >> shr);
 
-                p[0] += (comb << shl);
-                p[1] += (comb >> shr);
+                    if (m2b) {
+                        u32 * r2 = p2 + stride;
 
-                if (param4 & 2) {
+                        p2[stride] = p2[stride] & cm0;
+                        r2[1] = r2[1] & cm1;
+                        p2[stride] = p2[stride] + (comb << shl);
+                        r2[1] = r2[1] + (comb >> shr);
+                    }
 
-                    w = param5;
+                    p2 += local0c;
+                    j = j + 1;
+                } while (j < 4);
 
-                    p[w] &= cm0;
-                    p[w+1] &= cm1;
-
-                    p[w] += (comb << shl);
-                    p[w+1] += (comb >> shr);
-                }
-
-                p += local0c;
-            }
+                local04 = local04 + 4;
+                param6 += 1;
+                local2c += local28 * 4;
+            } while (local04 < local10);
         }
     }
 }
+
+#pragma opt_common_subs reset
+#pragma optimization_level reset

@@ -74,7 +74,7 @@ typedef struct {
     u8 * field04;
 } UnkStruct_0200bce8_24;
 
-struct UnkStruct_0200b8bc {
+typedef struct UnkStruct_0200b8bc {
     u32 field00;
     u8 * field04;
     union {
@@ -145,7 +145,7 @@ struct UnkStruct_0200b8bc {
     };
     UnkStruct_0200b8bc_24 unkStruct24;  // +0x24
     UnkStruct_0200b8bc_2c * field2c;
-};
+} UnkStruct_0200b8bc;
 
 typedef struct {
     u8 field00;

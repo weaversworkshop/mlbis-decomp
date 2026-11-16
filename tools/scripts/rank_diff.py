@@ -580,7 +580,7 @@ def main():
     a = ap.parse_args()
     if a.validate:
         return validate(a.limit)
-    mine = Path(a.mine) if a.mine else fn_diff.find_mine(a.symbol)
+    mine = Path(a.mine) if a.mine else fn_diff.find_mine(a.symbol)[0]
     if a.brief:
         print(*flips(a.symbol, mine, Path(a.target)))
         return 0

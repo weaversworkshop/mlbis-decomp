@@ -257,6 +257,22 @@ mwcc's color-pop order.
 - `-v` adds target-only forced edges; `--brief` prints `<flips> <webs differing>`; `--validate` re-checks the
   model on matched functions. `objective()`/`flips()` are used by the patched permuter scorer.
 
+### schedsim/ — instruction-scheduler model
+Model of mwccarm's two scheduling passes (`notes/mwcc_scheduler.md`). Exact on the compiler's own pcode: 9,270/9,270
+blocks over all game TUs (2026-11-15). Windows only (drives `mwccarm.exe` under a debugger). Outputs in `build/schedsim/`.
+- `parity.py [tu...] [--variant stock]` — full check: dumps every scheduled block, rebuilds the dependency graph,
+  re-runs the pick, compares with the real graph and real order. No args = every `arm9/src` TU. Details of any
+  failure in `build/schedsim/parity.log`. Re-run after a compiler change.
+- `pcdump.py <tu> <out.jsonl> [--variant V] [--src copy.c]` — per-block pcode dump (pass 1 = virtual regs): operands,
+  flags, alias records, real edges/heights, real output order. `--src` compiles a scratch copy of the TU.
+- `show.py <dump.jsonl> [idx...] [--grep RE] [--picks] [--edges]` — list blocks; for chosen ones print textual ->
+  scheduled position, latency, height, alias (`W` = worst case) and, with `--picks`, every pick with its candidates
+  and the deciding level (urgency / release / height / descriptor / pressure cost).
+- `cc.py` — patched compiler copies (`nosched`, `p1off`, `p2off`), created on demand under `build/schedsim/cc/`.
+- `pcsim.py` — the model (graph build, alias predicate, pick, pressure mode, ARM9 costs). `opinfo.json` = opcode names.
+- `asmcheck.py <tu...> [--vin nosched --vout p1off] [--wslots 16,20]`, `asmsim.py`, `armparse.py` — approximate
+  variant working from disassembly only (no alias info, ~97%); kept for quick A/B of two compiler variants.
+
 ### asm_smell.py
 Hand-asm vs compiled-C classifier — run before any decomp.
 `asm_smell.py <symbol>... [--target X.o]`, `asm_smell.py --sweep` (run by `make progress`/`diff`)
