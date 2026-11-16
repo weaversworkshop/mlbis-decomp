@@ -1,43 +1,43 @@
 {
  "measures": {
-  "fuzzy_match_percent": 8.373488390178537,
+  "fuzzy_match_percent": 8.41285081461674,
   "total_code": 3343290,
-  "matched_code": 271930,
-  "matched_code_percent": 8.133604922097694,
+  "matched_code": 273246,
+  "matched_code_percent": 8.172967346535897,
   "total_data": 1803032,
   "matched_data": 111516,
   "matched_data_percent": 6.184915187306714,
   "total_functions": 12115,
-  "matched_functions": 1897,
-  "matched_functions_percent": 15.658274865868758,
-  "complete_code": 228330,
-  "complete_code_percent": 6.829500282655707,
+  "matched_functions": 1902,
+  "matched_functions_percent": 15.699546017333883,
+  "complete_code": 229646,
+  "complete_code_percent": 6.868862707093911,
   "complete_data": 99716,
   "complete_data_percent": 5.53046202175003,
-  "total_units": 226,
-  "complete_units": 222
+  "total_units": 227,
+  "complete_units": 223
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 5.408676856569399,
+    "fuzzy_match_percent": 5.449312953527868,
     "total_code": 3238500,
-    "matched_code": 167140,
-    "matched_code_percent": 5.161031341670527,
+    "matched_code": 168456,
+    "matched_code_percent": 5.201667438628995,
     "total_data": 1803032,
     "matched_data": 111516,
     "matched_data_percent": 6.184915187306714,
     "total_functions": 11178,
-    "matched_functions": 960,
-    "matched_functions_percent": 8.588298443370908,
-    "complete_code": 125600,
-    "complete_code_percent": 3.878338737069631,
+    "matched_functions": 965,
+    "matched_functions_percent": 8.63302916443013,
+    "complete_code": 126916,
+    "complete_code_percent": 3.9189748340280994,
     "complete_data": 44096,
     "complete_data_percent": 2.4456582024057254,
-    "total_units": 66,
-    "complete_units": 62
+    "total_units": 67,
+    "complete_units": 63
    }
   },
   {
@@ -176,22 +176,22 @@
    "id": "ov002",
    "name": "ov002",
    "measures": {
-    "fuzzy_match_percent": 0.0,
+    "fuzzy_match_percent": 100.0,
     "total_code": 1316,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
+    "matched_code": 1316,
+    "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 100.0,
     "total_functions": 5,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0,
-    "complete_code": 0,
-    "complete_code_percent": 0.0,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0,
+    "complete_code": 1316,
+    "complete_code_percent": 100.0,
     "complete_data": 0,
     "complete_data_percent": 100.0,
-    "total_units": 0,
-    "complete_units": 0
+    "total_units": 1,
+    "complete_units": 1
    }
   },
   {
@@ -9433,6 +9433,55 @@
    }
   },
   {
+   "name": "ov002/heapPlace",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 1316,
+    "matched_code": 1316,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 100.0,
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "heapAllocAt",
+     "size": 616,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "heapClaimBlock",
+     "size": 308,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "_ZnwmP9HeapBlockli",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "heapSetFrontier",
+     "size": 188,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "heapResetFrontier",
+     "size": 172,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "ov002"
+    ]
+   }
+  },
+  {
    "name": "sdk/os/os_cache",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -18275,55 +18324,6 @@
     "progress_categories": [
      "game",
      "ov000"
-    ]
-   }
-  },
-  {
-   "name": "ov002/_undecompiled",
-   "measures": {
-    "fuzzy_match_percent": 0.0,
-    "total_code": 1316,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 100.0,
-    "total_functions": 5,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0
-   },
-   "functions": [
-    {
-     "name": "func_ov002_02069820",
-     "size": 616,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov002_02069a88",
-     "size": 308,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov002_02069bbc",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov002_02069bdc",
-     "size": 188,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov002_02069c98",
-     "size": 172,
-     "fuzzy_match_percent": 0.0
-    }
-   ],
-   "metadata": {
-    "complete": false,
-    "progress_categories": [
-     "game",
-     "ov002"
     ]
    }
   },

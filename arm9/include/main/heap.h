@@ -19,16 +19,20 @@ typedef struct HeapBlock {
         };
         struct {
             u32 sizeFree : 26;  // +0x8
+            u32 dir : 1;
+            u32 slot : 5;
         };
     };
 } HeapBlock;
 
-#define GET_HEADER(ptr) ((HeapBlock*)((u8*)ptr - 0xc))
+#define GET_HEADER(ptr) ((HeapBlock*)((u8*)ptr - sizeof(HeapBlock)))
 
 typedef struct {
     HeapBlock * bounds[2][2];  // +0x0
-    u32 size : 27;  // +0x10
-    u32 slot : 5;
+    struct {
+        u32 size : 27;  // +0x10
+        u32 slot : 5;
+    };
 } Heap;
 
 extern Heap heaps[32];

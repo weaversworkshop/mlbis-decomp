@@ -54,6 +54,7 @@ FNPTR_RE = re.compile(
 TRAIL_ANCHOR_RE = re.compile(r"//.*(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
 OBJ_DATA_SYM_RE = re.compile(r"^\S+\s+(?P<bind>[gl])\s+O\s+(?:\.[id]tcm)?\.(?:data|bss|sbss|rodata)\b.*\s(\S+)$")
 ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9a-fA-F]+)")
+OV_NAME_RE = re.compile(r"^(?:func|data)_ov([0-9]{3})_[0-9a-fA-F]{8}$")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
 CTOR_CODE_RE = re.compile(r"[CD][0-9]$")
 
@@ -160,6 +161,8 @@ def load_anchors(verbose):
                 cls = stack[-1][0] if stack else ""
                 for am in ANCHOR_MOD_RE.finditer(line):
                     mod_by_addr[int(am.group("addr"), 16)] = am.group("mod")
+                    if (km := ANCHOR_RE.search(line)) and not km.group("scope") and not stack:
+                        mod_by_addr[("", norm_name(km.group("name")))] = am.group("mod")
                 if sm := STRIPPED_RE.search(line):
                     stripped.add((sm.group("scope") or cls, sm.group("name")))
                 cd = CTORDTOR_DECL_RE.search(line)
@@ -180,6 +183,8 @@ def load_anchors(verbose):
                     nm = norm_name(m.group("name"))
                     if nm.startswith("operator "):
                         nm += f"/{source_arity(m.group('params'))}"
+                        if om := ANCHOR_MOD_RE.search(line):
+                            nm += f"@{om.group('mod')}"
                         idents.setdefault((scope, nm), set()).update(
                             re.findall(r"[A-Za-z_]\w*", m.group("params")))
                     raw[(scope, nm)].append((int(m.group("addr"), 16), loc))
@@ -220,13 +225,21 @@ def load_anchors(verbose):
     return anchors, conflicts, idents, mod_by_addr, stripped
 
 
-def resolve_anchor(anchors, by_name, scope, simple, idents):
+def resolve_anchor(anchors, by_name, scope, simple, idents, mod=None):
     if simple.startswith("operator "):
         part = simple.split("/")
-        key = (scope, "/".join(part[:2]))
+        base = "/".join(part[:2])
         want = set(part[2].split(",")) if len(part) > 2 else set()
-        a = anchors.get(key)
-        return a if a is not None and want <= idents.get(key, set()) else None
+
+        def fits(key):
+            return key in anchors and want <= idents.get(key, set())
+        # Same-arity overloads per module: own `ovNNN`-tagged anchor, then the untagged one,
+        # then another module's tagged one only when a class-typed param singles it out.
+        for key in ((scope, f"{base}@{mod}"), (scope, base)):
+            if fits(key):
+                return anchors[key]
+        other = [k for k in anchors if k[0] == scope and k[1].startswith(base + "@") and fits(k)]
+        return anchors[other[0]] if want and len(other) == 1 else None
     a = anchors.get((scope, simple))
     if a is not None:
         return a
@@ -346,7 +359,16 @@ def load_tables(modules, mods_needed, tables):
     return tables
 
 
-def resolve_module(addr, mod, tables, resident, mod_by_addr):
+def resolve_module(addr, mod, tables, resident, mod_by_addr, key=None, is_def=False):
+    def has(m):
+        return m in tables and addr in tables[m].by_addr
+    # Overlays share addresses: the declaration's own module, then the name's, then a definition's TU.
+    if key in mod_by_addr:
+        return mod_by_addr[key] if has(mod_by_addr[key]) else None
+    if key and (om := OV_NAME_RE.match(key[1])):
+        return f"ov{int(om.group(1)):03d}" if has(f"ov{int(om.group(1)):03d}") else None
+    if is_def and has(mod):
+        return mod
     named = mod_by_addr.get(addr)
     if named is not None:
         return named if named in tables and addr in tables[named].by_addr else None
@@ -372,8 +394,9 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
         if addr is None:
             addr = embedded_addr(simple)
         if addr is None:
-            addr = resolve_anchor(anchors, by_name, scope, simple, idents)
-        tgt = None if addr is None else resolve_module(addr, mod, tables, resident, mod_by_addr)
+            addr = resolve_anchor(anchors, by_name, scope, simple, idents, mod)
+        tgt = None if addr is None else resolve_module(
+            addr, mod, tables, resident, mod_by_addr, (scope, simple), is_def)
         resolved.append((addr, tgt, scope, simple, full, is_def))
 
     names_at = defaultdict(set)
