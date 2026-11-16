@@ -6,7 +6,7 @@ from collections import Counter
 from pathlib import Path
 
 import data_catalog
-from common import ROOT, load_json, sdk_mappings
+from common import ROOT, load_json, overlay_of, sdk_mappings
 
 START_RE = re.compile(r"^\s*(?:arm|thumb)_func_start\s+(\S+)")
 END_RE = re.compile(r"^\s*(?:arm|thumb)_func_end\s+(\S+)")
@@ -326,8 +326,16 @@ def main():
     md = render_md(rows, args.target, sort_desc)
 
     dstatus = parse_data(report)
-    dentries = data_catalog.parse_asm(Path(asm_path), data_catalog.parse_symbols())
-    md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs(),
+    module = overlay_of(args.target)
+    dentries = data_catalog.parse_asm(Path(asm_path), data_catalog.parse_symbols(module))
+    last = {}
+    for e in dentries:
+        if e["section"] not in last or e["addr"] > last[e["section"]]["addr"]:
+            last[e["section"]] = e
+    for e in last.values():
+        if e["space"] is None:
+            e["space"] = data_catalog.size_bytes(Path(asm_path), e["name"])
+    md += "\n".join(render_data(dentries, dstatus, data_catalog.count_refs(module),
                                 args.data_notes)) + "\n"
 
     Path(out_md).write_text(md, encoding="utf-8")

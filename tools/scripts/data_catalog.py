@@ -4,22 +4,22 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from common import CONFIG, ROOT, read_symbols, resident_symbols
+from common import CONFIG, ROOT, module_symbols, read_symbols, resident_symbols
 
 LABEL_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_$]*):")
 SECTION_RE = re.compile(r"^\s*\.section\s+(\.[A-Za-z0-9_]+)")
 SPACE_RE = re.compile(r"\.space\s+(0x[0-9a-fA-F]+|\d+)")
-ADDR_IN_NAME = re.compile(r"^data_0*([0-9a-fA-F]+)$")
+ADDR_IN_NAME = re.compile(r"^data_(?:ov\d{3}_)?0*([0-9a-fA-F]+)$")
 DATA_SECTIONS = {".rodata", ".data", ".bss", ".ctor", ".init", ".exception", ".exceptix"}
 DIRECTIVE_SIZES = ((4, (".word", ".long", ".4byte")),
                    (2, (".short", ".hword", ".2byte")),
                    (1, (".byte",)))
 
 
-def parse_symbols():
+def parse_symbols(module=None):
     """name -> ascending data addresses (same-named statics in different TUs repeat a name)."""
     out = {}
-    for s in resident_symbols():
+    for s in module_symbols(module):
         if s.kind != "function":
             out.setdefault(s.name, []).append(s.addr)
     return {n: sorted(a) for n, a in out.items()}
@@ -60,12 +60,17 @@ def parse_asm(gap_path, symbols):
     return entries
 
 
-def count_refs():
-    """addr -> number of relocs (all modules) whose `to:` is exactly that address."""
+def count_refs(module=None):
+    """addr -> number of relocs (all modules) whose `to:` is exactly that address (and lands in `module`)."""
+    ov = int(module[2:]) if module and module.startswith("ov") else None
     counts = {}
     for rp in CONFIG.glob("**/relocs.txt"):
         for line in rp.read_text().splitlines():
             m = re.search(r"\bto:0x([0-9a-fA-F]+)", line)
+            if m and ov is not None:
+                t = re.search(r"\bmodule:overlays?\(([\d,]+)\)", line)
+                if not t or ov not in map(int, t.group(1).split(",")):
+                    continue
             if m:
                 a = int(m.group(1), 16)
                 counts[a] = counts.get(a, 0) + 1

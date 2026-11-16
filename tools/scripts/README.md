@@ -38,7 +38,7 @@ extracted to `build/prebuilt/`). A game file without the comment is warned about
 Writes objdiff base objects into `build/split/` for every unit whose object has TCM sections or a
 code-flagged data-only section (`x.o` main part, `x@itcm_1.o` TCM part; the list is the `build/split/`
 base paths in `objdiff.json`, chosen by `objdiff_base()`), patching section headers only; `make all` runs it, and
-`split_tcm.py --keep main|itcm|dtcm SRC DST` does one object. See `notes/itcm.md` "Split objects".
+`split_tcm.py --keep main|itcm|dtcm SRC DST` does one object.
 
 ### setup_tools.py
 Builds dsd via `cargo install` at the commit in `tools/dsd.pin` (Rust ≥ 1.85). Currency is decided by
@@ -272,7 +272,7 @@ mwcc's color-pop order.
   model on matched functions. `objective()`/`flips()` are used by the patched permuter scorer.
 
 ### schedsim/ — instruction-scheduler model
-Model of mwccarm's two scheduling passes (`notes/mwcc_scheduler.md`). Exact on the compiler's own pcode: 9,270/9,270
+Model of mwccarm's two scheduling passes. Exact on the compiler's own pcode: 9,270/9,270
 blocks over all game TUs (2026-11-15). Windows only (drives `mwccarm.exe` under a debugger). Outputs in `build/schedsim/`.
 - `parity.py [tu...] [--variant stock]` — full check: dumps every scheduled block, rebuilds the dependency graph,
   re-runs the pick, compares with the real graph and real order. No args = every `arm9/src` TU. Details of any

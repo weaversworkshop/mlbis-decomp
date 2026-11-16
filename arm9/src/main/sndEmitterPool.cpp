@@ -49,7 +49,6 @@ void sndEmitReset(u32);  // 0x0200b30c
 void sndEmitStopId(s32);  // 0x0200b340
 void sndEmitStopFaded(u32, BOOL);  // 0x0200b3e4
 void sndEmitStopSlot(u32);  // 0x0200b4b8
-void sndEmitClearQueue(void);  // 0x0200b57c
 void sndEmitFlushQueue(u32);  // 0x0200b5a8
 void sndEmitReboot(void);  // 0x0200b718
 SndEmitterSlot * sndEmitAlloc(s32);  // 0x0200b75c

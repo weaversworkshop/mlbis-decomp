@@ -22,10 +22,10 @@ from:0x02069920 kind:arm_call to:0x0200b57c module:main
 from:0x0206993c kind:arm_call to:0x0201a138 module:main
 from:0x02069948 kind:arm_call to:0x02069cb8 module:overlay(1)
 from:0x0206995c kind:load to:0x02056504 module:main
-from:0x02069960 kind:load to:0x01ff93cc module:itcm
+from:0x02069960 kind:load to:0x01ff93c8 add:0x4 module:itcm
 from:0x02069964 kind:load to:0x01ff93c8 module:itcm
-from:0x02069968 kind:load to:0x01ff93d4 module:itcm
-from:0x0206996c kind:load to:0x01ff9428 module:itcm
+from:0x02069968 kind:load to:0x01ff93c8 add:0xc module:itcm
+from:0x0206996c kind:load to:0x01ff93c8 add:0x60 module:itcm
 from:0x02069970 kind:load to:0x01ff93c0 module:itcm
 from:0x02069974 kind:load to:0x02055fe0 module:main
 from:0x02069990 kind:arm_call to:0x0201a138 module:main

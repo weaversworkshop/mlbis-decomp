@@ -13,7 +13,7 @@ public:
     u16 mode;  // +0x28
     u16 prevMode;  // +0x2a
 
-    clGameMain();
+    clGameMain();  // C1 0x02069cb8
     virtual ~clGameMain() {};  // D1 0x020057cc D0 0x020057e0
     virtual void run(void);  // 0x02004ce8
 
@@ -50,11 +50,11 @@ typedef struct {
         u8 field4cc_3 : 2; // current save slot (0/1) ?? 
         u8 : 3;
     };
-    u8 field4cd;
+    u8 language;  // +0x4cd
     u8 field4ce;
     u8 pad_4cf[0x1];
     u32 field4d0;
-    u32 field4d4;
+    const u32 * field4d4;
     u32 * messageBanks[MSG_BANK_COUNT];  // +0x4d8
     u16 field4e8[10];
     u16 field4fc;

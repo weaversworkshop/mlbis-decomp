@@ -11,6 +11,8 @@
 #include "main/sound.h"
 #include "main/task.h"
 
+#include "ov001/boot.h"
+
 extern "C" {
 
 #include <nitro.h>
@@ -29,11 +31,8 @@ FS_EXTERN_OVERLAY(OVY_1);
 #include <nitro/itcm_begin.h>
 u8 irqTasksEnabled;  // 0x01ff93c0
 u8 blockSleep;  // 0x01ff93c4
+ConsoleInfo consoleInfo;  // 0x01ff93c8
 #include <nitro/itcm_end.h>
-
-// --- Extern Functions --- //
-
-extern void func_ov001_02069820(u32);
 
 // --- Function Declarations --- //
 
@@ -248,7 +247,7 @@ void bootGame() {
     fsLoadOverlay(FS_OVERLAY_ID(OVY_0), MI_PROCESSOR_ARM9);
     fsLoadOverlay(FS_OVERLAY_ID(OVY_1), MI_PROCESSOR_ARM9);
 
-    func_ov001_02069820(tableSize);
+    bootInit(tableSize);
 
     fsUnloadOverlay(FS_OVERLAY_ID(OVY_1), MI_PROCESSOR_ARM9);
     fsUnloadOverlay(FS_OVERLAY_ID(OVY_0), MI_PROCESSOR_ARM9);

@@ -15,13 +15,15 @@ struct SoftResetState {
     SoftResetState();  // C1 0x02005d50
     ~SoftResetState();  // D1 0x02005fe0
 
-    u32 inhibit : 1;  // +0x0
-    u32 pending : 1;
-    u32 active : 1;
-    u32 fadeFrames : 8;
-    u32 defaultFadeFrames : 8;
-    u32 fadeTimer : 8;
-    u32 : 5;
+    struct {
+        u32 inhibit : 1;  // +0x0
+        u32 pending : 1;
+        u32 active : 1;
+        u32 fadeFrames : 8;
+        u32 defaultFadeFrames : 8;
+        u32 fadeTimer : 8;
+        u32 : 5;
+    };
     u32 resetParam;  // +0x4
     InputState input;  // +0x8
 };

@@ -10,7 +10,7 @@ from collections import Counter
 from pathlib import Path
 
 import common
-from common import ROOT, compiled_object, resident_symbols
+from common import ROOT, compiled_object, module_symbols, overlay_of
 from patch_lcf import LINK_SYMS
 
 SHT_SYMTAB, SHT_REL, SHT_RELA, SHT_NOBITS = 2, 9, 4, 8
@@ -295,18 +295,30 @@ def tokenize(elf, sym, is_code=True):
 _SYM_ADDRS = None
 _SYM_SORTED = None
 _SYM_DUPS = set()
+_SYM_MODULE = None
+_SYM_CACHE = {}
+
+
+def use_module(target_path):
+    """Symbol tables = resident + the target's overlay (overlays share addresses)."""
+    global _SYM_ADDRS, _SYM_SORTED, _SYM_DUPS, _SYM_MODULE
+    mod = overlay_of(target_path)
+    if mod == _SYM_MODULE and _SYM_ADDRS is not None:
+        return
+    if mod not in _SYM_CACHE:
+        allsyms = module_symbols(mod)
+        addrs = {}
+        for sym in allsyms:
+            addrs.setdefault(sym.name, sym.addr)
+        _SYM_CACHE[mod] = (addrs, sorted({(s.addr, s.name) for s in allsyms}),
+                           {n for n, c in Counter(s.name for s in allsyms).items() if c > 1})
+    _SYM_ADDRS, _SYM_SORTED, _SYM_DUPS = _SYM_CACHE[mod]
+    _SYM_MODULE = mod
 
 
 def _load_symbols():
-    global _SYM_ADDRS, _SYM_SORTED
-    if _SYM_ADDRS is not None:
-        return
-    _SYM_ADDRS = {}
-    allsyms = resident_symbols()
-    for sym in allsyms:
-        _SYM_ADDRS.setdefault(sym.name, sym.addr)
-    _SYM_SORTED = sorted({(s.addr, s.name) for s in allsyms})
-    _SYM_DUPS.update(n for n, c in Counter(s.name for s in allsyms).items() if c > 1)
+    if _SYM_ADDRS is None:
+        use_module("")
 
 
 def sym_addr(name):
@@ -431,6 +443,7 @@ def data_status(tgt, tsym, bsym, pct, addr, inside):
 
 def run_unit(unit, cache, claimed, verbose):
     tgt_path, base_path = unit["target_path"], compiled_object(unit["base_path"])
+    use_module(tgt_path)
     for p in (tgt_path, base_path):
         if not (ROOT / p).is_file():
             if verbose:

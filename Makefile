@@ -85,7 +85,9 @@ DSD_CONFIG_DEPS := $(shell $(FIND) config -mindepth 1 2>/dev/null)
 OBJDIFF_CLI := $(TOOLS_DIR)/objdiff-cli.exe
 
 TARGET ?= main_7
-TODO_TARGETS ?= $(sort $(TARGET) itcm_1 dtcm_1)
+OV_SRC := $(filter arm9/src/ov%,$(SRC_ALL))
+OV_TARGETS := $(if $(OV_SRC),$(shell sed -n 's/.*objdiff-target. .*_dsd_gap@\(ov[0-9]*_[0-9]*\).*/\1/p' $(OV_SRC)))
+TODO_TARGETS ?= $(sort $(TARGET) itcm_1 dtcm_1 $(OV_TARGETS))
 
 SDK_MAPPINGS := config/sdk_mappings.json
 SDK_APPLY    := python $(SCRIPTS)/apply_sdk_mappings.py
@@ -100,7 +102,6 @@ SYNC_NAMES   := python $(SCRIPTS)/sync_renames.py
 all: DEFER_ERRORS := 1
 all: compile-ok split-tcm objdiff.json
 
-# notes/itcm.md "Split objects"
 SPLIT_TCM := python $(SCRIPTS)/split_tcm.py
 split-tcm: objdiff.json | compile-ok
 	@$(SPLIT_TCM)

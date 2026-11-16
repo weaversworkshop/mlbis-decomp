@@ -26,7 +26,6 @@ FSManager fsManager;  // 0x0205ba8c
 // --- Function Declarations --- //
 
 u32 fsChunkSize(FSChunkTable *, u32); // 0x0201ade4
-BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4
 
 // --- Function Definitions --- //
 
@@ -727,7 +726,7 @@ u8 * clFSEx::readChunk(s16 slot, u32 chunkIdx, u32 offset, u8 * dst, s32 * pSize
     }
 
     u32 oldSize = size;
-    if (dst == 0) {
+    if (dst == NULL) {
         dst = (u8 *)heapAlloc(heapId, size, NULL, align);
     } else if (pSize != NULL && *pSize != 0) {
         size = *pSize;

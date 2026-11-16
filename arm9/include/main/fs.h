@@ -126,7 +126,7 @@ public:
 
 class clDPP : public clFS {
 public:
-    void (*copyFn)(u8 **, void **);
+    void (*copyFn)(u8 **, void **);  // +0xd8
     u8 buffer[0xb20];  // +0xdc
     u8 * alignedBuf;  // +0xbfc
     u8 * cursor;    // +0xc00
@@ -196,6 +196,7 @@ u16 * fsChunkPtr(FSChunkTable *, u16); // 0x0201add4
 BOOL fsLoadOverlay(FSOverlayID, MIProcessor); // 0x0201b180
 BOOL fsUnloadOverlay(FSOverlayID, MIProcessor); // 0x0201b274
 u32 fsInit(u32, void *, u32); // 0x0201b28c
+BOOL fsLoadFileTable(void *, u32); // 0x0201b2e4
 
 #ifdef __cplusplus
 } // extern "C"

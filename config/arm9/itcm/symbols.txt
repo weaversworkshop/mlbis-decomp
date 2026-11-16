@@ -31,10 +31,7 @@ MIi_DmaSetParams_wait_noInt kind:function(arm,size=0x64) addr:0x01ff92c4
 MI_SendGXCommand kind:function(arm,size=0x94) addr:0x01ff9328
 irqTasksEnabled kind:bss addr:0x01ff93c0
 blockSleep kind:bss addr:0x01ff93c4
-data_01ff93c8 kind:bss addr:0x01ff93c8
-data_01ff93cc kind:bss addr:0x01ff93cc
-data_01ff93d4 kind:bss addr:0x01ff93d4
-data_01ff9428 kind:bss addr:0x01ff9428
+consoleInfo kind:bss addr:0x01ff93c8
 sndDriverInfoIdx kind:bss addr:0x01ff9438
 sndForceCenterX kind:bss addr:0x01ff943c
 sndEchoMode kind:bss addr:0x01ff9440

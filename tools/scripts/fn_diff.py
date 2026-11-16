@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from common import BUILD, GAP_O, OBJDUMP, ROOT, die
+from common import BUILD, CONFIG, GAP_O, OBJDUMP, ROOT, die, overlay_gap, overlay_of, read_symbols
 
 SYM_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:")
 ADDR_INSN_RE = re.compile(r"^\s*([0-9a-f]+):\s*([0-9a-f]{4,8})( \t)?\s*(\S.*)$")
@@ -167,8 +167,17 @@ def defined_syms(path):
 
 
 def pick_target(names):
+    ovs = {o for n in names if (o := overlay_of(n))}
+    if len(ovs) == 1 and (g := overlay_gap(ovs.pop())):
+        return g
     gaps = [GAP_O] + sorted((BUILD / "delinks").glob("_dsd_gap@itcm_*.o")) +         sorted((BUILD / "delinks").glob("_dsd_gap@dtcm_*.o"))
-    return next((g for g in gaps if g.is_file() and names & defined_syms(g)), GAP_O)
+    hit = next((g for g in gaps if g.is_file() and names & defined_syms(g)), None)
+    if hit:
+        return hit
+    for sp in sorted((CONFIG / "overlays").glob("*/symbols.txt")):
+        if any(s.name in names for s in read_symbols(sp)) and (g := overlay_gap(sp.parent.name)):
+            return g
+    return GAP_O
 
 
 def find_mine(symbol):
@@ -179,6 +188,8 @@ def find_mine(symbol):
         if not base.is_dir():
             continue
         for o in sorted(base.rglob("*.o")):
+            if o.name.startswith("_dsd_gap@") or "delinks" in o.parts:
+                continue
             syms = defined_syms(o)
             if symbol in syms:
                 return o, symbol

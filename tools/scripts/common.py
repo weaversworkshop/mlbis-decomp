@@ -53,6 +53,29 @@ def resident_symbols():
     return out
 
 
+OVERLAY_RE = re.compile(r"(?<![A-Za-z0-9])ov(\d{3})(?![0-9])")
+
+
+def overlay_of(text):
+    m = OVERLAY_RE.search(str(text))
+    return f"ov{m.group(1)}" if m else None
+
+
+def module_symbols(module=None):
+    """Resident symbols plus one overlay's own (overlays share addresses, so never more than one)."""
+    out = resident_symbols()
+    if module and module.startswith("ov"):
+        path = CONFIG / "overlays" / module / "symbols.txt"
+        if path.exists():
+            out += read_symbols(path)
+    return out
+
+
+def overlay_gap(module):
+    hits = sorted((BUILD / "delinks").glob(f"_dsd_gap@{module}_*.o"))
+    return hits[0] if hits else None
+
+
 def word_symbols(path=SYMBOLS):
     return [s for s in read_symbols(path) if re.fullmatch(r"\w+", s.name)]
 

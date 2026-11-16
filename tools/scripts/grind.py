@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fn_diff as fd  # noqa: E402
-from common import BUILD, GAP_O, ROOT, die, game_sources  # noqa: E402
+from common import BUILD, ROOT, die, game_sources  # noqa: E402
 
 WORK = BUILD / "scratch/grind"
 REG_RE = re.compile(r"\b(r\d+|sl|fp|ip|lr|sp)\b")
@@ -225,7 +225,7 @@ def main():
     ap.add_argument("symbol")
     ap.add_argument("--tu")
     ap.add_argument("--func", help="source name of the function (default: derived from symbol)")
-    ap.add_argument("--target", default=str(GAP_O))
+    ap.add_argument("--target", help="default: the gap defining the symbol (fn_diff's rule)")
     ap.add_argument("--target-symbol")
     ap.add_argument("--variants", help="python file defining V = {name: function text}")
     ap.add_argument("--bodies", nargs="*", help="globs of files, each a whole function definition")
@@ -242,7 +242,8 @@ def main():
     name = args.func or func_name_from_symbol(args.symbol)
     tu = Path(args.tu) if args.tu else find_tu(name)
     tu = tu if tu.is_absolute() else ROOT / tu
-    H = Harness(tu, name, args.symbol, args.target, args.target_symbol)
+    target = args.target or str(fd.pick_target({args.target_symbol or args.symbol}))
+    H = Harness(tu, name, args.symbol, target, args.target_symbol)
     V = load_variants(args, H.base)
     if args.write:
         nm, out = args.write

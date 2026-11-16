@@ -36,6 +36,7 @@ def patched(data, keep):
     data = bytearray(data)
     secs = read_sections(data)
     text = next((sh_name for _, n, sh_name, _, _ in secs if n == ".text"), None)
+    rw = next((sh_name + len(n) - len(".data") for _, n, sh_name, _, _ in secs if n.endswith(".data")), None)
     for hdr, n, sh_name, sh_type, flags in secs:
         if not flags & SHF_ALLOC:
             continue
@@ -49,6 +50,11 @@ def patched(data, keep):
             flags = 0
         elif sh_type == SHT_NOBITS:
             sh_name, flags = sh_name + len(n) - len(".bss"), SHF_WRITE | SHF_ALLOC
+        elif keep == "dtcm":
+            if rw is None:
+                flags = SHF_WRITE | SHF_ALLOC
+            else:
+                sh_name, flags = rw, SHF_WRITE | SHF_ALLOC
         elif text is not None:
             sh_name, flags = text, SHF_ALLOC | SHF_EXEC
         struct.pack_into("<III", data, hdr, sh_name, sh_type, flags)
