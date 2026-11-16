@@ -15,7 +15,7 @@ RESIDENT = ("main", "itcm", "dtcm")
 
 
 def pct(n, d):
-    return 100.0 * n / d if d else 0.0
+    return 100.0 * n / d if d else 100.0
 
 
 def measures(funcs, data, units=None):
