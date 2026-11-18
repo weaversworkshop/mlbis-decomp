@@ -152,7 +152,7 @@ void clDfxSh::exec() {
 }
 
 // MATCHED 100%
-void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, clYanaCtrlBase ** list, clDfxVramMan * vramMan) {
+void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, clYanaCtrlSys * param4, clDfxVramMan * vramMan) {
     u16 * script = (sys->scriptTable != NULL) ? fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
     clDfx & dfx = *vr;
@@ -163,7 +163,7 @@ void dfxVrStart(clDfxSys * sys, clDfxVr * vr, u32 scriptId, clYanaCtrlBase ** li
     dfx.originY = 128;
     dfx.originZ = 4096;
 
-    dfx.start(list, script);
+    dfx.start(param4, script);
 
     vr->vramMan = vramMan;
     vr->sys = sys;

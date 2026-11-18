@@ -29,7 +29,6 @@ SndEmitterList sndEmitterList;  // 0x02058920
 
 // --- Function Declarations --- //
 
-void sndEmitSetCmdTable(void);  // 0x0200a40c
 void sndEmitTickScript(SndEmitter *);  // 0x0200a814
 void sndEmitArmEnd(SndEmitter *);  // 0x0200a98c
 void sndEmitLoopEnd(SndEmitter *);  // 0x0200aa20

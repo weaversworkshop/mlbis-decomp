@@ -38,7 +38,7 @@ def find_tu(name):
     hits = []
     for p in game_sources():
         if re.search(
-            rf"^\S[^;]*\b{re.escape(name)}\s*\(|^//\s+arm_func_end {re.escape(name)}\b", p.read_text(errors="replace"), re.M
+            rf"^(\S[^;]*\b)?{re.escape(name)}\s*\(|^//\s+arm_func_end {re.escape(name)}\b", p.read_text(errors="replace"), re.M
         ):
             hits.append(p)
     if len(hits) != 1:
@@ -47,7 +47,7 @@ def find_tu(name):
 
 
 def locate(lines, name):
-    sig = re.compile(rf"^\S[^;]*\b{re.escape(name)}\s*\(")
+    sig = re.compile(rf"^(\S[^;]*\b)?{re.escape(name)}\s*\(")
     for i, l in enumerate(lines):
         if l.lstrip().startswith("//") or not sig.match(l):
             continue

@@ -112,7 +112,6 @@ u32 getResPlttSize(YanaRes *);  // 0x0202b0d0
 u32 getDataUnits(u32 *);  // 0x0202b15c
 u32 getDataSize(u32 *);  // 0x0202b168
 u32 getTexPlttSize(YanaRes *, u32 *);  // 0x0202b1a4
-void setupOrtho(u32);  // 0x0202b1d8
 
 void copyChars(u32 *, u32 *, u32, u32);  // 0x0202d08c
 void linearToTiles4(u32 *, u32 *, u32, u32);  // 0x0202d09c
@@ -120,8 +119,6 @@ void linearToTiles8(u32 *, u32 *, u32, u32);  // 0x0202d0b8
 void tilesToLinear4(u32 *, u32 *, u32, u32);  // 0x0202d0d4
 void tilesToLinear8(u32 *, u32 *, u32, u32);  // 0x0202d0f0
 
-void flushCharLoads(u32);  // 0x0202d980
-void flushPlttLoads(u32);  // 0x0202d9f4
 void cellAnimeUpdateAll(void);  // 0x0202da68
 void cellAnimeDrawAll(nsObjSys::clOamMan *, nsObjSys::clOamMan *, u32, u32);  // 0x0202daa0
 void queueClear(nsObjSys::clCellAnime * &);  // 0x0202dc34

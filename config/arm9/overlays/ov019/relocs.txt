@@ -72,7 +72,7 @@ from:0x020c9c10 kind:load to:0x020555a0 add:0x8 module:main
 from:0x020c9c14 kind:load to:0x02070bc0 module:overlay(11)
 from:0x020c9c18 kind:load to:0x02070ba0 module:overlay(11)
 from:0x020c9c1c kind:load to:0x020c9c98 module:overlay(19)
-from:0x020c9c20 kind:load to:0x02064e34 module:overlay(8)
+from:0x020c9c20 kind:load to:0x02064e2c add:0x8 module:overlay(8)
 from:0x020c9c24 kind:load to:0x020ad47c module:overlay(16)
 from:0x020c9c28 kind:load to:0x020727e0 module:overlays(11,130)
 from:0x020c9c2c kind:load to:0x02071d54 module:overlay(11)

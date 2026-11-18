@@ -14,6 +14,7 @@ from common import INCLUDE as INCLUDE_ROOT, READELF, ROOT, SRC as SRC_ROOT
 BUILD = common.BUILD / "offsets"
 CACHE = BUILD / "cache.json"
 DEFAULT_DIRS = ["arm9/include/main", "arm9/src/main", "arm9/include/dtcm", "arm9/src/dtcm"]
+DEFAULT_DIRS += sorted(d.relative_to(ROOT).as_posix() for r in (INCLUDE_ROOT, SRC_ROOT) for d in r.glob("ov[0-9]*"))
 SENTINEL = 0xffffffff
 
 AGG_OPEN_RE = re.compile(r"\b(?:class|struct|union)\s+(?P<name>[A-Za-z_]\w*)"

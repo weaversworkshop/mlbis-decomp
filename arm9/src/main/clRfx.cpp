@@ -35,8 +35,8 @@ void copy20(void *, void *);  // 0x02021e50
 // --- Function Definitions --- //
 
 // MATCHED 100%
-void clRfx::start(clYanaCtrlBase ** list, u16 * script) {
-    this->moveToList(list);
+void clRfx::start(clYanaCtrlSys * param1, u16 * script) {
+    this->moveToList(param1);
     this->init(0);
 
     this->script = script;

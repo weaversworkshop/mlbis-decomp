@@ -15,8 +15,7 @@ extern "C" {
 // --- Function Declarations --- //
 
 clYanaUnitSys * findOwner(void *);  // 0x020204c8
-void func_02020608(clYanaCtrlBase **);  // 0x02020608
-void func_02020634(clYanaCtrlBase **);  // 0x02020634
+
 void nullHandler(clYanaCtrl *);  // 0x020206c8
 
 } // extern "C"
@@ -55,8 +54,8 @@ clYanaUnitSys * findOwner(void * addr) {
 }
 
 // MATCHED 100%
-void clYanaCtrlBase::moveToList(clYanaCtrlBase ** head) {
-    if (head != NULL) {
+void clYanaCtrlBase::moveToList(clYanaCtrlSys * param1) {
+    if (param1 != NULL) {
         clYanaCtrlBase * prev = this->prev;
         if (this->prev != NULL) {
             this->prev = NULL;
@@ -67,7 +66,7 @@ void clYanaCtrlBase::moveToList(clYanaCtrlBase ** head) {
             prev->next = next;
         }
 
-        clYanaCtrlBase * base = (clYanaCtrlBase *)((u8 *)head - 4);
+        clYanaCtrlBase * base = (clYanaCtrlBase *)((u8 *)param1 - 4);
         clYanaCtrlBase * next = base->next;
         if (next != NULL) {
             next->prev = this;
@@ -105,8 +104,8 @@ clYanaCtrlBase::~clYanaCtrlBase() {
 }
 
 // MATCHED 100%
-void func_02020608(clYanaCtrlBase ** head) {
-    clYanaCtrlBase * node = *head;
+void clYanaCtrlSys::func_02020608() {
+    clYanaCtrlBase * node = this->field00;
 
     while (node != NULL) {
         clYanaCtrlBase * next = node->next;
@@ -116,14 +115,14 @@ void func_02020608(clYanaCtrlBase ** head) {
 }
 
 // MATCHED 100%
-void func_02020634(clYanaCtrlBase ** head) {
-    clYanaCtrlBase * node = *head;
+void clYanaCtrlSys::func_02020634() {
+    clYanaCtrlBase * node = this->field00;
     while (node != NULL) {
         if (node != NULL) {
             delete node;
         }
 
-        node = *head;
+        node = this->field00;
     }
 }
 

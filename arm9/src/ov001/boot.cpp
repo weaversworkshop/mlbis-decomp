@@ -129,7 +129,7 @@ void loadNameMessages() {
 
         if (maxSize != 0) {
             u8 * ptr = (u8 *)heapAlloc(1, maxSize, NULL, FALSE);
-            gameState.messageBanks[i] = (u32 *)fs->readChunk(i, lang, 0, ptr, NULL, NULL, 0, 0, 1, 0);
+            gameState.messageBanks[i] = (u32 *)fs->readChunk(i, lang, 0, ptr, NULL, NULL, 0, 0, 1, FALSE);
         }
     }
 

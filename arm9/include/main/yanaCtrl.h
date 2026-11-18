@@ -21,13 +21,22 @@ public:
     void operator delete(void *);  // 0x020204a4
 };
 
+class clYanaCtrlSys {
+public:
+    clYanaCtrlBase * field00;
+    clYanaUnitSys * field04;
+
+    void func_02020608(void);  // 0x02020608
+    void func_02020634(void);  // 0x02020634
+};
+
 class clYanaCtrlBase : public inYanaUnit {
 public:
     clYanaCtrlBase() { this->next = NULL; this->prev = NULL; }
     virtual ~clYanaCtrlBase();  // D1 0x0202057c D0 0x020205a4 D2 0x020205e0
     virtual void update(void) = 0;
 
-    void moveToList(clYanaCtrlBase **);  // 0x02020508
+    void moveToList(clYanaCtrlSys *);  // 0x02020508
     void detach(void);  // 0x02020554
 };
 

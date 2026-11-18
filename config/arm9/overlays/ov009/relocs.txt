@@ -1,6 +1,6 @@
-from:0x02064f44 kind:arm_call to:0x02063b00 module:overlays(0,8,138)
+from:0x02064f44 kind:arm_call to:0x02063b00 module:overlay(8)
 from:0x02064f6c kind:arm_call to:0x02047364 module:main
-from:0x02064fb4 kind:load to:0x02064ebc module:overlay(8)
+from:0x02064fb4 kind:load to:0x02064eb4 add:0x8 module:overlay(8)
 from:0x02064fb8 kind:load to:0x02064b18 module:overlay(8)
 from:0x02064fbc kind:load to:0x02064f20 module:overlay(9)
 from:0x02064fc0 kind:load to:0x02064f0c module:overlay(8)

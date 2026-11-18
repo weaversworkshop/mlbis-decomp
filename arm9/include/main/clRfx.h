@@ -48,7 +48,7 @@ public:
     virtual u32 extScriptCount(void);  // 0x02020b98
     virtual void beginDraw(void);  // 0x020213a8
 
-    void start(clYanaCtrlBase **, u16 *);  // 0x02020998
+    void start(clYanaCtrlSys *, u16 *);  // 0x02020998
     void finish(void);  // 0x02020a3c
 
     void runTrackLooped(s32, s16, s32);  // 0x02021290

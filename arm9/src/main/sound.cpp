@@ -186,13 +186,11 @@ u32 sndGetSeqNos(void);  // 0x020068ac
 void sndClearSlot(u32);  // 0x020068c4
 void sndSetTempoRatio(u32, s32);  // 0x02006914
 void sndStopAllVoices(void);  // 0x02006c34
-u32 sndGetActiveSeqMask(void);  // 0x02006c90
 void sndHeapLoadState(void);  // 0x02006d68
 void sndLoadSeqArc(u32, u32);  // 0x02006d84
 void sndPlayAlt(s16, s16, s16, s16, s8, s16);  // 0x02006e84
 void sndPlayAltOwned(SndVoiceList *, s16, s16, s16, s16, s8, s16);  // 0x02006ed0
 void sndLoadPrograms(u16 *, BOOL, u32);  // 0x02006f4c
-void sndPlayStreamById(u16, s16, s16, s16, s8);  // 0x02007108
 void sndPlayStreamOwned(SndVoiceList *, u16, s16, s16, s16, s8);  // 0x0200711c
 void sndStopStreamById(s8, u32);  // 0x02007158
 void sndStopVoiceStream(SndVoiceList *, u32);  // 0x02007164

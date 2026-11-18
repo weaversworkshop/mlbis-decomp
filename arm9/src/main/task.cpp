@@ -19,10 +19,6 @@ clVBlankTask * vblHead;  // 0x0205ba88
 clVBlankTask * vblCur;  // 0x0205ba7c
 clVBlankTask * vblNext;  // 0x0205ba80
 
-// --- Function Declarations --- //
-
-void deleteVBlankTask(clVBlankTask *);  // 0x0201a9a4
-
 // --- Function Definitions --- //
 
 // MATCHED 100%
@@ -130,7 +126,7 @@ void resetTasks() {
 }
 
 // MATCHED 100%
-clVBlankTask::clVBlankTask(u8 param1, u32 param2, u32 param3) {
+clVBlankTask::clVBlankTask(u8 param1, u32 param2, void * param3) {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
 
     clVBlankTask * task = vblHead;

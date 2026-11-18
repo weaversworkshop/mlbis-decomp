@@ -30,7 +30,7 @@ public:
 
 class clVBlankTask {
 public:
-    u32 field04;
+    void * field04;
     clVBlankTask * prev;  // +0x8
     clVBlankTask * next;  // +0xc
     u8 field10;
@@ -43,9 +43,9 @@ public:
     u8 pad_13[0x1];
     u32 numRuns;  // +0x14
 
-    clVBlankTask(u8, u32, u32);  // C1 0x0201a69c
+    clVBlankTask(u8, u32, void *);  // C2 0x0201a69c
     virtual ~clVBlankTask();  // D1 0x0201a794 D0 0x0201a800 D2 0x0201a880
-    virtual void func_ov008_02064558(void) = 0;
+    virtual void run(void) = 0;
 
     void enable(void);  // 0x0201a8ec
 };
@@ -62,13 +62,18 @@ extern clVBlankTask * vblHead;
 extern "C" {
 #endif // __cplusplus
 
-void disableAllTasks(void);  // 0x0201a630
 void resetTasks(void);  // 0x0201a67c
-void disableAllVBlankTasks(void);  // 0x0201a91c
 void resetVBlankTasks(void);  // 0x0201a974
 
 #ifdef __cplusplus
+
+void disableAllTasks(void);  // 0x0201a630
+void disableAllVBlankTasks(void);  // 0x0201a91c
+void deleteVBlankTask(clVBlankTask *);  // 0x0201a9a4
+
 } // extern "C"
+
 #endif
+
 
 #endif

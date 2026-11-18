@@ -145,7 +145,7 @@ void runVBlankTasks() {
         vblCur = task;
 
         if (task->enabled && !task->hasRan) {
-            task->func_ov008_02064558();
+            task->run();
 
             if (vblCur != NULL) {
                 task->numRuns++;

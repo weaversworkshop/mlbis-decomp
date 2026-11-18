@@ -9,19 +9,13 @@
 #include "main/heap.h"
 #include "main/sound.h"
 
+#include "ov008/clBtlSys.h"
+
 extern "C" {
 
 #include <nitro.h>
 
 // --- Struct Definitions --- //
-
-typedef struct {
-    u8 pad_00[0x1cf4];
-    s16 field1cf4;
-    s16 field1cf6;
-} UnkStruct_ov008_02064f0c;
-
-extern UnkStruct_ov008_02064f0c * data_ov008_02064f0c;
 
 typedef struct {
     u8 pad_00[0x1d20];
@@ -38,7 +32,6 @@ FS_EXTERN_OVERLAY(OVY_121);
 
 // --- Extern Functions --- //
 
-extern void func_ov008_0206406c(void);
 extern void func_ov009_02064f30(UnkStruct_ov009_02064f30 *);
 
 // --- Variable Definitions --- //
@@ -77,13 +70,14 @@ void btlSetup() {
         case 0x3009:
             gameState.field504_0 = 3;
             break;
-        default:
-        if (gameState.field502 != 0) {
-            gameState.field504_0 = 2;
-        } else if (gameState.field504_0b != 0) {
-            gameState.field504_0 = 1;
-        } else {
-            gameState.field504_0 = 0;
+        default: {
+            if (gameState.field502 != 0) {
+                gameState.field504_0 = 2;
+            } else if (gameState.field504_0b != 0) {
+                gameState.field504_0 = 1;
+            } else {
+                gameState.field504_0 = 0;
+            }
         }
     }
 
@@ -145,14 +139,14 @@ void btlSetup() {
         func_ov009_02064f30(ptr);
     }
 
-    data_ov008_02064f0c->field1cf4 = FS_OVERLAY_ID(OVY_9);
-    data_ov008_02064f0c->field1cf6 = data_ov008_02064f0c->field1cf4;
+    btlMainSys->field1cf4 = FS_OVERLAY_ID(OVY_9);
+    btlMainSys->field1cf6 = btlMainSys->field1cf4;
 }
 
 // MATCHED 100%
 void btlExit() {
 
-    func_ov008_0206406c();
+    btlDisableVramBanks();
 
     sndEchoMode = 0;
 

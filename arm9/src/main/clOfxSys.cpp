@@ -187,7 +187,7 @@ void clOfxSh::exec() {
 }
 
 // MATCHED 100%
-void ofxVrStart(clOfxSys * sys, clOfxVr * vr, u32 scriptId, clYanaCtrlBase ** list, clOfxVramMan * vramMan) {
+void ofxVrStart(clOfxSys * sys, clOfxVr * vr, u32 scriptId, clYanaCtrlSys * param4, clOfxVramMan * vramMan) {
     u16 * script = (sys->scriptTable != NULL) ? fsChunkPtr(sys->scriptTable, scriptId) : NULL;
 
     clOfx & ofx = *vr;
@@ -198,7 +198,7 @@ void ofxVrStart(clOfxSys * sys, clOfxVr * vr, u32 scriptId, clYanaCtrlBase ** li
     ofx.originY = 128;
     ofx.originZ = 4096;
 
-    ofx.start(list, script);
+    ofx.start(param4, script);
 
     ofx.priority = 0;
 

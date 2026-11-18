@@ -206,7 +206,7 @@ u32 clFS::getChunkDataSize(u32 slot, u32 idx) {
 }
 
 // MATCHED 100%
-FSFileReq * clFS::setupReq(FSFileReq * req, u32 chunkIdx, u8 * buf, u32 bufSize, s16 slot) {
+FSFileReq * clFS::setupReq(FSFileReq * req, u16 chunkIdx, u8 * buf, u32 bufSize, s16 slot) {
     if (slot >= 0) {
         req->slot = slot;
     }
@@ -408,7 +408,7 @@ void clFS::closeAllFiles() {
 }
 
 // MATCHED 100%
-bool clFS::queueTableLoad(u32 slot, FSChunkTable * table, u32 size, u32 offset, void (*fn)(FSTableReq *, bool), u32 arg, u32 flags) {
+bool clFS::queueTableLoad(u32 slot, FSChunkTable * table, u32 size, u32 offset, void (*fn)(FSTableReq *, s32), u32 arg, u32 flags) {
     FSTableReq * tblReqs = this->tableReqs;
     FSTableReq * tblReq = &tblReqs[slot];
 
@@ -497,7 +497,7 @@ start:
 }
 
 // MATCHED 100%
-bool clFS::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags) {
+bool clFS::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, s32), u32 arg, u32 flags) {
     if (slot >= 0) {
         req->slot = slot;
     }
@@ -668,7 +668,7 @@ clFSEx::~clFSEx() {
 }
 
 // MATCHED 100%
-bool clFSEx::openArchive(s16 slot, const char * path, void (*fn)(FSTableReq *, bool), u32 arg, BOOL hasTails, u32 heapId, u32 flags, u32 align) {
+bool clFSEx::openArchive(s16 slot, const char * path, void (*fn)(FSTableReq *, s32), u32 arg, BOOL hasTails, u32 heapId, u32 flags, u32 align) {
     if (this->tables[slot] != NULL) {
         if ((this->externTable[slot >> 5] & 1 << (slot & 0x1f)) != 0) {
             this->releaseSlot(slot);
@@ -708,7 +708,7 @@ void clFSEx::setArchive(s16 slot, const char * path, FSChunkTable * table, BOOL 
 }
 
 // MATCHED 100%
-u8 * clFSEx::readChunk(s16 slot, u32 chunkIdx, u32 offset, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags, u32 heapId, u32 align) {
+u8 * clFSEx::readChunk(s16 slot, u16 chunkIdx, u32 offset, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), u32 arg, u32 flags, u32 heapId, BOOL align) {
     u32 size = (this->*this->sizeFns[slot])(slot, chunkIdx);
     if (size == 0) {
         if (pSize != NULL) {
@@ -767,7 +767,7 @@ void clFSEx::cancelAll() {
 }
 
 // MATCHED 100%
-u8 * clFSEx::readChunkStream(s16 slot, u32 chunkIdx, u8 * headerBuf, u32 headerSize, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, bool), u32 arg, s32 heapId, u32 align) {
+u8 * clFSEx::readChunkStream(s16 slot, u16 chunkIdx, u8 * headerBuf, u32 headerSize, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), u32 arg, s32 heapId, u32 align) {
     if (this->getChunkSize(slot, chunkIdx) == 0) {
         if (pSize != NULL) {
             *pSize = 0;
@@ -987,7 +987,7 @@ u32 clDPP::readStreamHeader(FSFileReqEx * req, s16 slot) {
 }
 
 // MATCHED 100%
-void clDPP::queueStream(FSFileReqEx * req, u32 * dst, void (*fn)(FSFileReq *, bool), u32 arg) {
+void clDPP::queueStream(FSFileReqEx * req, u32 * dst, void (*fn)(FSFileReq *, s32), u32 arg) {
     req->fn = fn;
     req->arg = arg;
     req->dstBase = dst;
@@ -1029,7 +1029,7 @@ void clDPP::cancelStream(FSFileReq * req) {
 }
 
 // MATCHED 100%
-bool clDPP::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, bool), u32 arg, u32 flags) {
+bool clDPP::queueRead(FSFileReq * req, u32 offset, s32 slot, void (*fn)(FSFileReq *, s32), u32 arg, u32 flags) {
     req->streamState = DPP_IDLE;
     return clFS::queueRead(req, offset, slot, fn, arg, flags);
 }

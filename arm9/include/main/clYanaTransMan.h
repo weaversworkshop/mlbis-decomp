@@ -43,13 +43,26 @@ public:
     u16 head;  // +0x8
     u16 tail;  // +0xa
     u16 capacity;  // +0xc
-    vu16 texMode : 1;  // +0xe
-    vu16 ownsBuffer : 1;
-    vu16 locked : 1;
-    vu16 flushBlocked : 1;
-    vu16 : 12;
+    struct {
+        u16 texMode : 1;  // +0xe
+        u16 ownsBuffer : 1;
+        vu16 locked : 1;
+        vu16 flushBlocked : 1;
+        u16 : 12;
+    };
 
+    clYanaTransMan() {
+        this->entries = NULL;
+        this->head = 0;
+        this->tail = 0;
+        this->capacity = 0;
+        this->texMode = 0;
+        this->ownsBuffer = 0;
+        this->locked = 1;
+        this->flushBlocked = 0;
+    };
     virtual ~clYanaTransMan();  // D1 0x0201f5ac D0 0x0201f5cc D2 0x0201f5f4
+    virtual void submit(YanaTransEntry *);  // 0x0201fb68
 
     void init(u32, u16, YanaTransEntry *, s32);  // 0x0201f614
     void destroy(void);  // 0x0201f6cc
@@ -68,8 +81,6 @@ public:
     void postObjExtPltt(void *, void *, u32, u32);  // 0x0201fac8
     YanaTransEntry * beginEntry(void);  // 0x0201fb20
     void endEntry(void);  // 0x0201fb58
-
-    virtual void submit(YanaTransEntry *);  // 0x0201fb68
 };
 
 #endif

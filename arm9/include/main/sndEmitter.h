@@ -69,6 +69,7 @@ public:
 
 extern "C" {
 
+void sndEmitSetCmdTable(void);  // 0x0200a40c
 void sndEmitInit(void);  // 0x0200a600
 void sndEmitUpdate(void);  // 0x0200a61c
 void sndEmitClearQueue(void);  // 0x0200b57c

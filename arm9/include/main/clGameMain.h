@@ -64,8 +64,12 @@ typedef struct {
     union {
         struct {
             u32 field504_0 : 2;  // +0x504
-            u32 field504_2 : 11;
+            u32 field504_2 : 2;
+            u32 field504_4 : 1;
+            u32 field504_5 : 2;
+            u32 : 6;
             u32 field504_13 : 2;
+            u32 : 17;
         };
         struct {
             u32 field504_0b : 1;  // +0x504

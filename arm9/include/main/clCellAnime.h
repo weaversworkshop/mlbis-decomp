@@ -166,7 +166,10 @@ extern "C" {
 s32 findCharEntry(u32, u32, u32, YanaRes *);  // 0x0202af48
 u32 getResCharSize(u32, u32, u32, YanaRes *);  // 0x0202afbc
 u32 getObjPlttUnits(YanaRes *, u32 *);  // 0x0202b170
+void setupOrtho(u32);  // 0x0202b1d8
 void transferChars(u32, u32, YanaRes *, u32 *, u16 *, u32, u32, u32, u8);  // 0x0202d10c
+void flushCharLoads(u32);  // 0x0202d980
+void flushPlttLoads(u32);  // 0x0202d9f4
 void queuePush(nsObjSys::clCellAnime *, nsObjSys::clCellAnime * &, nsObjSys::clCellAnime * &, u32);  // 0x0202dbf0
 
 }

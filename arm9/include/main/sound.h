@@ -100,9 +100,11 @@ u32 sndGetSlotStatus(u32);  // 0x02006864
 void sndPlayById(u32, s16, s16, s16, s8, s16);  // 0x02006964
 BOOL sndPlayByIdOwned(SndVoiceList *, u32, s16, s16, s16, s8, s16);  // 0x02006a74
 void sndStopOwned(SndVoiceList *, u32);  // 0x02006bc0
+u32 sndGetActiveSeqMask(void);  // 0x02006c90
 void sndSetListPosition(SndVoiceList *, s16, s16);  // 0x02006cf8
 void sndLoadGroup(u32, u32);  // 0x02006d14
 void sndStopAlt(s16);  // 0x0200709c
+void sndPlayStreamById(u16, s16, s16, s16, s8);  // 0x02007108
 
 #ifdef __cplusplus
 } // extern "C"
