@@ -85,7 +85,7 @@ public:
             };
         };
     };
-    void (*onEnd)(u32, clCellAnime *);
+    void (*onEnd)(u32, clCellAnime *);  // +0x90
     u32 onEndArg;  // +0x94
     union {
         u32 field98w;

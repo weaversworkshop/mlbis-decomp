@@ -86,7 +86,7 @@ struct SndLoadNode {
     u32 fileId;  // +0x8
     u32 size;  // +0xc
     u32 offset;  // +0x10
-    void (*onComplete)(SndLoadNode *self);
+    void (*onComplete)(SndLoadNode *self);  // +0x14
     void * userData;  // +0x18
 };
 

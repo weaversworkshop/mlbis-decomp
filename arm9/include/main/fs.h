@@ -40,7 +40,7 @@ extern FSManager fsManager;
 
 typedef struct FSFileReq {
     FSFileReq * next;  // +0x0
-    void (*fn)(FSFileReq *, s32);
+    void (*fn)(FSFileReq *, s32);  // +0x4
     u32 arg;  // +0x8
     u8 * dst;  // +0xc
     u8 * buf;  // +0x10
@@ -63,7 +63,7 @@ struct FSFileReqEx : FSFileReq {
 
 typedef struct FSTableReq {
     FSTableReq * next;  // +0x0
-    void (*fn)(FSTableReq *, s32);
+    void (*fn)(FSTableReq *, s32);  // +0x4
     u32 arg;  // +0x8
     u32 * dst;  // +0xc
     u32 remaining;  // +0x10

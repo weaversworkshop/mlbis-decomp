@@ -23,6 +23,8 @@ ANON_OPEN_RE = re.compile(r"\b(?P<kind>struct|union)\s*\{")
 NS_OPEN_RE = re.compile(r"\bnamespace\s+(?P<name>[A-Za-z_]\w*)\s*\{")
 TYPEDEF_CLOSE_RE = re.compile(r"^\s*\}\s*(?P<name>[A-Za-z_]\w*)\s*;")
 MEMBER_RE = re.compile(r"^\s*.*?\b(?P<name>[A-Za-z_]\w*)\s*(?:\[[^\]]*\]\s*)*;")
+FNPTR_RE = re.compile(r"^[^()=]*\(\s*(?:[\w:]+::\s*)?\*\s*(?:const\s+)?(?P<name>[A-Za-z_]\w*)"
+                      r"\s*(?:\[[^\]]*\]\s*)*\)\s*\(.*\)\s*;")
 BITFIELD_RE = re.compile(r"^\s*.*?(?:\b(?P<name>[A-Za-z_]\w*)\s*)?:\s*\d+\s*;")
 OFFSET_CMT_RE = re.compile(r"//\s*\+0x[0-9a-fA-F]+")
 ADDR_CMT_RE = re.compile(r"//.*(?<!\+)\b0x[0-9a-fA-F]{6,8}\b")
@@ -159,16 +161,17 @@ def parse(path):
         elif template and code.strip() and not code.lstrip().startswith("template"):
             template = False
 
-        if stack and not ignored and not agg and not anon and "(" not in code \
+        fp = FNPTR_RE.match(code)
+        if stack and not ignored and not agg and not anon and ("(" not in code or fp) \
                 and not NOT_A_MEMBER.match(line):
-            bf = BITFIELD_RE.match(code)
+            bf = None if fp else BITFIELD_RE.match(code)
             if bf and not re.search(r"\w\s*::\s*\w", code):
                 unnamed = len(re.findall(r"[A-Za-z_]\w*", code.split(":")[0])) < 2
                 bitfields.append([enclosing,
                                   "<anon>" if unnamed else bf.group("name"),
                                   lineno])
             else:
-                mm = MEMBER_RE.match(code)
+                mm = fp or MEMBER_RE.match(code)
                 if mm:
                     members.append(
                         Member(enclosing, mm.group("name"), lineno, in_union))

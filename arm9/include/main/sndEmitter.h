@@ -23,7 +23,7 @@ class SndEmitter {
 public:
     SndEmitter * next;  // +0x0
     SndEmitter * prev;  // +0x4
-    void (*tick)(SndEmitter *);
+    void (*tick)(SndEmitter *);  // +0x8
     SndVoiceList voices[8];  // +0xc
     s16 * xSrc;  // +0x2c
     s16 * ySrc;  // +0x30

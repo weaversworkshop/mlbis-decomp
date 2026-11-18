@@ -17,7 +17,7 @@
 #define PRO_TRANS_ENTRY_COUNT 8
 
 typedef struct BtlJob {
-    void (*fn)(BtlJob *);
+    void (*fn)(BtlJob *);  // +0x0
     u32 arg0;  // +0x4
     u32 arg1;  // +0x8
     u32 arg2;  // +0xc
@@ -70,8 +70,8 @@ public:
     clYanaTransMan texTrans;  // +0xc24
     clYanaTransMan vblankTrans;  // +0xc34
     clBtlProTransMan proTrans;  // +0xc44
-    void (*frameFn)(void);
-    void (*exitFn)(void);
+    void (*frameFn)(void);  // +0xc54
+    void (*exitFn)(void);  // +0xc58
     u32 frameCt;  // +0xc5c
     BtlOvyQueue ovyQueue;  // +0xc60
     YanaTransEntry texTransEntries[TEX_TRANS_ENTRY_COUNT];  // +0xcc8

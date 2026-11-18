@@ -14,8 +14,8 @@ typedef struct {
     CARDResult result;  // +0x4
     enum BackupStatus status;
     s32 lockId;  // +0xc
-    void (*write)(u32, u32, u32, MIDmaCallback, void *);
-    void (*read)(u32, u32, u32, MIDmaCallback, void *);
+    void (*write)(u32, u32, u32, MIDmaCallback, void *);  // +0x10
+    void (*read)(u32, u32, u32, MIDmaCallback, void *);  // +0x14
 } BackupWork;
 
 // --- Variable Definitions --- //

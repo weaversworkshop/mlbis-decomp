@@ -42,7 +42,7 @@ public:
 
 class clYanaCtrl: public clYanaCtrlBase {
 public:
-    void (*handler)(clYanaCtrl *);
+    void (*handler)(clYanaCtrl *);  // +0xc
 
     virtual ~clYanaCtrl() {};  // D1 0x020206cc D0 0x020206ac
     virtual void update(void);  // 0x0202066c
