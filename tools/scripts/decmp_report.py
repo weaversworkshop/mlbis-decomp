@@ -105,7 +105,7 @@ def main():
         for name, (_cls, s, _comdat) in elf.data_objects().items():
             data[(stem, name)] = {"size": s["size"], "module": module}
 
-    best, owner, data_done, data_owner = {}, {}, {}, {}
+    best, owner, data_done, data_owner, comdat = {}, {}, {}, {}, {}
     for u in om["units"]:
         stem = unit_gap.get(u["name"])
         for f in u["functions"]:
@@ -115,10 +115,21 @@ def main():
                 owner[key] = u["name"]
         for o in u.get("objects", []):
             key = (stem, o["name"])
-            if o["comdat"] or key not in data:
+            if key not in data:
+                continue
+            if o["comdat"]:
+                comdat.setdefault(key, []).append((u["name"], o["status"] in DATA_DONE))
                 continue
             data_done[key] = data_done.get(key, False) or o["status"] in DATA_DONE
             data_owner.setdefault(key, u["name"])
+
+    for key, emits in comdat.items():
+        if key in data_owner:
+            continue
+        stem, name = key
+        data_done[key] = any(ok for _, ok in emits)
+        vtable = data_owner.get((stem, "_ZTV" + name[4:])) if name[:4] in ("_ZTI", "_ZTS") else None
+        data_owner[key] = vtable if vtable in {n for n, _ in emits} else min(n for n, _ in emits)
 
     def fn_rows(keys):
         return [{"name": funcs[k]["name"], "size": funcs[k]["size"],

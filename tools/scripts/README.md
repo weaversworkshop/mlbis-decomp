@@ -120,7 +120,7 @@ ignored), so undecompiled code counts against progress; scores dedupe per target
 equals `main_7_todo.md`. Categories: `game`/`sdk` (sdk = resident address in `sdk_mappings.json`) plus
 one per module (`main`, `itcm`, `dtcm`, `ovNNN`; a unit's module = its objdiff.json `target_path`).
 Unowned functions go in `<module>/_undecompiled[_sdk]` pseudo-units (excluded from unit counts).
-Matched data = homed non-COMDAT objects with status `ok`/`pad`.
+Matched data = homed objects with status `ok`/`pad`. COMDAT (RTTI) counts when any emitting unit scores it; owner = the unit homing its `_ZTV`, else the first emitter by name.
 `obj_match.py | decmp_report.py --report - -o FILE` = `make report [REPORT=progress/report.json]`.
 The committed `progress/report.json` is what `.github/workflows/progress.yml` uploads (no CI build).
 

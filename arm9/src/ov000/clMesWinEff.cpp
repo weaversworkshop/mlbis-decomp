@@ -10,7 +10,7 @@ extern "C" {
 
 #include "itcm/cpu_mem.h"
 
-// --- Extern Data Variables --- //
+// --- Variable Definitions --- //
 
 const u16 wipeHCloseSeq[4] = { 0x00b0, 0x00b8, 0x00c8, 0x00c0 };  // 0x02067300
 

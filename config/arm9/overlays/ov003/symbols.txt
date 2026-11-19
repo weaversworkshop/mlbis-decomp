@@ -1,8 +1,8 @@
-func_ov003_02069d60 kind:function(arm,size=0x4) addr:0x02069d60
-func_ov003_02069d64 kind:function(arm,size=0x30) addr:0x02069d64
-func_ov003_02069d94 kind:function(arm,size=0x28) addr:0x02069d94
-func_ov003_02069dbc kind:function(arm,size=0x10) addr:0x02069dbc
-func_ov003_02069dcc kind:function(arm,size=0x10) addr:0x02069dcc
+_ZN6clFPaf19func_ov003_02069d60Ev kind:function(arm,size=0x4) addr:0x02069d60
+_ZN6clFPafD0Ev kind:function(arm,size=0x30) addr:0x02069d64
+_ZN6clFPafD1Ev kind:function(arm,size=0x28) addr:0x02069d94
+_ZThn12_N6clFPafD0Ev kind:function(arm,size=0x10) addr:0x02069dbc
+_ZThn12_N6clFPafD1Ev kind:function(arm,size=0x10) addr:0x02069dcc
 func_ov003_02069ddc kind:function(arm,size=0x5c) addr:0x02069ddc
 func_ov003_02069e38 kind:function(arm,size=0x5c) addr:0x02069e38
 func_ov003_02069e94 kind:function(arm,size=0x14) addr:0x02069e94

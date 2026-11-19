@@ -66,7 +66,6 @@ public:
     void startWipeV(MesWinSlot *, const u16 *);  // 0x0206566c
     void startSplitV(MesWinSlot *);  // 0x02065a64
     void startSplitH(MesWinSlot *);  // 0x02065dd8
-    
 };
 
 
