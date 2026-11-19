@@ -157,9 +157,9 @@ s16 clMesWinEff::createEff(MesWinParams * params, s16 idx) {
         this->replaced = 1;
     }
 
-    s16 r4 = this->create(params, idx);
-    this->startOpen(&this->windows[r4]);
-    return r4;
+    s16 newIdx = this->create(params, idx);
+    this->startOpen(&this->windows[newIdx]);
+    return newIdx;
 }
 
 // MATCHED 100%
@@ -270,8 +270,8 @@ void clMesWinEff::startOpen(MesWinSlot * window) {
 void clMesWinEff::updateEffect(MesWinSlot * window) {
     switch (window->effState) {
         case 0: {
-            for (s32 r4 = window->params.effectFast; r4 >= 0; r4--) {
-                this->subStep = r4;
+            for (s32 step = window->params.effectFast; step >= 0; step--) {
+                this->subStep = step;
 
                 if (window->effStep(this, window)) {
                     if (window->tail.active == 0) {
@@ -364,8 +364,8 @@ void clMesWinEff::updateEffect(MesWinSlot * window) {
             }
         }
         case 3: {
-            for (s32 r4 = window->params.effectFast; r4 >= 0; r4--) {
-                this->subStep = r4;
+            for (s32 step = window->params.effectFast; step >= 0; step--) {
+                this->subStep = step;
 
                 if (window->effStep(this, window)) {
                     window->effState = 4;
@@ -388,566 +388,566 @@ void clMesWinEff::updateEffect(MesWinSlot * window) {
 }
 
 // MATCHED 100%
-void clMesWinEff::startNone(MesWinSlot * param1) {
-    param1->effStep = stepNone;
+void clMesWinEff::startNone(MesWinSlot * window) {
+    window->effStep = stepNone;
 
-    if (param1->params.mode == 1) {
-        u32 size = param1->charSize;
-        if (param1->charsBack < param1->chars) {
-            cpu_copy32_rev(param1->charsBack, param1->chars, size);
+    if (window->params.mode == 1) {
+        u32 size = window->charSize;
+        if (window->charsBack < window->chars) {
+            cpu_copy32_rev(window->charsBack, window->chars, size);
         } else {
-            cpu_copy32_fwd(param1->charsBack, param1->chars, size);
+            cpu_copy32_fwd(window->charsBack, window->chars, size);
         }
 
         if (this->replaced == 0) {
-            this->windows[(s16)param1->slot].dirty = 1;
+            this->windows[(s16)window->slot].dirty = 1;
             this->charsDirty = 1;
         }
 
         this->replaced = 0;
     }
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 }
 
 // MATCHED 100%
-BOOL stepNone(clMesWinEff * param1, MesWinSlot * param2) {
-    if (param2->effErase == 0) {
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+BOOL stepNone(clMesWinEff * self, MesWinSlot * window) {
+    if (window->effErase == 0) {
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
 
-        if (param2->params.mode == 0 && param2->tail.active == 0) {
-            param1->addTail(&param1->windows[param2->slot]);
+        if (window->params.mode == 0 && window->tail.active == 0) {
+            self->addTail(&self->windows[window->slot]);
 
-            u32 size = param2->charSize;
-            if (param2->charsBack < param2->chars) {
-                cpu_copy32_rev(param2->charsBack, param2->chars, size);
+            u32 size = window->charSize;
+            if (window->charsBack < window->chars) {
+                cpu_copy32_rev(window->charsBack, window->chars, size);
             } else {
-                cpu_copy32_fwd(param2->charsBack, param2->chars, size);
+                cpu_copy32_fwd(window->charsBack, window->chars, size);
             }
 
-            param1->windows[(s16)param2->slot].dirty = 1;
-            param1->charsDirty = 1;
+            self->windows[(s16)window->slot].dirty = 1;
+            self->charsDirty = 1;
         }
 
         return TRUE;
     }
 
-    cpu_fill32(param2->chars, 0, param2->charSize);
+    cpu_fill32(window->chars, 0, window->charSize);
     return TRUE;
 }
 
 // MATCHED 100%
-void clMesWinEff::startFade(MesWinSlot * param1, const u16 * param2) {
-    MesEffWork * r12 = &this->effWork[(u16)param1->slot * 12];
-    r12->frame = 0;
-    r12->timer = 1;
+void clMesWinEff::startFade(MesWinSlot * window, const u16 * seq) {
+    MesEffWork * work = &this->effWork[(u16)window->slot * 12];
+    work->frame = 0;
+    work->timer = 1;
 
-    param1->effStep = stepFade;
-    param1->effData = param2;
+    window->effStep = stepFade;
+    window->effData = seq;
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 }
 
 // MATCHED 100%
-BOOL stepFade(clMesWinEff * param1, MesWinSlot * param2) {
-    const u32 * r2;
-    u32 * r3;
-    u32 * r12;
-    BOOL r14;
-    s32 r4;
+BOOL stepFade(clMesWinEff * self, MesWinSlot * window) {
+    const u32 * mask;
+    u32 * src;
+    u32 * dst;
+    BOOL done;
+    s32 tile;
 
-    MesEffWork * r5 = &param1->effWork[(u16)param2->slot * 12];
-    r3 = param2->charsBack;
-    r12 = param2->chars;
-    r2 = &effMasks[((u16*)param2->effData)[r5->frame]];
+    MesEffWork * work = &self->effWork[(u16)window->slot * 12];
+    src = window->charsBack;
+    dst = window->chars;
+    mask = &effMasks[((u16*)window->effData)[work->frame]];
 
-    r14 = FALSE;
+    done = FALSE;
 
-    if (--r5->timer & 0xff) {
-        return r14;
+    if (--work->timer & 0xff) {
+        return done;
     }
 
-    r5->timer = 3;
+    work->timer = 3;
 
-    if (r5->frame+1 == 7) {
-        r14 = TRUE;
+    if (work->frame+1 == 7) {
+        done = TRUE;
     }
 
-    if (param1->subStep == 0 || r14) {
-        for (r4 = (param2->charSize / 32) - 1; r4 >= 0; r4--) {
-            r12[0] = r3[0] & r2[0];
-            r12[1] = r3[1] & r2[1];
-            r12[2] = r3[2] & r2[2];
-            r12[3] = r3[3] & r2[3];
-            r12[4] = r3[4] & r2[4];
-            r12[5] = r3[5] & r2[5];
-            r12[6] = r3[6] & r2[6];
-            r12[7] = r3[7] & r2[7];
+    if (self->subStep == 0 || done) {
+        for (tile = (window->charSize / 32) - 1; tile >= 0; tile--) {
+            dst[0] = src[0] & mask[0];
+            dst[1] = src[1] & mask[1];
+            dst[2] = src[2] & mask[2];
+            dst[3] = src[3] & mask[3];
+            dst[4] = src[4] & mask[4];
+            dst[5] = src[5] & mask[5];
+            dst[6] = src[6] & mask[6];
+            dst[7] = src[7] & mask[7];
 
-            r3 += 8;
-            r12 += 8;
+            src += 8;
+            dst += 8;
         }
 
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
     }
 
-    r5->frame++;
+    work->frame++;
 
-    return r14;
+    return done;
 }
 
 // MATCHED 100%
-void clMesWinEff::startDiag(MesWinSlot * param1, const MesEffSeq * param2, u32 param3) {
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+void clMesWinEff::startDiag(MesWinSlot * window, const MesEffSeq * seq, u32 seqLen) {
+    MesEffWork * work = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(work, 0, 12 * sizeof(MesEffWork));
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 
-    r4->active = 1;
-    r4->frame = 0;
-    r4->timer = 1;
+    work->active = 1;
+    work->frame = 0;
+    work->timer = 1;
 
-    param1->effStep = stepDiag;
-    param1->effData = param2;
-    param1->effLen = param3;
+    window->effStep = stepDiag;
+    window->effData = seq;
+    window->effLen = seqLen;
 }
 
 
-static inline MesEffWork * findFreeWork(MesEffWork * r3) {
-    for (s32 i = 11; i >= 0; i--, r3++) {
-        if (!r3->active) {
-            return r3;
+static inline MesEffWork * findFreeWork(MesEffWork * work) {
+    for (s32 i = 11; i >= 0; i--, work++) {
+        if (!work->active) {
+            return work;
         }
     }
     return NULL;
 }
 
 // MATCHED 100%
-BOOL stepDiag(clMesWinEff * param1, MesWinSlot * param2) {
-    BOOL local04 = FALSE;
-    MesEffSeq * r6 = (MesEffSeq *)param2->effData;
-    MesEffWork * local00 = &param1->effWork[(u16)param2->slot * 12];
-    BOOL r2 = FALSE;
-    MesEffWork * r7 = local00;
+BOOL stepDiag(clMesWinEff * self, MesWinSlot * window) {
+    BOOL done = FALSE;
+    MesEffSeq * seq = (MesEffSeq *)window->effData;
+    MesEffWork * works = &self->effWork[(u16)window->slot * 12];
+    BOOL drew = FALSE;
+    MesEffWork * work = works;
 
-    for (s32 r11 = 11; r11 >= 0; r11--, r7++) {
-        if (r7->active) {
-            if (r7->skip) {
-                r7->skip = 0;
-            } else if ((--r7->timer & 0xff) == 0) {
-                r7->timer = 1;
+    for (s32 n = 11; n >= 0; n--, work++) {
+        if (work->active) {
+            if (work->skip) {
+                work->skip = 0;
+            } else if ((--work->timer & 0xff) == 0) {
+                work->timer = 1;
 
-                if (r7->frame+1 == param2->effLen) {
-                    r7->active = 0;
+                if (work->frame+1 == window->effLen) {
+                    work->active = 0;
                 }
 
-                if (param1->subStep == 0 || !r7->active) {
-                    u16 r4 = r6[r7->frame].maskOfs;
-                    s8 r8 = r7->x;
-                    s8 r10 = r7->y;
-                    const u32 * r9 = &effMasks[r4];
+                if (self->subStep == 0 || !work->active) {
+                    u16 maskOfs = seq[work->frame].maskOfs;
+                    s8 col = work->x;
+                    s8 row = work->y;
+                    const u32 * mask = &effMasks[maskOfs];
 
-                    while (r8 >= 0 && r10 <= param2->rows) {
-                        s32 r5 = (r10 * (param2->cols + 1) + r8) * 8;
-                        u32 * r3 = &param2->charsBack[r5];
-                        u32 * r12 = &param2->chars[r5];
+                    while (col >= 0 && row <= window->rows) {
+                        s32 tileOfs = (row * (window->cols + 1) + col) * 8;
+                        u32 * src = &window->charsBack[tileOfs];
+                        u32 * dst = &window->chars[tileOfs];
 
-                        r8--;
-                        r10++;
+                        col--;
+                        row++;
 
-                        r12[0] = r3[0] & r9[0];
-                        r12[1] = r3[1] & r9[1];
-                        r12[2] = r3[2] & r9[2];
-                        r12[3] = r3[3] & r9[3];
-                        r12[4] = r3[4] & r9[4];
-                        r12[5] = r3[5] & r9[5];
-                        r12[6] = r3[6] & r9[6];
-                        r12[7] = r3[7] & r9[7];
+                        dst[0] = src[0] & mask[0];
+                        dst[1] = src[1] & mask[1];
+                        dst[2] = src[2] & mask[2];
+                        dst[3] = src[3] & mask[3];
+                        dst[4] = src[4] & mask[4];
+                        dst[5] = src[5] & mask[5];
+                        dst[6] = src[6] & mask[6];
+                        dst[7] = src[7] & mask[7];
                     }
 
-                    r2 = TRUE;
+                    drew = TRUE;
                 }
 
-                r7->frame++;
+                work->frame++;
 
-                if (!r7->active) {
-                    if (r7->last) {
-                        local04 = TRUE;
+                if (!work->active) {
+                    if (work->last) {
+                        done = TRUE;
                         break;
                     }
-                } else if (r6[r7->frame].spawn && r7->last == 0) {
-                    MesEffWork * r3 = findFreeWork(local00);
-                    r3->active = 1;
+                } else if (seq[work->frame].spawn && work->last == 0) {
+                    MesEffWork * spawned = findFreeWork(works);
+                    spawned->active = 1;
 
-                    if (r7->x == param2->cols) {
-                        r3->x = r7->x;
+                    if (work->x == window->cols) {
+                        spawned->x = work->x;
 
-                        if (r7->y == param2->rows) {
-                            r3->last = 1;
+                        if (work->y == window->rows) {
+                            spawned->last = 1;
                         }
 
-                        r3->y = r7->y + 1;
+                        spawned->y = work->y + 1;
                     } else {
-                        r3->x = r7->x + 1;
-                        r3->y = r7->y;
+                        spawned->x = work->x + 1;
+                        spawned->y = work->y;
                     }
 
-                    r3->timer = 2;
-                    r3->frame = 0;
+                    spawned->timer = 2;
+                    spawned->frame = 0;
 
-                    if (r3 > r7) {
-                        r3->skip = 1;
+                    if (spawned > work) {
+                        spawned->skip = 1;
                     }
                 }
             }
         }
     }
 
-    if (r2) {
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+    if (drew) {
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
     }
 
-    return local04;
+    return done;
 }
 
 // MATCHED 100%
-void clMesWinEff::startDiagPair(MesWinSlot * param1, MesEffSeqPair * param2, u32 param3) {
-    s16 r0;
-    s16 r1;
-    s16 r2;
-    s16 r3;
+void clMesWinEff::startDiagPair(MesWinSlot * window, MesEffSeqPair * pair, u32 seqLen) {
+    s16 backCol;
+    s16 backRow;
+    s16 fwdCol;
+    s16 fwdRow;
 
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+    MesEffWork * fwdWork = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(fwdWork, 0, 12 * sizeof(MesEffWork));
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 
-    r4->active = 1;
-    r4->frame = 0;
-    r4->timer = 1;
-    r4->field00_2 = 0;
+    fwdWork->active = 1;
+    fwdWork->frame = 0;
+    fwdWork->timer = 1;
+    fwdWork->field00_2 = 0;
 
-    r2 = r4->x;
-    r3 = r4->y;
+    fwdCol = fwdWork->x;
+    fwdRow = fwdWork->y;
 
-    MesEffWork * r4_next = r4+1;
+    MesEffWork * backWork = fwdWork+1;
 
-    r4_next->active = 1;
-    r4_next->x = param1->cols;
-    r4_next->y = param1->rows;
-    r4_next->frame = 0;
-    r4_next->timer = 1;
-    r4_next->field00_2 = 1;
+    backWork->active = 1;
+    backWork->x = window->cols;
+    backWork->y = window->rows;
+    backWork->frame = 0;
+    backWork->timer = 1;
+    backWork->field00_2 = 1;
 
-    r0 = r4_next->x;
-    r1 = r4_next->y;
+    backCol = backWork->x;
+    backRow = backWork->y;
 
-    param1->effStep = stepDiagPair;
-    param1->effData = param2;
-    param1->effMet = 0;
-    param1->effLen = param3;
+    window->effStep = stepDiagPair;
+    window->effData = pair;
+    window->effMet = 0;
+    window->effLen = seqLen;
 
-    s16 r12;
-    s16 r7;
+    s16 tipCol;
+    s16 tipRow;
     do {
-        if (r2 == param1->cols) {
-            r3++;
+        if (fwdCol == window->cols) {
+            fwdRow++;
         } else {
-            r2++;
+            fwdCol++;
         }
 
-        r12 = r2;
-        r7 = r3;
+        tipCol = fwdCol;
+        tipRow = fwdRow;
 
-        while (r12 > 0 && r7 < param1->rows) {
-            r12--;
-            r7++;
+        while (tipCol > 0 && tipRow < window->rows) {
+            tipCol--;
+            tipRow++;
         }
 
-        if (r0 == 0) {
-            r1--;
+        if (backCol == 0) {
+            backRow--;
         } else {
-            r0--;
+            backCol--;
         }
-    } while (r12 <= r0 && r1 >= r7);
+    } while (tipCol <= backCol && backRow >= tipRow);
 
-    param1->effMeetCol = r2;
-    param1->effMeetRow = r3;
+    window->effMeetCol = fwdCol;
+    window->effMeetRow = fwdRow;
 }
 
 // MATCHED 100%
-BOOL stepDiagPair(clMesWinEff * param1, MesWinSlot * param2) {
-    const MesEffSeq * local0c;
-    BOOL local08 = FALSE;
-    s32 local04;
-    MesEffWork * local00 = &param1->effWork[(u16)param2->slot * 12];
-    BOOL r3 = local08;
-    MesEffWork * r14 = local00;
+BOOL stepDiagPair(clMesWinEff * self, MesWinSlot * window) {
+    const MesEffSeq * seq;
+    BOOL done = FALSE;
+    s32 n;
+    MesEffWork * works = &self->effWork[(u16)window->slot * 12];
+    BOOL drew = done;
+    MesEffWork * work = works;
 
-    for (local04 = 11; local04 >= 0; local04--, r14++) {
-        if (r14->active) {
-            if (r14->skip) {
-                r14->skip = 0;
-            } else if ((--r14->timer & 0xff) == 0) {
-                r14->timer = 1;
+    for (n = 11; n >= 0; n--, work++) {
+        if (work->active) {
+            if (work->skip) {
+                work->skip = 0;
+            } else if ((--work->timer & 0xff) == 0) {
+                work->timer = 1;
 
-                if (r14->frame + 1 == param2->effLen) {
-                    r14->active = 0;
+                if (work->frame + 1 == window->effLen) {
+                    work->active = 0;
                 }
 
-                s8 r9 = r14->x;
-                s8 r8 = r14->y;
+                s8 col = work->x;
+                s8 row = work->y;
 
-                if (!r14->field00_2) {
-                    local0c = ((MesEffSeqPair *)param2->effData)->fwd;
-                    const u32 * r4 = &effMasks[local0c[r14->frame].maskOfs];
+                if (!work->field00_2) {
+                    seq = ((MesEffSeqPair *)window->effData)->fwd;
+                    const u32 * mask = &effMasks[seq[work->frame].maskOfs];
 
-                    if (param1->subStep == 0 || !r14->active) {
-                        while (r9 >= 0 && r8 <= param2->rows) {
-                            s32 r2 = (r8 * (param2->cols + 1) + r9) * 8;
-                            u32 * r5 = &param2->charsBack[r2];
-                            u32 * r6 = &param2->chars[r2];
+                    if (self->subStep == 0 || !work->active) {
+                        while (col >= 0 && row <= window->rows) {
+                            s32 tileOfs = (row * (window->cols + 1) + col) * 8;
+                            u32 * src = &window->charsBack[tileOfs];
+                            u32 * dst = &window->chars[tileOfs];
 
-                            if (param2->effErase) {
-                                r6[0] = r6[0] & r4[0];
-                                r6[1] = r6[1] & r4[1];
-                                r6[2] = r6[2] & r4[2];
-                                r6[3] = r6[3] & r4[3];
-                                r6[4] = r6[4] & r4[4];
-                                r6[5] = r6[5] & r4[5];
-                                r6[6] = r6[6] & r4[6];
-                                r6[7] = r6[7] & r4[7];
+                            if (window->effErase) {
+                                dst[0] = dst[0] & mask[0];
+                                dst[1] = dst[1] & mask[1];
+                                dst[2] = dst[2] & mask[2];
+                                dst[3] = dst[3] & mask[3];
+                                dst[4] = dst[4] & mask[4];
+                                dst[5] = dst[5] & mask[5];
+                                dst[6] = dst[6] & mask[6];
+                                dst[7] = dst[7] & mask[7];
                             } else {
-                                for (s32 r7 = 7; r7 >= 0; r7--) {
-                                    r6[r7] = (r5[r7] & r4[r7]) | (r6[r7] & (r4[r7] ^ 0xffffffff));
+                                for (s32 i = 7; i >= 0; i--) {
+                                    dst[i] = (src[i] & mask[i]) | (dst[i] & (mask[i] ^ 0xffffffff));
                                 }
                             }
 
-                            r9--;
-                            r8++;
+                            col--;
+                            row++;
                         }
 
-                        r3 = TRUE;
+                        drew = TRUE;
                     }
                 } else {
-                    local0c = ((MesEffSeqPair *)param2->effData)->back;
-                    const u32 * r5 = &effMasks[local0c[param2->effLen - 1 - r14->frame].maskOfs];
+                    seq = ((MesEffSeqPair *)window->effData)->back;
+                    const u32 * mask = &effMasks[seq[window->effLen - 1 - work->frame].maskOfs];
 
-                    if (param1->subStep == 0 || !r14->active) {
-                        while (r9 <= param2->cols && r8 >= 0) {
-                            s32 r2 = (r8 * (param2->cols + 1) + r9) * 8;
-                            u32 * r6 = &param2->charsBack[r2];
-                            u32 * r7 = &param2->chars[r2];
+                    if (self->subStep == 0 || !work->active) {
+                        while (col <= window->cols && row >= 0) {
+                            s32 tileOfs = (row * (window->cols + 1) + col) * 8;
+                            u32 * src = &window->charsBack[tileOfs];
+                            u32 * dst = &window->chars[tileOfs];
 
-                            if (param2->effErase) {
-                                r7[0] = r7[0] & r5[0];
-                                r7[1] = r7[1] & r5[1];
-                                r7[2] = r7[2] & r5[2];
-                                r7[3] = r7[3] & r5[3];
-                                r7[4] = r7[4] & r5[4];
-                                r7[5] = r7[5] & r5[5];
-                                r7[6] = r7[6] & r5[6];
-                                r7[7] = r7[7] & r5[7];
+                            if (window->effErase) {
+                                dst[0] = dst[0] & mask[0];
+                                dst[1] = dst[1] & mask[1];
+                                dst[2] = dst[2] & mask[2];
+                                dst[3] = dst[3] & mask[3];
+                                dst[4] = dst[4] & mask[4];
+                                dst[5] = dst[5] & mask[5];
+                                dst[6] = dst[6] & mask[6];
+                                dst[7] = dst[7] & mask[7];
                             } else {
-                                for (s32 r10 = 7; r10 >= 0; r10--) {
-                                    r7[r10] = (r6[r10] & r5[r10]) | (r7[r10] & (r5[r10] ^ 0xffffffff));
+                                for (s32 i = 7; i >= 0; i--) {
+                                    dst[i] = (src[i] & mask[i]) | (dst[i] & (mask[i] ^ 0xffffffff));
                                 }
                             }
 
-                            r9++;
-                            r8--;
+                            col++;
+                            row--;
                         }
 
-                        r3 = TRUE;
+                        drew = TRUE;
                     }
                 }
 
-                r14->frame++;
+                work->frame++;
 
-                if (!r14->active) {
-                    if (r14->last) {
-                        local08 = TRUE;
+                if (!work->active) {
+                    if (work->last) {
+                        done = TRUE;
                         break;
                     }
-                } else if (local0c[r14->frame].spawn && r14->last == 0) {
-                    MesEffWork * r2 = findFreeWork(local00);
-                    r2->active = 1;
+                } else if (seq[work->frame].spawn && work->last == 0) {
+                    MesEffWork * spawned = findFreeWork(works);
+                    spawned->active = 1;
 
-                    if (!r14->field00_2) {
-                        if (r14->x == param2->cols) {
-                            r2->x = r14->x;
-                            r2->y = r14->y + 1;
+                    if (!work->field00_2) {
+                        if (work->x == window->cols) {
+                            spawned->x = work->x;
+                            spawned->y = work->y + 1;
                         } else {
-                            r2->x = r14->x + 1;
-                            r2->y = r14->y;
+                            spawned->x = work->x + 1;
+                            spawned->y = work->y;
                         }
 
-                        if (r2->x == param2->effMeetCol && r2->y == param2->effMeetRow) {
-                            r2->last = 1;
-                            param2->effMet = 1;
+                        if (spawned->x == window->effMeetCol && spawned->y == window->effMeetRow) {
+                            spawned->last = 1;
+                            window->effMet = 1;
                         }
                     } else {
-                        if (r14->x == 0) {
-                            r2->x = r14->x;
-                            r2->y = r14->y - 1;
+                        if (work->x == 0) {
+                            spawned->x = work->x;
+                            spawned->y = work->y - 1;
                         } else {
-                            r2->x = r14->x - 1;
-                            r2->y = r14->y;
+                            spawned->x = work->x - 1;
+                            spawned->y = work->y;
                         }
 
-                        if (param2->effMet) {
-                            r2->last = 1;
+                        if (window->effMet) {
+                            spawned->last = 1;
                         }
                     }
 
-                    r2->timer = 2;
-                    r2->frame = 0;
-                    r2->field00_2 = r14->field00_2;
+                    spawned->timer = 2;
+                    spawned->frame = 0;
+                    spawned->field00_2 = work->field00_2;
 
-                    if (r2 > r14) {
-                        r2->skip = 1;
+                    if (spawned > work) {
+                        spawned->skip = 1;
                     }
                 }
             }
         }
     }
 
-    if (r3) {
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+    if (drew) {
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
     }
 
-    return local08;
+    return done;
 }
 
 // MATCHED 100%
-void clMesWinEff::startWipeH(MesWinSlot * param1, const u16 * param2) {
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+void clMesWinEff::startWipeH(MesWinSlot * window, const u16 * seq) {
+    MesEffWork * fwdWork = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(fwdWork, 0, 12 * sizeof(MesEffWork));
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 
-    r4->frame = 0;
-    r4->timer = 1;
+    fwdWork->frame = 0;
+    fwdWork->timer = 1;
 
-    MesEffWork * r4_next = r4+1;
-    r4_next->x = param1->cols;
-    r4_next->frame = 2;
-    r4_next->timer = 1;
+    MesEffWork * backWork = fwdWork+1;
+    backWork->x = window->cols;
+    backWork->frame = 2;
+    backWork->timer = 1;
 
-    param1->effStep = stepWipeH;
-    param1->effData = param2;
+    window->effStep = stepWipeH;
+    window->effData = seq;
 }
 
 // MATCHED 100%
-BOOL stepWipeH(clMesWinEff * param1, MesWinSlot * param2) {
-    BOOL r4 = FALSE;
-    MesEffWork * r5 = &param1->effWork[(u16)param2->slot * 12];
+BOOL stepWipeH(clMesWinEff * self, MesWinSlot * window) {
+    BOOL lastFrame = FALSE;
+    MesEffWork * fwdWork = &self->effWork[(u16)window->slot * 12];
 
-    if (r5->field00_2 == 0 && (--r5->timer & 0xff) == 0) {
-        r5->timer = 1;
+    if (fwdWork->field00_2 == 0 && (--fwdWork->timer & 0xff) == 0) {
+        fwdWork->timer = 1;
 
-        if (r5->frame+1 == 2) {
-            r4 = TRUE;
+        if (fwdWork->frame+1 == 2) {
+            lastFrame = TRUE;
         }
 
-        if (drawWipeColumn(param1, param2, r5, r4)) {
-            param1->windows[(s16)param2->slot].dirty = 1;
-            param1->charsDirty = 1;
+        if (drawWipeColumn(self, window, fwdWork, lastFrame)) {
+            self->windows[(s16)window->slot].dirty = 1;
+            self->charsDirty = 1;
         }
 
-        r5->frame++;
+        fwdWork->frame++;
 
-        if (r4) {
-            r5->frame = 0;
+        if (lastFrame) {
+            fwdWork->frame = 0;
 
-            if (++r5->x > param2->cols) {
-                r5->field00_2 = 1;
+            if (++fwdWork->x > window->cols) {
+                fwdWork->field00_2 = 1;
             }
         }
     }
 
-    MesEffWork * r5_next = r5+1;
+    MesEffWork * backWork = fwdWork+1;
 
-    if (r5_next->field00_2 == 0 && (--r5_next->timer & 0xff) == 0) {
-        r5_next->timer = 1;
+    if (backWork->field00_2 == 0 && (--backWork->timer & 0xff) == 0) {
+        backWork->timer = 1;
 
-        r4 = FALSE;
-        if (r5_next->frame+1 == 4) {
-            r4 = TRUE;
+        lastFrame = FALSE;
+        if (backWork->frame+1 == 4) {
+            lastFrame = TRUE;
         }
 
-        if (drawWipeColumn(param1, param2, r5_next, r4)) {
-            param1->windows[(s16)param2->slot].dirty = 1;
-            param1->charsDirty = 1;
+        if (drawWipeColumn(self, window, backWork, lastFrame)) {
+            self->windows[(s16)window->slot].dirty = 1;
+            self->charsDirty = 1;
         }
 
-        r5_next->frame++;
+        backWork->frame++;
 
-        if (r4) {
-            r5_next->frame = 2;
+        if (lastFrame) {
+            backWork->frame = 2;
 
-            if (--r5_next->x < 0) {
-                r5_next->field00_2 = 1;
+            if (--backWork->x < 0) {
+                backWork->field00_2 = 1;
             }
         }
     }
 
-    if (r5->field00_2 && r5_next->field00_2) {
+    if (fwdWork->field00_2 && backWork->field00_2) {
         return TRUE;
     }
     return FALSE;
 }
 
 // MATCHED 100%
-BOOL drawWipeColumn(clMesWinEff * param1, MesWinSlot * param2, MesEffWork * param3, BOOL param4) {
-    if (param1->subStep != 0 && param4 == FALSE) {
+BOOL drawWipeColumn(clMesWinEff * self, MesWinSlot * window, MesEffWork * work, BOOL lastFrame) {
+    if (self->subStep != 0 && lastFrame == FALSE) {
         return FALSE;
     }
 
-    const u32 * r2 = &effMasks[((u16 *)param2->effData)[param3->frame]];
-    u32 * r3 = &param2->charsBack[param3->x * 8];
-    u32 * r12 = &param2->chars[param3->x * 8];
+    const u32 * mask = &effMasks[((u16 *)window->effData)[work->frame]];
+    u32 * src = &window->charsBack[work->x * 8];
+    u32 * dst = &window->chars[work->x * 8];
 
-    if (param2->effErase == 0) {
-        for (s32 r14 = param2->rows; r14 >= 0; r14--) {
-            for (s32 r4 = 7; r4 >= 0; r4--) {
-                r12[r4] = (r3[r4] & r2[r4]) | (r12[r4] & (r2[r4] ^ 0xffffffff));
+    if (window->effErase == 0) {
+        for (s32 row = window->rows; row >= 0; row--) {
+            for (s32 i = 7; i >= 0; i--) {
+                dst[i] = (src[i] & mask[i]) | (dst[i] & (mask[i] ^ 0xffffffff));
             }
 
-            r3 += (param2->cols+1) * 8;
-            r12 += (param2->cols+1) * 8;
+            src += (window->cols+1) * 8;
+            dst += (window->cols+1) * 8;
         }
     } else {
-        for (s32 r0 = param2->rows; r0 >= 0; r0--) {
-            r12[0] &= r2[0];
-            r12[1] &= r2[1];
-            r12[2] &= r2[2];
-            r12[3] &= r2[3];
-            r12[4] &= r2[4];
-            r12[5] &= r2[5];
-            r12[6] &= r2[6];
-            r12[7] &= r2[7];
+        for (s32 row = window->rows; row >= 0; row--) {
+            dst[0] &= mask[0];
+            dst[1] &= mask[1];
+            dst[2] &= mask[2];
+            dst[3] &= mask[3];
+            dst[4] &= mask[4];
+            dst[5] &= mask[5];
+            dst[6] &= mask[6];
+            dst[7] &= mask[7];
 
-            r12 += (param2->cols+1) * 8;
+            dst += (window->cols+1) * 8;
         }
     }
 
@@ -955,119 +955,119 @@ BOOL drawWipeColumn(clMesWinEff * param1, MesWinSlot * param2, MesEffWork * para
 }
 
 // MATCHED 100%
-void clMesWinEff::startWipeV(MesWinSlot * param1, const u16 * param2) {
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+void clMesWinEff::startWipeV(MesWinSlot * window, const u16 * seq) {
+    MesEffWork * fwdWork = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(fwdWork, 0, 12 * sizeof(MesEffWork));
 
-    param1->effErase = 0;
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    window->effErase = 0;
+    if (window->effState == 2) {
+        window->effErase = 1;
     }
 
-    r4->frame = 0;
-    r4->timer = 1;
+    fwdWork->frame = 0;
+    fwdWork->timer = 1;
 
-    MesEffWork * r4_next = r4+1;
-    r4_next->y = param1->rows;
-    r4_next->frame = 2;
-    r4_next->timer = 1;
+    MesEffWork * backWork = fwdWork+1;
+    backWork->y = window->rows;
+    backWork->frame = 2;
+    backWork->timer = 1;
 
-    param1->effStep = stepWipeV;
-    param1->effData = param2;
+    window->effStep = stepWipeV;
+    window->effData = seq;
 }
 
 // MATCHED 100%
-BOOL stepWipeV(clMesWinEff * param1, MesWinSlot * param2) {
-    BOOL r4 = FALSE;
-    MesEffWork * r5 = &param1->effWork[(u16)param2->slot * 12];
+BOOL stepWipeV(clMesWinEff * self, MesWinSlot * window) {
+    BOOL lastFrame = FALSE;
+    MesEffWork * fwdWork = &self->effWork[(u16)window->slot * 12];
 
-    if (r5->field00_2 == 0 && (--r5->timer & 0xff) == 0) {
-        r5->timer = 1;
+    if (fwdWork->field00_2 == 0 && (--fwdWork->timer & 0xff) == 0) {
+        fwdWork->timer = 1;
 
-        if (r5->frame+1 == 2) {
-            r4 = TRUE;
+        if (fwdWork->frame+1 == 2) {
+            lastFrame = TRUE;
         }
 
-        if (drawWipeRow(param1, param2, r5, r4)) {
-            param1->windows[(s16)param2->slot].dirty = 1;
-            param1->charsDirty = 1;
+        if (drawWipeRow(self, window, fwdWork, lastFrame)) {
+            self->windows[(s16)window->slot].dirty = 1;
+            self->charsDirty = 1;
         }
 
-        r5->frame++;
+        fwdWork->frame++;
 
-        if (r4) {
-            r5->frame = 0;
+        if (lastFrame) {
+            fwdWork->frame = 0;
 
-            if (++r5->y > param2->rows) {
-                r5->field00_2 = 1;
+            if (++fwdWork->y > window->rows) {
+                fwdWork->field00_2 = 1;
             }
         }
     }
 
-    MesEffWork * r5_next = r5+1;
+    MesEffWork * backWork = fwdWork+1;
 
-    if (r5_next->field00_2 == 0 && (--r5_next->timer & 0xff) == 0) {
-        r5_next->timer = 1;
+    if (backWork->field00_2 == 0 && (--backWork->timer & 0xff) == 0) {
+        backWork->timer = 1;
 
-        r4 = FALSE;
+        lastFrame = FALSE;
 
-        if (r5_next->frame+1 == 4) {
-            r4 = TRUE;
+        if (backWork->frame+1 == 4) {
+            lastFrame = TRUE;
         }
 
-        if (drawWipeRow(param1, param2, r5_next, r4)) {
-            param1->windows[(s16)param2->slot].dirty = 1;
-            param1->charsDirty = 1;
+        if (drawWipeRow(self, window, backWork, lastFrame)) {
+            self->windows[(s16)window->slot].dirty = 1;
+            self->charsDirty = 1;
         }
 
-        r5_next->frame++;
+        backWork->frame++;
 
-        if (r4) {
-            r5_next->frame = 2;
+        if (lastFrame) {
+            backWork->frame = 2;
 
-            if (--r5_next->y < 0) {
-                r5_next->field00_2 = 1;
+            if (--backWork->y < 0) {
+                backWork->field00_2 = 1;
             }
         }
     }
 
-    if (r5->field00_2 && r5_next->field00_2) {
+    if (fwdWork->field00_2 && backWork->field00_2) {
         return TRUE;
     }
     return FALSE;
 }
 
 // MATCHED 100%
-BOOL drawWipeRow(clMesWinEff * param1, MesWinSlot * param2, MesEffWork * param3, BOOL param4) {
-    if (param1->subStep != 0 && param4 == FALSE) {
+BOOL drawWipeRow(clMesWinEff * self, MesWinSlot * window, MesEffWork * work, BOOL lastFrame) {
+    if (self->subStep != 0 && lastFrame == FALSE) {
         return FALSE;
     }
 
-    const u32 * r0 = &effMasks[((u16 *)param2->effData)[param3->frame]];
-    u32 * r1 = &param2->charsBack[param3->y * (param2->cols + 1) * 8];
-    u32 * r2 = &param2->chars[param3->y * (param2->cols + 1) * 8];
+    const u32 * mask = &effMasks[((u16 *)window->effData)[work->frame]];
+    u32 * src = &window->charsBack[work->y * (window->cols + 1) * 8];
+    u32 * dst = &window->chars[work->y * (window->cols + 1) * 8];
 
-    if (param2->effErase == 0) {
-        for (s32 r3 = param2->cols; r3 >= 0; r3--) {
-            for (s32 r8 = 7; r8 >= 0; r8--) {
-                r2[r8] = (r1[r8] & r0[r8]) | (r2[r8] & (r0[r8] ^ 0xffffffff));
+    if (window->effErase == 0) {
+        for (s32 col = window->cols; col >= 0; col--) {
+            for (s32 i = 7; i >= 0; i--) {
+                dst[i] = (src[i] & mask[i]) | (dst[i] & (mask[i] ^ 0xffffffff));
             }
 
-            r1 += 8;
-            r2 += 8;
+            src += 8;
+            dst += 8;
         }
     } else {
-        for (s32 r3 = param2->cols; r3 >= 0; r3--) {
-            r2[0] &= r0[0];
-            r2[1] &= r0[1];
-            r2[2] &= r0[2];
-            r2[3] &= r0[3];
-            r2[4] &= r0[4];
-            r2[5] &= r0[5];
-            r2[6] &= r0[6];
-            r2[7] &= r0[7];
+        for (s32 col = window->cols; col >= 0; col--) {
+            dst[0] &= mask[0];
+            dst[1] &= mask[1];
+            dst[2] &= mask[2];
+            dst[3] &= mask[3];
+            dst[4] &= mask[4];
+            dst[5] &= mask[5];
+            dst[6] &= mask[6];
+            dst[7] &= mask[7];
 
-            r2 += 8;
+            dst += 8;
         }
     }
 
@@ -1075,451 +1075,451 @@ BOOL drawWipeRow(clMesWinEff * param1, MesWinSlot * param2, MesEffWork * param3,
 }
 
 // MATCHED 100%
-void clMesWinEff::startSplitV(MesWinSlot * param1) {
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+void clMesWinEff::startSplitV(MesWinSlot * window) {
+    MesEffWork * work = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(work, 0, 12 * sizeof(MesEffWork));
 
-    param1->effHalf = (param1->params.height + 1) * 8 / 2;
-    param1->effErase = 0;
+    window->effHalf = (window->params.height + 1) * 8 / 2;
+    window->effErase = 0;
 
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    if (window->effState == 2) {
+        window->effErase = 1;
 
-        r4->y = param1->effHalf;
+        work->y = window->effHalf;
     }
 
-    param1->effStep = stepSplitV;
+    window->effStep = stepSplitV;
 }
 
 // MATCHED 100%
-BOOL stepSplitV(clMesWinEff * param1, MesWinSlot * param2) {
-    s16 r4;
-    u32 r11;
-    BOOL r5;
-    u32 r6;
-    u32 r7;
-    MesEffWork * r8;
-    u32 local00;
+BOOL stepSplitV(clMesWinEff * self, MesWinSlot * window) {
+    s16 inset;
+    u32 fillSize;
+    BOOL done;
+    u32 stride;
+    u32 subY;
+    MesEffWork * work;
+    u32 lastLine;
 
-    r8 = &param1->effWork[(u16)param2->slot * 12];
-    r6 = (param2->cols + 1) * 8;
-    r5 = FALSE;
-    local00 = (param2->params.height + 1) * 8 - 1;
-    r7 = param2->params.y % 8;
+    work = &self->effWork[(u16)window->slot * 12];
+    stride = (window->cols + 1) * 8;
+    done = FALSE;
+    lastLine = (window->params.height + 1) * 8 - 1;
+    subY = window->params.y % 8;
 
-    if (!param2->effErase) {
-        if (r8->y + 2 > param2->effHalf) {
-            r5 = TRUE;
+    if (!window->effErase) {
+        if (work->y + 2 > window->effHalf) {
+            done = TRUE;
         }
     } else {
-        if (r8->y - 2 < 0) {
-            r5 = TRUE;
+        if (work->y - 2 < 0) {
+            done = TRUE;
         }
     }
 
-    if (param1->subStep == 0 || r5) {
-        if (param2->effErase) {
-            r4 = param2->effHalf - r8->y;
-            s32 r0 = ((r7 + r4) & ~7) - 8;
+    if (self->subStep == 0 || done) {
+        if (window->effErase) {
+            inset = window->effHalf - work->y;
+            s32 topOfs = ((subY + inset) & ~7) - 8;
 
-            if (r0 < 0) {
-                r0 += 8;
+            if (topOfs < 0) {
+                topOfs += 8;
             }
 
-            r0 *= param2->cols + 1;
-            r11 = (param2->cols + 1) * 64;
-            cpu_fill32(&param2->chars[r0], 0, r11);
+            topOfs *= window->cols + 1;
+            fillSize = (window->cols + 1) * 64;
+            cpu_fill32(&window->chars[topOfs], 0, fillSize);
 
-            u32 r0b;
+            u32 bottomOfs;
 
-            if (r7 != 0) {
-                r0b = (r7 + param2->rows * 8 - r4) & ~7;
+            if (subY != 0) {
+                bottomOfs = (subY + window->rows * 8 - inset) & ~7;
 
-                if (r0b >= param2->rows * 8) {
-                    r0b -= 8;
+                if (bottomOfs >= window->rows * 8) {
+                    bottomOfs -= 8;
                 }
             } else {
-                r0b = (param2->rows * 8 + 8 - r4) & ~7;
+                bottomOfs = (window->rows * 8 + 8 - inset) & ~7;
 
-                if (r0b >= param2->rows * 8) {
-                    r11 /= 2;
+                if (bottomOfs >= window->rows * 8) {
+                    fillSize /= 2;
                 }
             }
 
-            r0b *= param2->cols + 1;
-            cpu_fill32(&param2->chars[r0b], 0, r11);
+            bottomOfs *= window->cols + 1;
+            cpu_fill32(&window->chars[bottomOfs], 0, fillSize);
         }
 
-        for (s32 r2 = r7; r2 < r8->y + r7; r2++) {
-            s32 r1i = r2 & 7;
-            r1i += (r2 >> 3) * r6;
+        for (s32 line = subY; line < work->y + subY; line++) {
+            s32 srcOfs = line & 7;
+            srcOfs += (line >> 3) * stride;
 
-            u32 * r1 = &param2->charsBack[r1i];
-            u32 r0 = r2 + (param2->effHalf - r8->y);
-            u32 * r11 = &param2->chars[(r0 / 8) * r6 + (r0 % 8)];
+            u32 * src = &window->charsBack[srcOfs];
+            u32 dstLine = line + (window->effHalf - work->y);
+            u32 * dst = &window->chars[(dstLine / 8) * stride + (dstLine % 8)];
 
-            for (s32 r0 = 0; r0 <= param2->cols * 8; r0 += 8) {
-                r11[r0] = r1[r0];
+            for (s32 i = 0; i <= window->cols * 8; i += 8) {
+                dst[i] = src[i];
             }
         }
 
-        for (s32 r0 = 0; r0 <= r8->y; r0++) {
-            u32 r3 = local00 + r7 - r0;
-            u32 * r3p = &param2->charsBack[(r3 / 8) * r6 + (r3 % 8)];
-            u32 r14 = r7 + (param2->effHalf - 1 + r8->y) - r0;
-            u32 * r4 = &param2->chars[(r14 / 8) * r6 + (r14 % 8)];
+        for (s32 n = 0; n <= work->y; n++) {
+            u32 srcLine = lastLine + subY - n;
+            u32 * src = &window->charsBack[(srcLine / 8) * stride + (srcLine % 8)];
+            u32 dstLine = subY + (window->effHalf - 1 + work->y) - n;
+            u32 * dst = &window->chars[(dstLine / 8) * stride + (dstLine % 8)];
 
-            for (s32 r11 = 0; r11 <= param2->cols * 8; r11 += 8) {
-                r4[r11] = r3p[r11];
+            for (s32 i = 0; i <= window->cols * 8; i += 8) {
+                dst[i] = src[i];
             }
         }
 
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
     }
 
-    if (!param2->effErase) {
-        r8->y += 2;
+    if (!window->effErase) {
+        work->y += 2;
     } else {
-        r8->y -= 2;
+        work->y -= 2;
     }
 
-    return r5;
+    return done;
 }
 
 // MATCHED 100%
-void clMesWinEff::startSplitH(MesWinSlot * param1) {
-    MesEffWork * r4 = &this->effWork[(u16)param1->slot * 12];
-    cpu_fill32(r4, 0, 12 * sizeof(MesEffWork));
+void clMesWinEff::startSplitH(MesWinSlot * window) {
+    MesEffWork * work = &this->effWork[(u16)window->slot * 12];
+    cpu_fill32(work, 0, 12 * sizeof(MesEffWork));
 
-    param1->effHalf = (param1->params.width + 1) * 8 / 2;
-    param1->effErase = 0;
+    window->effHalf = (window->params.width + 1) * 8 / 2;
+    window->effErase = 0;
 
-    if (param1->effState == 2) {
-        param1->effErase = 1;
+    if (window->effState == 2) {
+        window->effErase = 1;
 
-        r4->x = param1->effHalf;
+        work->x = window->effHalf;
     }
 
-    param1->effStep = stepSplitH;
+    window->effStep = stepSplitH;
 }
 
 // MATCHED 100%
-BOOL stepSplitH(clMesWinEff * param1, MesWinSlot * param2) {
-    BOOL local24;
-    BOOL local20;
-    s32 local1c;
-    s32 local18;
-    u32 * r10;
-    u32 * r9;
-    u32 r0;
-    u32 r6;
-    s32 r7;
-    u32 r1m;
+BOOL stepSplitH(clMesWinEff * self, MesWinSlot * window) {
+    BOOL done;
+    BOOL shiftNeg;
+    s32 rowShl;
+    s32 rowShr;
+    u32 * src;
+    u32 * dst;
+    u32 stride;
+    u32 leftOfs;
+    s32 leftSrc;
+    u32 maskAlt;
 
-    MesEffWork * local14 =&param1->effWork[(u16)param2->slot * 12];
-    local24 = FALSE;
+    MesEffWork * work =&self->effWork[(u16)window->slot * 12];
+    done = FALSE;
 
-    if (!param2->effErase) {
-        if (local14->x + 2 > param2->effHalf) {
-            local24 = TRUE;
+    if (!window->effErase) {
+        if (work->x + 2 > window->effHalf) {
+            done = TRUE;
         }
     } else {
-        if (local14->x - 2 < 0) {
-            local24 = TRUE;
+        if (work->x - 2 < 0) {
+            done = TRUE;
         }
     }
 
-    if (param1->subStep == 0 || local24) {
-        cpu_fill32(param2->chars, 0, param2->charSize);
+    if (self->subStep == 0 || done) {
+        cpu_fill32(window->chars, 0, window->charSize);
 
-        r0 = (param2->cols + 1) * 8;
+        stride = (window->cols + 1) * 8;
     
-        u8 local10 = param2->effHalf & 7;
-        u8 local0c = param2->params.x & 7;
+        u8 subHalf = window->effHalf & 7;
+        u8 subX = window->params.x & 7;
 
-        r6 = (local10 + (param2->effHalf - local14->x)) & ~7;
-        if ((local14->x & 7) == 0) {
-            r6 -= 8;
+        leftOfs = (subHalf + (window->effHalf - work->x)) & ~7;
+        if ((work->x & 7) == 0) {
+            leftOfs -= 8;
         }
 
-        s8 r2 = (7 - (local14->x & 7) - (local10 - 1)) * 4;
-        if (r2 >= 0) {
-            local20 = FALSE;
+        s8 shift = (7 - (work->x & 7) - (subHalf - 1)) * 4;
+        if (shift >= 0) {
+            shiftNeg = FALSE;
         } else {
-            r2 *= -1;
-            local20 = TRUE;
+            shift *= -1;
+            shiftNeg = TRUE;
         }
 
-        s8 r1 = 32 - r2;
-        s32 r14 = (local14->x & ~7) + local0c - local10;
+        s8 carryShift = 32 - shift;
+        s32 srcEnd = (work->x & ~7) + subX - subHalf;
 
-        if (local20) {
-            for (r7 = 0; r7 < r14; r7 += 8) {
-                r9 = &param2->chars[r6];
-                r10 = &param2->charsBack[r7];
+        if (shiftNeg) {
+            for (leftSrc = 0; leftSrc < srcEnd; leftSrc += 8) {
+                dst = &window->chars[leftOfs];
+                src = &window->charsBack[leftSrc];
 
-                for (s32 r8 = param2->rows; r8 >= 0; r8--) {
-                    r9[0] += (r10[0] >> r2);
-                    r9[1] += (r10[1] >> r2);
-                    r9[2] += (r10[2] >> r2);
-                    r9[3] += (r10[3] >> r2);
-                    r9[4] += (r10[4] >> r2);
-                    r9[5] += (r10[5] >> r2);
-                    r9[6] += (r10[6] >> r2);
-                    r9[7] += (r10[7] >> r2);
+                for (s32 row = window->rows; row >= 0; row--) {
+                    dst[0] += (src[0] >> shift);
+                    dst[1] += (src[1] >> shift);
+                    dst[2] += (src[2] >> shift);
+                    dst[3] += (src[3] >> shift);
+                    dst[4] += (src[4] >> shift);
+                    dst[5] += (src[5] >> shift);
+                    dst[6] += (src[6] >> shift);
+                    dst[7] += (src[7] >> shift);
 
-                    r9[0] += (r10[8] << r1);
-                    r9[1] += (r10[9] << r1);
-                    r9[2] += (r10[10] << r1);
-                    r9[3] += (r10[11] << r1);
-                    r9[4] += (r10[12] << r1);
-                    r9[5] += (r10[13] << r1);
-                    r9[6] += (r10[14] << r1);
-                    r9[7] += (r10[15] << r1);
+                    dst[0] += (src[8] << carryShift);
+                    dst[1] += (src[9] << carryShift);
+                    dst[2] += (src[10] << carryShift);
+                    dst[3] += (src[11] << carryShift);
+                    dst[4] += (src[12] << carryShift);
+                    dst[5] += (src[13] << carryShift);
+                    dst[6] += (src[14] << carryShift);
+                    dst[7] += (src[15] << carryShift);
 
-                    r10 += r0;
-                    r9 += r0;
+                    src += stride;
+                    dst += stride;
                 }
 
-                r6 += 8;
+                leftOfs += 8;
             }
         } else {
-            for (r7 = 0; r7 < r14; r7 += 8) {
-                r9 = &param2->chars[r6];
-                r10 = &param2->charsBack[r7];
+            for (leftSrc = 0; leftSrc < srcEnd; leftSrc += 8) {
+                dst = &window->chars[leftOfs];
+                src = &window->charsBack[leftSrc];
 
-                for (s32 r3 = param2->rows; r3 >= 0; r3--) {
-                    r9[0] += (r10[0] << r2);
-                    r9[1] += (r10[1] << r2);
-                    r9[2] += (r10[2] << r2);
-                    r9[3] += (r10[3] << r2);
-                    r9[4] += (r10[4] << r2);
-                    r9[5] += (r10[5] << r2);
-                    r9[6] += (r10[6] << r2);
-                    r9[7] += (r10[7] << r2);
-                    r9[8] += (r10[0] >> r1);
-                    r9[9] += (r10[1] >> r1);
-                    r9[10] += (r10[2] >> r1);
-                    r9[11] += (r10[3] >> r1);
-                    r9[12] += (r10[4] >> r1);
-                    r9[13] += (r10[5] >> r1);
-                    r9[14] += (r10[6] >> r1);
-                    r9[15] += (r10[7] >> r1);
+                for (s32 row = window->rows; row >= 0; row--) {
+                    dst[0] += (src[0] << shift);
+                    dst[1] += (src[1] << shift);
+                    dst[2] += (src[2] << shift);
+                    dst[3] += (src[3] << shift);
+                    dst[4] += (src[4] << shift);
+                    dst[5] += (src[5] << shift);
+                    dst[6] += (src[6] << shift);
+                    dst[7] += (src[7] << shift);
+                    dst[8] += (src[0] >> carryShift);
+                    dst[9] += (src[1] >> carryShift);
+                    dst[10] += (src[2] >> carryShift);
+                    dst[11] += (src[3] >> carryShift);
+                    dst[12] += (src[4] >> carryShift);
+                    dst[13] += (src[5] >> carryShift);
+                    dst[14] += (src[6] >> carryShift);
+                    dst[15] += (src[7] >> carryShift);
 
-                    r10 += r0;
-                    r9 += r0;
+                    src += stride;
+                    dst += stride;
                 }
 
-                r6 += 8;
+                leftOfs += 8;
             }
         }
 
-        u32 r8;
-        if (local10 != 0) {
-            r8 = splitMaskLow[(local10 + param2->params.x - 1) & 7];
+        u32 mask;
+        if (subHalf != 0) {
+            mask = splitMaskLow[(subHalf + window->params.x - 1) & 7];
         } else {
-            r8 = splitMaskLow[local0c];
-            if (r8 == 0) {
-                r8 = 0xffffffff;
+            mask = splitMaskLow[subX];
+            if (mask == 0) {
+                mask = 0xffffffff;
             }
         }
 
-        r9 = &param2->chars[r6];
-        r10 = &param2->charsBack[r7];
+        dst = &window->chars[leftOfs];
+        src = &window->charsBack[leftSrc];
 
-        if (local20) {
-            for (s32 r6 = param2->rows; r6 >= 0; r6--) {
-                for (s32 r7 = 7; r7 >= 0; r7--) {
-                    r9[r7] = r8 & (r9[r7] + (r10[r7] >> r2) + (r10[r7+8] << r1));
+        if (shiftNeg) {
+            for (s32 row = window->rows; row >= 0; row--) {
+                for (s32 i = 7; i >= 0; i--) {
+                    dst[i] = mask & (dst[i] + (src[i] >> shift) + (src[i+8] << carryShift));
                 }
 
-                r10 += r0;
-                r9 += r0;
+                src += stride;
+                dst += stride;
             }
         } else {
-            for (s32 r6 = param2->rows; r6 >= 0; r6--) {
-                for (s32 r7 = 7; r7 >= 0; r7--) {
-                    r9[r7] = r8 & (r9[r7] + (r10[r7] << r2));
+            for (s32 row = window->rows; row >= 0; row--) {
+                for (s32 i = 7; i >= 0; i--) {
+                    dst[i] = mask & (dst[i] + (src[i] << shift));
                 }
 
-                r10 += r0;
-                r9 += r0;
+                src += stride;
+                dst += stride;
             }
         }
 
-        u32 r2b = ((param2->effHalf + local14->x) - local10) & ~7;
-        if (local0c != 0) {
-            r2b += 8;
+        u32 rightOfs = ((window->effHalf + work->x) - subHalf) & ~7;
+        if (subX != 0) {
+            rightOfs += 8;
         }
 
-        r2 = (8 - (local14->x & 7) - local10) * 4;
-        if (r2 >= 0) {
-            local20 = FALSE;
+        shift = (8 - (work->x & 7) - subHalf) * 4;
+        if (shift >= 0) {
+            shiftNeg = FALSE;
         } else {
-            r2 *= -1;
-            local20 = TRUE;
+            shift *= -1;
+            shiftNeg = TRUE;
         }
 
-        s32 r11 = 0;
-        r1 = 32 - r2;
+        s32 rightSrc = 0;
+        carryShift = 32 - shift;
 
-        r14 = (local14->x & ~7) + local0c;
-        if (local10 != 0 || local0c != 0) {
-            r14 -= 8;
+        srcEnd = (work->x & ~7) + subX;
+        if (subHalf != 0 || subX != 0) {
+            srcEnd -= 8;
         }
 
-        if (local20) {
-            while (r11 < r14) {
-                r9 = &param2->chars[r2b];
-                r10 = &param2->charsBack[param2->cols * 8] - r11;
+        if (shiftNeg) {
+            while (rightSrc < srcEnd) {
+                dst = &window->chars[rightOfs];
+                src = &window->charsBack[window->cols * 8] - rightSrc;
 
-                for (s32 r1i = param2->rows; r1i >= 0; r1i--) {
-                    r9[0] += (r10[0] << r2);
-                    r9[1] += (r10[1] << r2);
-                    r9[2] += (r10[2] << r2);
-                    r9[3] += (r10[3] << r2);
-                    r9[4] += (r10[4] << r2);
-                    r9[5] += (r10[5] << r2);
-                    r9[6] += (r10[6] << r2);
-                    r9[7] += (r10[7] << r2);
-                    r9[8] += (r10[0] >> r1);
-                    r9[9] += (r10[1] >> r1);
-                    r9[10] += (r10[2] >> r1);
-                    r9[11] += (r10[3] >> r1);
-                    r9[12] += (r10[4] >> r1);
-                    r9[13] += (r10[5] >> r1);
-                    r9[14] += (r10[6] >> r1);
-                    r9[15] += (r10[7] >> r1);
+                for (s32 row = window->rows; row >= 0; row--) {
+                    dst[0] += (src[0] << shift);
+                    dst[1] += (src[1] << shift);
+                    dst[2] += (src[2] << shift);
+                    dst[3] += (src[3] << shift);
+                    dst[4] += (src[4] << shift);
+                    dst[5] += (src[5] << shift);
+                    dst[6] += (src[6] << shift);
+                    dst[7] += (src[7] << shift);
+                    dst[8] += (src[0] >> carryShift);
+                    dst[9] += (src[1] >> carryShift);
+                    dst[10] += (src[2] >> carryShift);
+                    dst[11] += (src[3] >> carryShift);
+                    dst[12] += (src[4] >> carryShift);
+                    dst[13] += (src[5] >> carryShift);
+                    dst[14] += (src[6] >> carryShift);
+                    dst[15] += (src[7] >> carryShift);
 
-                    r10 += r0;
-                    r9 += r0;
+                    src += stride;
+                    dst += stride;
                 }
 
-                r2b -= 8;
-                r11 += 8;
+                rightOfs -= 8;
+                rightSrc += 8;
             }
         } else {
-            while (r11 < r14) {
-                r9 = &param2->chars[r2b];
-                r10 = &param2->charsBack[param2->cols * 8] - r11;
+            while (rightSrc < srcEnd) {
+                dst = &window->chars[rightOfs];
+                src = &window->charsBack[window->cols * 8] - rightSrc;
 
-                for (s32 r1i = param2->rows; r1i >= 0; r1i--) {
-                    r9[0] = r9[0] + (r10[0] >> r2);
-                    r9[1] = r9[1] + (r10[1] >> r2);
-                    r9[2] = r9[2] + (r10[2] >> r2);
-                    r9[3] = r9[3] + (r10[3] >> r2);
-                    r9[4] = r9[4] + (r10[4] >> r2);
-                    r9[5] = r9[5] + (r10[5] >> r2);
-                    r9[6] = r9[6] + (r10[6] >> r2);
-                    r9[7] = r9[7] + (r10[7] >> r2);
-                    r9[-8] = r9[-8] + (r10[0] << r1);
-                    r9[-7] = r9[-7] + (r10[1] << r1);
-                    r9[-6] = r9[-6] + (r10[2] << r1);
-                    r9[-5] = r9[-5] + (r10[3] << r1);
-                    r9[-4] = r9[-4] + (r10[4] << r1);
-                    r9[-3] = r9[-3] + (r10[5] << r1);
-                    r9[-2] = r9[-2] + (r10[6] << r1);
-                    r9[-1] = r9[-1] + (r10[7] << r1);
-                    r10 += r0;
-                    r9 += r0;
+                for (s32 row = window->rows; row >= 0; row--) {
+                    dst[0] = dst[0] + (src[0] >> shift);
+                    dst[1] = dst[1] + (src[1] >> shift);
+                    dst[2] = dst[2] + (src[2] >> shift);
+                    dst[3] = dst[3] + (src[3] >> shift);
+                    dst[4] = dst[4] + (src[4] >> shift);
+                    dst[5] = dst[5] + (src[5] >> shift);
+                    dst[6] = dst[6] + (src[6] >> shift);
+                    dst[7] = dst[7] + (src[7] >> shift);
+                    dst[-8] = dst[-8] + (src[0] << carryShift);
+                    dst[-7] = dst[-7] + (src[1] << carryShift);
+                    dst[-6] = dst[-6] + (src[2] << carryShift);
+                    dst[-5] = dst[-5] + (src[3] << carryShift);
+                    dst[-4] = dst[-4] + (src[4] << carryShift);
+                    dst[-3] = dst[-3] + (src[5] << carryShift);
+                    dst[-2] = dst[-2] + (src[6] << carryShift);
+                    dst[-1] = dst[-1] + (src[7] << carryShift);
+                    src += stride;
+                    dst += stride;
                 }
 
-                r2b -= 8;
-                r11 += 8;
+                rightOfs -= 8;
+                rightSrc += 8;
             }
         }
 
 
-        if (local10 != 0) {
-            u32 r7i = (param2->params.x & 0xF) + (local10 - 1);
-            r8 = splitMaskHigh[r7i];
-            r1m = splitMaskHighAlt[r7i];
+        if (subHalf != 0) {
+            u32 maskIdx = (window->params.x & 0xF) + (subHalf - 1);
+            mask = splitMaskHigh[maskIdx];
+            maskAlt = splitMaskHighAlt[maskIdx];
         } else {
-            r8 = splitMaskHigh[local0c];
-            r1m = 0xFFFFFFFF;
+            mask = splitMaskHigh[subX];
+            maskAlt = 0xFFFFFFFF;
         }
 
-        if (r14 + 8 > 0 && (local10 != 0 || local0c != 0)) {
-            r10 = &param2->charsBack[param2->cols * 8] - r11;
-            r9 = &param2->chars[r2b];
+        if (srcEnd + 8 > 0 && (subHalf != 0 || subX != 0)) {
+            src = &window->charsBack[window->cols * 8] - rightSrc;
+            dst = &window->chars[rightOfs];
 
-            if (local20) {
-                for (local1c = param2->rows; local1c >= 0; local1c--) {
-                    for (s32 r9i = 7; r9i >= 0; r9i--) {
-                        r9[r9i] = r9[r9i] + (r1m & (r10[r9i] << r2));
-                        r9[r9i + 8] = r9[r9i + 8] + (r10[r9i] >> r1);
+            if (shiftNeg) {
+                for (rowShl = window->rows; rowShl >= 0; rowShl--) {
+                    for (s32 i = 7; i >= 0; i--) {
+                        dst[i] = dst[i] + (maskAlt & (src[i] << shift));
+                        dst[i + 8] = dst[i + 8] + (src[i] >> carryShift);
                     }
 
-                    r10 += r0;
-                    r9 += r0;
+                    src += stride;
+                    dst += stride;
                 }
             } else {
-                for (local18 = param2->rows; local18 >= 0; local18--) {
-                    for (s32 r9i = 7; r9i >= 0; r9i--) {
-                        r9[r9i] = r9[r9i] + (r1m & (r10[r9i] >> r2));
-                        r9[r9i - 8] = r9[r9i - 8] + (r8 & (r10[r9i] << r1));
+                for (rowShr = window->rows; rowShr >= 0; rowShr--) {
+                    for (s32 i = 7; i >= 0; i--) {
+                        dst[i] = dst[i] + (maskAlt & (src[i] >> shift));
+                        dst[i - 8] = dst[i - 8] + (mask & (src[i] << carryShift));
                     }
 
-                    r10 += r0;
-                    r9 += r0;
+                    src += stride;
+                    dst += stride;
                 }
             }
 
-            r2b -= 8;
-            r11 += 8;
+            rightOfs -= 8;
+            rightSrc += 8;
         }
 
-        r9 = &param2->chars[r2b];
-        r10 = &param2->charsBack[param2->cols * 8] - r11;
-        if (local20) {
-            for (s32 r7 = param2->rows; r7 >= 0; r7--) {
-                for (s32 r8i = 7; r8i >= 0; r8i--) {
-                    r9[r8i] = r9[r8i] + (r8 & (r10[r8i] << r2));
-                    r9[r8i + 8] = r9[r8i + 8] + (r1m & (r10[r8i] >> r1));
+        dst = &window->chars[rightOfs];
+        src = &window->charsBack[window->cols * 8] - rightSrc;
+        if (shiftNeg) {
+            for (s32 row = window->rows; row >= 0; row--) {
+                for (s32 i = 7; i >= 0; i--) {
+                    dst[i] = dst[i] + (mask & (src[i] << shift));
+                    dst[i + 8] = dst[i + 8] + (maskAlt & (src[i] >> carryShift));
                 }
 
-                r10 += r0;
-                r9 += r0;
+                src += stride;
+                dst += stride;
             }
         } else {
-            for (s32 r7 = param2->rows; r7 >= 0; r7--) {
-                for (s32 r8i = 7; r8i >= 0; r8i--) {
-                    r9[r8i] = r9[r8i] + (r8 & (r10[r8i] >> r2));
+            for (s32 row = window->rows; row >= 0; row--) {
+                for (s32 i = 7; i >= 0; i--) {
+                    dst[i] = dst[i] + (mask & (src[i] >> shift));
                 }
 
-                r10 += r0;
-                r9 += r0;
+                src += stride;
+                dst += stride;
             }
         }
 
-        param1->windows[(s16)param2->slot].dirty = 1;
-        param1->charsDirty = 1;
+        self->windows[(s16)window->slot].dirty = 1;
+        self->charsDirty = 1;
     }
 
-    if (!param2->effErase) {
-        local14->x += 2;
+    if (!window->effErase) {
+        work->x += 2;
     } else {
-        local14->x -= 2;
+        work->x -= 2;
     }
 
-    return local24;
+    return done;
 }
 
 // MATCHED 100%
-void clMesWinEff::drawFrame(MesWinSlot * param1, BOOL param2) {
-    if (param1->params.style != 0) {
-        switch (param1->params.mode) {
+void clMesWinEff::drawFrame(MesWinSlot * window, BOOL flush) {
+    if (window->params.style != 0) {
+        switch (window->params.mode) {
             case 0: {
-                if ((param1->params.x & 7) || (param1->params.y & 7)) {
-                    this->drawFrameBGShifted(param1, param1->charsBack);
+                if ((window->params.x & 7) || (window->params.y & 7)) {
+                    this->drawFrameBGShifted(window, window->charsBack);
                 } else {
-                    this->drawFrameBG(param1, param1->charsBack);
+                    this->drawFrameBG(window, window->charsBack);
                 }
                 break;
             }
             case 1: {
-                this->drawFrameTex(param1, param1->charsBack);
+                this->drawFrameTex(window, window->charsBack);
                 break;
             }
         }
@@ -1527,12 +1527,12 @@ void clMesWinEff::drawFrame(MesWinSlot * param1, BOOL param2) {
 }
 
 // MATCHED 100%
-void clMesWinEff::close(s16 param1) {
-    this->windows[param1].effCloseReq = 1;
+void clMesWinEff::close(s16 idx) {
+    this->windows[idx].effCloseReq = 1;
 }
 
 // MATCHED 100%
-void clMesWinEff::open(MesWinParams * param1, s16 param2) {
-    this->createEff(param1, param2);
+void clMesWinEff::open(MesWinParams * params, s16 idx) {
+    this->createEff(params, idx);
 }
 
