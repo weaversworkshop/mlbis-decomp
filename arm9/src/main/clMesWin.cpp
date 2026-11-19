@@ -47,10 +47,10 @@ void clMesWin::update() {
     }
 
     if (this->screenMask & 4) {
-        MesWinSlot * window = this->listMain.next;
+        MesWinSlot * window = this->listMainNext;
         u32 depth = this->baseDepth + this->winCountMain * 2 - 1;
 
-        while (window->link.next != (MesWinSlot *)-1) {
+        while (window->next != (MesWinSlot *)-1) {
             window->depth = depth;
 
             if (window->cursor.active) {
@@ -61,13 +61,13 @@ void clMesWin::update() {
                 window->tail.depth = depth-1;
             }
 
-            window = window->link.next;
+            window = window->next;
             depth -= 2;
         }
     }
 
-    this->updateList(this->listMain.next);
-    this->updateList(this->listSub.next);
+    this->updateList(this->listMainNext);
+    this->updateList(this->listSubNext);
 
     this->icons->update();
 
@@ -144,7 +144,7 @@ void clMesWin::initParams(MesWinParams * params) {
     params->text = NULL;
     params->result = NULL;
 
-    params->field24 = 0;
+    params->effectWord = 0;
 
     params->fixedSize = 0;
 
@@ -461,15 +461,15 @@ clMesWin::clMesWin(u32 screenMask, u32 bgMain, u32 bgSub, u8 priorityMain, u8 pr
     this->plttMain = 0xf;
     this->plttSub = 0xf;
 
-    this->listMain.prev = (MesWinSlot *)0x11111111;
-    this->listMain.next = (MesWinSlot *)&this->listMainEnd;
-    this->listMainEnd.prev = (MesWinSlot *)&this->listMain;
-    this->listMainEnd.next = (MesWinSlot *)-1;
+    this->listMainPrev = (MesWinSlot *)0x11111111;
+    this->listMainNext = (MesWinSlot *)&this->listMainEndPrev;
+    this->listMainEndPrev = (MesWinSlot *)&this->listMainPrev;
+    this->listMainEndNext = (MesWinSlot *)-1;
 
-    this->listSub.prev = (MesWinSlot *)0x11111111;
-    this->listSub.next = (MesWinSlot *)&this->listSubEnd;
-    this->listSubEnd.prev = (MesWinSlot *)&this->listSub;
-    this->listSubEnd.next = (MesWinSlot *)-1;
+    this->listSubPrev = (MesWinSlot *)0x11111111;
+    this->listSubNext = (MesWinSlot *)&this->listSubEndPrev;
+    this->listSubEndPrev = (MesWinSlot *)&this->listSubPrev;
+    this->listSubEndNext = (MesWinSlot *)-1;
 
     MI_CpuFill8(this->textCallbacks, 0, sizeof(this->textCallbacks));
 
@@ -550,7 +550,7 @@ inline void clMesWin::updateWindow(MesWinSlot * window) {
 
 // MATCHED 100%
 void clMesWin::updateList(MesWinSlot * window) {
-    while (window->link.next != (MesWinSlot *)-1) {
+    while (window->next != (MesWinSlot *)-1) {
         this->curSlot = window->slot;
 
         if (window->copyPending) {
@@ -578,7 +578,7 @@ void clMesWin::updateList(MesWinSlot * window) {
             DC_FlushRange(window->chars, window->charSize);
         }
 
-        window = window->link.next;
+        window = window->next;
     }
 }
 
@@ -729,8 +729,8 @@ void clMesWin::advanceText(MesWinSlot * window) {
             if (window->cursor.active) {
                 window->cursor.active = 0;
 
-                window->cursor.link.prev->link.next = window->cursor.link.next;
-                window->cursor.link.next->link.prev = window->cursor.link.prev;
+                window->cursor.prev->next = window->cursor.next;
+                window->cursor.next->prev = window->cursor.prev;
             }
 
             window->promptMode = 0;
@@ -1375,18 +1375,18 @@ bool clMesWin::destroy(s16 idx) {
 
     if (window->cursor.active) {
         window->cursor.active = 0;
-        window->cursor.link.prev->link.next = window->cursor.link.next;
-        window->cursor.link.next->link.prev = window->cursor.link.prev;
+        window->cursor.prev->next = window->cursor.next;
+        window->cursor.next->prev = window->cursor.prev;
     }
 
     if (window->tail.active) {
         window->tail.active = 0;
-        window->tail.link.prev->link.next = window->tail.link.next;
-        window->tail.link.next->link.prev = window->tail.link.prev;
+        window->tail.prev->next = window->tail.next;
+        window->tail.next->prev = window->tail.prev;
     }
 
-    window->link.prev->link.next = window->link.next;
-    window->link.next->link.prev = window->link.prev;
+    window->prev->next = window->next;
+    window->next->prev = window->prev;
 
     if (window->params.screen == 0) {
         this->winCountMain--;
@@ -1406,21 +1406,21 @@ void clMesWin::rebuildScreen(u8 screen) {
             cpu_fill32(this->screenMain, 0, 0x780);
         }
 
-        window = this->listMain.next;
+        window = this->listMainNext;
     } else {
         if (this->screenSub != NULL) {
             cpu_fill32(this->screenSub, 0, 0x780);
         }
 
-        window = this->listSub.next;
+        window = this->listSubNext;
     }
 
-    while (window->link.next != (MesWinSlot *)-1) {
+    while (window->next != (MesWinSlot *)-1) {
         if (window->params.mode == 0) {
             this->writeScreen(window);
         }
 
-        window = window->link.next;
+        window = window->next;
     }
 
     if (screen == 0) {
@@ -1439,18 +1439,18 @@ MesWinSlot * clMesWin::allocWindow(u8 screen, u32 size, s16 idx) {
     u32 poolSize;
     if (screen == 0) {
         pool = this->charPoolMain;
-        head = this->listMain.next;
+        head = this->listMainNext;
         poolSize = this->charPoolSizeMain;
     } else {
         pool = this->charPoolSub;
-        head = this->listSub.next;
+        head = this->listSubNext;
         poolSize = this->charPoolSizeSub;
     }
 
     MesWinSlot * cur = head;
     u8 * ptr = pool;
     do {
-        MesWinSlot * next = cur->link.next;
+        MesWinSlot * next = cur->next;
         if (next == (MesWinSlot *)-1) {
             if (pool + poolSize - ptr >= size) {
                 found = TRUE;
@@ -1499,7 +1499,7 @@ MesWinSlot * clMesWin::allocWindow(u8 screen, u32 size, s16 idx) {
     }
 
     u32 * chars;
-    MesWinSlot * next = head->link.next;
+    MesWinSlot * next = head->next;
     if (next != (MesWinSlot *)-1) {
         chars = window->chars;
         do {
@@ -1507,14 +1507,14 @@ MesWinSlot * clMesWin::allocWindow(u8 screen, u32 size, s16 idx) {
                 break;
             }
             head = next;
-            next = next->link.next;
+            next = next->next;
         } while (next != (MesWinSlot *)-1);
     }
 
-    window->link.prev = head->link.prev;
-    window->link.next = head->link.prev->link.next;
-    head->link.prev->link.next = window;
-    head->link.prev = window;
+    window->prev = head->prev;
+    window->next = head->prev->next;
+    head->prev->next = window;
+    head->prev = window;
 
     if (screen == 0) {
         this->winCountMain++;
@@ -2275,20 +2275,20 @@ void clMesWin::loadScreenSub() {
 void clMesWin::loadChars() {
     this->charsDirty = 0;
 
-    MesWinSlot  * window = this->listMain.next;
+    MesWinSlot  * window = this->listMainNext;
 
     if (window->params.mode == 0) {
-        while (window->link.next != (MesWinSlot *)-1) {
+        while (window->next != (MesWinSlot *)-1) {
             if (window->dirty) {
                 window->dirty = 0;
 
                 this->loadWinChars(window);
             }
 
-            window = window->link.next;
+            window = window->next;
         }
     } else {
-        while (window->link.next != (MesWinSlot *)-1) {
+        while (window->next != (MesWinSlot *)-1) {
             if (window->dirty) {
                 window->dirty = 0;
 
@@ -2297,24 +2297,24 @@ void clMesWin::loadChars() {
                 GX_EndLoadTex();
             }
 
-            window = window->link.next;
+            window = window->next;
         }
     }
 
-    window = this->listSub.next;
+    window = this->listSubNext;
 
     if (window->params.mode == 0) {
-        while (window->link.next != (MesWinSlot *)-1) {
+        while (window->next != (MesWinSlot *)-1) {
             if (window->dirty) {
                 window->dirty = 0;
 
                 this->loadWinChars(window);
             }
 
-            window = window->link.next;
+            window = window->next;
         }
     } else {
-        while (window->link.next != (MesWinSlot *)-1) {
+        while (window->next != (MesWinSlot *)-1) {
             if (window->dirty) {
                 window->dirty = 0;
 
@@ -2323,7 +2323,7 @@ void clMesWin::loadChars() {
                 GX_EndLoadTex();
             }
 
-            window = window->link.next;
+            window = window->next;
         }
     }
 }
@@ -2840,8 +2840,8 @@ void clMesWin::measureString(UnkStruct_0200b8bc * text, MesNumStr * num) {
 
 // MATCHED 100%
 void clMesIcon::update() {
-    MesIcon * icon = this->list.next;
-    while (icon->link.next != (MesIcon *)-1) {
+    MesIcon * icon = this->listNext;
+    while (icon->next != (MesIcon *)-1) {
         if (icon->hidden == 0) {
             if (--icon->timer == 0) {
                 YanaResAnim * anims = (YanaResAnim *)RES_PTR(MES_ICON_RES, MES_ICON_RES->animOffset);
@@ -2872,7 +2872,7 @@ void clMesIcon::update() {
             }
         }
 
-        icon = icon->link.next;
+        icon = icon->next;
     }
 }
 
@@ -3107,10 +3107,10 @@ void clMesIcon::add(MesIcon * icon, u8 screen, s8 anim, u16 x, u16 y, u8 flip, u
     icon->timer = delay;
     icon->depth = depth;
 
-    this->listEnd.prev->link.next = icon;
-    icon->link.prev = this->listEnd.prev;
-    icon->link.next = (MesIcon *)&this->listEnd;
-    this->listEnd.prev = icon;
+    this->listEndPrev->next = icon;
+    icon->prev = this->listEndPrev;
+    icon->next = (MesIcon *)&this->listEndPrev;
+    this->listEndPrev = icon;
 }
 
 // MATCHED 100%
@@ -3177,10 +3177,10 @@ clMesIcon::clMesIcon(BOOL useTex) {
     this->tileRes[0] = NULL;
     this->tileRes[1] = NULL;
 
-    this->list.prev = (MesIcon *)0x11111111;
-    this->list.next = (MesIcon *)&this->listEnd;
-    this->listEnd.prev = (MesIcon *)&this->list;
-    this->listEnd.next = (MesIcon *)-1;
+    this->listPrev = (MesIcon *)0x11111111;
+    this->listNext = (MesIcon *)&this->listEndPrev;
+    this->listEndPrev = (MesIcon *)&this->listPrev;
+    this->listEndNext = (MesIcon *)-1;
 
     this->scale = 1;
 

@@ -9,9 +9,9 @@ from:0x02063c20 kind:arm_call to:0x02010930 module:main
 from:0x02063c60 kind:arm_call to:0x0201008c module:main
 from:0x02063c78 kind:arm_call to:0x02063ea0 module:overlay(0)
 from:0x02063cac kind:arm_call to:0x0200e370 module:main
-from:0x02063cc4 kind:load to:0x0206975c module:overlay(0)
+from:0x02063cc4 kind:load to:0x02069754 add:0x8 module:overlay(0)
 from:0x02063cf0 kind:arm_call to:0x0200e370 module:main
-from:0x02063d08 kind:load to:0x0206975c module:overlay(0)
+from:0x02063d08 kind:load to:0x02069754 add:0x8 module:overlay(0)
 from:0x02063d88 kind:arm_call to:0x01ff8380 module:itcm
 from:0x02063d90 kind:arm_call to:0x01ff82ac module:itcm
 from:0x02063de8 kind:arm_call to:0x0200fa40 module:main

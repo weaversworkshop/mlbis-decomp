@@ -567,7 +567,7 @@ from:0x020e7c2c kind:arm_call to:0x020a4668 module:overlays(4,15)
 from:0x020e7c38 kind:load to:0x02064f08 module:overlay(8)
 from:0x020e7d08 kind:load to:0x02055fe4 add:0x500 module:main
 from:0x020e7d10 kind:load to:0x02064f08 module:overlay(8)
-from:0x020e7d14 kind:load to:0x02067770 module:overlays(0,11)
+from:0x020e7d14 kind:load to:0x02067770 module:overlay(11)
 from:0x020e7d98 kind:arm_call to:0x020acec4 module:overlay(16)
 from:0x020e7dc8 kind:arm_call to:0x020eb574 module:overlay(121)
 from:0x020e7e08 kind:arm_call to:0x02066c28 module:overlay(11)

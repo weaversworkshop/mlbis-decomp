@@ -5,6 +5,8 @@
 #include "main/clMesWin.h"
 #include "main/mesWinUtil.h"
 
+#include "ov000/clMesWinEff.h"
+
 extern "C" {
 
 #include "main/uiUtil.h"
@@ -15,10 +17,6 @@ extern "C" {
 #define MESWIN_MIN_Y 1
 #define MESWIN_MAX_X 2
 #define MESWIN_MAX_Y 3
-
-// --- Extern Functions --- //
-
-extern void func_ov000_02063ba8(clMesWin *, MesWinParams *, s16);
 
 // --- Variable Definitions --- //
 
@@ -38,7 +36,7 @@ u32 getTextLineCount(u32 *, u32);  // 0x020152c4
 u32 getTextColCount(u32 *, u32);  // 0x020152d8
 void calcMesWinPlacement(clMesWin *, MesWinRequest *, s16 *, s16 *, MesWinPlacement *);  // 0x020152ec
 void openMesWin(clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, UnkStruct_0200b8bc_10 **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015d04
-void openMesWinEx(clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, s16, u8, UnkStruct_0200b8bc_10 **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015dd0
+void openMesWinEff(clMesWinEff *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, s16, u8, UnkStruct_0200b8bc_10 **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015dd0
 
 } // extern "C"
 
@@ -458,12 +456,12 @@ void openMesWin(clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tail
 }
 
 // MATCHED 100%
-void openMesWinEx(clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, s16 field24_0, u8 field24_7, UnkStruct_0200b8bc_10 ** font, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
+void openMesWinEff(clMesWinEff * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, s16 field24_0, u8 field24_7, UnkStruct_0200b8bc_10 ** font, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
     MesWinParams params;
     buildMesWinParams(&params, window, screen, x, y, style, tailKind, tailAlt, tailUp, tailFlipH, tailX, width, height, persistent, voice, 0, font, text, textId, numbers, result, indent);
 
-    params.field24_0 = field24_0;
-    params.field24_7 = field24_7;
+    params.effect = field24_0;
+    params.effectFast = field24_7;
 
-    func_ov000_02063ba8(window, &params, slot);
+    window->createEff(&params, slot);
 }

@@ -15,14 +15,12 @@ extern "C" {
     #include "main/unk_tu_0200b8bc.h"
 }
 
-template <typename T>
-struct ListLink {
-    T * prev;
-    T * next;
-};
+class clMesWin;
+class clMesWinEff;
 
 typedef struct MesIcon {
-    ListLink<MesIcon> link;  // +0x0
+    MesIcon * prev;  // +0x0
+    MesIcon * next;  // +0x4
     struct {
         u32 screen : 1;  // +0x8
         u32 x : 9;
@@ -76,10 +74,10 @@ typedef struct {
     s16 voiceX;  // +0x20
     u8 pad_22[0x2];
     union {
-        u32 field24;
+        u32 effectWord;  // +0x24
         struct {
-            u32 field24_0 : 7;  // +0x24
-            u32 field24_7 : 1;
+            u32 effect : 7;  // +0x24
+            u32 effectFast : 1;
             u32 : 24;
         };
     };
@@ -113,7 +111,8 @@ typedef struct {
 } MesFrameEntry;
 
 typedef struct MesWinSlot {
-    ListLink<MesWinSlot> link;  // +0x0
+    MesWinSlot * prev;  // +0x0
+    MesWinSlot * next;  // +0x4
     MesWinParams params;  // +0x8
     UnkStruct_0200b8bc text;  // +0x30
     MesNumStr nums[4];  // +0x60
@@ -164,7 +163,24 @@ typedef struct MesWinSlot {
         u32 lineWidth : 16;
     };
     SndEmitter voice;  // +0x100
-    u8 pad_146[0xc];
+    BOOL (*effStep)(clMesWinEff *, MesWinSlot *);  // +0x148
+    const void * effData;  // +0x14c
+    struct {
+        u8 effLen : 7;  // +0x150
+        u8 effCloseReq : 1;
+    };
+    struct {
+        u8 effState : 6;  // +0x151
+        u8 effMet : 1;
+        u8 effErase : 1;
+    };
+    union {
+        s16 effHalf;  // +0x152
+        struct {
+            s8 effMeetCol;  // +0x152
+            s8 effMeetRow;  // +0x153
+        };
+    };
 } MesWinSlot;
 
 typedef struct {
@@ -190,8 +206,10 @@ public:
     u32 charBase[2];  // +0x44  unclear boundary
     u8 pad_4c[0x8];
     BOOL useTex;  // +0x54
-    ListLink<MesIcon> list;  // +0x58
-    ListLink<MesIcon> listEnd;  // +0x60
+    MesIcon * listPrev;  // +0x58
+    MesIcon * listNext;  // +0x5c
+    MesIcon * listEndPrev;  // +0x60
+    MesIcon * listEndNext;  // +0x64
 
     clMesIcon(BOOL);  // C1 0x0201465c C2 0x0201470c
     ~clMesIcon();  // D1 0x020147bc D2 0x0201480c
@@ -279,10 +297,14 @@ public:
     u16 windowCount;  // +0x50
     u8 pad_52[0x2];
     u32 bufSize;  // +0x54
-    ListLink<MesWinSlot> listMain;  // +0x58
-    ListLink<MesWinSlot> listMainEnd;  // +0x60
-    ListLink<MesWinSlot> listSub;  // +0x68
-    ListLink<MesWinSlot> listSubEnd;  // +0x70
+    MesWinSlot * listMainPrev;  // +0x58
+    MesWinSlot * listMainNext;  // +0x5c
+    MesWinSlot * listMainEndPrev;  // +0x60
+    MesWinSlot * listMainEndNext;  // +0x64
+    MesWinSlot * listSubPrev;  // +0x68
+    MesWinSlot * listSubNext;  // +0x6c
+    MesWinSlot * listSubEndPrev;  // +0x70
+    MesWinSlot * listSubEndNext;  // +0x74
     nsObjSys::clObjPltVramMan * texMan;  // +0x78
     nsObjSys::clObjPltVramMan * texPlttMan;  // +0x7c
     VramHandle * texAlloc;  // +0x80
@@ -362,11 +384,6 @@ public:
     void measureString(UnkStruct_0200b8bc *, MesNumStr *);  // 0x02013b0c
 };
 
-// extern "C" {
 #endif // __cplusplus
-
-// #ifdef __cplusplus
-// } // extern "C"
-// #endif
 
 #endif

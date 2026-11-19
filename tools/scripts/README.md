@@ -287,6 +287,23 @@ blocks over all game TUs (2026-11-15). Windows only (drives `mwccarm.exe` under 
 - `asmcheck.py <tu...> [--vin nosched --vout p1off] [--wslots 16,20]`, `asmsim.py`, `armparse.py` — approximate
   variant working from disassembly only (no alias info, ~97%); kept for quick A/B of two compiler variants.
 
+Register colouring (`notes/mwcc_coloring.md`). Exact on 877/877 rounds over all game TUs (2026-11-18). Outputs in
+`build/schedsim/col/`.
+- `colparity.py [tu...]` — dumps every TU from a scratch copy; checks graph rebuild, costs, push order + stall picks,
+  colours, post-rewrite registers, debugger object == normal object. No args = every `arm9/src` TU; uncompilable
+  copies are SKIPs. Exit 1 on any mismatch; details in `build/schedsim/colparity.log`.
+- `coldump.py <tu> <out.jsonl> [--src copy.cpp] [--func NAME] [--obj X.o]` — one line per function × round (0-based):
+  graph, variables, merges, pcode + live-outs, costs, pushes (sweep/stall, degree), stall tables, colours. Without
+  `--src` copies the TU to `build/schedsim/col/src/` first. `--func` = name as mwcc holds it (methods unqualified, ctors `!!C1`).
+- `colshow.py <dump> [--func NAME] [--fn N] [--round N]` — no `--func`: list functions. Default: pop order by
+  sweep/stall with registers, variables, defining insn, callee-reg acquisitions. Last round unless `--round`.
+  - `--stalls` candidate tables (cost = 2R+D−M, current degree, value, pick); `--node vN...`; `--cost vN...` the
+    reload groups / kill points / defs / copies behind a cost; `--why vA vB` pop-order reason + exact cost
+    thresholds (re-simulated) + first-order degree gaps.
+  - `--what-if "cost vN=K" "cost vN+=K" "edge -vA,vB" "edge +vA,vB"` re-runs simplify + assign, prints webs that
+    change register. Coalescing is not modelled.
+- `colsim.py` — the model (graph build, cost pass, simplify, assign, edits, parity check), importable.
+
 ### asm_smell.py
 Hand-asm vs compiled-C classifier — run before any decomp.
 `asm_smell.py <symbol>... [--target X.o]`, `asm_smell.py --sweep` (run by `make progress`/`diff`)
