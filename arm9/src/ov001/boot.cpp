@@ -171,7 +171,7 @@ BOOL loadSaveData() {
 
     backupInit(1);
 
-    if (backupRead(0, (u32)&saveData, sizeof(saveData)) == FALSE) {
+    if (backupRead(0, &saveData, sizeof(saveData)) == FALSE) {
         return FALSE;
     }
 

@@ -54,7 +54,7 @@ from:0x020c95ec kind:load to:0x02055f3c add:0x8 module:main
 from:0x020c95f0 kind:load to:0x020c9608 module:overlay(57)
 from:0x020c95f4 kind:load to:0x020c95e0 module:overlay(57)
 from:0x020c9624 kind:load to:0x020c95ec module:overlay(57)
-from:0x020c9628 kind:load to:0x020694e0 module:overlays(0,11)
+from:0x020c9628 kind:load to:0x020694e0 module:overlay(11)
 from:0x020c962c kind:load to:0x0209770c module:overlays(14,130)
 from:0x020c9630 kind:load to:0x020c94e8 module:overlay(57)
 from:0x020c9634 kind:load to:0x020c952c module:overlay(57)

@@ -7350,6 +7350,38 @@
       "sdk_name": "OS_IrqHandler_ThreadSwitch",
       "library": "os",
       "confidence": "certain"
+    },
+    {
+      "addr": "0x02017844",
+      "sdk_name": "CARD_WriteAndVerifyEepromAsync",
+      "library": "card",
+      "header": "nitro/card/eeprom.h",
+      "confidence": "certain",
+      "note": "SDK static inline emitted out-of-line in backup.c (address taken by backupInit)"
+    },
+    {
+      "addr": "0x0201788c",
+      "sdk_name": "CARD_ReadEepromAsync",
+      "library": "card",
+      "header": "nitro/card/eeprom.h",
+      "confidence": "certain",
+      "note": "SDK static inline emitted out-of-line in backup.c (address taken by backupInit)"
+    },
+    {
+      "addr": "0x020178c0",
+      "sdk_name": "CARD_WriteAndVerifyFlashAsync",
+      "library": "card",
+      "header": "nitro/card/flash.h",
+      "confidence": "certain",
+      "note": "SDK static inline emitted out-of-line in backup.c (address taken by backupInit)"
+    },
+    {
+      "addr": "0x02017908",
+      "sdk_name": "CARD_ReadFlashAsync",
+      "library": "card",
+      "header": "nitro/card/flash.h",
+      "confidence": "certain",
+      "note": "SDK static inline emitted out-of-line in backup.c (address taken by backupInit)"
     }
   ],
   "objdiff_units": [

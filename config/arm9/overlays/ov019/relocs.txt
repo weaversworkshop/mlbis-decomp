@@ -105,7 +105,7 @@ from:0x020c9d10 kind:load to:0x02070e80 module:overlay(11)
 from:0x020c9d14 kind:load to:0x02070e5c module:overlay(11)
 from:0x020c9d20 kind:arm_call to:0x02020774 module:main
 from:0x020c9d34 kind:arm_call to:0x02020774 module:main
-from:0x020c9d54 kind:load to:0x02069110 module:overlays(0,11)
+from:0x020c9d54 kind:load to:0x02069110 module:overlay(11)
 from:0x020c9d60 kind:arm_call to:0x020c9d44 module:overlay(19)
 from:0x020c9d6c kind:arm_call to:0x020ee180 module:overlay(118)
 from:0x020c9d78 kind:arm_call to:0x020ef21c module:overlay(118)
@@ -157,9 +157,9 @@ from:0x020ca204 kind:load to:0x02055fe4 add:0x4fc module:main
 from:0x020ca208 kind:load to:0x020cdb30 module:overlay(55)
 from:0x020ca20c kind:load to:0x020cbefc module:overlay(19)
 from:0x020ca210 kind:load to:0x02064f0c module:overlay(8)
-from:0x020ca214 kind:load to:0x02068afc module:overlays(0,11)
-from:0x020ca218 kind:load to:0x02068c08 module:overlays(0,11)
-from:0x020ca21c kind:load to:0x02067d78 module:overlays(0,11)
+from:0x020ca214 kind:load to:0x02068afc module:overlay(11)
+from:0x020ca218 kind:load to:0x02068c08 module:overlay(11)
+from:0x020ca21c kind:load to:0x02067d78 module:overlay(11)
 from:0x020ca238 kind:load to:0x020af8d4 module:overlay(16)
 from:0x020ca248 kind:arm_call to:0x020c92a4 module:overlay(19)
 from:0x020ca260 kind:arm_call to:0x02096730 module:overlay(14)
@@ -515,8 +515,8 @@ from:0x020ccd54 kind:arm_call to:0x0201e380 module:main
 from:0x020ccd6c kind:arm_call to:0x020af8d4 module:overlay(16)
 from:0x020ccd84 kind:arm_call to:0x020af8d4 module:overlay(16)
 from:0x020ccd9c kind:load to:0x02064f08 module:overlay(8)
-from:0x020ccda0 kind:load to:0x02068db4 module:overlays(0,11)
-from:0x020ccda4 kind:load to:0x02068df8 module:overlays(0,11)
+from:0x020ccda0 kind:load to:0x02068db4 module:overlay(11)
+from:0x020ccda4 kind:load to:0x02068df8 module:overlay(11)
 from:0x020ccdd4 kind:load to:0x020206e0 module:main
 from:0x020ccf8c kind:arm_call to:0x0201ec50 module:main
 from:0x020ccfb8 kind:arm_call to:0x0204536c module:main

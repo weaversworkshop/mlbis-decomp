@@ -301,10 +301,10 @@ _ZN13clGlobalEvent6getVarEP12EventContextm kind:function(arm,size=0x20) addr:0x0
 evalCompare kind:function(arm,size=0xf4) addr:0x02017634
 initContext kind:function(arm,size=0x30) addr:0x02017728
 backupInit kind:function(arm,size=0xec) addr:0x02017758
-eepromWriteAsync kind:function(arm,size=0x48) addr:0x02017844
-eepromReadAsync kind:function(arm,size=0x34) addr:0x0201788c
-flashWriteAsync kind:function(arm,size=0x48) addr:0x020178c0
-flashReadAsync kind:function(arm,size=0x34) addr:0x02017908
+CARD_WriteAndVerifyEepromAsync kind:function(arm,size=0x48) addr:0x02017844
+CARD_ReadEepromAsync kind:function(arm,size=0x34) addr:0x0201788c
+CARD_WriteAndVerifyFlashAsync kind:function(arm,size=0x48) addr:0x020178c0
+CARD_ReadFlashAsync kind:function(arm,size=0x34) addr:0x02017908
 backupRead kind:function(arm,size=0x68) addr:0x0201793c
 readDone kind:function(arm,size=0x34) addr:0x020179a4
 backupWrite kind:function(arm,size=0x7c) addr:0x020179d8
@@ -1935,7 +1935,7 @@ iconTexSizeParams kind:data(any) addr:0x0204a83c
 iconQuadVtx kind:data(any) addr:0x0204a86c
 iconTexCoords kind:data(any) addr:0x0204a92c
 argSizes kind:data(any) addr:0x0204ac2c
-data_0204ac38 kind:data(any) addr:0x0204ac38
+saveHeaderTemplate kind:data(any) addr:0x0204ac38
 sGearSlotsBowser kind:data(any) addr:0x0204ac40
 sGearSlotsBros kind:data(any) addr:0x0204ac44
 repeatKeyMasks kind:data(any) addr:0x0204ac4c

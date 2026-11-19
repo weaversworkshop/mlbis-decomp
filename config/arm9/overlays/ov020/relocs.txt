@@ -61,7 +61,7 @@ from:0x020ce470 kind:load to:0x02064f0c module:overlay(8)
 from:0x020ce474 kind:load to:0x020ce498 module:overlay(20)
 from:0x020ce478 kind:load to:0x020cd524 module:overlays(19,88)
 from:0x020ce480 kind:load to:0x020d51a0 module:overlay(20)
-from:0x020ce48c kind:load to:0x02067d78 module:overlays(0,11)
+from:0x020ce48c kind:load to:0x02067d78 module:overlay(11)
 from:0x020ce490 kind:load to:0x020cea64 module:overlay(20)
 from:0x020ce494 kind:load to:0x02064f00 module:overlay(8)
 from:0x020ce4c0 kind:arm_call to:0x0201f7ec module:main

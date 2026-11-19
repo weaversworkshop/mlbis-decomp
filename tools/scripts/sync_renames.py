@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yaml
 
-from common import BUILD, CONFIG as CONFIG_DIR, INCLUDE, OBJDUMP, ROOT, SRC, objdiff_target
+from common import BUILD, CONFIG as CONFIG_DIR, INCLUDE, OBJDUMP, ROOT, SRC, objdiff_target, sdk_mappings
 
 CONFIG_YAML = CONFIG_DIR / "config.yaml"
 ANCHOR_DIRS = [INCLUDE, SRC]
@@ -382,7 +382,7 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
                    stripped, verbose):
     syms = dump_symbols(o_paths, verbose, lambda n: ("", n) in anchors)
     if not syms or mod not in tables:
-        return 0, [], set(), 0
+        return 0, [], set(), 0, []
 
     by_name = defaultdict(set)
     for (_, name), a in anchors.items():
@@ -412,10 +412,12 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
     def known(full):
         return any(full in tables[m].present for m in [mod] + resident if m in tables)
 
-    changed, unplaced, unanchored = [], [], []
+    sdk_by_addr = {int(e["addr"], 16): e["sdk_name"] for e in sdk_mappings()}
+    sdk_names = set(sdk_by_addr.values())
+    changed, unplaced, unanchored, sdk_clash = [], [], [], []
     for addr, tgt, scope, simple, full, is_def in resolved:
         if tgt is None:
-            if addr is None and (scope, simple) in stripped:
+            if addr is None and ((scope, simple) in stripped or full in sdk_names):
                 continue
             # An unanchored extern (SDK link symbol) is expected; an anchored address nobody owns is not.
             if (is_userish(simple) or "/T" in simple) and not known(full) and (is_def or addr is not None):
@@ -424,6 +426,9 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
                 unanchored.append(full)
             continue
         if (tgt, addr) in ambiguous:
+            continue
+        if tgt in resident and sdk_by_addr.get(addr, full) != full:
+            sdk_clash.append((addr, full, sdk_by_addr[addr]))
             continue
         if r := tables[tgt].rename(addr, full):
             changed.append((tgt, addr, *r))
@@ -445,8 +450,7 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
                  if m in tables and full in tables[m].addr_of)
         print(f"  [{mod}] NOANCHOR: {full} -- add // 0x{a:08x} to its declaration",
               file=sys.stderr)
-
-    return len(changed), unplaced, ambiguous, len(unanchored)
+    return len(changed), unplaced, ambiguous, len(unanchored), sdk_clash
 
 
 def main():
@@ -463,15 +467,17 @@ def main():
     tables = load_tables(modules, resident + sorted(set(mod_by_addr.values())), {})
 
     total_changed = total_unplaced = total_ambiguous = total_unanchored = 0
+    sdk_clash = set()
     for mod in sorted(by_mod):
         if mod not in modules:
             print(f"  WARN: module '{mod}' has source but is not in config.yaml "
                   f"-- skipped", file=sys.stderr)
             continue
         load_tables(modules, [mod], tables)
-        n, unplaced, ambiguous, unanchored = process_module(
+        n, unplaced, ambiguous, unanchored, clash = process_module(
             mod, by_mod[mod], tables, resident, anchors, idents,
             mod_by_addr, stripped, args.verbose)
+        sdk_clash.update(clash)
         total_changed += n
         total_unplaced += len(unplaced)
         total_ambiguous += len(ambiguous)
@@ -480,6 +486,11 @@ def main():
             print(f"  module {mod}: {len(by_mod[mod])} unit(s), "
                   f"{'would rename' if args.dry_run else 'renamed'} {n}",
                   file=sys.stderr)
+
+    for addr, full, sdk in sorted(sdk_clash):
+        print(f"  SDK-MAPPED: {full} -- 0x{addr:08x} is '{sdk}' in "
+              f"config/sdk_mappings.json; remove that entry to rename it", file=sys.stderr)
+    conflicts += len(sdk_clash)
 
     if not args.dry_run:
         for t in tables.values():

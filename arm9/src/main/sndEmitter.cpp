@@ -6,6 +6,8 @@
 
 #include "main/sound.h"
 
+#include "ov000/sndEmitScripts.h"
+
 extern "C" {
 
 // --- Struct Definitions --- //
@@ -16,8 +18,6 @@ typedef struct {
 } SndEmitterList;
 
 // --- Extern Data Variables --- //
-
-extern SndEmitterCmd * data_ov000_02069468;
 
 extern SndEmitterCmd * data_ov011_02070018;
 
@@ -120,7 +120,7 @@ void SndEmitter::stop(u32 fadeFrames) {
 // MATCHED 100%
 void sndEmitInit() {
     sndEmitterList.head = NULL;
-    sndEmitterList.cmdTable = &data_ov000_02069468;
+    sndEmitterList.cmdTable = sndEmitCmdTable;
 }
 
 // MATCHED 100%
@@ -214,10 +214,10 @@ void SndEmitter::advance() {
 
         SndEmitterCmd * cmd = this->resolveCmd();
 
-        if (cmd->id == -1) {
+        if (cmd->id == SND_CMD_END) {
             this->unlink();
         } else {
-            if (cmd->id == -2) {
+            if (cmd->id == SND_CMD_REPEAT) {
                 this->step = cmd->arg;
                 cmd = this->resolveCmd();
             }
@@ -241,9 +241,9 @@ void sndEmitArmEnd(SndEmitter * param1) {
         param1->unlink();
     }
 
-    SndVoice * r0 = param1->voices[param1->voiceIdx].head;
-    playing = (r0 != NULL);
-    playing = (playing && NNS_SndHandleIsValid(&r0->handle));
+    SndVoice * voice = param1->voices[param1->voiceIdx].head;
+    playing = (voice != NULL);
+    playing = (playing && NNS_SndHandleIsValid(&voice->handle));
 
     if (playing) {
         param1->tick = sndEmitLoopEnd;
@@ -252,9 +252,9 @@ void sndEmitArmEnd(SndEmitter * param1) {
 
 // MATCHED 100%
 void sndEmitLoopEnd(SndEmitter * param1) {
-    SndVoice * r0 = param1->voices[param1->voiceIdx].head;
-    BOOL playing = (r0 != NULL);
-    playing = (playing && NNS_SndHandleIsValid(&r0->handle));
+    SndVoice * voice = param1->voices[param1->voiceIdx].head;
+    BOOL playing = (voice != NULL);
+    playing = (playing && NNS_SndHandleIsValid(&voice->handle));
 
     if (!playing) {
         if (param1->repeats != 0 && --param1->repeats == 0) {
@@ -274,9 +274,9 @@ void sndEmitArmTimed(SndEmitter * param1) {
         param1->unlink();
     }
 
-    SndVoice * r0 = param1->voices[param1->voiceIdx].head;
-    playing = (r0 != NULL);
-    playing = (playing && NNS_SndHandleIsValid(&r0->handle));
+    SndVoice * voice = param1->voices[param1->voiceIdx].head;
+    playing = (voice != NULL);
+    playing = (playing && NNS_SndHandleIsValid(&voice->handle));
 
     if (playing) {
         param1->tick = sndEmitLoopTimed;
@@ -375,7 +375,7 @@ SndEmitterCmd * SndEmitter::resolveCmd() {
     while (TRUE) {
         SndEmitterCmd * cmd = &sndEmitterList.cmdTable[this->id & 0xff0fff][this->step];
 
-        if (cmd->id == -2) {
+        if (cmd->id == SND_CMD_REPEAT) {
             if (this->repeatCount == 0) {
                 if (cmd->volume != 0) {
                     this->repeatCount = cmd->volume-1;
@@ -386,16 +386,16 @@ SndEmitterCmd * SndEmitter::resolveCmd() {
             } else {
                 this->step++;
             }
-        } else if (cmd->id == -3) {
+        } else if (cmd->id == SND_CMD_HOLD_ON) {
             this->noStopOnEnd = 1;
             this->step++;
-        } else if (cmd->id == -4) {
+        } else if (cmd->id == SND_CMD_CROSS_FADE) {
             sndEmitCrossFade(cmd->arg);
             this->step++;
-        } else if (cmd->id == -5) {
+        } else if (cmd->id == SND_CMD_CROSS_FADE_BACK) {
             sndEmitCrossFadeBack(cmd->arg);
             this->step++;
-        } else if (cmd->id == -6) {
+        } else if (cmd->id == SND_CMD_HOLD_OFF) {
             this->noStopOnEnd = 0;
             this->step++;
         } else {

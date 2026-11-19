@@ -10,6 +10,8 @@ CONFIG_ROOT = ROOT / "config"
 SOURCE_ROOTS = [SRC, INCLUDE, ROOT / "lib"]
 SOURCE_EXCLUDES = [ROOT / "lib" / "NitroSDK", ROOT / "lib" / "mw-libraries"]
 
+PLACEHOLDER_RE = re.compile(r"^(?:func|data)_(?:ov\d+_)?[0-9a-fA-F]{8}$")
+
 SYMBOL_LINE_RE = re.compile(
     r"^(?P<name>\S+)(?P<mid>\s+kind:\S+\s+addr:)(?P<addr>0x[0-9a-fA-F]+)"
     r"(?P<tail>.*?)\s*$"
@@ -61,6 +63,13 @@ def rename_in_symbols(symbols_files, mappings, dry_run, verbose):
             old_name = m.group("name")
             new_name = mappings[addr]["sdk_name"]
             if old_name == new_name:
+                new_lines.append(raw)
+                continue
+            if not PLACEHOLDER_RE.match(old_name):
+                print(f"WARNING: {sf.relative_to(ROOT)}: {addr} is '{old_name}', not a "
+                      f"placeholder -- not renamed to '{new_name}'; if it is game code, "
+                      f"remove the sdk_mappings.json entry, else rename it by hand",
+                      file=sys.stderr)
                 new_lines.append(raw)
                 continue
             if old_name in renames and renames[old_name] != new_name:

@@ -1,43 +1,43 @@
 {
  "measures": {
-  "fuzzy_match_percent": 8.914631994233225,
+  "fuzzy_match_percent": 8.981871150872344,
   "total_code": 3343290,
-  "matched_code": 290022,
-  "matched_code_percent": 8.674748526152383,
+  "matched_code": 292270,
+  "matched_code_percent": 8.741987682791502,
   "total_data": 1803032,
-  "matched_data": 113460,
-  "matched_data_percent": 6.2927335732255445,
+  "matched_data": 121204,
+  "matched_data_percent": 6.722232328655287,
   "total_functions": 12116,
-  "matched_functions": 1968,
-  "matched_functions_percent": 16.24298448332783,
-  "complete_code": 246422,
-  "complete_code_percent": 7.370643886710396,
-  "complete_data": 101660,
-  "complete_data_percent": 5.63828040766886,
-  "total_units": 229,
-  "complete_units": 225
+  "matched_functions": 1991,
+  "matched_functions_percent": 16.4328161109277,
+  "complete_code": 248670,
+  "complete_code_percent": 7.437883043349515,
+  "complete_data": 109404,
+  "complete_data_percent": 6.067779163098603,
+  "total_units": 231,
+  "complete_units": 227
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 5.967330554268952,
-    "total_code": 3238500,
-    "matched_code": 185232,
-    "matched_code_percent": 5.719685039370079,
+    "fuzzy_match_percent": 6.029549275349788,
+    "total_code": 3238252,
+    "matched_code": 187232,
+    "matched_code_percent": 5.7818847946361185,
     "total_data": 1803032,
-    "matched_data": 113460,
-    "matched_data_percent": 6.2927335732255445,
-    "total_functions": 11179,
-    "matched_functions": 1031,
-    "matched_functions_percent": 9.222649610877538,
-    "complete_code": 143692,
-    "complete_code_percent": 4.436992434769183,
-    "complete_data": 46040,
-    "complete_data_percent": 2.5534765883245556,
-    "total_units": 69,
-    "complete_units": 65
+    "matched_data": 121204,
+    "matched_data_percent": 6.722232328655287,
+    "total_functions": 11175,
+    "matched_functions": 1050,
+    "matched_functions_percent": 9.395973154362416,
+    "complete_code": 145940,
+    "complete_code_percent": 4.506752408398111,
+    "complete_data": 46048,
+    "complete_data_percent": 2.5539202853859497,
+    "total_units": 70,
+    "complete_units": 66
    }
   },
   {
@@ -45,21 +45,21 @@
    "name": "SDK",
    "measures": {
     "fuzzy_match_percent": 100.0,
-    "total_code": 104790,
-    "matched_code": 104790,
+    "total_code": 105038,
+    "matched_code": 105038,
     "matched_code_percent": 100.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 100.0,
-    "total_functions": 937,
-    "matched_functions": 937,
+    "total_functions": 941,
+    "matched_functions": 941,
     "matched_functions_percent": 100.0,
-    "complete_code": 105042,
-    "complete_code_percent": 100.24048096192385,
-    "complete_data": 55828,
+    "complete_code": 106074,
+    "complete_code_percent": 100.98630971648356,
+    "complete_data": 63588,
     "complete_data_percent": 100.0,
-    "total_units": 162,
-    "complete_units": 162
+    "total_units": 164,
+    "complete_units": 164
    }
   },
   {
@@ -71,15 +71,15 @@
     "matched_code": 265570,
     "matched_code_percent": 96.55335393564806,
     "total_data": 114088,
-    "matched_data": 102268,
-    "matched_data_percent": 89.6395764672884,
+    "matched_data": 102276,
+    "matched_data_percent": 89.64658859827502,
     "total_functions": 1867,
     "matched_functions": 1860,
     "matched_functions_percent": 99.62506695232995,
     "complete_code": 221970,
     "complete_code_percent": 80.70169060170878,
-    "complete_data": 90468,
-    "complete_data_percent": 79.29668326204333,
+    "complete_data": 90476,
+    "complete_data_percent": 79.30369539302994,
     "total_units": 208,
     "complete_units": 204
    }
@@ -132,22 +132,22 @@
    "id": "ov000",
    "name": "ov000",
    "measures": {
-    "fuzzy_match_percent": 84.30167597765363,
+    "fuzzy_match_percent": 100.0,
     "total_code": 14320,
-    "matched_code": 12072,
-    "matched_code_percent": 84.30167597765363,
+    "matched_code": 14320,
+    "matched_code_percent": 100.0,
     "total_data": 9488,
-    "matched_data": 1724,
-    "matched_data_percent": 18.170320404721753,
+    "matched_data": 9460,
+    "matched_data_percent": 99.70489038785834,
     "total_functions": 53,
-    "matched_functions": 30,
-    "matched_functions_percent": 56.60377358490566,
-    "complete_code": 12072,
-    "complete_code_percent": 84.30167597765363,
-    "complete_data": 1724,
-    "complete_data_percent": 18.170320404721753,
-    "total_units": 1,
-    "complete_units": 1
+    "matched_functions": 53,
+    "matched_functions_percent": 100.0,
+    "complete_code": 14320,
+    "complete_code_percent": 100.0,
+    "complete_data": 9460,
+    "complete_data_percent": 99.70489038785834,
+    "total_units": 3,
+    "complete_units": 3
    }
   },
   {
@@ -3262,22 +3262,22 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "eepromWriteAsync",
+     "name": "CARD_WriteAndVerifyEepromAsync",
      "size": 72,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "eepromReadAsync",
+     "name": "CARD_ReadEepromAsync",
      "size": 52,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "flashWriteAsync",
+     "name": "CARD_WriteAndVerifyFlashAsync",
      "size": 72,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "flashReadAsync",
+     "name": "CARD_ReadFlashAsync",
      "size": 52,
      "fuzzy_match_percent": 100.0
     },
@@ -3331,6 +3331,7 @@
     "complete": true,
     "progress_categories": [
      "game",
+     "sdk",
      "main"
     ]
    }
@@ -7790,8 +7791,8 @@
     "total_code": 1256,
     "matched_code": 1256,
     "matched_code_percent": 100.0,
-    "total_data": 8192,
-    "matched_data": 8192,
+    "total_data": 8200,
+    "matched_data": 8200,
     "matched_data_percent": 100.0,
     "total_functions": 3,
     "matched_functions": 3,
@@ -9548,6 +9549,168 @@
     "complete": true,
     "progress_categories": [
      "game",
+     "ov000"
+    ]
+   }
+  },
+  {
+   "name": "ov000/saveIO",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 2248,
+    "matched_code": 2248,
+    "matched_code_percent": 100.0,
+    "total_data": 0,
+    "matched_data": 0,
+    "matched_data_percent": 100.0,
+    "total_functions": 23,
+    "matched_functions": 23,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "verifyChecksum",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "backupClear",
+     "size": 88,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "writeSaveHeader",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "readSaveHeader",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "isSaveHeaderValid",
+     "size": 84,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "writeSaveInfoWait",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "writeSaveInfo",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "readSaveInfo",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "verifySaveInfo",
+     "size": 184,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "func_ov000_02066c8c",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "func_ov000_02066cb8",
+     "size": 24,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "readSaveCopyWait",
+     "size": 60,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "readSaveCopy",
+     "size": 44,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "isSaveCopyValid",
+     "size": 32,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "verifySaveCopy",
+     "size": 20,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "formatSaveData",
+     "size": 164,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "clearSaveInfo",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "func_ov000_02066e2c",
+     "size": 28,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "clearSaveCopy",
+     "size": 40,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "copySaveCopy",
+     "size": 168,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "func_ov000_02066f18",
+     "size": 48,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "commitGauntletResult",
+     "size": 804,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "rebuildSaveInfo",
+     "size": 132,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "ov000"
+    ]
+   }
+  },
+  {
+   "name": "ov000/sndEmitScripts",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 0,
+    "matched_code": 0,
+    "matched_code_percent": 100.0,
+    "total_data": 7736,
+    "matched_data": 7736,
+    "matched_data_percent": 100.0,
+    "total_functions": 0,
+    "matched_functions": 0,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "sdk",
      "ov000"
     ]
    }
@@ -18413,145 +18576,6 @@
     "progress_categories": [
      "sdk",
      "dtcm"
-    ]
-   }
-  },
-  {
-   "name": "ov000/_undecompiled",
-   "measures": {
-    "fuzzy_match_percent": 0.0,
-    "total_code": 2248,
-    "matched_code": 0,
-    "matched_code_percent": 0.0,
-    "total_data": 0,
-    "matched_data": 0,
-    "matched_data_percent": 100.0,
-    "total_functions": 23,
-    "matched_functions": 0,
-    "matched_functions_percent": 0.0
-   },
-   "functions": [
-    {
-     "name": "func_ov000_02066a28",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066a50",
-     "size": 88,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066aa8",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066ad8",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066b04",
-     "size": 84,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066b58",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066b88",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066ba8",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066bd4",
-     "size": 184,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066c8c",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066cb8",
-     "size": 24,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066cd0",
-     "size": 60,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066d0c",
-     "size": 44,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066d38",
-     "size": 32,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066d58",
-     "size": 20,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066d6c",
-     "size": 164,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066e10",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066e2c",
-     "size": 28,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066e48",
-     "size": 40,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066e70",
-     "size": 168,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066f18",
-     "size": 48,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_02066f48",
-     "size": 804,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov000_0206726c",
-     "size": 132,
-     "fuzzy_match_percent": 0.0
-    }
-   ],
-   "metadata": {
-    "complete": false,
-    "progress_categories": [
-     "game",
-     "ov000"
     ]
    }
   },

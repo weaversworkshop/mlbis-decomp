@@ -28,29 +28,29 @@ stepSplitH kind:function(arm,size=0xb10) addr:0x02065e7c
 _ZN11clMesWinEff9drawFrameEP10MesWinSloti kind:function(arm,size=0x74) addr:0x0206698c
 _ZN11clMesWinEff5closeEs kind:function(arm,size=0x1c) addr:0x02066a00
 _ZN11clMesWinEff4openEP12MesWinParamss kind:function(arm,size=0xc) addr:0x02066a1c
-func_ov000_02066a28 kind:function(arm,size=0x28) addr:0x02066a28
-func_ov000_02066a50 kind:function(arm,size=0x58) addr:0x02066a50
-func_ov000_02066aa8 kind:function(arm,size=0x30) addr:0x02066aa8
-func_ov000_02066ad8 kind:function(arm,size=0x2c) addr:0x02066ad8
-func_ov000_02066b04 kind:function(arm,size=0x54) addr:0x02066b04
-func_ov000_02066b58 kind:function(arm,size=0x30) addr:0x02066b58
-func_ov000_02066b88 kind:function(arm,size=0x20) addr:0x02066b88
-func_ov000_02066ba8 kind:function(arm,size=0x2c) addr:0x02066ba8
-func_ov000_02066bd4 kind:function(arm,size=0xb8) addr:0x02066bd4
+verifyChecksum kind:function(arm,size=0x28) addr:0x02066a28
+backupClear kind:function(arm,size=0x58) addr:0x02066a50
+writeSaveHeader kind:function(arm,size=0x30) addr:0x02066aa8
+readSaveHeader kind:function(arm,size=0x2c) addr:0x02066ad8
+isSaveHeaderValid kind:function(arm,size=0x54) addr:0x02066b04
+writeSaveInfoWait kind:function(arm,size=0x30) addr:0x02066b58
+writeSaveInfo kind:function(arm,size=0x20) addr:0x02066b88
+readSaveInfo kind:function(arm,size=0x2c) addr:0x02066ba8
+verifySaveInfo kind:function(arm,size=0xb8) addr:0x02066bd4
 func_ov000_02066c8c kind:function(arm,size=0x2c) addr:0x02066c8c
 func_ov000_02066cb8 kind:function(arm,size=0x18) addr:0x02066cb8
-func_ov000_02066cd0 kind:function(arm,size=0x3c) addr:0x02066cd0
-func_ov000_02066d0c kind:function(arm,size=0x2c) addr:0x02066d0c
-func_ov000_02066d38 kind:function(arm,size=0x20) addr:0x02066d38
-func_ov000_02066d58 kind:function(arm,size=0x14) addr:0x02066d58
-func_ov000_02066d6c kind:function(arm,size=0xa4) addr:0x02066d6c
-func_ov000_02066e10 kind:function(arm,size=0x1c) addr:0x02066e10
+readSaveCopyWait kind:function(arm,size=0x3c) addr:0x02066cd0
+readSaveCopy kind:function(arm,size=0x2c) addr:0x02066d0c
+isSaveCopyValid kind:function(arm,size=0x20) addr:0x02066d38
+verifySaveCopy kind:function(arm,size=0x14) addr:0x02066d58
+formatSaveData kind:function(arm,size=0xa4) addr:0x02066d6c
+clearSaveInfo kind:function(arm,size=0x1c) addr:0x02066e10
 func_ov000_02066e2c kind:function(arm,size=0x1c) addr:0x02066e2c
-func_ov000_02066e48 kind:function(arm,size=0x28) addr:0x02066e48
-func_ov000_02066e70 kind:function(arm,size=0xa8) addr:0x02066e70
+clearSaveCopy kind:function(arm,size=0x28) addr:0x02066e48
+copySaveCopy kind:function(arm,size=0xa8) addr:0x02066e70
 func_ov000_02066f18 kind:function(arm,size=0x30) addr:0x02066f18
-func_ov000_02066f48 kind:function(arm,size=0x324) addr:0x02066f48
-func_ov000_0206726c kind:function(arm,size=0x84) addr:0x0206726c
+commitGauntletResult kind:function(arm,size=0x324) addr:0x02066f48
+rebuildSaveInfo kind:function(arm,size=0x84) addr:0x0206726c
 wipeVCloseSeq kind:data(any) addr:0x020672f0
 wipeVOpenSeq kind:data(any) addr:0x020672f8
 wipeHCloseSeq kind:data(any) addr:0x02067300
@@ -113,7 +113,6 @@ data_ov000_02067d28 kind:data(any) addr:0x02067d28
 data_ov000_02067d40 kind:data(any) addr:0x02067d40
 data_ov000_02067d58 kind:data(any) addr:0x02067d58
 data_ov000_02067d70 kind:data(any) addr:0x02067d70
-data_ov000_02067d78 kind:data(any) addr:0x02067d78 ambiguous
 data_ov000_02067d88 kind:data(any) addr:0x02067d88
 data_ov000_02067dac kind:data(any) addr:0x02067dac
 data_ov000_02067dd0 kind:data(any) addr:0x02067dd0
@@ -202,7 +201,6 @@ data_ov000_02068b5c kind:data(any) addr:0x02068b5c
 data_ov000_02068b8c kind:data(any) addr:0x02068b8c
 data_ov000_02068bbc kind:data(any) addr:0x02068bbc
 data_ov000_02068bec kind:data(any) addr:0x02068bec
-data_ov000_02068c08 kind:data(any) addr:0x02068c08 ambiguous
 data_ov000_02068c1c kind:data(any) addr:0x02068c1c
 data_ov000_02068c4c kind:data(any) addr:0x02068c4c
 data_ov000_02068c88 kind:data(any) addr:0x02068c88
@@ -212,7 +210,6 @@ data_ov000_02068d3c kind:data(any) addr:0x02068d3c
 data_ov000_02068d78 kind:data(any) addr:0x02068d78
 data_ov000_02068db4 kind:data(any) addr:0x02068db4
 data_ov000_02068df0 kind:data(any) addr:0x02068df0
-data_ov000_02068df8 kind:data(any) addr:0x02068df8 ambiguous
 data_ov000_02068e2c kind:data(any) addr:0x02068e2c
 data_ov000_02068e74 kind:data(any) addr:0x02068e74
 data_ov000_02068ebc kind:data(any) addr:0x02068ebc
@@ -224,16 +221,12 @@ data_ov000_02069024 kind:data(any) addr:0x02069024
 data_ov000_0206906c kind:data(any) addr:0x0206906c
 data_ov000_020690b4 kind:data(any) addr:0x020690b4
 data_ov000_02069108 kind:data(any) addr:0x02069108
-data_ov000_02069110 kind:data(any) addr:0x02069110 ambiguous
 data_ov000_02069174 kind:data(any) addr:0x02069174
 data_ov000_020691ec kind:data(any) addr:0x020691ec
 data_ov000_02069270 kind:data(any) addr:0x02069270
 data_ov000_02069300 kind:data(any) addr:0x02069300
 data_ov000_020693b4 kind:data(any) addr:0x020693b4
-data_ov000_02069468 kind:data(any) addr:0x02069468
-data_ov000_020694e0 kind:data(any) addr:0x020694e0 ambiguous
-data_ov000_020694e4 kind:data(any) addr:0x020694e4 ambiguous
-data_ov000_02069518 kind:data(any) addr:0x02069518 ambiguous
+sndEmitCmdTable kind:data(any) addr:0x02069468
 diagDitherClosePair kind:data(any) addr:0x020696f8
 diagClosePair kind:data(any) addr:0x02069700
 diagDitherOpenPair kind:data(any) addr:0x02069708

@@ -183,13 +183,16 @@ pairs them. Runs inside `make diff`/`make progress`; standalone `make sync-names
 - `// stripped` on a declaration = function absent from the ROM (dead-stripped); silences its `UNPLACED`.
 - Reports: `UNPLACED` (semantic name, no address; or anchor nobody owns), `CONFLICT` (same key, different
   addresses), `ambiguous` (one address, two names), `duplicate anchor`, `NOANCHOR` (named in
-  `symbols.txt` but its declaration lacks the anchor; prints the address to add). `--strict` exits 1 on
-  UNPLACED/CONFLICT.
+  `symbols.txt` but its declaration lacks the anchor; prints the address to add). Both skip `sdk_name`s in
+`config/sdk_mappings.json` — SDK inlines emitted out-of-line in a game TU, e.g. `backup.c`'s `CARD_*Async`. `--strict` exits 1 on
+  UNPLACED/CONFLICT. `SDK-MAPPED` (counted as a conflict): an anchored game name at an address
+  `sdk_mappings.json` owns -- not renamed; drop the JSON entry if it is really game code.
 
 ### apply_sdk_mappings.py
 Renames `func_XXXX` → SDK name from `config/sdk_mappings.json` across every `config/**/symbols.txt` and
 sources in `arm9/src`, `arm9/include`, `lib` (NitroSDK/mw-libraries excluded). Idempotent; prerequisite of
-`make delinks`. Exit 1 on conflicting mappings.
+`make delinks`. Exit 1 on conflicting mappings. Only placeholder names (`func_`/`data_<addr>`) are
+renamed; a real name at a mapped address is warned about and left alone (never rewrites game source).
 `apply_sdk_mappings.py [--dry-run] [-v]`
 
 ### struct_offsets.py — `// +0xNN`

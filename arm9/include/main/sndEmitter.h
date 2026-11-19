@@ -9,6 +9,15 @@
 #define SND_ID_REQUEUE  0x4000000
 #define SND_ID_NO_DUP   0x2000
 
+#define SND_CMD_END             -1
+#define SND_CMD_REPEAT          -2
+#define SND_CMD_HOLD_ON         -3
+#define SND_CMD_CROSS_FADE      -4
+#define SND_CMD_CROSS_FADE_BACK -5
+#define SND_CMD_HOLD_OFF        -6
+
+#define SND_CMD_X(x)            (0x8000 | (x))
+
 #ifdef __cplusplus
 
 typedef struct {

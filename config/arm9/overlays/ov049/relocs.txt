@@ -906,7 +906,7 @@ from:0x020daf68 kind:load to:0x02055f3c add:0x8 module:main
 from:0x020daf6c kind:load to:0x020daf84 module:overlay(49)
 from:0x020daf70 kind:load to:0x020daf5c module:overlay(49)
 from:0x020daf9c kind:load to:0x020daf68 module:overlay(49)
-from:0x020dafa0 kind:load to:0x020694e0 module:overlays(0,11)
+from:0x020dafa0 kind:load to:0x020694e0 module:overlay(11)
 from:0x020dafa4 kind:load to:0x0209770c module:overlays(14,130)
 from:0x020dafa8 kind:load to:0x020d4c94 module:overlay(49)
 from:0x020dafac kind:load to:0x020cc7cc module:overlay(49)

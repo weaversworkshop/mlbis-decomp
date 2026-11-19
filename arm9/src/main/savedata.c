@@ -10,17 +10,9 @@
 #include "main/clGameMain.h"
 #include "main/clGlobalEvent.h"
 
-// --- Struct Definitions --- //
-
-#define SAVE_OK         0
-#define SAVE_DISABLED   1
-#define SAVE_FAILED     2
-
-#define EVENT_FLAG_WORD(id) (((id) & 0xfff) >> 5)
-#define EVENT_FLAG_BIT(id)  (1u << ((id) & 0x1f))
-
 // --- Variable Definitions --- //
 
+const SaveHeader saveHeaderTemplate = { "MLRPG3", 1 };  // 0x0204ac38
 SaveData saveData;  // 0x02058f84
 
 // --- Function Definitions --- //
@@ -31,7 +23,7 @@ BOOL writeSavePrimary(u32 slotIdx) {  // Save into primary slot
         return FALSE;
     }
 
-    backupWrite((void *)(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_PRIMARY_OFFSET), &saveData.saves[slotIdx * 2], SAVE_PAYLOAD_SIZE, 1);
+    backupWrite(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_PRIMARY_OFFSET, &saveData.saves[slotIdx * SAVE_NUM_COPIES], SAVE_PAYLOAD_SIZE, TRUE);
 
     return TRUE;
 }
@@ -42,26 +34,17 @@ BOOL writeSaveBackup(u32 slotIdx) {  // Save into backup slot
         return FALSE;
     }
 
-    backupWrite((void *)(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_BACKUP_OFFSET), &saveData.saves[slotIdx * 2], SAVE_PAYLOAD_SIZE, 1);
+    backupWrite(slotIdx * SAVE_SLOT_SIZE + SAVE_SLOT_BACKUP_OFFSET, &saveData.saves[slotIdx * SAVE_NUM_COPIES], SAVE_PAYLOAD_SIZE, TRUE);
 
     return TRUE;
-}
-
-// Helper inline function for `commitSave()`
-static inline void snapshotEventFlag(SaveEventFlags * record, u16 id) {
-    if (getGameVar(id, NULL, NULL) != 0) {
-        record->eventFlags[EVENT_FLAG_WORD(id)] |=  EVENT_FLAG_BIT(id);
-    } else {
-        record->eventFlags[EVENT_FLAG_WORD(id)] &= ~EVENT_FLAG_BIT(id);
-    }
 }
 
 // MATCHED 100%
 s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
     u32 slot = gameState.field4cc_3;
-    u32 slotBase = 2 * slot;
+    u32 slotBase = slot * SAVE_NUM_COPIES;
 
-    if ((saveData.header.slotValid & (1 << slotBase)) == 0) {
+    if ((saveData.info.copyInUse & (1 << slotBase)) == 0) {
         return SAVE_DISABLED;
     }
 
@@ -94,28 +77,28 @@ s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
         saveData.saves[copyIdx].field10e[i] = gameState.field4e8[i];
     }
 
-    SaveEventFlags * record = &saveData.saves[copyIdx].eventFlags;
+    u32 * eventFlags = saveData.saves[copyIdx].eventFlags;
 
-    snapshotEventFlag(record, 0xe713);
-    snapshotEventFlag(record, 0xe714);
-    snapshotEventFlag(record, 0xe715);
-    snapshotEventFlag(record, 0xe716);
-    snapshotEventFlag(record, 0xe717);
-    snapshotEventFlag(record, 0xe718);
-    snapshotEventFlag(record, 0xe719);
-    snapshotEventFlag(record, 0xe71a);
-    snapshotEventFlag(record, 0xe71b);
-    snapshotEventFlag(record, 0xe71c);
-    snapshotEventFlag(record, 0xe71d);
-    snapshotEventFlag(record, 0xe71e);
-    snapshotEventFlag(record, 0xe71f);
-    snapshotEventFlag(record, 0xe720);
-    snapshotEventFlag(record, 0xe721);
-    snapshotEventFlag(record, 0xe722);
-    snapshotEventFlag(record, 0xe723);
-    snapshotEventFlag(record, 0xe724);
-    snapshotEventFlag(record, 0xe725);
-    snapshotEventFlag(record, 0xe726);
+    snapshotEventFlag(eventFlags, 0xe713);
+    snapshotEventFlag(eventFlags, 0xe714);
+    snapshotEventFlag(eventFlags, 0xe715);
+    snapshotEventFlag(eventFlags, 0xe716);
+    snapshotEventFlag(eventFlags, 0xe717);
+    snapshotEventFlag(eventFlags, 0xe718);
+    snapshotEventFlag(eventFlags, 0xe719);
+    snapshotEventFlag(eventFlags, 0xe71a);
+    snapshotEventFlag(eventFlags, 0xe71b);
+    snapshotEventFlag(eventFlags, 0xe71c);
+    snapshotEventFlag(eventFlags, 0xe71d);
+    snapshotEventFlag(eventFlags, 0xe71e);
+    snapshotEventFlag(eventFlags, 0xe71f);
+    snapshotEventFlag(eventFlags, 0xe720);
+    snapshotEventFlag(eventFlags, 0xe721);
+    snapshotEventFlag(eventFlags, 0xe722);
+    snapshotEventFlag(eventFlags, 0xe723);
+    snapshotEventFlag(eventFlags, 0xe724);
+    snapshotEventFlag(eventFlags, 0xe725);
+    snapshotEventFlag(eventFlags, 0xe726);
 
     BOOL result;
     if (useBackup) {

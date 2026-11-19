@@ -14,8 +14,8 @@ typedef struct {
     CARDResult result;  // +0x4
     enum BackupStatus status;
     s32 lockId;  // +0xc
-    void (*write)(u32, u32, u32, MIDmaCallback, void *);  // +0x10
-    void (*read)(u32, u32, u32, MIDmaCallback, void *);  // +0x14
+    void (*write)(u32, const void *, u32, MIDmaCallback, void *);  // +0x10
+    void (*read)(u32, void *, u32, MIDmaCallback, void *);  // +0x14
 } BackupWork;
 
 // --- Variable Definitions --- //
@@ -38,18 +38,18 @@ void backupInit(u32 type) {
         switch (type) {
             case 0:
                 CARD_IdentifyBackup(CARD_BACKUP_TYPE_EEPROM_4KBITS);
-                backup.write = &eepromWriteAsync;
-                backup.read = &eepromReadAsync;
+                backup.write = &CARD_WriteAndVerifyEepromAsync;
+                backup.read = &CARD_ReadEepromAsync;
                 break;
             case 1:
                 CARD_IdentifyBackup(CARD_BACKUP_TYPE_EEPROM_64KBITS);
-                backup.write = &eepromWriteAsync;
-                backup.read = &eepromReadAsync;
+                backup.write = &CARD_WriteAndVerifyEepromAsync;
+                backup.read = &CARD_ReadEepromAsync;
                 break;
             case 2:
                 CARD_IdentifyBackup(CARD_BACKUP_TYPE_FLASH_2MBITS);
-                backup.write = &flashWriteAsync;
-                backup.read = &flashReadAsync;
+                backup.write = &CARD_WriteAndVerifyFlashAsync;
+                backup.read = &CARD_ReadFlashAsync;
         }
 
         unlockBackup();
@@ -60,29 +60,8 @@ void backupInit(u32 type) {
     }
 }
 
-// MATCHED 100% -- may return bool
-void eepromWriteAsync(u32 dst, u32 src, u32 len, MIDmaCallback callback, void * arg) {
-    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_PROGRAM_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
-    // CARDi_RequestStreamCommand
-}
-
 // MATCHED 100%
-void eepromReadAsync(u32 src, u32 dst, u32 len, MIDmaCallback callback, void * arg) {
-    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
-}
-
-// MATCHED 100%
-void flashWriteAsync(u32 dst, u32 src, u32 len, MIDmaCallback callback, void * arg) {
-    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_WRITE_BACKUP, CARD_RETRY_COUNT_MAX, CARD_REQUEST_MODE_SEND_VERIFY);
-}
-
-// MATCHED 100%
-void flashReadAsync(u32 src, u32 dst, u32 len, MIDmaCallback callback, void * arg) {
-    CARDi_RequestStreamCommand(src, dst, len, callback, arg, TRUE, CARD_REQ_READ_BACKUP, 1, CARD_REQUEST_MODE_RECV);
-}
-
-// MATCHED 100%
-BOOL backupRead(u32 src, u32 dst, u32 len) {
+BOOL backupRead(u32 src, void * dst, u32 len) {
     if  (!lockBackup()) {
         return FALSE;
     }
@@ -108,14 +87,14 @@ void readDone(void * param1) {
 }
 
 // MATCHED 100%
-BOOL backupWrite(u32 dst, u32 src, u32 len, BOOL addChecksum) {
+BOOL backupWrite(u32 dst, void * src, u32 len, BOOL addChecksum) {
     if (!lockBackup()) {
         return FALSE;
     }
 
     if (addChecksum) {
-        u16 * footer = (u16 *)(src + len);
-        footer[-1] = calcChecksum((void *)src, len);
+        u16 * footer = (u16 *)((u8 *)src + len);
+        footer[-1] = calcChecksum(src, len);
     }
 
     backup.write(dst, src, len, &writeDone, NULL);

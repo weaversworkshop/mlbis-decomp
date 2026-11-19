@@ -329,7 +329,7 @@ from:0x020cb96c kind:load to:0x02055f3c add:0x8 module:main
 from:0x020cb970 kind:load to:0x020cb9ac module:overlay(71)
 from:0x020cb974 kind:load to:0x020cb960 module:overlay(71)
 from:0x020cb98c kind:load to:0x020cb96c module:overlay(71)
-from:0x020cb990 kind:load to:0x020694e0 module:overlays(0,11)
+from:0x020cb990 kind:load to:0x020694e0 module:overlay(11)
 from:0x020cb994 kind:load to:0x0209770c module:overlays(14,130)
 from:0x020cb998 kind:load to:0x020c93f8 module:overlay(71)
 from:0x020cb99c kind:load to:0x020cb898 module:overlay(71)
