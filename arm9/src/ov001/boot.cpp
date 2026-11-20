@@ -135,9 +135,7 @@ void loadNameMessages() {
 
     fs->waitAll();
 
-    if (fs != NULL) {
-        delete fs;
-    }
+    delete fs;
 }
 
 // MATCHED 100%

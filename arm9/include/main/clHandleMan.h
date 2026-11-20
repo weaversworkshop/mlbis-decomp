@@ -91,6 +91,11 @@ public:
     u32 base;  // +0x10
     u32 size;  // +0x14
 
+    clVramManByteBase(u8 bank, u8 type, u32 index) : clVramManBase(bank, type, index) {
+        this->size = this->base = 0;
+        this->head[0] = this->head[1] = NULL;
+    }
+
     virtual ~clVramManByteBase() {};  // D1 0x020296c0 D0 0x020296ac
     virtual VramHandle * alloc(u32, u32, u32);  // 0x02028950
     virtual BOOL release(VramHandle *, s32, u32);  // 0x0202946c

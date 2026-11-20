@@ -118,10 +118,7 @@ void clYanaCtrlSys::func_02020608() {
 void clYanaCtrlSys::func_02020634() {
     clYanaCtrlBase * node = this->field00;
     while (node != NULL) {
-        if (node != NULL) {
-            delete node;
-        }
-
+        delete node;
         node = this->field00;
     }
 }

@@ -34,8 +34,6 @@ void func_0200e35c(nsObjSys::clVramManByteBase *, u32, u32, u32);  // 0x0200e35c
 
 void putTileColumn(void *, void *, s32);  // 0x02011320
 
-void func_02014070(nsObjSys::clVramManByteBase *, u32, u32, u32);  // 0x02014070
-
 } // extern "C"
 
 // --- Function Definitions --- //
@@ -503,9 +501,7 @@ clMesWin::~clMesWin() {
     this->release();
 
     if (this->icons != NULL && this->ownsIcons) {
-        if (this->icons != NULL) {
-            delete this->icons;
-        }
+        delete this->icons;
         this->icons = NULL;
     }
 }
@@ -2877,7 +2873,7 @@ void clMesIcon::update() {
 }
 
 // MATCHED 100%
-void clMesIcon::setObjMan(BOOL sub, nsObjSys::clOamMan * oam, nsObjSys::clObjPltVramMan * chars, nsObjSys::clObjPltVramMan * pltt) {
+void clMesIcon::setObjMan(BOOL sub, nsObjSys::clOamMan * oam, nsObjSys::clObjCgVramMan * chars, nsObjSys::clObjPltVramMan * pltt) {
     if (!sub) {
         this->objManMain.oamMan = oam;
         if (chars != NULL) {
@@ -2943,12 +2939,6 @@ void clMesIcon::loadObjChars(u32 screen, u32 addr) {
     u32 dst = addr + objVramBase[screen];
 
     transferChars(dst, 0, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[screen]->offset), shift+5, 0, 0, 0);
-}
-
-// MATCHED 100%
-void func_02014070(nsObjSys::clVramManByteBase *man, u32 size, u32 param3, u32 param4) {
-    u32 base = (1 << objCharUnitShift[man->manBank]);
-    man->clVramManByteBase::alloc(MATH_ROUNDUP(size, base), param3, param4);
 }
 
 // MATCHED 100%

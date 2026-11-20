@@ -239,9 +239,7 @@ void resetVBlankTasks() {
 void deleteVBlankTask(clVBlankTask * task) {
     if (task != NULL) {
         OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_BLANK);
-
         delete task;
-
         OS_EnableIrqMask(mask);
     }
 }

@@ -72,7 +72,7 @@ from:0x0206abb0 kind:load to:0x02055ae8 add:0x8 module:main
 from:0x0206abb4 kind:load to:0x0205c1b0 module:main
 from:0x0206abb8 kind:load to:0x02055a70 add:0x8 module:main
 from:0x0206abbc kind:load to:0x0204ac68 module:main
-from:0x0206abc0 kind:load to:0x020827fc module:overlay(3)
+from:0x0206abc0 kind:load to:0x020827f4 add:0x8 module:overlay(3)
 from:0x0206abc4 kind:load to:0x0205c25c module:main
 from:0x0206ac4c kind:load to:0x0205c268 module:main
 from:0x0206ac50 kind:load to:0x0205c268 add:0x4 module:main

@@ -6,6 +6,7 @@
 #ifdef __cplusplus
 
 #include "main/clOamMan.h"
+#include "main/clObjCgVramMan.h"
 #include "main/clObjPltVramMan.h"
 
 #include "main/sndEmitter.h"
@@ -185,7 +186,7 @@ typedef struct MesWinSlot {
 
 typedef struct {
     nsObjSys::clOamMan * oamMan;  // +0x0
-    nsObjSys::clObjPltVramMan * charMan;  // +0x4
+    nsObjSys::clObjCgVramMan * charMan;  // +0x4
     nsObjSys::clObjPltVramMan * plttMan;  // +0x8
 } MesIconObjMan;
 
@@ -216,7 +217,7 @@ public:
 
     void update(void);  // 0x02013dc8
 
-    void setObjMan(BOOL, nsObjSys::clOamMan *, nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013ec4
+    void setObjMan(BOOL, nsObjSys::clOamMan *, nsObjSys::clObjCgVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013ec4
     void setTexMan(nsObjSys::clObjPltVramMan *, nsObjSys::clObjPltVramMan *);  // 0x02013f00
     void loadChars(u32, u32);  // 0x02013f14
     void loadObjChars(u32, u32);  // 0x02013f3c
