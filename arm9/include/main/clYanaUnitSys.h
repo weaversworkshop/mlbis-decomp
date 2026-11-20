@@ -10,11 +10,19 @@ public:
     clYanaUnitSys * next;  // +0x4
     clYanaUnitSys * prev;  // +0x8
     u16 unitSize;  // +0xc
-    u16 ownsBuffer : 1;  // +0xe
-    u16 field0e_01 : 15;
+    struct {
+        u16 ownsBuffer : 1;  // +0xe
+        u16 field0e_01 : 15;
+    };
     void * freeList;  // +0x10
     void * buffer;  // +0x14
     void * bufferEnd;  // +0x18
+
+    clYanaUnitSys() {
+        this->prev = NULL;
+        this->ownsBuffer = 0;
+        this->buffer = NULL;
+    }
 
     virtual ~clYanaUnitSys();  // D1 0x020202b8 D0 0x020202d8 D2 0x02020300
 

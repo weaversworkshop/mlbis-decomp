@@ -104,7 +104,7 @@ from:0x0206b1dc kind:arm_call to:0x01ff8228 module:itcm
 from:0x0206b270 kind:load to:0x0208283c add:0x8 module:overlay(3)
 from:0x0206b280 kind:arm_call to:0x0201a168 module:main
 from:0x0206b2f4 kind:arm_call to:0x0201a39c module:main
-from:0x0206b348 kind:load to:0x0208287c module:overlay(3)
+from:0x0206b348 kind:load to:0x02082874 add:0x8 module:overlay(3)
 from:0x0206b34c kind:load to:0x02054e64 add:0x8 module:main
 from:0x0206b350 kind:load to:0x02055fe4 module:main
 from:0x0206b360 kind:arm_call to:0x020202b8 module:main

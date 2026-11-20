@@ -2,8 +2,6 @@
 
 #include "ov003/clFieldChrBase.h"
 
-#include "main/heap.h"
-
 extern "C" {
 
 #include <nitro.h>
