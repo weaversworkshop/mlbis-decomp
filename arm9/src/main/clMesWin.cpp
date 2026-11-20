@@ -1018,7 +1018,7 @@ void clMesWin::setVoice(MesWinSlot * window, BOOL restart) {
 
 // MATCHED 100%
 void clMesWin::playCursorSound() {
-    if (gameMain->mode != 2) {
+    if (gameMain->gameMode != 2) {
         sndPlayById(0x200201d8, 0, 0x7f, 0x60, 0x7f, 0);
     } else {
         sndPlayById(0x2003000a, 0, 0x7f, 0x60, 0x7f, 0);
@@ -1027,7 +1027,7 @@ void clMesWin::playCursorSound() {
 
 // MATCHED 100%
 void clMesWin::playDecideSound() {
-    if (gameMain->mode != 2) {
+    if (gameMain->gameMode != 2) {
         sndPlayById(0x201d9, 0, 0x7f, 0x60, 0x7f, 0);
     } else {
         sndPlayById(0x3000b, 0, 0x7f, 0x60, 0x7f, 0);

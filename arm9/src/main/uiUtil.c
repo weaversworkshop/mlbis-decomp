@@ -95,7 +95,7 @@ void * getResChunk(YanaRes * res, u32 id, s32 index) {
 }
 
 // MATCHED 100%
-s32 stepMenuCursor(s32 cursor, s32 count, u32 keyPrev, u32 keyNext) {
+s32 btnSelect(s32 cursor, s32 count, u32 keyPrev, u32 keyNext) {
     if (systemState.inputState.repeat & keyPrev) {
         cursor--;
     }

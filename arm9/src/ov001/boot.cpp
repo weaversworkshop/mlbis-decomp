@@ -104,8 +104,8 @@ void loadNameMessages() {
     clFSEx * fs;
     u8 lang;
 
-    cpu_fill32(&gameState, 0, sizeof(gameState));
-    gameState.field4d4 = &data_02047d3c;
+    cpu_fill32(&gameWork, 0, sizeof(gameWork));
+    gameWork.field4d4 = &data_02047d3c;
 
     fs = openNameArchives();
 
@@ -114,7 +114,7 @@ void loadNameMessages() {
         lang = OS_LANGUAGE_ENGLISH;
     }
 
-    gameState.language = lang;
+    gameWork.language = lang;
 
     for (s32 i = 0; i < 4; i++) {
         u32 maxSize = 0;
@@ -129,7 +129,7 @@ void loadNameMessages() {
 
         if (maxSize != 0) {
             u8 * ptr = (u8 *)heapAlloc(1, maxSize, NULL, FALSE);
-            gameState.messageBanks[i] = (u32 *)fs->readChunk(i, lang, 0, ptr, NULL, NULL, 0, 0, 1, FALSE);
+            gameWork.messageBanks[i] = (u32 *)fs->readChunk(i, lang, 0, ptr, NULL, NULL, 0, 0, 1, FALSE);
         }
     }
 
@@ -159,8 +159,8 @@ void initSoftResetInput(SoftResetState * state) {
 
 // MATCHED 100%
 clGameMain::clGameMain() : clTask(8, 0, 0) {
-    mode = 0xd;
-    prevMode = 0xffff;
+    gameMode = 0xd;
+    prevGameMode = 0xffff;
 }
 
 // MATCHED 100%

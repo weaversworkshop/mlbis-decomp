@@ -229,12 +229,12 @@ BOOL copySaveCopy(u8 srcIdx, u8 dstIdx) {
 
 // MATCHED 100%
 void * func_ov000_02066f18() {
-    return &saveData.saves[gameState.field4cc_3 * SAVE_NUM_COPIES].field45c;
+    return &saveData.saves[gameWork.field4cc_3 * SAVE_NUM_COPIES].field45c;
 }
 
 // MATCHED 100%
 u32 commitGauntletResult(s32 coinDelta, BOOL useBackup) {
-    u32 slot = gameState.field4cc_3;
+    u32 slot = gameWork.field4cc_3;
     u32 slotBase = slot * SAVE_NUM_COPIES;
 
     if ((saveData.info.copyInUse & (1 << slotBase)) == 0) {

@@ -83,6 +83,6 @@ typedef struct {
 
 u32 countDigits(s32);  // 0x0201f3a0
 void * getResChunk(YanaRes *, u32, s32);  // 0x0201f4f8
-s32 stepMenuCursor(s32, s32, u32, u32);  // 0x0201f550
+s32 btnSelect(s32, s32, u32, u32);  // 0x0201f550
 
 #endif

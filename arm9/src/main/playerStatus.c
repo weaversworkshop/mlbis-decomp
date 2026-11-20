@@ -5,6 +5,7 @@
 #include "main/playerStatus.h"
 
 #include "itcm/cpu_mem.h"
+
 #include "main/backup.h"
 #include "main/clGameMain.h"
 
@@ -50,11 +51,11 @@ void initParty(u32 preset) {
     u32 slot;
     PlayerStatus * p;
 
-    cpu_fill32(&gameState.party, 0, sizeof(PartyStatus));
+    cpu_fill32(&gameWork.party, 0, sizeof(PartyStatus));
 
     startBadge = 0;
     u16 startGear[4] = { 0, 0, 0, 0 };
-    p = gameState.party.members;
+    p = gameWork.party.members;
 
     for (chr = 0; chr < 3; chr++) {
         LevelStats * lvl = sLevelTable[chr];
@@ -127,20 +128,20 @@ void initParty(u32 preset) {
         p++;
     }
 
-    gameState.party.coins = 0;
+    gameWork.party.coins = 0;
 
-    gameState.party.field94 = 0;
+    gameWork.party.field94 = 0;
 
-    gameState.party.itemCount[0] = data_020526c0[preset];
-    gameState.party.itemCount[0x18] = data_0205af8c[preset];
-    gameState.party.itemCount[1] = data_0205af88[preset];
-    gameState.party.itemCount[0x10] = data_020526bc[preset];
-    gameState.party.itemCount[0xb] = data_0205af84[preset];
+    gameWork.party.itemCount[0] = data_020526c0[preset];
+    gameWork.party.itemCount[0x18] = data_0205af8c[preset];
+    gameWork.party.itemCount[1] = data_0205af88[preset];
+    gameWork.party.itemCount[0x10] = data_020526bc[preset];
+    gameWork.party.itemCount[0xb] = data_0205af84[preset];
 }
 
 // MATCHED 100%
 void setLevel(u8 chr, u8 level) {
-    PlayerStatus * p = &gameState.party.members[chr];
+    PlayerStatus * p = &gameWork.party.members[chr];
     p->level = level;
     
     if (chr < 2) {
@@ -307,17 +308,17 @@ s16 badgeComboIdx(s32 marioBadge, s32 luigiBadge) {
 }
 
 // MATCHED 100%
-s32 getItemCount(u16 id) {
-    s32 count = 0;
+s32 getItemNum(u16 id) {
+    s32 num = 0;
 
     switch ((id & ID_SPACE_MASK)) {
         case ID_ITEM:
-            count = gameState.party.itemCount[id & ID_INDEX_MASK];
+            num = gameWork.party.itemCount[id & ID_INDEX_MASK];
             break;
         case ID_GEAR:
-            count = gameState.party.gearCount[id & ID_INDEX_MASK];
+            num = gameWork.party.gearCount[id & ID_INDEX_MASK];
     }
-    return count;
+    return num;
 }
 
 // MATCHED 100%
@@ -325,7 +326,7 @@ s8 addItem(u16 id, s8 delta) {
     s8 ret = 0;
     u16 idx = (id & ID_INDEX_MASK);
     
-    PartyStatus * party = &gameState.party;
+    PartyStatus * party = &gameWork.party;
 
     switch ((u16)(id & ID_SPACE_MASK)) {
         case ID_BADGE: {
@@ -382,24 +383,24 @@ s8 addItem(u16 id, s8 delta) {
 
 // MATCHED 100%
 s32 addCoins(s32 delta) {
-    u32 old = gameState.party.coins;
+    u32 old = gameWork.party.coins;
     s32 coins = old + delta;
     if (coins < 0) {
-        gameState.party.coins = 0;
+        gameWork.party.coins = 0;
     } else {
         if (coins > COIN_MAX) {
-            gameState.party.coins = COIN_MAX;
+            gameWork.party.coins = COIN_MAX;
         } else {
-            gameState.party.coins = coins;
+            gameWork.party.coins = coins;
         }
     }
 
-    return (gameState.party.coins - old);
+    return (gameWork.party.coins - old);
 }
 
 // MATCHED 100%
 void calcStats(PlayerStatus * dst, u32 chr, s16 slot, u16 gearId) {
-    PlayerStatus * src = &gameState.party.members[chr];
+    PlayerStatus * src = &gameWork.party.members[chr];
 
     s32 hp = src->stats[0];
     dst->stats[0] = hp;
@@ -600,7 +601,7 @@ BOOL equipGear(u8 chr, u16 gearId, u8 slot) {
     GearInfo * gear;
     u32 i;
 
-    PlayerStatus * p = &gameState.party.members[chr];
+    PlayerStatus * p = &gameWork.party.members[chr];
 
     gear = getGearInfo(gearId);
 
@@ -648,23 +649,23 @@ BOOL equipGear(u8 chr, u16 gearId, u8 slot) {
 
 // MATCHED 100%
 BOOL refreshStats(u8 chr) {
-    return equipGear(chr, gameState.party.members[chr].gear[0] | ID_GEAR, 0);
+    return equipGear(chr, gameWork.party.members[chr].gear[0] | ID_GEAR, 0);
 }
 
 // MATCHED 100%
 void equipBadge(u8 chr, u16 badgeId) {
-    gameState.party.members[chr].badge = badgeId & ID_INDEX_MASK;
+    gameWork.party.members[chr].badge = badgeId & ID_INDEX_MASK;
 
-    s16 combo = badgeComboIdx(gameState.party.members[0].badge, gameState.party.members[1].badge);
+    s16 combo = badgeComboIdx(gameWork.party.members[0].badge, gameWork.party.members[1].badge);
     if (combo != -1) {
-        gameState.party.field138 = combo;
+        gameWork.party.field138 = combo;
     }
 }
 
 // MATCHED 100%
 BOOL findGearEffect(u8 chr, u8 effect, u8 * outValue, u8 * outValue2) {
 
-    PlayerStatus * p = &gameState.party.members[chr];
+    PlayerStatus * p = &gameWork.party.members[chr];
     BOOL found = FALSE;
     u8 bestValue = 0;
     u8 bestValue2 = 0;
@@ -695,7 +696,7 @@ BOOL findGearEffect(u8 chr, u8 effect, u8 * outValue, u8 * outValue2) {
 
 // MATCHED 100%
 u16 getEquippedBadge(u8 chr) {
-    return gameState.party.members[chr].badge | ID_BADGE;
+    return gameWork.party.members[chr].badge | ID_BADGE;
 }
 
 // MATCHED 100%
@@ -705,7 +706,7 @@ BOOL keyItemFlagSet(u32 keyItemId) {
         return 0;
     }
 
-    u32 val = gameState.field054[(flag & 0xfff) >> 5] >> (flag & 0x1f);
+    u32 val = gameWork.field054[(flag & 0xfff) >> 5] >> (flag & 0x1f);
     return ((val & 1) != 0);
 }
 

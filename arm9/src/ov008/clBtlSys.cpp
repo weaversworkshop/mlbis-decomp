@@ -482,7 +482,7 @@ void btlRestartSoundJob(BtlJob * job) {
         sndInit(FALSE, 0xa0000, 0x57780, 0x80);
         sndEmitSetCmdTable();
 
-        switch (gameState.field504_0) {
+        switch (gameWork.field504_0) {
             case 1:
             case 2: {
                 sndEchoMode = 0;
@@ -490,7 +490,7 @@ void btlRestartSoundJob(BtlJob * job) {
             }
             case 0:
             case 3: {
-                if (gameState.field504_5 == 1) {
+                if (gameWork.field504_5 == 1) {
                     sndEchoMode = 1;
                 } else {
                     sndEchoMode = 0;
@@ -499,21 +499,21 @@ void btlRestartSoundJob(BtlJob * job) {
             }
         }
 
-        switch (gameState.field504_0) {
+        switch (gameWork.field504_0) {
             case 0:
             case 1: {
                 u32 strmNo;
-                if (gameState.field504_2 == 2) {
+                if (gameWork.field504_2 == 2) {
                     strmNo = 0x2a;
-                } else if (gameState.field504_4 == 0) {
+                } else if (gameWork.field504_4 == 0) {
                     strmNo = 0x162;
-                } else if (gameState.field504_2 == 0) {
+                } else if (gameWork.field504_2 == 0) {
                     strmNo = 0x6b;
                 } else {
                     strmNo = 0x3d;
                 }
 
-                if (gameState.field504_5 == 1) {
+                if (gameWork.field504_5 == 1) {
                     strmNo += 0x1f4;
                 }
 

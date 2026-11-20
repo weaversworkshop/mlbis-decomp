@@ -59,29 +59,29 @@ void btlEnter(u32 param1, u32 param2) {
 
 // MATCHED 100%
 void btlSetup() {
-    switch ((s16)gameState.field4fc) {
+    switch ((s16)gameWork.field4fc) {
         case 0x3001:
         case 0x3002:
         case 0x3003:
         case 0x3004:
-            gameState.field504_0 = 1;
+            gameWork.field504_0 = 1;
             break;
         case 0x3005:
         case 0x3009:
-            gameState.field504_0 = 3;
+            gameWork.field504_0 = 3;
             break;
         default: {
-            if (gameState.field502 != 0) {
-                gameState.field504_0 = 2;
-            } else if (gameState.field504_0b != 0) {
-                gameState.field504_0 = 1;
+            if (gameWork.field502 != 0) {
+                gameWork.field504_0 = 2;
+            } else if (gameWork.field504_0b != 0) {
+                gameWork.field504_0 = 1;
             } else {
-                gameState.field504_0 = 0;
+                gameWork.field504_0 = 0;
             }
         }
     }
 
-    switch (gameState.field504_0) {
+    switch (gameWork.field504_0) {
         case 0: {
             FSOverlayInfo info;
             void * ret;
@@ -150,25 +150,25 @@ void btlExit() {
 
     sndEchoMode = 0;
 
-    gameState.field502 = 0;
+    gameWork.field502 = 0;
 
-    if (gameState.field504_13 == 3) {
+    if (gameWork.field504_13 == 3) {
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        u16 hold = gameMain->prevMode;
-        gameMain->setMode(2);
-        gameMain->prevMode = hold;
+        u16 hold = gameMain->prevGameMode;
+        gameMain->change(2);
+        gameMain->prevGameMode = hold;
     } else {
         data_0205af98 = 0;
 
         GX_SetMasterBrightness(-0x10);
         GXS_SetMasterBrightness(~0xf);
 
-        if (gameMain->prevMode == 5) {
-            gameState.field4fc &= ~1;
+        if (gameMain->prevGameMode == 5) {
+            gameWork.field4fc &= ~1;
         }
 
-        gameMain->setMode(gameMain->prevMode);
+        gameMain->change(gameMain->prevGameMode);
     }
 }

@@ -4435,7 +4435,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN10clGameMain7setModeEt",
+     "name": "_ZN10clGameMain6changeEt",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
@@ -4450,17 +4450,17 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "initGameState",
+     "name": "initGameWork",
      "size": 192,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "getGameVar",
+     "name": "getRegFlag",
      "size": 444,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "setGameVar",
+     "name": "putRegFlag",
      "size": 556,
      "fuzzy_match_percent": 100.0
     },
@@ -4524,12 +4524,12 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "fetchInstruction",
+     "name": "_ZN13clGlobalEvent16fetchInstructionEP12clLocalEventP10ScriptCode",
      "size": 456,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "rewindInstruction",
+     "name": "_ZN13clGlobalEvent6rewindEP12clLocalEventP10ScriptCode",
      "size": 140,
      "fuzzy_match_percent": 100.0
     },
@@ -4554,37 +4554,37 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "stepScript",
+     "name": "_ZN13clGlobalEvent14execLocalEventEP12clLocalEvent",
      "size": 128,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "execInstruction",
+     "name": "_ZN13clGlobalEvent15execInstructionEP12clLocalEventP10ScriptCode",
      "size": 5036,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN13clGlobalEvent10execCustomEP12EventContextP16EventInstruction",
+     "name": "_ZN13clGlobalEvent6execExEP12clLocalEventP10ScriptCode",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN13clGlobalEvent17getCustomVariableEP12EventContextm",
+     "name": "_ZN13clGlobalEvent12getStatusRegEP12clLocalEventm",
      "size": 8,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN13clGlobalEvent17setCustomVariableEP12EventContextml",
+     "name": "_ZN13clGlobalEvent12setStatusRegEP12clLocalEventml",
      "size": 4,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "_ZN13clGlobalEvent6getVarEP12EventContextm",
+     "name": "_ZN13clGlobalEvent11getRegisterEP12clLocalEventm",
      "size": 32,
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "evalCompare",
+     "name": "cmp",
      "size": 244,
      "fuzzy_match_percent": 100.0
     },
@@ -7612,7 +7612,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "getItemCount",
+     "name": "getItemNum",
      "size": 84,
      "fuzzy_match_percent": 100.0
     },
@@ -9022,7 +9022,7 @@
      "fuzzy_match_percent": 100.0
     },
     {
-     "name": "stepMenuCursor",
+     "name": "btnSelect",
      "size": 92,
      "fuzzy_match_percent": 100.0
     }

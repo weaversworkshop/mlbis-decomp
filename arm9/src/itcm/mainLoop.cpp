@@ -279,9 +279,9 @@ void mainLoop() {
 
         runResetFade(&softResetState);
 
-        if (gameState.field4cc_0) {
-            if (gameState.field4d0 < -1) {
-                gameState.field4d0++;
+        if (gameWork.field4cc_0) {
+            if (gameWork.field4d0 < -1) {
+                gameWork.field4d0++;
             }
         }
 

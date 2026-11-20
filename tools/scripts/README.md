@@ -13,7 +13,7 @@ listed where one exists.
 | Build glue | `fix_deps`, `gen_objdiff`, `setup_tools` |
 | Delink / link | `gen_delinks`, `check_relocs`, `link_rom`, `patch_lcf` |
 | Scoring / progress | `obj_match`, `build_todo`, `decmp_report`, `call_graph`, `data_catalog` |
-| Naming | `sync_renames`, `apply_sdk_mappings`, `struct_offsets`, `data_syms` |
+| Naming | `sync_renames`, `apply_sdk_mappings`, `struct_offsets`, `data_syms`, `static_names` |
 | Per-function matching | `fn_diff`, `grind`, `rank_diff`, `asm_smell`, `../permuter/extract_target_asm` |
 | SDK identification | `sdk_propose`, `sdk_compile_audit` |
 | TU scouting | `tu_cluster` |
@@ -225,6 +225,18 @@ Fixes dsd's data-symbol splits. **Config-only and dry-run unless `--apply`.**
   Use `--addr-from` with the pre-merge `symbols.txt` if `merge --apply` already ran.
 - `rebase NAME NEW_ADDR`: move a symbol down to its object start, adding the delta to each reloc's `add:`
   (e.g. vtable referenced only at `+8` ⇒ dsd placed it 8 late). Then `rm -f build/delinks/.stamp && make delinks`.
+
+### static_names.py
+Looks names up in the 3DS symbol exports (BIS DX = `DX`, Dream Team = `DT`) at `../static_names/`. Naming
+evidence for close-tu only — 3DS addresses don't map to DS. Class keys drop `cl`/`in`/`ns` (ours) and `Ctr`
+(3DS); types compare after `long`→`int`. Findings: `notes/static_names_parity.md`.
+- `static_names.py clCellAnime` — every member of the namesake class(es), tagged DX/DT/DX+DT.
+- `static_names.py <regex>` — classes matching it, else members whose name matches.
+- `static_names.py --survey [-o F]` — every DS class with symbols: per method matches / params differ /
+  not in 3DS / placeholder (+ same-arity 3DS candidates), unused 3DS members, classes with no namesake,
+  free functions whose name is a 3DS member, and every 3DS free function (pair those by signature).
+- `static_names.py --params <regex>` — 3DS functions whose parameter list matches (finds a twin under a
+  different name, e.g. `--params 'short, GlobalEvent'` → `GetRegFlag`).
 
 ---
 

@@ -71,7 +71,7 @@ BOOL writeSaveBackup(u32);  // 0x02017ba4
 s32 commitSave(s32, u32, u32, BOOL);  // 0x02017bec
 
 static inline void snapshotEventFlag(u32 * eventFlags, u16 id) {
-    if (getGameVar(id, NULL, NULL) != 0) {
+    if (getRegFlag(id, NULL, NULL) != 0) {
         eventFlags[EVENT_FLAG_WORD(id)] |=  EVENT_FLAG_BIT(id);
     } else {
         eventFlags[EVENT_FLAG_WORD(id)] &= ~EVENT_FLAG_BIT(id);
@@ -79,7 +79,7 @@ static inline void snapshotEventFlag(u32 * eventFlags, u16 id) {
 }
 
 static inline void snapshotByteVar(u8 * byteVars, u16 id) {
-    byteVars[id - GVAR_SPACE_6000] = getGameVar(id, NULL, NULL);
+    byteVars[id - GVAR_SPACE_6000] = getRegFlag(id, NULL, NULL);
 }
 
 extern const SaveHeader saveHeaderTemplate;

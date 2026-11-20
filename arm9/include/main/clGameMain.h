@@ -5,19 +5,20 @@
 
 #ifdef __cplusplus
 
+#include "main/clGlobalEvent.h"
 #include "main/task.h"
 
 class clGameMain : public clTask {
 public:
     u8 pad_18[0x10];
-    u16 mode;  // +0x28
-    u16 prevMode;  // +0x2a
+    u16 gameMode;  // +0x28
+    u16 prevGameMode;  // +0x2a
 
     clGameMain();  // C1 0x02069cb8
     virtual ~clGameMain() {};  // D1 0x020057cc D0 0x020057e0
     virtual void run(void);  // 0x02004ce8
 
-    void setMode(u16);  // 0x020057ac
+    void change(u16);  // 0x020057ac
 };
 
 extern clGameMain * gameMain;
@@ -77,22 +78,15 @@ typedef struct {
         };
     };
     s16 field508[6];
-} GameState;
+} GameWork;
 
-extern GameState gameState;
-
-#ifdef __cplusplus
-class clGlobalEvent;
-struct EventContext;
-#else
-typedef struct clGlobalEvent clGlobalEvent;
-typedef struct EventContext EventContext;
-#endif
-
-u32 getGameVar(u16, clGlobalEvent *, EventContext *);  // 0x020058bc
-void setGameVar(u16, s32, clGlobalEvent *, EventContext *);  // 0x02005a78
+extern GameWork gameWork;
 
 #ifdef __cplusplus
+
+u32 getRegFlag(u16, clGlobalEvent *, clLocalEvent *);  // 0x020058bc
+void putRegFlag(u16, s32, clGlobalEvent *, clLocalEvent *);  // 0x02005a78
+
 } // extern "C"
 #endif
 

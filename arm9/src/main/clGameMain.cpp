@@ -116,7 +116,7 @@ extern void func_ov132_020776c8(UnkStruct_ov132_020776c8 *, u32, u32, u32);
 // --- Variable Definitions --- //
 
 clGameMain * gameMain;  // 0x02055fe0
-GameState gameState;  // 0x02055fe4
+GameWork gameWork;  // 0x02055fe4
 
 // --- Function Declarations --- //
 
@@ -124,7 +124,7 @@ GameState gameState;  // 0x02055fe4
 #define BITSET_SET(ptr,idx) ((ptr)[(idx) >> 5] |= 1 << ((idx) & 0x1f))
 #define BITSET_CLR(ptr,idx) ((ptr)[(idx) >> 5] &= ~(1 << ((idx) & 0x1f)))
 
-void initGameState(void);  // 0x020057fc
+void initGameWork(void);  // 0x020057fc
 u8 * getMessageText(u32, u32);  // 0x02005ca4
 u8 * getItemNameText(s32);  // 0x02005cbc
 
@@ -139,7 +139,7 @@ void clGameMain::run() {
             return;
         }
 
-        switch (this->prevMode) {
+        switch (this->prevGameMode) {
             case 0:
                 fsUnloadOverlay(FS_OVERLAY_ID(OVY_0), MI_PROCESSOR_ARM9);
                 fsUnloadOverlay(FS_OVERLAY_ID(OVY_2), MI_PROCESSOR_ARM9);
@@ -205,7 +205,7 @@ void clGameMain::run() {
         }
     }
 
-    switch (this->mode) {
+    switch (this->gameMode) {
         case 0: {
             FSOverlayInfo info;
             void * heapBase;
@@ -227,8 +227,8 @@ void clGameMain::run() {
             fsLoadOverlay(FS_OVERLAY_ID(OVY_4), MI_PROCESSOR_ARM9);
             fsLoadOverlay(FS_OVERLAY_ID(OVY_5), MI_PROCESSOR_ARM9);
 
-            if (gameState.field4cc_2) {
-                initGameState();
+            if (gameWork.field4cc_2) {
+                initGameWork();
             }
 
             UnkStruct_ov004_020cad58 * ptr = new(HEAP_MAIN_LO, NULL, TRUE) UnkStruct_ov004_020cad58;
@@ -494,74 +494,74 @@ void clGameMain::run() {
 }
 
 // MATCHED 100%
-void clGameMain::setMode(u16 newMode) {
-    this->prevMode = this->mode;
-    this->mode = newMode;
+void clGameMain::change(u16 newMode) {
+    this->prevGameMode = this->gameMode;
+    this->gameMode = newMode;
     this->field10 = 1;
 
     this->enable();
 }
 
 // MATCHED 100%
-void initGameState() {
-    cpu_fill32(gameState.field000, 0, sizeof(gameState.field000));
-    cpu_fill32(gameState.field040, 0, sizeof(gameState.field040));
-    cpu_fill32(gameState.field054, 0, sizeof(gameState.field054));
-    cpu_fill32(gameState.field05c, 0, sizeof(gameState.field05c));
-    cpu_fill32(gameState.field0e4, 0, sizeof(gameState.field0e4));
-    MI_CpuFill8(gameState.field2e4, 0, sizeof(gameState.field2e4));
-    cpu_fill32(gameState.field37c, 0, sizeof(gameState.field37c));
-    cpu_fill16(gameState.field4e8, 0, sizeof(gameState.field4e8));
+void initGameWork() {
+    cpu_fill32(gameWork.field000, 0, sizeof(gameWork.field000));
+    cpu_fill32(gameWork.field040, 0, sizeof(gameWork.field040));
+    cpu_fill32(gameWork.field054, 0, sizeof(gameWork.field054));
+    cpu_fill32(gameWork.field05c, 0, sizeof(gameWork.field05c));
+    cpu_fill32(gameWork.field0e4, 0, sizeof(gameWork.field0e4));
+    MI_CpuFill8(gameWork.field2e4, 0, sizeof(gameWork.field2e4));
+    cpu_fill32(gameWork.field37c, 0, sizeof(gameWork.field37c));
+    cpu_fill16(gameWork.field4e8, 0, sizeof(gameWork.field4e8));
 
     initParty(0);
 
-    gameState.field4ce = 0;
-    gameState.field4d0 = 0;
+    gameWork.field4ce = 0;
+    gameWork.field4d0 = 0;
 }
 
 // MATCHED 100%
-u32 getGameVar(u16 id,clGlobalEvent * sys, EventContext * ctx) {
+u32 getRegFlag(u16 id, clGlobalEvent * sys, clLocalEvent * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
-        return BITSET_GET(gameState.field0e4, idx);
+        return BITSET_GET(gameWork.field0e4, idx);
     }
 
     u32 idx = id & ID_INDEX_MASK;
     switch ((u16)(id & ID_SPACE_MASK)) {
         case 0x2000:
-            return BITSET_GET(gameState.field054, idx);
+            return BITSET_GET(gameWork.field054, idx);
         case 0xd000:
-            return BITSET_GET(gameState.field05c, idx);
+            return BITSET_GET(gameWork.field05c, idx);
         case 0x3000:
         case 0x4000:
-            return sys->getCustomVariable(ctx, id);
+            return sys->getStatusReg(ctx, id);
         case 0x5000:
-            return gameState.field000[idx];
+            return gameWork.field000[idx];
         case 0x6000:
-            return gameState.field2e4[idx];
+            return gameWork.field2e4[idx];
         case 0x9000:
             return sys->vars[idx];
         case 0xa000:
-            return ctx->locals[idx];
+            return ctx->workRegs[idx];
         case 0xb000:
-            return BITSET_GET(ctx->words, idx);
+            return BITSET_GET(ctx->workBitRegs, idx);
         case 0xc000:
-            return gameState.field040[idx];
+            return gameWork.field040[idx];
         case 0x1000:
-            return ctx->args[idx];
+            return ctx->tempRegs[idx];
         default:
             return 0;
     }
 }
 
 // MATCHED 100%
-void setGameVar(u16 id,s32 value, clGlobalEvent * sys, EventContext * ctx) {
+void putRegFlag(u16 id, s32 value, clGlobalEvent * sys, clLocalEvent * ctx) {
     if ((id & 0xe000) == 0xe000) {
         u32 idx = id & ~0xe000;
         if (value != 0) {
-            BITSET_SET(gameState.field0e4, idx);
+            BITSET_SET(gameWork.field0e4, idx);
         } else {
-            BITSET_CLR(gameState.field0e4, idx);
+            BITSET_CLR(gameWork.field0e4, idx);
         }
         return;
     }
@@ -570,52 +570,52 @@ void setGameVar(u16 id,s32 value, clGlobalEvent * sys, EventContext * ctx) {
     switch ((u16)(id & ID_SPACE_MASK)) {
         case 0x2000:
             if (value != 0) {
-                BITSET_SET(gameState.field054, idx);
+                BITSET_SET(gameWork.field054, idx);
             } else {
-                BITSET_CLR(gameState.field054, idx);
+                BITSET_CLR(gameWork.field054, idx);
             }
             break;
         case 0xd000:
             if (value != 0) {
-                BITSET_SET(gameState.field05c, idx);
+                BITSET_SET(gameWork.field05c, idx);
             } else {
-                BITSET_CLR(gameState.field05c, idx);
+                BITSET_CLR(gameWork.field05c, idx);
             }
             break;
         case 0x4000:
-            sys->setCustomVariable(ctx, id, value);
+            sys->setStatusReg(ctx, id, value);
             break;
         case 0x5000:
-            gameState.field000[idx] = value;
+            gameWork.field000[idx] = value;
             break;
         case 0x6000:
-            gameState.field2e4[idx] = value;
+            gameWork.field2e4[idx] = value;
             break;
         case 0x9000:
             sys->vars[idx] = value;
             break;
         case 0xa000:
-            ctx->locals[idx] = value;
+            ctx->workRegs[idx] = value;
             break;
         case 0xb000:
             if (value != 0) {
-                BITSET_SET(ctx->words, idx);
+                BITSET_SET(ctx->workBitRegs, idx);
             } else {
-                BITSET_CLR(ctx->words, idx);
+                BITSET_CLR(ctx->workBitRegs, idx);
             }
             break;
         case 0xc000:
-            gameState.field040[idx] = value;
+            gameWork.field040[idx] = value;
             break;
         case 0x1000:
-            ctx->args[idx] = value;
+            ctx->tempRegs[idx] = value;
             break;
     }
 }
 
 // MATCHED 100%
 u8 * getMessageText(u32 bank, u32 idx) {
-    return (u8*)gameState.messageBanks[bank] + gameState.messageBanks[bank][idx];
+    return (u8*)gameWork.messageBanks[bank] + gameWork.messageBanks[bank][idx];
 }
 
 // MATCHED 100%

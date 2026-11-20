@@ -16,16 +16,12 @@ extern "C" {
 
 // --- Variable Definitions --- //
 
-const u8 argSizes[12] = { 1, 2, 4, 1, 2, 4, 2, 4, 4, 2, 0, 0 };  // 0x0204ac2c
+const u8 argTypeSizeTbl[12] = { 1, 2, 4, 1, 2, 4, 2, 4, 4, 2, 0, 0 };  // 0x0204ac2c
 
 // --- Function Declarations --- //
 
-void fetchInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x02015f0c
-u32 rewindInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x020160d4
-u32 stepScript(clGlobalEvent *, EventContext *);  // 0x020161d4
-u32 execInstruction(clGlobalEvent *, EventContext *, EventInstruction *);  // 0x02016254
-bool evalCompare(s32, s32, s32);  // 0x02017634
-void initContext(EventContext *, u8 *);  // 0x02017728
+bool cmp(s32, s32, s32);  // 0x02017634
+void initContext(clLocalEvent *, u8 *);  // 0x02017728
 
 // --- Function Definitions --- //
 
@@ -43,7 +39,7 @@ void clScriptSystem::setOpInfo(EventOpInfo * param) {
 }
 
 // MATCHED 100%
-void fetchInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
+void clGlobalEvent::fetchInstruction(clLocalEvent * ctx, ScriptCode * inst) {
     u8 * head;
     u32 * arg;
     s32 i;
@@ -51,13 +47,12 @@ void fetchInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
     s32 argCount;
     u8 * p;
     u32 mask;
-    
 
     head = ctx->pc;
     p = &ctx->pc[6];
     inst->opcode = head[0] | (head[1] << 8);
 
-    info = &sys->opInfo[inst->opcode];
+    info = &this->opInfo[inst->opcode];
 
     mask = head[2] | (head[3] << 8) | (head[4] << 16) | (head[5] << 24);
     inst->varArgMask = mask;
@@ -76,7 +71,7 @@ void fetchInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
         for (i = 0; i < argCount; i++) {
 
             if ((mask >> i & 1) != 0) {
-                arg[0] = sys->getVar(ctx, p[0] | (p[1] << 8));
+                arg[0] = this->getRegister(ctx, p[0] | (p[1] << 8));
                 p += 2;
             } else {
                 switch ((info->argTypes[i/2] >> (i & 1) * 4) & 0xf) {
@@ -119,10 +114,10 @@ void fetchInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
 }
 
 // MATCHED 100%
-u32 rewindInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
+u32 clGlobalEvent::rewind(clLocalEvent * ctx, ScriptCode * inst) {
     s32 idx;
 
-    EventOpInfo * entry = &sys->opInfo[inst->opcode];
+    EventOpInfo * entry = &this->opInfo[inst->opcode];
     u8 header = entry->argInfo;
     s32 count = EV_ARG_COUNT(header);
 
@@ -136,7 +131,7 @@ u32 rewindInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction 
         if (((inst->varArgMask >> idx) & 1) != 0) {
             r0 += 2;
         } else {
-            r0 += argSizes[entry->argTypes[idx / 2] >> (idx & 1) * 4 & 0xf];
+            r0 += argTypeSizeTbl[entry->argTypes[idx / 2] >> (idx & 1) * 4 & 0xf];
         }
     }
 
@@ -153,7 +148,7 @@ clGlobalEvent::clGlobalEvent() {
 clGlobalEvent::~clGlobalEvent() {}
 
 // MATCHED 100%
-u32 stepScript(clGlobalEvent * sys, EventContext * ctx) {
+u32 clGlobalEvent::execLocalEvent(clLocalEvent * ctx) {
     u32 ret = 1;
 
     if (ctx->pc != NULL) {
@@ -163,11 +158,11 @@ u32 stepScript(clGlobalEvent * sys, EventContext * ctx) {
             }
         }
 
-        EventInstruction r4;
+        ScriptCode r4;
         ret = 0;
         while (ret == 0) {
-            fetchInstruction(sys, ctx, &r4);
-            ret = execInstruction(sys, ctx, &r4);
+            this->fetchInstruction(ctx, &r4);
+            ret = this->execInstruction(ctx, &r4);
         }
     }
 
@@ -175,7 +170,7 @@ u32 stepScript(clGlobalEvent * sys, EventContext * ctx) {
 }
 
 // MATCHED 100%
-u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * inst) {
+u32 clGlobalEvent::execInstruction(clLocalEvent * ctx, ScriptCode * inst) {
     s32 val;
 
     switch (inst->opcode) {
@@ -188,11 +183,11 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                 return 2;
             }
             ctx->sp--;
-            ctx->pc = ctx->stack[ctx->sp];
+            ctx->pc = (u8 *)ctx->stack[ctx->sp];
             return 0;
         case JUMP:
             if (inst->args[0] == 1) {
-                ctx->stack[ctx->sp] = ctx->pc;
+                ctx->stack[ctx->sp] = (s32)ctx->pc;
                 ctx->sp++;
             }
             ctx->pc += inst->args[1];
@@ -201,7 +196,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             ctx->waitFrames = inst->args[0];
             return 3;
         case BRANCH_IF:
-            val = evalCompare(inst->args[0], inst->args[1], inst->args[2]);
+            val = cmp(inst->args[0], inst->args[1], inst->args[2]);
             if (inst->args[3] == val) {
                 ctx->pc += inst->args[4];
             }
@@ -213,16 +208,16 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
         case NOOP63:
             return 0;
         case PUSH:
-            ctx->stack[ctx->sp] = (u8 *)inst->args[0];
+            ctx->stack[ctx->sp] = inst->args[0];
             ctx->sp++;
             return 0;
         case POP_TO_VAR:
             ctx->sp--;
-            setGameVar(inst->destVar, (s32)ctx->stack[ctx->sp], sys, ctx);
+            putRegFlag(inst->destVar, ctx->stack[ctx->sp], this, ctx);
             return 0;
         case LOOP: {
             u32 sp = ctx->sp;
-            u8 ** stackTop = ctx->stackTop;
+            s32 * stackTop = &ctx->stack[-1];
             u32 mode = inst->args[0] & 0xf;
 
             if (mode == 3) {
@@ -231,7 +226,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                 stackTop[sp]--;
             }
 
-            val = evalCompare(inst->args[1], inst->args[2], (s32)stackTop[sp]);
+            val = cmp(inst->args[1], inst->args[2], stackTop[sp]);
 
             if (val != 0) {
                 ctx->pc += inst->args[3];
@@ -255,7 +250,7 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             u8 * rec = &ctx->pc[inst->args[0]];
             u16 header = rec[0] | (rec[1] << 8);
             s32 type = (header & 0xf00) >> 8;
-            u8 * elem = (rec + 2) + argSizes[type] * (inst->args[1] & 0xff);
+            u8 * elem = (rec + 2) + argTypeSizeTbl[type] * (inst->args[1] & 0xff);
 
             switch (type) {
                 case 0:
@@ -283,176 +278,176 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     break;
             }
 
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         }
         case BYTE_GET: {
             u8 * ptr = &ctx->pc[inst->args[0]];
-            setGameVar(inst->destVar, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, sys, ctx);
+            putRegFlag(inst->destVar, (u16)(*ptr | (*(ptr+1) << 8)) & 0xff, this, ctx);
             return 0;
         }
         case MOV:
-            setGameVar(inst->destVar, inst->args[0], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0], this, ctx);
             return 0;
         case ADD:
-            setGameVar(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] + inst->args[1], this, ctx);
             return 0;
         case SUB:
-            setGameVar(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] - inst->args[1], this, ctx);
             return 0;
         case MUL:
-            setGameVar(inst->destVar, inst->args[0] * inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] * inst->args[1], this, ctx);
             return 0;
         case DIV:
-            setGameVar(inst->destVar, inst->args[0] / inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] / inst->args[1], this, ctx);
             return 0;
         case MOD:
-            setGameVar(inst->destVar, inst->args[0] % inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] % inst->args[1], this, ctx);
             return 0;
         case SHL:
-            setGameVar(inst->destVar, inst->args[0] << inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] << inst->args[1], this, ctx);
             return 0;
         case SHR:
-            setGameVar(inst->destVar, inst->args[0] >> inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] >> inst->args[1], this, ctx);
             return 0;
         case AND:
-            setGameVar(inst->destVar, inst->args[0] & inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] & inst->args[1], this, ctx);
             return 0;
         case OR:
-            setGameVar(inst->destVar, inst->args[0] | inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] | inst->args[1], this, ctx);
             return 0;
         case XOR:
-            setGameVar(inst->destVar, inst->args[0] ^ inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] ^ inst->args[1], this, ctx);
             return 0;
         case NEG:
-            setGameVar(inst->destVar, -inst->args[0], sys, ctx);
+            putRegFlag(inst->destVar, -inst->args[0], this, ctx);
             return 0;
         case LNOT:
-            setGameVar(inst->destVar, (inst->args[0] == 0), sys, ctx);
+            putRegFlag(inst->destVar, (inst->args[0] == 0), this, ctx);
             return 0;
         case BNOT:
-            setGameVar(inst->destVar, ~inst->args[0], sys, ctx);
+            putRegFlag(inst->destVar, ~inst->args[0], this, ctx);
             return 0;
         case INC:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val+1, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val+1, this, ctx);
             return 0;
         case DEC:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val-1, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val-1, this, ctx);
             return 0;
         case ADD_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, inst->args[0]+val, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, inst->args[0]+val, this, ctx);
             return 0;
         case SUB_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val-inst->args[0], sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val-inst->args[0], this, ctx);
             return 0;
         case MUL_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, inst->args[0]*val, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, inst->args[0]*val, this, ctx);
             return 0;
         case DIV_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val / inst->args[0], sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val / inst->args[0], this, ctx);
             return 0;
         case MOD_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val % inst->args[0], sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val % inst->args[0], this, ctx);
             return 0;
         case SHL_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val << inst->args[0], sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val << inst->args[0], this, ctx);
             return 0;
         case SHR_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, val >> inst->args[0], sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, val >> inst->args[0], this, ctx);
             return 0;
         case AND_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, inst->args[0] & val, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, inst->args[0] & val, this, ctx);
             return 0;
         case OR_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, inst->args[0] | val, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, inst->args[0] | val, this, ctx);
             return 0;
         case XOR_EQ:
-            val = getGameVar(inst->destVar, sys, ctx);
-            setGameVar(inst->destVar, inst->args[0] ^ val, sys, ctx);
+            val = getRegFlag(inst->destVar, this, ctx);
+            putRegFlag(inst->destVar, inst->args[0] ^ val, this, ctx);
             return 0;
         case SQRT:
             val = FX_Sqrt(inst->args[0] << FX32_SHIFT);
-            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
+            putRegFlag(inst->destVar, val / FX32_ONE, this, ctx);
             return 0;
         case INVSQRT:
             val = FX_InvSqrt(inst->args[0] << FX32_SHIFT);
-            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
+            putRegFlag(inst->destVar, val / FX32_ONE, this, ctx);
             return 0;
         case INV:
             val = FX_Inv(inst->args[0] << FX32_SHIFT);
-            setGameVar(inst->destVar, val / FX32_ONE, sys, ctx);
+            putRegFlag(inst->destVar, val / FX32_ONE, this, ctx);
             return 0;
         case SIN:
-            setGameVar(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
+            putRegFlag(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 16) / 360)), this, ctx);
             return 0;
         case COS:
-            setGameVar(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 16) / 360)), sys, ctx);
+            putRegFlag(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 16) / 360)), this, ctx);
             return 0;
         case ATAN:
-            setGameVar(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 16), sys, ctx);
+            putRegFlag(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 16), this, ctx);
             return 0;
         case ATAN2:
-            setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 16), sys, ctx);
+            putRegFlag(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 16), this, ctx);
             return 0;
         case RAND:
             val = rand_range(inst->args[0]);
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         case MOV_FX:
-            setGameVar(inst->destVar, inst->args[0], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0], this, ctx);
             return 0;
         case FX_TRUNC:
-            setGameVar(inst->destVar, FX_Whole(inst->args[0]), sys, ctx);
+            putRegFlag(inst->destVar, FX_Whole(inst->args[0]), this, ctx);
             return 0;
         case FX_FLOOR:
-            setGameVar(inst->destVar, FX_Floor(inst->args[0]), sys, ctx);
+            putRegFlag(inst->destVar, FX_Floor(inst->args[0]), this, ctx);
             return 0;
         case FX_SQRT:
-            setGameVar(inst->destVar, FX_Sqrt(inst->args[0]), sys, ctx);
+            putRegFlag(inst->destVar, FX_Sqrt(inst->args[0]), this, ctx);
             return 0;
         case FX_INVSQRT:
-            setGameVar(inst->destVar, FX_InvSqrt(inst->args[0]), sys, ctx);
+            putRegFlag(inst->destVar, FX_InvSqrt(inst->args[0]), this, ctx);
             return 0;
         case FX_INV:
-            setGameVar(inst->destVar, FX_Inv(inst->args[0]), sys, ctx);
+            putRegFlag(inst->destVar, FX_Inv(inst->args[0]), this, ctx);
             return 0;
         case FX_SIN:
-            setGameVar(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
+            putRegFlag(inst->destVar, FX_SinIdx((u16)((inst->args[0] << 4) / 360)), this, ctx);
             return 0;
         case FX_COS:
-            setGameVar(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 4) / 360)), sys, ctx);
+            putRegFlag(inst->destVar, FX_CosIdx((u16)((inst->args[0] << 4) / 360)), this, ctx);
             return 0;
         case FX_ATAN: 
-            setGameVar(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 4), sys, ctx);
+            putRegFlag(inst->destVar, FX_AtanIdx(inst->args[0]) * 360 / (1 << 4), this, ctx);
             return 0;
         case FX_ADD:
-            setGameVar(inst->destVar, inst->args[0] + inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] + inst->args[1], this, ctx);
             return 0;
         case FX_SUB:
-            setGameVar(inst->destVar, inst->args[0] - inst->args[1], sys, ctx);
+            putRegFlag(inst->destVar, inst->args[0] - inst->args[1], this, ctx);
             return 0;
         case FX_MUL:
-            setGameVar(inst->destVar, FX_MUL(inst->args[0], inst->args[1]), sys, ctx);
+            putRegFlag(inst->destVar, FX_MUL(inst->args[0], inst->args[1]), this, ctx);
             return 0;
         case FX_DIV:
-            setGameVar(inst->destVar, FX_Div(inst->args[0], inst->args[1]), sys, ctx);
+            putRegFlag(inst->destVar, FX_Div(inst->args[0], inst->args[1]), this, ctx);
             return 0;
         case FX_MOD:
-            setGameVar(inst->destVar, FX_ModS32(inst->args[0], inst->args[1]), sys, ctx);
+            putRegFlag(inst->destVar, FX_ModS32(inst->args[0], inst->args[1]), this, ctx);
             return 0;
         case FX_ATAN2: 
-            setGameVar(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), sys, ctx);
+            putRegFlag(inst->destVar, FX_Atan2Idx(inst->args[0], inst->args[1]) * 360 / (1 << 4), this, ctx);
             return 0;
         case OP64:
             setSoftResetFade(&softResetState, -1);
@@ -460,36 +455,36 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
             return 0;
         case OP65:
             val = addCoins(inst->args[0]);
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         case ADD_COINS: {
-            u16 old = gameState.party.field94;
+            u16 old = gameWork.party.field94;
             u32 sum = old + inst->args[0];
 
             if (sum > 999) {
-                gameState.party.field94 = 999;
+                gameWork.party.field94 = 999;
             } else {
-                gameState.party.field94 = sum;
+                gameWork.party.field94 = sum;
             }
 
-            setGameVar(inst->destVar, gameState.party.field94 - old, sys, ctx);
+            putRegFlag(inst->destVar, gameWork.party.field94 - old, this, ctx);
             return 0;
         }
         case GET_FLAG:
             if ((inst->args[0] & 0x3000) == 0x3000) {
-                val = (gameState.party.badgeOwned >> (inst->args[0] & 0xfff)) & 1;
+                val = (gameWork.party.badgeOwned >> (inst->args[0] & 0xfff)) & 1;
             } else {
-                val = getItemCount(inst->args[0]);
+                val = getItemNum(inst->args[0]);
             }
 
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         case OP68:
             val = addItem(inst->args[0], inst->args[1]);
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         case ACTOR_GET: {
-            PlayerStatus *player = &gameState.party.members[inst->args[0]];
+            PlayerStatus *player = &gameWork.party.members[inst->args[0]];
             ExpCounter local;
 
             switch (inst->args[1]) {
@@ -580,13 +575,13 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
                     break;
             }
 
-            setGameVar(inst->destVar, val, sys, ctx);
+            putRegFlag(inst->destVar, val, this, ctx);
             return 0;
         }
         case ACTOR_SET: {
             s32 id = inst->args[0];
             s32 val = inst->args[2];
-            PlayerStatus *player = &gameState.party.members[id];
+            PlayerStatus *player = &gameWork.party.members[id];
             ExpCounter local;
 
             switch (inst->args[1]) {
@@ -653,29 +648,29 @@ u32 execInstruction(clGlobalEvent * sys, EventContext * ctx, EventInstruction * 
 
     }
 
-    return sys->execCustom(ctx, inst);
+    return this->execEx(ctx, inst);
 }
 
 // MATCHED 100%
-u32 clGlobalEvent::execCustom(EventContext * param1, EventInstruction * param2) {
+u32 clGlobalEvent::execEx(clLocalEvent * param1, ScriptCode * param2) {
     return 1;
 }
 
 // MATCHED 100%
-s32 clGlobalEvent::getCustomVariable(EventContext * ctx, u32 id) {
+s32 clGlobalEvent::getStatusReg(clLocalEvent * ctx, u32 id) {
     return 0;
 }
 
 // MATCHED 100%
-void clGlobalEvent::setCustomVariable(EventContext * ctx, u32 id, s32 value) {}
+void clGlobalEvent::setStatusReg(clLocalEvent * ctx, u32 id, s32 value) {}
 
 // MATCHED 100%
-s32 clGlobalEvent::getVar(EventContext * param2, u32 param3) {
-    return getGameVar(param3, this, param2);
+s32 clGlobalEvent::getRegister(clLocalEvent * param2, u32 param3) {
+    return getRegFlag(param3, this, param2);
 }
 
 // MATCHED 100%
-bool evalCompare(s32 op, s32 lhs, s32 rhs) {
+bool cmp(s32 op, s32 lhs, s32 rhs) {
     switch (op) {
         case 0:
             return (lhs == rhs);
@@ -705,12 +700,12 @@ bool evalCompare(s32 op, s32 lhs, s32 rhs) {
 }
 
 // MATCHED 100%
-void initContext(EventContext * ctx, u8 * code) {
+void initContext(clLocalEvent * ctx, u8 * code) {
     ctx->pc = code;
 
-    cpu_fill32(ctx->locals, 0, sizeof(ctx->locals));
+    cpu_fill32(ctx->workRegs, 0, sizeof(ctx->workRegs));
 
-    ctx->flags = 0;
+    ctx->workBitRegs[0] = 0;
     ctx->sp = 0;
     ctx->waitFrames = 0;
 }

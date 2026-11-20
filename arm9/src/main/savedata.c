@@ -41,7 +41,7 @@ BOOL writeSaveBackup(u32 slotIdx) {  // Save into backup slot
 
 // MATCHED 100%
 s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
-    u32 slot = gameState.field4cc_3;
+    u32 slot = gameWork.field4cc_3;
     u32 slotBase = slot * SAVE_NUM_COPIES;
 
     if ((saveData.info.copyInUse & (1 << slotBase)) == 0) {
@@ -74,7 +74,7 @@ s32 commitSave(s32 coinDelta, u32 gearId1, u32 gearId2, BOOL useBackup) {
     }
 
     for (s32 i = 0; i < 10; i++) {
-        saveData.saves[copyIdx].field10e[i] = gameState.field4e8[i];
+        saveData.saves[copyIdx].field10e[i] = gameWork.field4e8[i];
     }
 
     u32 * eventFlags = saveData.saves[copyIdx].eventFlags;

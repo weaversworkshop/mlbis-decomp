@@ -105,7 +105,7 @@ typedef struct {
 
 void initParty(u32);  // 0x02018048
 u16 * getNameIdPtr(s32);  // 0x02018538
-s32 getItemCount(u16);  // 0x02018824
+s32 getItemNum(u16);  // 0x02018824
 s8 addItem(u16, s8);  // 0x02018878
 s32 addCoins(s32);  // 0x02018974
 BOOL equipGear(u8, u16, u8);  // 0x02018ec4
