@@ -3,40 +3,40 @@ _ZN6clFPafD0Ev kind:function(arm,size=0x30) addr:0x02069d64
 _ZN6clFPafD1Ev kind:function(arm,size=0x28) addr:0x02069d94
 _ZThn12_N6clFPafD0Ev kind:function(arm,size=0x10) addr:0x02069dbc
 _ZThn12_N6clFPafD1Ev kind:function(arm,size=0x10) addr:0x02069dcc
-func_ov003_02069ddc kind:function(arm,size=0x5c) addr:0x02069ddc
-func_ov003_02069e38 kind:function(arm,size=0x5c) addr:0x02069e38
-func_ov003_02069e94 kind:function(arm,size=0x14) addr:0x02069e94
-func_ov003_02069ea8 kind:function(arm,size=0x1c) addr:0x02069ea8
-func_ov003_02069ec4 kind:function(arm,size=0x14) addr:0x02069ec4
-func_ov003_02069ed8 kind:function(arm,size=0x38) addr:0x02069ed8
-func_ov003_02069f10 kind:function(arm,size=0x138) addr:0x02069f10
-func_ov003_0206a048 kind:function(arm,size=0xa0) addr:0x0206a048
+_ZN16clFieldCellAnimeC2Ev kind:function(arm,size=0x5c) addr:0x02069ddc
+_ZN16clFieldCellAnimeC1Ev kind:function(arm,size=0x5c) addr:0x02069e38
+_ZN16clFieldCellAnimeD1Ev kind:function(arm,size=0x14) addr:0x02069e94
+_ZN16clFieldCellAnimeD0Ev kind:function(arm,size=0x1c) addr:0x02069ea8
+_ZN16clFieldCellAnimeD2Ev kind:function(arm,size=0x14) addr:0x02069ec4
+_ZN16clFieldCellAnime5resetEv kind:function(arm,size=0x38) addr:0x02069ed8
+_ZN16clFieldCellAnime11updateXformEv kind:function(arm,size=0x138) addr:0x02069f10
+getFieldAnimeRes kind:function(arm,size=0xa0) addr:0x0206a048
 func_ov003_0206a0e8 kind:function(arm,size=0x90) addr:0x0206a0e8
-func_ov003_0206a178 kind:function(arm,size=0xa0) addr:0x0206a178
-func_ov003_0206a218 kind:function(arm,size=0xd4) addr:0x0206a218
-func_ov003_0206a2ec kind:function(arm,size=0x58) addr:0x0206a2ec
-func_ov003_0206a344 kind:function(arm,size=0x80) addr:0x0206a344
-func_ov003_0206a3c4 kind:function(arm,size=0x60) addr:0x0206a3c4
-func_ov003_0206a424 kind:function(arm,size=0x94) addr:0x0206a424
-func_ov003_0206a4b8 kind:function(arm,size=0x44) addr:0x0206a4b8
-func_ov003_0206a4fc kind:function(arm,size=0x40) addr:0x0206a4fc
-func_ov003_0206a53c kind:function(arm,size=0x150) addr:0x0206a53c
-func_ov003_0206a68c kind:function(arm,size=0x94) addr:0x0206a68c
-func_ov003_0206a720 kind:function(arm,size=0xc) addr:0x0206a720
-func_ov003_0206a72c kind:function(arm,size=0x4c) addr:0x0206a72c
-func_ov003_0206a778 kind:function(arm,size=0x14) addr:0x0206a778
-func_ov003_0206a78c kind:function(arm,size=0x1c) addr:0x0206a78c
-func_ov003_0206a7a8 kind:function(arm,size=0x3c) addr:0x0206a7a8
-func_ov003_0206a7e4 kind:function(arm,size=0xa4) addr:0x0206a7e4
-func_ov003_0206a888 kind:function(arm,size=0x28) addr:0x0206a888
-func_ov003_0206a8b0 kind:function(arm,size=0x8) addr:0x0206a8b0
-func_ov003_0206a8b8 kind:function(arm,size=0x14) addr:0x0206a8b8
-func_ov003_0206a8cc kind:function(arm,size=0x18) addr:0x0206a8cc
-func_ov003_0206a8e4 kind:function(arm,size=0x14) addr:0x0206a8e4
-func_ov003_0206a8f8 kind:function(arm,size=0xc) addr:0x0206a8f8
-func_ov003_0206a904 kind:function(arm,size=0x8) addr:0x0206a904
-func_ov003_0206a90c kind:function(arm,size=0x8) addr:0x0206a90c
-func_ov003_0206a914 kind:function(arm,size=0x34) addr:0x0206a914
+parkRange kind:function(arm,size=0xa0) addr:0x0206a178
+parkScreen kind:function(arm,size=0xd4) addr:0x0206a218
+parkCount kind:function(arm,size=0x58) addr:0x0206a2ec
+unparkAll kind:function(arm,size=0x80) addr:0x0206a344
+flushLoads kind:function(arm,size=0x60) addr:0x0206a3c4
+queueLoads kind:function(arm,size=0x94) addr:0x0206a424
+_ZN16clFieldCellAnime9initAllocEmmPN8nsObjSys13clVramManBaseES2_P7YanaResPmS5_Pt kind:function(arm,size=0x44) addr:0x0206a4b8
+_ZN16clFieldCellAnime14initAllocFrontEmPN8nsObjSys13clVramManBaseES2_P7YanaResPmS5_Pt kind:function(arm,size=0x40) addr:0x0206a4fc
+_ZN16clFieldCellAnime11initAllocExEmmmPN8nsObjSys13clVramManBaseES2_P7YanaResPmS5_Pt kind:function(arm,size=0x150) addr:0x0206a53c
+_ZN16clFieldCellAnime9copyStateEPS_ kind:function(arm,size=0x94) addr:0x0206a68c
+_ZN16clFieldCellAnime19func_ov003_0206a720Ess kind:function(arm,size=0xc) addr:0x0206a720
+_ZN19clFieldSysCellAnimeC1Ev kind:function(arm,size=0x4c) addr:0x0206a72c
+_ZN19clFieldSysCellAnimeD1Ev kind:function(arm,size=0x14) addr:0x0206a778
+_ZN19clFieldSysCellAnimeD0Ev kind:function(arm,size=0x1c) addr:0x0206a78c
+_ZN19clFieldSysCellAnime5resetEv kind:function(arm,size=0x3c) addr:0x0206a7a8
+_ZN19clFieldSysCellAnime11updateXformEv kind:function(arm,size=0xa4) addr:0x0206a7e4
+_ZN16clFieldCellAnime6updateEv kind:function(arm,size=0x28) addr:0x0206a888
+_ZN16clFieldCellAnime18getPolygonAttrMiscEv kind:function(arm,size=0x8) addr:0x0206a8b0
+_ZN16clFieldCellAnime14setAllPriorityEm kind:function(arm,size=0x14) addr:0x0206a8b8
+_ZN16clFieldCellAnime18setAllBasePriorityEm kind:function(arm,size=0x18) addr:0x0206a8cc
+_ZN16clFieldCellAnime11setPriorityEmh kind:function(arm,size=0x14) addr:0x0206a8e4
+_ZN16clFieldCellAnime15setBasePriorityEmh kind:function(arm,size=0xc) addr:0x0206a8f8
+_ZN16clFieldCellAnime19setBasePriorityWordEm kind:function(arm,size=0x8) addr:0x0206a904
+_ZN16clFieldCellAnime8setAlphaEm kind:function(arm,size=0x8) addr:0x0206a90c
+_ZN16clFieldCellAnime15initWithHandlesEP10VramHandleS1_mP7YanaResPmS4_Pt kind:function(arm,size=0x34) addr:0x0206a914
 func_ov003_0206a948 kind:function(arm,size=0x2c) addr:0x0206a948
 func_ov003_0206a974 kind:function(arm,size=0x84) addr:0x0206a974
 func_ov003_0206a9f8 kind:function(arm,size=0x1c) addr:0x0206a9f8
@@ -677,58 +677,23 @@ data_ov003_0207e510 kind:data(any) addr:0x0207e510 ambiguous
 data_ov003_0207e518 kind:data(any) addr:0x0207e518
 data_ov003_0207e51a kind:data(any) addr:0x0207e51a
 data_ov003_0207e538 kind:data(any) addr:0x0207e538
-data_ov003_0207e580 kind:data(any) addr:0x0207e580
-data_ov003_0207e588 kind:data(any) addr:0x0207e588
-data_ov003_0207e59c kind:data(any) addr:0x0207e59c ambiguous
-data_ov003_0207e5cc kind:data(any) addr:0x0207e5cc ambiguous
-data_ov003_0207e5d4 kind:data(any) addr:0x0207e5d4 ambiguous
+_ZTS6clFPaf kind:data(any) addr:0x0207e580
+_ZTI6clFPaf kind:data(any) addr:0x0207e588
+_ZTV6clFPaf kind:data(any) addr:0x0207e594
 data_ov003_0207e5e0 kind:data(any) addr:0x0207e5e0
-data_ov003_0207e5e4 kind:data(any) addr:0x0207e5e4
-data_ov003_0207e5f0 kind:data(any) addr:0x0207e5f0
-data_ov003_0207e5fc kind:data(any) addr:0x0207e5fc
-data_ov003_0207e608 kind:data(any) addr:0x0207e608
-data_ov003_0207e61c kind:data(any) addr:0x0207e61c
-data_ov003_0207e620 kind:data(any) addr:0x0207e620 ambiguous
+fieldAnimeRes3 kind:data(any) addr:0x0207e5e4
+_ZTI19clFieldSysCellAnime kind:data(any) addr:0x0207e5f0
+_ZTI16clFieldCellAnime kind:data(any) addr:0x0207e5fc
+_ZTS16clFieldCellAnime kind:data(any) addr:0x0207e608
+_ZTS19clFieldSysCellAnime kind:data(any) addr:0x0207e61c
 data_ov003_0207e634 kind:data(any) addr:0x0207e634
-data_ov003_0207e694 kind:data(any) addr:0x0207e694
-data_ov003_0207e738 kind:data(any) addr:0x0207e738
-data_ov003_0207e7d4 kind:data(any) addr:0x0207e7d4
-data_ov003_0207e7d8 kind:data(any) addr:0x0207e7d8 ambiguous
-data_ov003_0207e84c kind:data(any) addr:0x0207e84c ambiguous
-data_ov003_0207e8cc kind:data(any) addr:0x0207e8cc ambiguous
-data_ov003_0207e920 kind:data(any) addr:0x0207e920 ambiguous
-data_ov003_0207e994 kind:data(any) addr:0x0207e994 ambiguous
-data_ov003_0207e9c0 kind:data(any) addr:0x0207e9c0 ambiguous
-data_ov003_0207e9e8 kind:data(any) addr:0x0207e9e8 ambiguous
+_ZTV16clFieldCellAnime kind:data(any) addr:0x0207e68c
+_ZTV19clFieldSysCellAnime kind:data(any) addr:0x0207e730
+fieldAnimeRes2 kind:data(any) addr:0x0207e7d4
 data_ov003_0207ea2c kind:data(any) addr:0x0207ea2c
-data_ov003_0207ea38 kind:data(any) addr:0x0207ea38 ambiguous
-data_ov003_0207ed20 kind:data(any) addr:0x0207ed20 ambiguous
-data_ov003_0207ed4c kind:data(any) addr:0x0207ed4c ambiguous
-data_ov003_0207ed64 kind:data(any) addr:0x0207ed64 ambiguous
-data_ov003_0207ed98 kind:data(any) addr:0x0207ed98 ambiguous
-data_ov003_0207edd0 kind:data(any) addr:0x0207edd0 ambiguous
-data_ov003_0207ee08 kind:data(any) addr:0x0207ee08 ambiguous
 data_ov003_0207ee28 kind:data(any) addr:0x0207ee28
-data_ov003_0207ee40 kind:data(any) addr:0x0207ee40 ambiguous
-data_ov003_0207ee78 kind:data(any) addr:0x0207ee78 ambiguous
-data_ov003_0207eeb4 kind:data(any) addr:0x0207eeb4 ambiguous
-data_ov003_0207eeec kind:data(any) addr:0x0207eeec ambiguous
-data_ov003_0207ef2c kind:data(any) addr:0x0207ef2c ambiguous
-data_ov003_0207ef6c kind:data(any) addr:0x0207ef6c ambiguous
-data_ov003_0207efac kind:data(any) addr:0x0207efac ambiguous
-data_ov003_0207eff0 kind:data(any) addr:0x0207eff0 ambiguous
-data_ov003_0207f01c kind:data(any) addr:0x0207f01c ambiguous
-data_ov003_0207f03c kind:data(any) addr:0x0207f03c ambiguous
-data_ov003_0207f19c kind:data(any) addr:0x0207f19c ambiguous
-data_ov003_0207f5b4 kind:data(any) addr:0x0207f5b4
-data_ov003_02080000 kind:data(any) addr:0x02080000
-data_ov003_0208000e kind:data(any) addr:0x0208000e ambiguous
-data_ov003_020800e5 kind:data(any) addr:0x020800e5 ambiguous
-data_ov003_020800e8 kind:data(any) addr:0x020800e8 ambiguous
-data_ov003_02080104 kind:data(any) addr:0x02080104 ambiguous
-data_ov003_020801e0 kind:data(any) addr:0x020801e0 ambiguous
-data_ov003_020801e8 kind:data(any) addr:0x020801e8 ambiguous
-data_ov003_02080344 kind:data(any) addr:0x02080344
+fieldAnimeRes0 kind:data(any) addr:0x0207f5b4
+fieldAnimeRes1 kind:data(any) addr:0x02080344
 data_ov003_020827cc kind:data(any) addr:0x020827cc
 data_ov003_020827d8 kind:data(any) addr:0x020827d8
 data_ov003_020827fc kind:data(any) addr:0x020827fc
@@ -764,4 +729,4 @@ data_ov003_02083d34 kind:data(any) addr:0x02083d34
 data_ov003_02083d38 kind:data(any) addr:0x02083d38
 data_ov003_02083d3c kind:data(any) addr:0x02083d3c
 data_ov003_02087264 kind:data(any) addr:0x02087264
-data_ov003_02087280 kind:bss addr:0x02087280
+parkedCellAnimeList kind:bss addr:0x02087280

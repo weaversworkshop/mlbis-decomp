@@ -4,9 +4,9 @@ from:0x02069d88 kind:arm_call to:0x020204a4 module:main
 from:0x02069da8 kind:arm_call to:0x02020774 module:main
 from:0x02069db0 kind:arm_call to:0x020205e0 module:main
 from:0x02069de4 kind:arm_call to:0x0202ac50 module:main
-from:0x02069e34 kind:load to:0x0207e694 module:overlay(3)
+from:0x02069e34 kind:load to:0x0207e68c add:0x8 module:overlay(3)
 from:0x02069e40 kind:arm_call to:0x0202ac50 module:main
-from:0x02069e90 kind:load to:0x0207e694 module:overlay(3)
+from:0x02069e90 kind:load to:0x0207e68c add:0x8 module:overlay(3)
 from:0x02069e9c kind:arm_call to:0x0202acc0 module:main
 from:0x02069eb0 kind:arm_call to:0x0202acc0 module:main
 from:0x02069eb8 kind:arm_call to:0x0201a168 module:main
@@ -52,7 +52,7 @@ from:0x0206a5f4 kind:arm_call to:0x0202b1a4 module:main
 from:0x0206a660 kind:arm_call to:0x0202b474 module:main
 from:0x0206a728 kind:load to:0x0202dee8 module:main
 from:0x0206a734 kind:arm_call to:0x02069ddc module:overlay(3)
-from:0x0206a774 kind:load to:0x0207e738 module:overlay(3)
+from:0x0206a774 kind:load to:0x0207e730 add:0x8 module:overlay(3)
 from:0x0206a780 kind:arm_call to:0x02069ec4 module:overlay(3)
 from:0x0206a794 kind:arm_call to:0x02069ec4 module:overlay(3)
 from:0x0206a79c kind:arm_call to:0x0201a168 module:main
@@ -596,16 +596,6 @@ from:0x0207e7c4 kind:load to:0x0206a8f8 module:overlay(3)
 from:0x0207e7c8 kind:load to:0x0206a904 module:overlay(3)
 from:0x0207e7cc kind:load to:0x0206a8cc module:overlay(3)
 from:0x0207e7d0 kind:load to:0x0206a68c module:overlay(3)
-from:0x0207f71c kind:load to:0x0205fd4c add:0x37d module:main
-from:0x0207f924 kind:load to:0x020d00d0 module:overlays(55,101)
-from:0x0207fa14 kind:load to:0x021000d3 module:overlay(4)
-from:0x02080734 kind:load to:0x020a0000 module:overlays(124,130)
-from:0x02080964 kind:load to:0x020d0004 module:overlays(55,101)
-from:0x02080a2c kind:load to:0x020c0000 module:overlay(17)
-from:0x02080ab8 kind:load to:0x020f0004 module:overlay(4)
-from:0x02082138 kind:load to:0x02050000 module:main
-from:0x0208214c kind:load to:0x0205fd4c add:0x2b4 module:main
-from:0x020821ec kind:load to:0x02080000 module:overlay(3)
 from:0x020827cc kind:load to:0x02055f3c add:0x8 module:main
 from:0x020827d0 kind:load to:0x020827d8 module:overlay(3)
 from:0x020827d4 kind:load to:0x020559f4 module:main

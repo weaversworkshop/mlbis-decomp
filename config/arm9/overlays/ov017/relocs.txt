@@ -11,5 +11,5 @@ from:0x020ba4a8 kind:load to:0x02050000 add:0x1 module:main
 from:0x020bb9e8 kind:load to:0x020a0002 module:overlays(124,130)
 from:0x020bba0c kind:load to:0x020a0002 module:overlays(124,130)
 from:0x020bbe14 kind:load to:0x02050000 add:0x5 module:main
-from:0x020bbe40 kind:load to:0x02080000 module:overlays(3,130)
-from:0x020bbe5c kind:load to:0x0208000e module:overlays(3,130)
+from:0x020bbe40 kind:load to:0x02080000 module:overlay(130)
+from:0x020bbe5c kind:load to:0x0208000e module:overlay(130)

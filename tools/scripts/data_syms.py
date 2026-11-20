@@ -37,7 +37,7 @@ def addr_of(sym_files, name):
 
 
 def merge(args):
-    config_dir = Path(args.config_dir)
+    config_dir = Path(args.config_dir).resolve()
     sym_files = config_files(config_dir, "symbols.txt")
     reloc_files = config_files(config_dir, "relocs.txt")
 

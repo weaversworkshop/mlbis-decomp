@@ -22,11 +22,6 @@ extern "C" {
 typedef void (*CharCopyFunc)(u32 *, u32 *, u32, u32);
 
 typedef struct {
-    nsObjSys::clCellAnime * head;  // +0x0
-    nsObjSys::clCellAnime * tail;  // +0x4
-} CellAnimeList;
-
-typedef struct {
     union {
         struct {
             s16 x;  // +0x0
@@ -105,13 +100,11 @@ nsObjSys::clCellAnime * plttLoadQueue[2];  // 0x0205c278
 
 u32 calcFrameCharSize(u32, u32, YanaRes *);  // 0x0202ace8
 u32 calcTotalCharSize(u32, u32, YanaRes *);  // 0x0202ae6c
-BOOL usesExtPltt(u32, YanaRes *);  // 0x0202b06c
 u32 getResPlttUnits(YanaRes *);  // 0x0202b0c0
 u32 getResPlttSize(YanaRes *);  // 0x0202b0d0
 
 u32 getDataUnits(u32 *);  // 0x0202b15c
 u32 getDataSize(u32 *);  // 0x0202b168
-u32 getTexPlttSize(YanaRes *, u32 *);  // 0x0202b1a4
 
 void copyChars(u32 *, u32 *, u32, u32);  // 0x0202d08c
 void linearToTiles4(u32 *, u32 *, u32, u32);  // 0x0202d09c
@@ -467,7 +460,7 @@ void clCellAnime::setup(u32 screen, u32 mode, u32 perFrame, VramHandle * charHan
     this->endMode = 0;
     this->playCount = -1;
 
-    this->field88w = 0x3020100;
+    this->priorityW = 0x3020100;
 
     switch (this->mode) {
         case 0: {

@@ -330,8 +330,8 @@ from:0x02113b6c kind:load to:0x02054f4c add:0x8 module:main
 from:0x02113b70 kind:load to:0x02054f4c add:0x38 module:main
 from:0x02113b74 kind:load to:0x0205590c add:0x8 module:main
 from:0x02113b78 kind:load to:0x0205590c add:0x38 module:main
-from:0x02113b7c kind:load to:0x0207e59c module:overlays(3,130)
-from:0x02113b80 kind:load to:0x0207e5cc module:overlays(3,130)
+from:0x02113b7c kind:load to:0x0207e594 add:0x8 module:overlay(3)
+from:0x02113b80 kind:load to:0x0207e594 add:0x38 module:overlay(3)
 from:0x02113b9c kind:load to:0x02115fcc module:overlay(7)
 from:0x02113ba8 kind:arm_call to:0x02113fb8 module:overlay(7)
 from:0x02113bd0 kind:arm_call to:0x0206ad4c module:overlay(3)

@@ -68,7 +68,7 @@ public:
     u8 perFrame;  // +0x86
     s8 state;  // +0x87
     union {
-        u32 field88w;
+        u32 priorityW;  // +0x88
         u8 priority[4];  // +0x88
     };
     union {
@@ -109,7 +109,7 @@ public:
     clCellAnime * prev;  // +0xac
     s32 pafState;  // +0xb0
 
-    clCellAnime();  // C1 0x0202ac50
+    clCellAnime();  // C2 0x0202ac50
     virtual ~clCellAnime();  // D1 0x0202ac68 D0 0x0202ac90 D2 0x0202acc0
     virtual void initWithHandles(VramHandle *, VramHandle *, u32, YanaRes *, u32 *, u32 *, u16 *);  // 0x0202b24c
     virtual void initAt(u32, u32, u32, u32, u32, YanaRes *, u32 *, u32 *, u16 *);  // 0x0202b2dc
@@ -165,7 +165,9 @@ extern "C" {
 
 s32 findCharEntry(u32, u32, u32, YanaRes *);  // 0x0202af48
 u32 getResCharSize(u32, u32, u32, YanaRes *);  // 0x0202afbc
+BOOL usesExtPltt(u32, YanaRes *);  // 0x0202b06c
 u32 getObjPlttUnits(YanaRes *, u32 *);  // 0x0202b170
+u32 getTexPlttSize(YanaRes *, u32 *);  // 0x0202b1a4
 void setupOrtho(u32);  // 0x0202b1d8
 void transferChars(u32, u32, YanaRes *, u32 *, u16 *, u32, u32, u32, u8);  // 0x0202d10c
 void flushCharLoads(u32);  // 0x0202d980
@@ -173,6 +175,13 @@ void flushPlttLoads(u32);  // 0x0202d9f4
 void queuePush(nsObjSys::clCellAnime *, nsObjSys::clCellAnime * &, nsObjSys::clCellAnime * &, u32);  // 0x0202dbf0
 
 }
+
+typedef struct {
+    nsObjSys::clCellAnime * head;  // +0x0
+    nsObjSys::clCellAnime * tail;  // +0x4
+} CellAnimeList;
+
+extern CellAnimeList cellAnimeList;
 
 extern nsObjSys::clCellAnime * charLoadQueue[2];
 extern nsObjSys::clCellAnime * plttLoadQueue[2];

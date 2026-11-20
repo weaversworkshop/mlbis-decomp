@@ -14,7 +14,6 @@ public:
     virtual void func_ov003_02069d60(void);  // 0x02069d60
 };
 
-
 #endif
 
 #endif
