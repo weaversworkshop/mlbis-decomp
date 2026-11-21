@@ -23,7 +23,9 @@ typedef struct {
 } UnkStruct_10;
 
 typedef struct {
-    u8 pad_00[0x10];
+    s16 x;  // +0x0
+    s16 y;  // +0x2
+    u8 pad_04[0xc];
     struct {
         u32 : 1;  // +0x10
         u32 field10_1 : 1;
