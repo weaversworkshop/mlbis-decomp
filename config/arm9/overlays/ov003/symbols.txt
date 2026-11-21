@@ -86,11 +86,11 @@ _ZN13clGuideMapChrD1Ev kind:function(arm,size=0x30) addr:0x0206b8f8
 _ZN13clGuideMapChrD0Ev kind:function(arm,size=0x38) addr:0x0206b928
 _ZN13clGuideMapChrD2Ev kind:function(arm,size=0x30) addr:0x0206b960
 _ZN13clGuideMapChr16releaseCellAnimeEv kind:function(arm,size=0x2c) addr:0x0206b990
-func_ov003_0206b9bc kind:function(arm,size=0x98) addr:0x0206b9bc
-func_ov003_0206ba54 kind:function(arm,size=0x90) addr:0x0206ba54
-func_ov003_0206bae4 kind:function(arm,size=0x6c) addr:0x0206bae4
-func_ov003_0206bb50 kind:function(arm,size=0x148) addr:0x0206bb50
-func_ov003_0206bc98 kind:function(arm,size=0xf0) addr:0x0206bc98
+ellipseCircumference kind:function(arm,size=0x98) addr:0x0206b9bc
+vecLength2D kind:function(arm,size=0x90) addr:0x0206ba54
+dir8ToVec kind:function(arm,size=0x6c) addr:0x0206bae4
+clampVecLength3D kind:function(arm,size=0x148) addr:0x0206bb50
+clampVecLength2D kind:function(arm,size=0xf0) addr:0x0206bc98
 func_ov003_0206bd88 kind:function(arm,size=0x68) addr:0x0206bd88
 func_ov003_0206bdf0 kind:function(arm,size=0xac) addr:0x0206bdf0
 func_ov003_0206be9c kind:function(arm,size=0xc8) addr:0x0206be9c
@@ -226,8 +226,7 @@ fobjTable kind:data(any) addr:0x02078600
 fmapDataTable kind:data(any) addr:0x0207b070
 data_ov003_0207e50c kind:data(any) addr:0x0207e50c ambiguous
 data_ov003_0207e510 kind:data(any) addr:0x0207e510 ambiguous
-data_ov003_0207e518 kind:data(any) addr:0x0207e518
-data_ov003_0207e51a kind:data(any) addr:0x0207e51a
+dir8Vecs kind:data(any) addr:0x0207e518
 data_ov003_0207e538 kind:data(any) addr:0x0207e538
 _ZTS6clFPaf kind:data(any) addr:0x0207e580
 _ZTI6clFPaf kind:data(any) addr:0x0207e588

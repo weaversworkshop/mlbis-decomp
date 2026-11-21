@@ -183,7 +183,7 @@ from:0x0206b98c kind:load to:0x020829a8 add:0x8 module:overlay(3)
 from:0x0206ba24 kind:arm_call to:0x0203491c module:main
 from:0x0206bad0 kind:arm_call to:0x0203491c module:main
 from:0x0206bb48 kind:load to:0x0207e518 module:overlay(3)
-from:0x0206bb4c kind:load to:0x0207e51a module:overlay(3)
+from:0x0206bb4c kind:load to:0x0207e518 add:0x2 module:overlay(3)
 from:0x0206bc3c kind:arm_call to:0x0203491c module:main
 from:0x0206bc48 kind:arm_call to:0x020348fc module:main
 from:0x0206bc6c kind:arm_call to:0x020348fc module:main

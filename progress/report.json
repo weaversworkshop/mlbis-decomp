@@ -1,43 +1,43 @@
 {
  "measures": {
-  "fuzzy_match_percent": 9.199022519733555,
+  "fuzzy_match_percent": 9.22809567820919,
   "total_code": 3343290,
-  "matched_code": 299530,
-  "matched_code_percent": 8.959139051652713,
+  "matched_code": 300502,
+  "matched_code_percent": 8.988212210128347,
   "total_data": 1803032,
-  "matched_data": 177172,
-  "matched_data_percent": 9.826336970170246,
+  "matched_data": 177204,
+  "matched_data_percent": 9.828111758415824,
   "total_functions": 12116,
-  "matched_functions": 2079,
-  "matched_functions_percent": 17.159128425222846,
-  "complete_code": 255662,
-  "complete_code_percent": 7.64701835617012,
-  "complete_data": 165292,
-  "complete_data_percent": 9.167446833999618,
-  "total_units": 238,
-  "complete_units": 233
+  "matched_functions": 2084,
+  "matched_functions_percent": 17.20039617035325,
+  "complete_code": 256634,
+  "complete_code_percent": 7.676091514645753,
+  "complete_data": 165324,
+  "complete_data_percent": 9.169221622245196,
+  "total_units": 239,
+  "complete_units": 234
  },
  "categories": [
   {
    "id": "game",
    "name": "Game",
    "measures": {
-    "fuzzy_match_percent": 6.253744304025752,
+    "fuzzy_match_percent": 6.283760497947658,
     "total_code": 3238252,
-    "matched_code": 194492,
-    "matched_code_percent": 6.006079823312083,
+    "matched_code": 195464,
+    "matched_code_percent": 6.036096017233989,
     "total_data": 1803032,
-    "matched_data": 177172,
-    "matched_data_percent": 9.826336970170246,
+    "matched_data": 177204,
+    "matched_data_percent": 9.828111758415824,
     "total_functions": 11175,
-    "matched_functions": 1138,
-    "matched_functions_percent": 10.183445190156599,
-    "complete_code": 152932,
-    "complete_code_percent": 4.722671367144991,
-    "complete_data": 101760,
-    "complete_data_percent": 5.64382662093629,
-    "total_units": 77,
-    "complete_units": 72
+    "matched_functions": 1143,
+    "matched_functions_percent": 10.228187919463087,
+    "complete_code": 153904,
+    "complete_code_percent": 4.752687561066897,
+    "complete_data": 101792,
+    "complete_data_percent": 5.645601409181867,
+    "total_units": 78,
+    "complete_units": 73
    }
   },
   {
@@ -198,22 +198,22 @@
    "id": "ov003",
    "name": "ov003",
    "measures": {
-    "fuzzy_match_percent": 18.592501536570374,
+    "fuzzy_match_percent": 21.081745543945914,
     "total_code": 39048,
-    "matched_code": 7260,
-    "matched_code_percent": 18.592501536570374,
+    "matched_code": 8232,
+    "matched_code_percent": 21.081745543945914,
     "total_data": 81072,
-    "matched_data": 54172,
-    "matched_data_percent": 66.81961713045195,
+    "matched_data": 54204,
+    "matched_data_percent": 66.8590882178804,
     "total_functions": 204,
-    "matched_functions": 88,
-    "matched_functions_percent": 43.13725490196079,
-    "complete_code": 6992,
-    "complete_code_percent": 17.90616676910469,
-    "complete_data": 54132,
-    "complete_data_percent": 66.77027827116638,
-    "total_units": 7,
-    "complete_units": 6
+    "matched_functions": 93,
+    "matched_functions_percent": 45.588235294117645,
+    "complete_code": 7964,
+    "complete_code_percent": 20.39541077648023,
+    "complete_data": 54164,
+    "complete_data_percent": 66.80974935859483,
+    "total_units": 8,
+    "complete_units": 7
    }
   },
   {
@@ -10427,6 +10427,55 @@
    }
   },
   {
+   "name": "ov003/fieldMath",
+   "measures": {
+    "fuzzy_match_percent": 100.0,
+    "total_code": 972,
+    "matched_code": 972,
+    "matched_code_percent": 100.0,
+    "total_data": 32,
+    "matched_data": 32,
+    "matched_data_percent": 100.0,
+    "total_functions": 5,
+    "matched_functions": 5,
+    "matched_functions_percent": 100.0
+   },
+   "functions": [
+    {
+     "name": "ellipseCircumference",
+     "size": 152,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "vecLength2D",
+     "size": 144,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "dir8ToVec",
+     "size": 108,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "clampVecLength3D",
+     "size": 328,
+     "fuzzy_match_percent": 100.0
+    },
+    {
+     "name": "clampVecLength2D",
+     "size": 240,
+     "fuzzy_match_percent": 100.0
+    }
+   ],
+   "metadata": {
+    "complete": true,
+    "progress_categories": [
+     "game",
+     "ov003"
+    ]
+   }
+  },
+  {
    "name": "ov008/clBtlSys",
    "measures": {
     "fuzzy_match_percent": 100.0,
@@ -19191,42 +19240,17 @@
    "name": "ov003/_undecompiled",
    "measures": {
     "fuzzy_match_percent": 0.0,
-    "total_code": 31788,
+    "total_code": 30816,
     "matched_code": 0,
     "matched_code_percent": 0.0,
     "total_data": 0,
     "matched_data": 0,
     "matched_data_percent": 100.0,
-    "total_functions": 116,
+    "total_functions": 111,
     "matched_functions": 0,
     "matched_functions_percent": 0.0
    },
    "functions": [
-    {
-     "name": "func_ov003_0206b9bc",
-     "size": 152,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov003_0206ba54",
-     "size": 144,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov003_0206bae4",
-     "size": 108,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov003_0206bb50",
-     "size": 328,
-     "fuzzy_match_percent": 0.0
-    },
-    {
-     "name": "func_ov003_0206bc98",
-     "size": 240,
-     "fuzzy_match_percent": 0.0
-    },
     {
      "name": "func_ov003_0206bd88",
      "size": 104,
