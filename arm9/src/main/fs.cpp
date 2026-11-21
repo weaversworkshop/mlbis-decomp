@@ -689,7 +689,7 @@ bool clFSEx::openArchive(s16 slot, const char * path, void (*fn)(FSTableReq *, s
 }
 
 // MATCHED 100%
-void clFSEx::setArchive(s16 slot, const char * path, FSChunkTable * table, BOOL hasTails) {
+void clFSEx::setArchive(s16 slot, const char * path, const FSChunkTable * table, BOOL hasTails) {
     if (this->tables[slot] != NULL) {
         if ((this->externTable[slot >> 5] & 1 << (slot & 0x1f)) != 0) {
             this->releaseSlot(slot);
@@ -703,7 +703,7 @@ void clFSEx::setArchive(s16 slot, const char * path, FSChunkTable * table, BOOL 
     this->openSlot(slot, path);
 
     this->sizeFns[slot] = (hasTails == FALSE) ? sChunkSizeFns[0] : sChunkSizeFns[3];
-    this->tables[slot] = table;
+    this->tables[slot] = (FSChunkTable *)table;
     this->externTable[slot >> 5] |= (1 << (slot & 0x1f));
 }
 

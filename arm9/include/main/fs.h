@@ -22,7 +22,7 @@
 
 typedef struct {
     u32 tailOffset;  // +0x0
-    u32 offsets[1];  // +0x4
+    u32 offsets[];  // +0x4
     // u16 tails[]     trailing dynamic sized u16 array
 } FSChunkTable;
 
@@ -138,13 +138,13 @@ public:
 
     clDPP(u8, u32, u16, u32, u32);  // C2 0x0201c66c
     virtual ~clDPP() {};  // D1 0x0201c6bc D0 0x0201c6d0 D2 0x0201c6ec
+    virtual bool queueRead(FSFileReq *, u32, s32, void (*)(FSFileReq *, s32), u32, u32);  // 0x0201c8a4
+    virtual bool pumpReads(void);  // 0x0201c9ac
 
     u32 readStreamHeader(FSFileReqEx *, s16);  // 0x0201c700
     void queueStream(FSFileReqEx *, u32 *, void (*)(FSFileReq *, s32), u32);  // 0x0201c7a0
     void cancelStream(FSFileReq *);  // 0x0201c890
-    virtual bool queueRead(FSFileReq *, u32, s32, void (*)(FSFileReq *, s32), u32, u32);  // 0x0201c8a4
     void readSync(FSFileReqEx *, u32);  // 0x0201c8d8
-    virtual bool pumpReads(void);  // 0x0201c9ac
     void selectCopyFn(FSFileReqEx *);  // 0x0201ced8
 };
 
@@ -160,13 +160,13 @@ public:
     
     clFSEx(u8, u32, u16, u16, u32, u32);  // C2 0x0201ba2c C1 0x0201bb14
     virtual ~clFSEx();  // D1 0x0201bbfc D0 0x0201bca4 D2 0x0201bd54
+    virtual bool pumpReads(void);  // 0x0201c2f4
 
     bool openArchive(s16, const char *, void (*)(FSTableReq *, s32), u32, BOOL, u32, u32, u32);  // 0x0201bdfc
-    void setArchive(s16, const char *, FSChunkTable *, BOOL);  // 0x0201bf34
+    void setArchive(s16, const char *, const FSChunkTable *, BOOL);  // 0x0201bf34
     u8 * readChunk(s16, u16, u32, u8 *, s32 *, void (*)(FSFileReq *, s32), u32, u32, u32, BOOL);  // 0x0201c044
     void cancelAll(void);  // 0x0201c194
     u8 * readChunkStream(s16, u16, u8 *, u32, u8 *, s32 *, void (*)(FSFileReq *, s32), u32, s32, u32);  // 0x0201c1f8
-    virtual bool pumpReads(void);  // 0x0201c2f4
     FSFileReqEx * allocReq(void);  // 0x0201c344
 };
 
