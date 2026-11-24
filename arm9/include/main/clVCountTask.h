@@ -7,7 +7,7 @@
 
 class clVCountTask {
 public:
-    u32 arg;  // +0x4
+    void * arg;  // +0x4
     clVCountTask * prev;  // +0x8
     clVCountTask * next;  // +0xc
     s32 line;  // +0x10
@@ -21,9 +21,9 @@ public:
     u8 pad_17[0x1];
     u32 numRuns;  // +0x18
 
-    clVCountTask(s32 priority, u8 id, u32 param3, u32 arg);  // C1 0x0201e5ec
+    clVCountTask(s32, u8, u32, void *);  // C1 0x0201e5ec
     virtual ~clVCountTask();  // D1 0x0201e700 D0 0x0201e76c D2 0x0201e7ec
-    virtual void func_ov003_02072638(void) = 0;
+    virtual void onVCount(void) = 0;
 
     void disable(void);  // 0x0201e858
     void enable(void);  // 0x0201e884

@@ -49,7 +49,7 @@ void bootInit(u32 fileTableSize) {
 
     CARD_SetCacheFlushThreshold(0x500, 0x2400);
 
-    u8 * pool = (u8 *)::operator new[](fileTableSize, 5, NULL, FALSE);
+    u8 * pool = new (5, NULL, FALSE) u8[fileTableSize];
     fsLoadFileTable(pool, fileTableSize);
 
     TP_Init();

@@ -28,7 +28,7 @@ OPERATOR_TOKENS = {"nw": "operator new", "na": "operator new[]",
                    "dl": "operator delete", "da": "operator delete[]"}
 CTORDTOR_DECL_RE = re.compile(
     r"\b(?:(?P<scope>[A-Za-z_]\w*)\s*::\s*)?(?P<tilde>~)?(?P<name>[A-Za-z_]\w*)"
-    r"\s*\([^;{]*\)\s*(?:const\s*)?[;{](?P<rest>.*)"
+    r"\s*\((?P<params>[^;{]*)\)\s*(?:const\s*)?[;{](?P<rest>.*)"
 )
 # Thunk tags: `Thn<N>` (fixed this-adjust), `Tv0_n<K>` / `Tvn<N>_n<K>` (virtual-base, vcall at vptr-K).
 THUNK_TAG = r"(Thn\d+|Tv(?:0|n\d+)_n\d+)"
@@ -57,6 +57,7 @@ ANCHOR_MOD_RE = re.compile(r"//.*?\b(?P<mod>ov[0-9]{3})\s+(?<!\+)0x(?P<addr>[0-9
 OV_NAME_RE = re.compile(r"^(?:func|data)_ov([0-9]{3})_[0-9a-fA-F]{8}$")
 TARGET_MOD_RE = re.compile(r"_dsd_gap@(?P<mod>.+)_\d+\.o")
 CTOR_CODE_RE = re.compile(r"[CD][0-9]$")
+CTOR_SYM_RE = re.compile(r"C[12]E(?P<params>.*)$")
 
 
 def parse_name(sym):
@@ -126,6 +127,14 @@ def mangled_params(s):
     return n, names
 
 
+def ctor_arity_key(simple, full):
+    m = CTOR_SYM_RE.search(full) if simple in ("C1", "C2") else None
+    if not m:
+        return None
+    n = 0 if m.group("params") == "v" else mangled_params(m.group("params"))[0]
+    return f"{simple}#{n}"
+
+
 def qual(scope, name):
     return f"{scope}::{name}" if scope else name
 
@@ -146,6 +155,7 @@ def is_userish(name):
 def load_anchors(verbose):
     raw = defaultdict(list)
     stripped = set()
+    ctor_plain = set()
     idents = {}
     mod_by_addr = {}
     for d in ANCHOR_DIRS:
@@ -178,6 +188,11 @@ def load_anchors(verbose):
                     for tag, code, addr in CTOR_DTOR_CODE_RE.findall(cd.group("rest")):
                         key = f"{code}/{tag}" if tag else code
                         raw[(eff, key)].append((int(addr, 16), loc))
+                        # Overloaded ctors share a code: the arity key tells them apart.
+                        if not tag and code[0] == "C":
+                            ctor_plain.add((eff, key))
+                            n = source_arity(cd.group("params"))
+                            raw[(eff, f"{code}#{n}")].append((int(addr, 16), loc))
                 elif m := ANCHOR_RE.search(line):
                     scope = m.group("scope") or cls
                     nm = norm_name(m.group("name"))
@@ -207,6 +222,11 @@ def load_anchors(verbose):
     anchors, conflicts = {}, 0
     for key, occ in raw.items():
         addrs = {a for a, _ in occ}
+        if len(addrs) > 1 and key in ctor_plain:
+            continue
+        if key[1][:2] in ("C1", "C2") and "#" in key[1] and len(occ) > 1 and len(addrs) == 1:
+            anchors[key] = addrs.pop()
+            continue
         if len(addrs) > 1:
             conflicts += 1
             locs = ", ".join(f"{loc} (0x{a:08x})" for a, loc in occ)
@@ -391,6 +411,8 @@ def process_module(mod, o_paths, tables, resident, anchors, idents, mod_by_addr,
     resolved = []
     for scope, simple, full, is_def in syms:
         addr = anchors.get((scope, simple))
+        if addr is None and (ck := ctor_arity_key(simple, full)):
+            addr = anchors.get((scope, ck))
         if addr is None:
             addr = embedded_addr(simple)
         if addr is None:

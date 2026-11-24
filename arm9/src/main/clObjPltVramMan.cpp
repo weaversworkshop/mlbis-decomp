@@ -663,7 +663,7 @@ VramHandle * clObjPltVramMan::findShared(u32 id, u16 attr, u32 mask, u32 offset,
 
 // MATCHED 100%
 clOamMan::clOamMan(u8 screen) {
-    OamPool * pool = (OamPool *)::operator new[](sizeof(OamPool), 3, NULL, FALSE);
+    OamPool * pool = new (3, NULL, FALSE) OamPool[1];
     this->init(screen, systemState.oamBuffers[screen], pool->affine, pool->runs);
 
     this->ownsPool = 1;

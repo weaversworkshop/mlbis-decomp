@@ -43,7 +43,7 @@ clHandleMan::clHandleMan(u32 heap, u32 count) {
     if (count == 0) {
         pool = NULL;
     } else {
-        pool = (VramHandle *)::operator new[](count * sizeof(VramHandle), heap, NULL, FALSE);
+        pool = new (heap, NULL, FALSE) VramHandle[count];
     }
 
     this->pool = pool;

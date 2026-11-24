@@ -120,10 +120,6 @@ GameWork gameWork;  // 0x02055fe4
 
 // --- Function Declarations --- //
 
-#define BITSET_GET(ptr,idx) (((ptr)[idx >> 5] >> ((idx) & 0x1f)) & 1)
-#define BITSET_SET(ptr,idx) ((ptr)[(idx) >> 5] |= 1 << ((idx) & 0x1f))
-#define BITSET_CLR(ptr,idx) ((ptr)[(idx) >> 5] &= ~(1 << ((idx) & 0x1f)))
-
 void initGameWork(void);  // 0x020057fc
 u8 * getMessageText(u32, u32);  // 0x02005ca4
 u8 * getItemNameText(s32);  // 0x02005cbc

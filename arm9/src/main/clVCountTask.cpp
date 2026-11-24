@@ -24,7 +24,7 @@ s32 vcountHookLine;  // 0x0205bae4
 // --- Function Definitions --- //
 
 // MATCHED 100%
-clVCountTask::clVCountTask(s32 priority, u8 id, u32 param3, u32 arg) {
+clVCountTask::clVCountTask(s32 line, u8 priority, u32 param3, void * arg) {
     OSIrqMask mask = OS_DisableIrqMask(OS_IE_V_COUNT);
 
     clVCountTask * task = vcountHead;
@@ -35,7 +35,7 @@ clVCountTask::clVCountTask(s32 priority, u8 id, u32 param3, u32 arg) {
         this->next = NULL;
     } else {
         while (TRUE) {
-            if (task->line > priority || (task->line == priority && task->priority > id)) {
+            if (task->line > line || (task->line == line && task->priority > priority)) {
                 clVCountTask * prev = task->prev;
 
                 if (prev == NULL) {
@@ -65,9 +65,9 @@ clVCountTask::clVCountTask(s32 priority, u8 id, u32 param3, u32 arg) {
     }
 
     this->arg = arg;
-    this->line = priority;
+    this->line = line;
     this->field14 = 0;
-    this->priority = id;
+    this->priority = priority;
     this->enabled = 0;
     this->hasRan = 1;
     this->numRuns = 0;

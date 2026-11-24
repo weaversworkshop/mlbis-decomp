@@ -12,7 +12,7 @@ class clFieldBaseSystem;
 
 typedef void (clFieldBaseSystem::*Func_28)(void);
 
-class clFieldBaseSystem : clTask {
+class clFieldBaseSystem : public clTask {
 public:
     u8 pad_18[0x10];
     Func_28 field28;

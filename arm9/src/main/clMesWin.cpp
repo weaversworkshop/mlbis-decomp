@@ -178,9 +178,9 @@ void clMesWin::close(s16 idx) {
 void clMesWin::allocBuffers(u32 heap, u16 count, u32 charSizeMain, u32 charSizeSub, u8 singleMain, u8 singleSub) {
     u32 nBytes = this->calcBufferSize(count, charSizeMain, charSizeSub, singleMain, singleSub);
 
-    MesWinSlot * arr = (MesWinSlot *)::operator new[](nBytes, heap, NULL, FALSE);
+    MesWinSlot * slots = (MesWinSlot *)new (heap, NULL, FALSE) u8[nBytes];
 
-    this->assignBuffers(arr);
+    this->assignBuffers(slots);
 
     this->ownsBuffers = 1;
 }

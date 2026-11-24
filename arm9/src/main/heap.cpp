@@ -95,7 +95,7 @@ void initHeapBlocks(Heap * heap) {
 }
 
 // MATCHED 100%
-void * heapAlloc(s32 heapId, u32 size, void * ptr, BOOL useFrontier) {
+void * heapAlloc(s32 heapId, u32 size, const char * name, BOOL useFrontier) {
     s32 dir;
     u32 blockSize;
     s32 tmp;
@@ -222,13 +222,13 @@ void heapFree(void * ptr) {
 }
 
 // MATCHED 100%
-void * operator new(size_t size, u32 heap, void * ptr, BOOL flag) {
-    return heapAlloc(heap, size, ptr, flag);
+void * operator new(size_t size, u32 heap, const char * name, BOOL flag) {
+    return heapAlloc(heap, size, name, flag);
 }
 
 // MATCHED 100%
-void * operator new[](size_t size, u32 heap, void * ptr, BOOL flag) {
-    return heapAlloc(heap, size, ptr, flag);
+void * operator new[](size_t size, u32 heap, const char * name, BOOL flag) {
+    return heapAlloc(heap, size, name, flag);
 }
 
 // MATCHED 100%

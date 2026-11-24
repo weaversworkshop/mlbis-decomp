@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+#define BITSET_GET(ptr,idx) (((ptr)[idx >> 5] >> ((idx) & 0x1f)) & 1)
+#define BITSET_SET(ptr,idx) ((ptr)[(idx) >> 5] |= 1 << ((idx) & 0x1f))
+#define BITSET_CLR(ptr,idx) ((ptr)[(idx) >> 5] &= ~(1 << ((idx) & 0x1f)))
+
 #ifdef __cplusplus
 
 #include "main/clGlobalEvent.h"

@@ -53,7 +53,6 @@ extern void cpu_copy32_rev(void *, void *, u32);
 // --- Function Declarations --- //
 
 s32 palAnimRun(s16 *, s32, u16 *, s32, u16 *, u32);  // 0x0201d2b4
-void palAnimRunOne(s32, s16, u32, s32, u16 *, s32, u16 *, u32);  // 0x0201d448
 s16 * palAnimRotate(s16 *, s32, u16 *, s32, u16 *);  // 0x0201d52c
 s16 * palAnimRotateBounce(s16 *, s32, u16 *, s32, u16 *);  // 0x0201d5c4
 s16 * palAnimKeySeg(s16 *, s32 *, s32 *, s32 *, s32 *);  // 0x0201d6d0
@@ -168,7 +167,7 @@ s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u
 }
 
 // NONMATCHING 96.40% -- param8 loaded early from stack before use in function call
-void palAnimRunOne(s32 kind, s16 color, u32 dur, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u32 loop) {
+void palAnimRunOne(s32 kind, u16 color, u32 dur, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u32 loop) {
     BOOL reverse = FALSE;
 
     if (kind < 0) {

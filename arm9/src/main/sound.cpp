@@ -166,8 +166,8 @@ NNSSndStrmThread sndStrmThread;  // 0x01ff9c7c
 SndAltVoiceInfo sndAltVoiceInfo[2] = { {0, 15}, {1, 14} };  // 0x02050040
 s16 sndStackVolumeDrop[32] = { 27, 27, 40, 60, 80, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90,
                                      90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90 };  // 0x02050048
-char sndHeapName[12] = "SoundHeap";  // 0x02050088
-char sndArcPath[24] = "sound/sound_data.sdat";  // 0x02050094
+// const char sndHeapName[] = "SoundHeap";  // 0x02050088
+// const char sndArcPath[] = "sound/sound_data.sdat";  // 0x02050094
 
 static SNDWaveArc sndWaveArcHeader;  // 0x02056520
 SNDDriverInfo sndDriverInfo[2];  // 0x02056560
@@ -292,7 +292,7 @@ void sndInit(BOOL loadSymbols, u32 totalSize, u32 slot0Size, u32 slot1Size) {
     sndDriverInfoDirty = 1;
 
     if (sndHeapBuffer == NULL) {
-        sndHeapBuffer = new(1, &sndHeapName, FALSE) char[totalSize];
+        sndHeapBuffer = new(1, "SoundHeap", FALSE) char[totalSize];
     }
 
     sndHeapSlot0Size = slot0Size;
@@ -317,7 +317,7 @@ void sndInit(BOOL loadSymbols, u32 totalSize, u32 slot0Size, u32 slot1Size) {
         sndHeapSys.heap = NNS_SndHeapCreate((u8*)sndHeapBuffer + offset, totalSize - offset);
     }
 
-    NNS_SndArcInit(&sndArc, sndArcPath, sndHeapSys.heap, loadSymbols);
+    NNS_SndArcInit(&sndArc, "sound/sound_data.sdat", sndHeapSys.heap, loadSymbols);
 
     NNS_SndArcPlayerSetup(sndHeapSys.heap);
 

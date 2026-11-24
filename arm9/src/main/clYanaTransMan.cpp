@@ -49,7 +49,7 @@ void clYanaTransMan::init(u32 texMode, u16 capacity, YanaTransEntry * buf, s32 h
     this->capacity = capacity;
     this->texMode = (texMode != 0) ? 1 : 0;
     this->ownsBuffer = (buf == NULL) ? 1 : 0;
-    this->entries = (buf != NULL) ? buf : (YanaTransEntry *)heapAlloc(heapId, capacity * sizeof(YanaTransEntry), (void *)"Trans Buf", FALSE);
+    this->entries = (buf != NULL) ? buf : (YanaTransEntry *)heapAlloc(heapId, capacity * sizeof(YanaTransEntry), "Trans Buf", FALSE);
     this->locked = 0;
     this->flushBlocked = 0;
 }

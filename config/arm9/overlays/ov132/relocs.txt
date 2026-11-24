@@ -6,7 +6,7 @@ from:0x020760f4 kind:arm_call to:0x02076080 module:overlay(132)
 from:0x02076108 kind:arm_call to:0x020760ac module:overlay(132)
 from:0x02076164 kind:arm_call to:0x0200dcdc module:main
 from:0x02076234 kind:load to:0x020799c0 module:overlay(132)
-from:0x02076238 kind:load to:0x02074f28 module:overlays(3,122,130)
+from:0x02076238 kind:load to:0x02074f28 module:overlay(122)
 from:0x020762d8 kind:arm_call to:0x020760d8 module:overlay(132)
 from:0x020762e4 kind:load to:0x020799c0 module:overlay(132)
 from:0x02076350 kind:load to:0x020799c0 module:overlay(132)

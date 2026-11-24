@@ -52,7 +52,7 @@ void clFieldBase::reset() {
 
 // MATCHED 100%
 void clFieldBase::func_ov003_0206a9f8() {
-    this->map->field28->func_ov003_02072638();
+    this->map->work.vblank->onVCount();
 }
 
 // MATCHED 100%
@@ -158,8 +158,8 @@ void clFieldBase::updateFade() {
 
 // Dead-stripped; required to emit clFieldMap's inline getters at 0x0206aec8/0x0206aed4
 void clFieldBase::unk_stripped_func() {
-    this->map->func_ov003_0206aec8();
-    this->map->func_ov003_0206aed4();
+    this->map->getWidthPx();
+    this->map->getHeightPx();
 }
 
 // MATCHED 100%

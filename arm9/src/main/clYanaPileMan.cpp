@@ -36,7 +36,7 @@ void clYanaPileMan::init(u32 regionSize, u32 capacity, YanaPileEntry * buf, s32 
 
     this->capacity = capacity;
     this->ownsBuffer = (buf == NULL) ? 1 : 0;
-    this->entries = (buf == NULL) ? (YanaPileEntry *)heapAlloc(heapId, capacity * sizeof(YanaPileEntry), (void *)"Pile Buf", FALSE) : buf;
+    this->entries = (buf == NULL) ? (YanaPileEntry *)heapAlloc(heapId, capacity * sizeof(YanaPileEntry), "Pile Buf", FALSE) : buf;
 
     this->resetPile(0);
     this->resetPile(1);

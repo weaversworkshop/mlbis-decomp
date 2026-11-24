@@ -177,7 +177,7 @@ void runVCountTasks() {
             vcountCur = task;
 
             if (task->enabled && !task->hasRan) {
-                task->func_ov003_02072638();
+                task->onVCount();
 
                 if (vcountCur != NULL) {
                     task->numRuns++;

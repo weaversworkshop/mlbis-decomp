@@ -30,7 +30,7 @@ void clYanaUnitSys::init(u32 unitSize, s32 unitCount, void * buf, s32 heapId) {
     totalSize = stride * unitCount;
 
     this->ownsBuffer = (buf == NULL) ? 1 : 0;
-    this->buffer = (buf == NULL) ? heapAlloc(heapId, totalSize, (void *)"UnitSys Buf", FALSE) : buf;
+    this->buffer = (buf == NULL) ? heapAlloc(heapId, totalSize, "UnitSys Buf", FALSE) : buf;
     this->bufferEnd = (u8 *)this->buffer + totalSize;
     this->unitSize = unitSize;
     this->freeList = this->buffer;

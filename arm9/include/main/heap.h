@@ -43,7 +43,7 @@ extern "C" {
 
 void initHeaps(void);  // 0x02019c90
 void initHeapBlocks(Heap *);  // 0x02019e10
-void * heapAlloc(s32, u32, void *, BOOL);  // 0x02019eac
+void * heapAlloc(s32, u32, const char *, BOOL);  // 0x02019eac
 void heapFree(void *);  // 0x0201a058
 void mergeBlocks(HeapBlock *, HeapBlock *);  // 0x0201a180
 s32 createHeap(s32, u32, void *, BOOL);  // 0x0201a1c0
@@ -55,8 +55,8 @@ void rebaseHeap(u32, void *);  // 0x0201a2e0
 #include <nitro.h>
 }
 
-void * operator new(size_t, u32, void *, BOOL);  // 0x0201a138
-void * operator new[](size_t, u32, void *, BOOL);  // 0x0201a150
+void * operator new(size_t, u32, const char *, BOOL);  // 0x0201a138
+void * operator new[](size_t, u32, const char *, BOOL);  // 0x0201a150
 void operator delete(void *);  // 0x0201a168
 void operator delete[](void *);  // 0x0201a174
 

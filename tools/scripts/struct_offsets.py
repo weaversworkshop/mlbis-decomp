@@ -246,7 +246,7 @@ def sweep_probes():
                 pass
 
 
-def compile_src(text, name, verbose=False, src_include=True):
+def compile_src(text, name, verbose=False, src_include=True, src_dir=None):
     BUILD.mkdir(parents=True, exist_ok=True)
     src = BUILD / name
     src.write_text(text, encoding="utf-8")
@@ -255,7 +255,7 @@ def compile_src(text, name, verbose=False, src_include=True):
     if src.suffix == ".c":
         flags = [f for f in flags if f != "-lang=c++"] + ["-lang=c99"]
     if src_include:
-        flags += ["-i", str(ROOT / "arm9/src/main")]
+        flags += ["-i", str(src_dir or ROOT / "arm9/src/main")]
     env = dict(os.environ, LM_LICENSE_FILE=str(LICENSE), MWCIncludes="arm9/include")
     r = subprocess.run([str(CC), *flags, "-c", "-o", str(obj), str(src)],
                        cwd=ROOT, env=env, capture_output=True, text=True)
@@ -301,7 +301,7 @@ def probe_via_tu(path, members, verbose=False):
         return False
     text = tu.read_text(encoding="utf-8", errors="replace")
     obj = compile_src(text + "\n\n" + probe_table(members),
-                      path.stem + "_tu_probe" + tu.suffix, verbose)
+                      path.stem + "_tu_probe" + tu.suffix, verbose, src_dir=tu.parent)
     return fill_offsets(obj, members)
 
 
@@ -341,7 +341,8 @@ def dwarf_offsets(path, types, prelude=None, verbose=False):
                          + f"\n{decls}\n", tu.suffix))
     obj = None
     for text, suffix in attempts:
-        obj = compile_src(text, path.stem + "_dw" + suffix, verbose)
+        obj = compile_src(text, path.stem + "_dw" + suffix, verbose,
+                          src_dir=tu.parent if tu else None)
         if obj:
             break
     if obj is None:
