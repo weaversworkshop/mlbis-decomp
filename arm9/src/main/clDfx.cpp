@@ -804,7 +804,7 @@ typedef struct {
     s32 s;  // +0x4
 } TexCoord;
 
-// NONMATCHING 99.73% -- spill stack order is scrambled
+// MATCHED 100%
 void clDfx::cmdLitMesh(u16 * cmd) {
     flushStrip();
 
@@ -812,16 +812,16 @@ void clDfx::cmdLitMesh(u16 * cmd) {
     DfxNode * node;
     s32 cols;
     s32 rows;
-    s32 r;
-    s32 c;
+    s32 row;
+    s32 col;
     s32 cg;
     s32 cb;
     s32 sA;
     s32 tA;
     s32 sB;
     s32 tB;
-    s32 nx2;
-    s32 ny2;
+    s32 nxSq;
+    s32 nySq;
 
     node = (DfxNode *)&rfxStack.cur[1];
 
@@ -850,16 +850,16 @@ void clDfx::cmdLitMesh(u16 * cmd) {
 
     G3_MultMtx43(&node->mtx);
 
-    VecFx32 light;
+    VecFx32 localLight;
     if (MTX_Inverse33((MtxFx33 *)node, &lightMtx)) {
-        light.x = 0;
-        light.y = 0;
-        light.z = 0;
+        localLight.x = 0;
+        localLight.y = 0;
+        localLight.z = 0;
     } else {
-        light.x = lightDir.x * lightMtx._00 + lightDir.y * lightMtx._10 + lightDir.z * lightMtx._20;
-        light.y = lightDir.x * lightMtx._01 + lightDir.y * lightMtx._11 + lightDir.z * lightMtx._21;
-        light.z = lightDir.x * lightMtx._02 + lightDir.y * lightMtx._12 + lightDir.z * lightMtx._22;
-        vector_set_length(&light, FX32_ONE);
+        localLight.x = lightDir.x * lightMtx._00 + lightDir.y * lightMtx._10 + lightDir.z * lightMtx._20;
+        localLight.y = lightDir.x * lightMtx._01 + lightDir.y * lightMtx._11 + lightDir.z * lightMtx._21;
+        localLight.z = lightDir.x * lightMtx._02 + lightDir.y * lightMtx._12 + lightDir.z * lightMtx._22;
+        vector_set_length(&localLight, FX32_ONE);
     }
 
     s32 stride = numKeys + 2;
@@ -871,156 +871,158 @@ void clDfx::cmdLitMesh(u16 * cmd) {
 
     G3_Begin(GX_BEGIN_TRIANGLES);
 
-    MtxFx43 m;
+    MtxFx43 tri;
     if (rows > 0) {
-        s32 w = cols + 1;
-        r = 0;
+        int rowVtx = cols + 1;
+        row = 0;
         do {
-            s16 x10 = px[w];
-            s16 y10 = py[w];
-            s32 z10 = pz[w];
+            s16 x10 = px[rowVtx];
+            s16 y10 = py[rowVtx];
+            s16 z10 = pz[rowVtx];
             s16 x00 = *px++;
             s16 y00 = *py++;
-            s32 z00 = *pz++;
+            s16 z00 = *pz++;
 
-            TexCoord c10;
-            c10.s = ps[w];
-            c10.t = pt[w];
+            TexCoord uv10;
+            uv10.s = ps[rowVtx];
+            uv10.t = pt[rowVtx];
 
-            TexCoord c00;
-            c00.s = *ps++;
-            c00.t = *pt++;
+            TexCoord uv00;
+            uv00.s = *ps++;
+            uv00.t = *pt++;
             
-            for (c = 0; c < cols; c++) {
-                s16 x11 = px[w];
-                s16 y11 = py[w];
-                s32 z11 = pz[w];
+            for (col = 0; col < cols; col++) {
+                s16 x11 = px[rowVtx];
+                s16 y11 = py[rowVtx];
+                s16 z11 = pz[rowVtx];
                 s16 x01 = *px++;
                 s16 y01 = *py++;
-                s32 z01 = *pz++;
+                s16 z01 = *pz++;
 
-                TexCoord c11;
-                c11.s = ps[w];
-                c11.t = pt[w];
+                TexCoord uv11;
+                uv11.s = ps[rowVtx];
+                uv11.t = pt[rowVtx];
 
-                TexCoord c01;
-                c01.s = *ps++;
-                c01.t = *pt++;
+                TexCoord uv01;
+                uv01.s = *ps++;
+                uv01.t = *pt++;
 
-                m._30 = x10 - x00;
-                m._31 = y10 - y00;
-                m._32 = z10 - z00;
-                m._21 = y01 - y10;
-                m._20 = x01 - x10;
-                m._22 = z01 - z10;
-                m._11 = y01 - y11;
-                m._10 = x01 - x11;
-                m._12 = z01 - z11;
+                tri._30 = x10 - (s32)x00;
+                tri._31 = y10 - (s32)y00;
+                tri._32 = z10 - z00;
+                tri._20 = x01 - (s32)x10;
+                tri._21 = y01 - (s32)y10;
+                tri._22 = z01 - z10;
+                tri._10 = x01 - (s32)x11;
+                tri._11 = y01 - (s32)y11;
+                tri._12 = z01 - z11;
 
-    #define PROJ_S(SC, X, Y, Z) ((SC) + (((X) * (ny2 - (nx2 / 16) * m._02 / 256) - (Y) * k) / (nx2 + ny2) + (Z) * m._00 / 4096))
-    #define PROJ_T(TC, X, Y, Z) ((TC) + (((Y) * (nx2 - (ny2 / 16) * m._02 / 256) - (X) * k) / (nx2 + ny2) + (Z) * m._01 / 4096))
 
-                vec_cross_product((VecFx32 *)&m._00, (VecFx32 *)&m._30, (VecFx32 *)&m._20);
-                vector_set_length((VecFx32 *)&m._00, FX32_ONE);
-                fx32 cos = vector_cosine((VecFx32 *)&m._00, &light);
-                if (cos != VECTOR_COS_INVALID) {
-                    s32 shade = (cos + FX32_ONE) / 2;
+                vec_cross_product((VecFx32 *)&tri._00, (VecFx32 *)&tri._30, (VecFx32 *)&tri._20);
+                vector_set_length((VecFx32 *)&tri._00, FX32_ONE);
+                fx32 cosine = vector_cosine((VecFx32 *)&tri._00, &localLight);
+                if (cosine != VECTOR_COS_INVALID) {
+                    s32 shade = (cosine + FX32_ONE) / 2;
                     cr = node->color.r * shade / 4096;
                     cg = node->color.g * shade / 4096;
                     cb = node->color.b * shade / 4096;
 
                     s32 sC, tC;
                     if (!node->tex.triStrip) {
-                        sA = c00.s + node->tex.tileW * c;
-                        tA = c00.t + node->tex.tileH * r;
-                        sB = c10.s + node->tex.tileW * c;
-                        tB = c10.t + node->tex.tileH * (r + 1);
-                        sC = c01.s + node->tex.tileW * (c + 1);
-                        tC = c01.t + node->tex.tileH * r;
+                        sA = uv00.s + node->tex.tileW * col;
+                        tA = uv00.t + node->tex.tileH * row;
+                        sB = uv10.s + node->tex.tileW * col;
+                        tB = uv10.t + node->tex.tileH * (row + 1);
+                        sC = uv01.s + node->tex.tileW * (col + 1);
+                        tC = uv01.t + node->tex.tileH * row;
                     } else {
-                        nx2 = m._00 * m._00 / 4;
-                        ny2 = m._01 * m._01 / 4;
+                        nxSq = tri._00 * tri._00 / 4;
+                        nySq = tri._01 * tri._01 / 4;
 
-                        if (nx2 + ny2 > 0) {
-                            s32 k0 = m._00 * m._01 / 4;
-                            s32 k = k0 + (k0 / 16) * m._02 / 256;
-                            sA = PROJ_S(c00.s, x00, y00, z00);
-                            tA = PROJ_T(c00.t, x00, y00, z00);
-                            sB = PROJ_S(c10.s, x10, y10, z10);
-                            tB = PROJ_T(c10.t, x10, y10, z10);
-                            sC = PROJ_S(c01.s, x01, y01, z01);
-                            tC = PROJ_T(c01.t, x01, y01, z01);
+                        if (nxSq + nySq > 0) {
+                            s32 nxy = tri._00 * tri._01 / 4;
+                            sA = uv00.s + ((x00 * (nySq - (nxSq / 16) * tri._02 / 256) - y00 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z00 * tri._00 / 4096);
+                            tA = uv00.t + ((y00 * (nxSq - (nySq / 16) * tri._02 / 256) - x00 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z00 * tri._01 / 4096);
+                            sB = uv10.s + ((x10 * (nySq - (nxSq / 16) * tri._02 / 256) - y10 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z10 * tri._00 / 4096);
+                            tB = uv10.t + ((y10 * (nxSq - (nySq / 16) * tri._02 / 256) - x10 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z10 * tri._01 / 4096);
+                            sC = uv01.s + ((x01 * (nySq - (nxSq / 16) * tri._02 / 256) - y01 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z01 * tri._00 / 4096);
+                            tC = uv01.t + ((y01 * (nxSq - (nySq / 16) * tri._02 / 256) - x01 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z01 * tri._01 / 4096);
                         } else {
-                            sA = c00.s + x00;
-                            tA = c00.t + y00;
-                            sB = c10.s + x10;
-                            tB = c10.t + y10;
-                            sC = c01.s + x01;
-                            tC = c01.t + y01;
+                            sA = uv00.s + x00;
+                            tA = uv00.t + y00;
+                            sB = uv10.s + x10;
+                            tB = uv10.t + y10;
+                            sC = uv01.s + x01;
+                            tC = uv01.t + y01;
                         }
                     }
 
                     GXRgb color = (cb << 10) | (cg << 5) | cr;
                     G3_Color(color);
                     G3_TexCoord(sA * 256, tA * 256);
-                    G3_Vtx(x00 * 16, y00 * 16, z00 * 16);
+                    G3_Vtx((s32)x00 * 16, (s32)y00 * 16, z00 * 16);
                     G3_TexCoord(sB * 256, tB * 256);
-                    G3_Vtx(x10 * 16, y10 * 16, z10 * 16);
+                    G3_Vtx((s32)x10 * 16, (s32)y10 * 16, z10 * 16);
                     G3_TexCoord(sC * 256, tC * 256);
-                    G3_Vtx(x01 * 16, y01 * 16, z01 * 16);
+                    G3_Vtx((s32)x01 * 16, (s32)y01 * 16, z01 * 16);
                 }
 
-                vec_cross_product((VecFx32 *)&m._00, (VecFx32 *)&m._20, (VecFx32 *)&m._10);
-                vector_set_length((VecFx32 *)&m._00, FX32_ONE);
-                cos = vector_cosine((VecFx32 *)&m._00, &light);
-                if (cos != VECTOR_COS_INVALID) {
-                    s32 shade = (cos + FX32_ONE) / 2;
+                vec_cross_product((VecFx32 *)&tri._00, (VecFx32 *)&tri._20, (VecFx32 *)&tri._10);
+                vector_set_length((VecFx32 *)&tri._00, FX32_ONE);
+                cosine = vector_cosine((VecFx32 *)&tri._00, &localLight);
+                if (cosine != VECTOR_COS_INVALID) {
+                    s32 cg;
+                    s32 cb;
+                    s32 sA;
+                    s32 tA;
+                    s32 sB;
+                    s32 tB;
+                    s32 nxSq;
+                    s32 nySq;
+                    s32 shade = (cosine + FX32_ONE) / 2;
                     cr = node->color.r * shade / 4096;
                     cg = node->color.g * shade / 4096;
                     cb = node->color.b * shade / 4096;
 
                     s32 sC, tC;
                     if (!node->tex.triStrip) {
-                        sA = c01.s + node->tex.tileW * (c + 1);
-                        tA = c01.t + node->tex.tileH * r;
-                        sB = c10.s + node->tex.tileW * c;
-                        tB = c10.t + node->tex.tileH * (r + 1);
-                        sC = c11.s + node->tex.tileW * (c + 1);
-                        tC = c11.t + node->tex.tileH * (r + 1);
+                        sA = uv01.s + node->tex.tileW * (col + 1);
+                        tA = uv01.t + node->tex.tileH * row;
+                        sB = uv10.s + node->tex.tileW * col;
+                        tB = uv10.t + node->tex.tileH * (row + 1);
+                        sC = uv11.s + node->tex.tileW * (col + 1);
+                        tC = uv11.t + node->tex.tileH * (row + 1);
                     } else {
-                        nx2 = m._00 * m._00 / 4;
-                        ny2 = m._01 * m._01 / 4;
+                        nxSq = tri._00 * tri._00 / 4;
+                        nySq = tri._01 * tri._01 / 4;
 
-                        if (nx2 + ny2 > 0) {
-                            s32 k0 = m._00 * m._01 / 4;
-                            s32 k = k0 + (k0 / 16) * m._02 / 256;
-                            sA = PROJ_S(c01.s, x01, y01, z01);
-                            tA = PROJ_T(c01.t, x01, y01, z01);
-                            sB = PROJ_S(c10.s, x10, y10, z10);
-                            tB = PROJ_T(c10.t, x10, y10, z10);
-                            sC = PROJ_S(c11.s, x11, y11, z11);
-                            tC = PROJ_T(c11.t, x11, y11, z11);
+                        if (nxSq + nySq > 0) {
+                            s32 nxy = tri._00 * tri._01 / 4;
+                            sA = uv01.s + ((x01 * (nySq - (nxSq / 16) * tri._02 / 256) - y01 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z01 * tri._00 / 4096);
+                            tA = uv01.t + ((y01 * (nxSq - (nySq / 16) * tri._02 / 256) - x01 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z01 * tri._01 / 4096);
+                            sB = uv10.s + ((x10 * (nySq - (nxSq / 16) * tri._02 / 256) - y10 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z10 * tri._00 / 4096);
+                            tB = uv10.t + ((y10 * (nxSq - (nySq / 16) * tri._02 / 256) - x10 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z10 * tri._01 / 4096);
+                            sC = uv11.s + ((x11 * (nySq - (nxSq / 16) * tri._02 / 256) - y11 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z11 * tri._00 / 4096);
+                            tC = uv11.t + ((y11 * (nxSq - (nySq / 16) * tri._02 / 256) - x11 * (nxy + (nxy / 16) * tri._02 / 256)) / (nxSq + nySq) + z11 * tri._01 / 4096);
                         } else {
-                            sA = c01.s + x01;
-                            tA = c01.t + y01;
-                            sB = c10.s + x10;
-                            tB = c10.t + y10;
-                            sC = c11.s + x11;
-                            tC = c11.t + y11;
+                            sA = uv01.s + x01;
+                            tA = uv01.t + y01;
+                            sB = uv10.s + x10;
+                            tB = uv10.t + y10;
+                            sC = uv11.s + x11;
+                            tC = uv11.t + y11;
                         }
                     }
 
                     GXRgb color = (cb << 10) | (cg << 5) | cr;
                     G3_Color(color);
                     G3_TexCoord(sA * 256, tA * 256);
-                    G3_Vtx(x01 * 16, y01 * 16, z01 * 16);
+                    G3_Vtx((s32)x01 * 16, (s32)y01 * 16, z01 * 16);
                     G3_TexCoord(sB * 256, tB * 256);
-                    G3_Vtx(x10 * 16, y10 * 16, z10 * 16);
+                    G3_Vtx((s32)x10 * 16, (s32)y10 * 16, z10 * 16);
                     G3_TexCoord(sC * 256, tC * 256);
-                    G3_Vtx(x11 * 16, y11 * 16, z11 * 16);
+                    G3_Vtx((s32)x11 * 16, (s32)y11 * 16, z11 * 16);
                 }
-    #undef PROJ_S
-    #undef PROJ_T
 
                 x10 = x11;
                 y10 = y11;
@@ -1028,11 +1030,14 @@ void clDfx::cmdLitMesh(u16 * cmd) {
                 x00 = x01;
                 y00 = y01;
                 z00 = z01;
-                c10 = c11;
-                c00 = c01;
+                uv10.s = uv11.s;
+                uv10.t = uv11.t;
+                uv00.s = uv01.s;
+                uv00.t = uv01.t;
             }
-        } while (++r < rows);
+        } while (++row < rows);
     }
+
     G3_End();
     G3_PopMtx(1);
 }

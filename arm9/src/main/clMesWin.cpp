@@ -52,11 +52,11 @@ void clMesWin::update() {
             window->depth = depth;
 
             if (window->cursor.active) {
-                window->cursor.depth = depth-1;
+                window->cursor.depth = depth - 1;
             }
 
             if (window->tail.active) {
-                window->tail.depth = depth-1;
+                window->tail.depth = depth - 1;
             }
 
             window = window->next;
@@ -130,7 +130,7 @@ void clMesWin::initParams(MesWinParams * params) {
     params->tailFlipH = 0;
     params->tailX = 0;
     params->textId = 0;
-    params->field04_28 = 0;
+    params->color = 0;
 
     params->x = 0;
     params->y = 0;
@@ -138,7 +138,7 @@ void clMesWin::initParams(MesWinParams * params) {
     params->persistent = 0;
 
     params->numbers = NULL;
-    params->font = NULL;
+    params->fonts = NULL;
     params->text = NULL;
     params->result = NULL;
 
@@ -195,7 +195,7 @@ u32 clMesWin::calcBufferSize(u16 count, u32 charSizeMain, u32 charSizeSub, u8 si
     if (this->screenMask & 5) {
         size += charSizeMain;
         this->charPoolSizeMain = charSizeMain;
-        
+
         if (singleMain == 0) {
             size += charSizeMain;
         }
@@ -287,7 +287,7 @@ void clMesWin::assignBuffers(MesWinSlot * buf) {
 // MATCHED 100%
 void clMesWin::release() {
     if (this->windows != NULL) {
-        s16 i = this->windowCount-1;
+        s16 i = this->windowCount - 1;
         while (i >= 0) {
             this->destroy(i);
             i--;
@@ -302,18 +302,18 @@ void clMesWin::release() {
 }
 
 // MATCHED 100%
-u32 clMesWin::measureText(const char * text, UnkStruct_0200b8bc_10 ** font) {
-    UnkStruct_0200b8bc_24 layout;
+u32 clMesWin::measureText(const char * text, MesFont ** fonts) {
+    MesExtents extents;
 
-    this->layoutText(text, font, &layout, 1);
+    this->layoutText(text, fonts, &extents, 1);
 
-    u16 w = layout.field28_0 + 24;
+    u16 w = extents.width + 24;
     if (w & 1) {
         w += 8;
     }
     w = (w >> 3) - 1;
 
-    u16 h = layout.field28_16 + 16;
+    u16 h = extents.height + 16;
     if (h & 1) {
         h += 8;
     }
@@ -471,11 +471,11 @@ clMesWin::clMesWin(u32 screenMask, u32 bgMain, u32 bgSub, u8 priorityMain, u8 pr
 
     MI_CpuFill8(this->textCallbacks, 0, sizeof(this->textCallbacks));
 
-    func_0200baf0(this->textCallbacks, 11, 1, NULL, NULL);
-    func_0200baf0(this->textCallbacks, 12, 1, NULL, NULL);
-    func_0200baf0(this->textCallbacks, 15, 2, (UnkCallback_0200b8bc_2c)callbackNumber, this);
-    func_0200baf0(this->textCallbacks, 16, 2, (UnkCallback_0200b8bc_2c)callbackNumberPadded, this);
-    func_0200baf0(this->textCallbacks, 17, 1, NULL, NULL);
+    mesWriterSetCallback(this->textCallbacks, 11, 1, NULL, NULL);
+    mesWriterSetCallback(this->textCallbacks, 12, 1, NULL, NULL);
+    mesWriterSetCallback(this->textCallbacks, 15, 2, (MesCodeCallback)callbackNumber, this);
+    mesWriterSetCallback(this->textCallbacks, 16, 2, (MesCodeCallback)callbackNumberPadded, this);
+    mesWriterSetCallback(this->textCallbacks, 17, 1, NULL, NULL);
 }
 
 // MATCHED 100%
@@ -509,7 +509,7 @@ clMesWin::~clMesWin() {
 inline void clMesWin::updateWindow(MesWinSlot * window) {
     if (window->clearStep) {
         this->stepClear(window);
-    } else if (window->text.field04 != NULL && window->paused == 0) {
+    } else if (window->writer.text != NULL && window->paused == 0) {
         if (!this->checkClose(window)) {
             this->advanceText(window);
         } else if (window->chars == 0) {
@@ -745,22 +745,22 @@ void clMesWin::advanceText(MesWinSlot * window) {
 
         window->line = 0;
 
-        window->lineWidth = 0;
+        window->textHeight = 0;
 
-        window->text.field08_0 = window->textX;
-        window->text.field08_10 = window->textY;
+        window->writer.x = window->textX;
+        window->writer.y = window->textY;
 
-        func_0200b9f4(&window->text);
+        mesWriterReset(&window->writer);
 
         window->choiceCount = 0;
 
         if (window->params.style == 2) {
-            this->alignLine(window, &window->text, 1);
+            this->alignLine(window, &window->writer, 1);
         }
 
-        window->lineWidth = 0;
+        window->textHeight = 0;
 
-        this->alignLine(window, &window->text, 1);
+        this->alignLine(window, &window->writer, 1);
     } else {
         if ((systemState.inputState.press & this->decideKeys) && window->waitCount == 0) {
             window->skip = 1;
@@ -792,16 +792,16 @@ void clMesWin::advanceText(MesWinSlot * window) {
                     }
                     break;
                 }
-            } while (this->execCode(window, &window->text, func_0200bce8(&window->text, 0, 0)));
+            } while (this->execCode(window, &window->writer, mesWriterStep(&window->writer, FALSE, FALSE)));
         } while (window->waitKey || window->hold || window->skip);
     }
 }
 
 // MATCHED 100%
-BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruct_0200bce8_24 code) {
+BOOL clMesWin::execCode(MesWinSlot * window, MesWriter * text, MesStepResult step) {
     BOOL result = FALSE;
 
-    switch (code.field02h) {
+    switch (step.code) {
         case 0:
         case 0xff20:
             break;
@@ -817,7 +817,7 @@ BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruc
 
             window->newPage = 1;
 
-            text->field04++;
+            text->text++;
             break;
         }
         case 0xff03: {
@@ -841,8 +841,8 @@ BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruc
                 }
             }
 
-            window->choicePos[window->choiceCount][0] = x + text->field08_0 + 8;
-            window->choicePos[window->choiceCount][1] = y + text->field08_10 +7;
+            window->choicePos[window->choiceCount][0] = x + text->x + 8;
+            window->choicePos[window->choiceCount][1] = y + text->y +7;
 
             result = TRUE;
 
@@ -860,28 +860,28 @@ BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruc
             break;
         }
         case 0xff0b: {
-            this->alignLine(window, text, code.field04[0]);
+            this->alignLine(window, text, step.text[0]);
 
             result = TRUE;
             break;
         }
         case 0xff0c: {
-            window->waitCount = code.field04[0];
+            window->waitCount = step.text[0];
 
             window->waitKey = 0;
             window->skip = 0;
             break;
         }
         case 0xff0f: {
-            this->formatNumber(window, code.field04[0], code.field04[1]-1, FALSE);
+            this->formatNumber(window, step.text[0], step.text[1] - 1, FALSE);
 
-            window->numSlot = code.field04[0]+1;
+            window->numSlot = step.text[0] + 1;
             break;
         }
         case 0xff10: {
-            this->formatNumber(window, code.field04[0], code.field04[1]-1, TRUE);
+            this->formatNumber(window, step.text[0], step.text[1] - 1, TRUE);
 
-            window->numSlot = code.field04[0]+1;
+            window->numSlot = step.text[0] + 1;
             break;
         }
         case 0xff11: {
@@ -901,7 +901,7 @@ BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruc
                 x = window->choicePos[0][0];
                 y = window->choicePos[0][1];
             } else {
-                switch (code.field04[0]) {
+                switch (step.text[0]) {
                     case 0: {
                         window->promptMode = 2;
 
@@ -967,7 +967,7 @@ BOOL clMesWin::execCode(MesWinSlot * window, UnkStruct_0200b8bc * text, UnkStruc
                 this->setVoice(window, FALSE);
             }
 
-            this->copyRect(window, text->field20_0, text->field20_10, text->field20_20, text->field20_26);
+            this->copyRect(window, text->lastX, text->lastY, text->lastWidth, text->lastHeight);
 
             this->windows[(s16)window->slot].dirty = 1;
             this->charsDirty = 1;
@@ -1006,7 +1006,7 @@ void clMesWin::setVoice(MesWinSlot * window, BOOL restart) {
     }
 
     s32 voiceId = window->params.voice;
-    if (restart == FALSE) {
+    if (!restart) {
         window->voiceState = 1;
     } else {
         window->voiceState = 3;
@@ -1035,38 +1035,38 @@ void clMesWin::playDecideSound() {
 }
 
 // MATCHED 100%
-void clMesWin::alignLine(MesWinSlot * window, UnkStruct_0200b8bc * text, u32 align) {
-    if (window->lineWidth == 0) {
-        window->lineWidth = func_0200bbb0(text);
+void clMesWin::alignLine(MesWinSlot * window, MesWriter * text, u32 align) {
+    if (window->textHeight == 0) {
+        window->textHeight = mesWriterMeasureHeight(text);
     }
 
     u16 height = window->params.height;
 
     switch (align) {
         case 0: {
-            text->field08_10 = window->textY;
+            text->y = window->textY;
             break;
         }
         case 1: {
-            text->field08_10 = (u32)((height+1) * 8 - (u8)window->lineWidth) / 2;
+            text->y = (u32)((height + 1) * 8 - (u8)window->textHeight) / 2;
 
             if (window->params.mode == 0) {
-                text->field08_10 += window->params.y & 7;
+                text->y += window->params.y & 7;
             }
             break;
         }
         case 2: {
-            text->field08_10 = (height + 2 - window->frame->frame->bottomH) * 8;
-            text->field08_10 -= text->field08_24 * (window->lineWidth >> 8) + (u8)window->lineWidth + 1;
+            text->y = (height + 2 - window->frame->frame->bottomH) * 8;
+            text->y -= text->lineSpacing * (window->textHeight >> 8) + (u8)window->textHeight + 1;
 
             if (window->params.mode == 0) {
-                text->field08_10 += window->params.y & 7;
+                text->y += window->params.y & 7;
             }
         }
     }
 
     if (window->line == 0) {
-        text->unkStruct24.field24_18 = text->field08_10;
+        text->extents.top = text->y;
     }
 }
 
@@ -1091,7 +1091,7 @@ void clMesWin::addIcon(MesWinSlot * window, s16 x, s16 y, u16 anim, u8 flip, Mes
         priority = (window->params.screen != 0) ? this->prioritySub : this->priorityMain;
     }
 
-    this->icons->add(icon, (u8)window->params.screen, (s8)anim, x, y, flip, priority, window->depth-1);
+    this->icons->add(icon, (u8)window->params.screen, (s8)anim, x, y, flip, priority, window->depth - 1);
 
     icon->fresh = 1;
 }
@@ -1108,7 +1108,7 @@ void clMesWin::copyRect(MesWinSlot * window, u8 x, u8 y, u8 w, u8 h) {
             u16 pitch = (window->cols + 1) * 8;
 
             u32 offset = (y >> 3) * pitch + (x & 0xfff8);
-            s32 bytes = (((w + (x & 7)) >> 3) + 1) << 5;
+            s32 bytes = (((w + (x & 7)) >> 3) + 1) * 32;
 
             s32 bottom = (y & 7);
             bottom = (u32)h + bottom;
@@ -1152,34 +1152,35 @@ void clMesWin::copyRect(MesWinSlot * window, u8 x, u8 y, u8 w, u8 h) {
 }
 #pragma optimization_level reset
 
-// NONMATCHING 97.98% -- 0x400 rsb on first `if` block ; case1 log expression
+// MATCHED 100%
 s16 clMesWin::create(MesWinParams * params, s16 idx) {
     u16 w;
     MesWinSlot * window;
     MesWinParams * windowParams;
     u8 * str;
     u16 h;
+    u32 one = 1;
 
     if (params->textId == 0x3ff) {
-        str = (u8*)params->text;
+        str = (u8 *)params->text;
     } else if (params->text == NULL) {
         str = NULL;
     } else {
-        str = (u8*)params->text + params->text[params->textId];
+        str = (u8 *)params->text + params->text[params->textId];
     }
 
     if (str != NULL) {
         if (params->textId == 0x3ff) {
             s32 size;
             if (params->width == 0 || params->height == 0) {
-                size = (u16)this->measureText((const char *)str, params->font);
+                size = (u16)this->measureText((const char *)str, params->fonts);
             }
 
             if (params->width == 0) {
                 w = size;
             } else {
                 w = params->width;
-            }  
+            }
 
             if (params->height == 0) {
                 h = size >> 16;
@@ -1190,13 +1191,13 @@ s16 clMesWin::create(MesWinParams * params, s16 idx) {
             if (params->width) {
                 w = params->width;
             } else {
-                w = str[0]+1;
+                w = str[0] + 1;
             }
 
             if (params->height) {
                 h = params->height;
             } else {
-                h = str[1]+1;
+                h = str[1] + 1;
             }
         }
     } else {
@@ -1243,7 +1244,11 @@ s16 clMesWin::create(MesWinParams * params, s16 idx) {
                 px -= 8;
             }
 
-            cols = MATH_ROUNDUP(px, 2 << MATH_ILog2(px)) >> 3;
+            u32 a = MATH_ILog2(px);
+            u32 b = MATH_CLZ(px);
+            b = 31 - b;
+            px = px + (2 << a) - 1;
+            cols = MATH_ROUNDDOWN(px, 2 << b) >> 3;
         }
     }
 
@@ -1262,11 +1267,11 @@ s16 clMesWin::create(MesWinParams * params, s16 idx) {
         cpu_copy32_fwd(params, windowParams, sizeof(MesWinParams));
     }
 
-    windowParams->width = w-1;
-    windowParams->height = h-1;
+    windowParams->width = w - 1;
+    windowParams->height = h - 1;
 
-    window->cols = cols-1;
-    window->rows = rows-1;
+    window->cols = cols - 1;
+    window->rows = rows - 1;
 
     window->voiceState = 0;
 
@@ -1305,39 +1310,31 @@ s16 clMesWin::create(MesWinParams * params, s16 idx) {
         if (windowParams->textId != 0x3ff) {
             str += 2;
         }
- 
-        u32 lines = (windowParams->textId == 0x3ff) ? windowParams->field04_28 : 1;
 
-        // !! Hacky check to force the strange `movs`/`moveq` instructions
-        // Maybe DEBUG code existed here??
-        u32 p7;
-        u32 p8;
-        if (TRUE) p8 = 1;
-        p8 = p8 ? p8 : 3;
-        if (TRUE) p7 = 1;
-        p7 = p7 ? p7 : 2;
-        
-        func_0200b8bc(&window->text, windowParams->font, (u32)chars, (const char *)str, window->textX, window->textY, p7, p8, lines, 6, window->cols, windowParams->width, xFrac, windowParams->mode, this->textCallbacks);
+        u32 color = (windowParams->textId == 0x3ff) ? windowParams->color : 1;
 
-        window->lineWidth = 0;
+        // yx suggests this is kerning for EN vs JP language -- likely a #if block that got turned on/off by language
+        mesWriterInit(&window->writer, windowParams->fonts, chars, (const char *)str, window->textX, window->textY, (one == 0) ? 2 : 1, (one == 0) ? 3 : 1, color, 6, window->cols, windowParams->width, xFrac, windowParams->mode, this->textCallbacks);
+
+        window->textHeight = 0;
 
         if (windowParams->style == 2) {
-            this->alignLine(window, &window->text, 1);
+            this->alignLine(window, &window->writer, 1);
         }
 
-        window->lineWidth = 0;
+        window->textHeight = 0;
 
-        this->alignLine(window, &window->text, 1);
+        this->alignLine(window, &window->writer, 1);
     }
 
     return (u16)window->slot;
 }
 
 // MATCHED 100%
-void clMesWin::layoutText(const char * str, UnkStruct_0200b8bc_10 ** font, UnkStruct_0200b8bc_24 * out, u8 alignW) {
-    UnkStruct_0200b8bc text;
-    func_0200b8bc(&text, font, 0, str, 0, 0, (alignW == 0) ? 2 : 1, (alignW == 0) ? 3 : 1, 1, 6, 0x40, alignW, 0, 0, this->textCallbacks);
-    func_0200bb1c(&text, out);
+void clMesWin::layoutText(const char * str, MesFont ** fonts, MesExtents * out, u8 alignW) {
+    MesWriter text;
+    mesWriterInit(&text, fonts, NULL, str, 0, 0, (alignW == 0) ? 2 : 1, (alignW == 0) ? 3 : 1, 1, 6, 0x40, alignW, 0, 0, this->textCallbacks);
+    mesWriterMeasure(&text, out);
 }
 
 // MATCHED 100%
@@ -1464,7 +1461,7 @@ MesWinSlot * clMesWin::allocWindow(u8 screen, u32 size, s16 idx) {
         cur = next;
     } while (TRUE);
 
-    if (found == FALSE) {
+    if (!found) {
         return NULL;
     }
 
@@ -1921,7 +1918,7 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
         for (i = frame->cornerW; i > 0; i--) {
             src1 = this->frameTiles + frame->topLeft[k];
             src2 = this->frameTiles + frame->topRight[k];
-            
+
             for (y = yFrac; y < yFrac + 8; y++) {
                 idx = (y & 0xfff8) * cols + y;
                 d = p + idx;
@@ -1996,7 +1993,7 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
 
     x = frame->cornerW;
     u16 local98 = (cols + 1) * (rows - frame->bottomH) * 8;
-    for (; x < localA0; x += frame->edgeH[0]) {
+    while (x < localA0) {
         d = chars + x * 8 + local98;
         k = 1;
         for (n = frame->bottomH; n > 0; n--) {
@@ -2015,14 +2012,15 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
 
             d += (cols + 1 - frame->edgeH[0]) * 8;
         }
+        x += frame->edgeH[0];
     }
 
     s16 i2;
     if (yFrac != 0 && frame->edgeV != NULL) {
         p = chars + ((cols + 1) * (rows - frame->bottomH) + frame->cornerW) * 8;
-        u32 *q = chars + (frame->topH * (cols + 1) + frame->cornerW) * 8 + yFrac;
+        u32 * q = chars + (frame->topH * (cols + 1) + frame->cornerW) * 8 + yFrac;
         i2 = xFrac ? cols - frame->cornerW * 2 : cols - frame->cornerW * 2 + 1;
-        for (; i2 > 0; i2--) {
+        while (i2 > 0) {
             for (i = 8 - yFrac; i > 0; i--) {
                 *q += fill << shl;
                 q[8] += fill >> shr;
@@ -2038,6 +2036,8 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
             }
 
             p += 8 - yFrac;
+
+            i2--;
         }
     }
 
@@ -2089,13 +2089,15 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
             }
 
             u16 fillOff = (cols - frame->cornerW * 2) * 8;
-            for (; n > 0; n--) {
+            while (n > 0) {
                 for (i = 8; i > 0; i--) {
                     *p += fill << shl;
                     u32 * q = p++;
                     q[fillOff] += fill >> shr;
                 }
                 p += cols * 8;
+
+                n--;
             }
         }
     }
@@ -2109,7 +2111,7 @@ void clMesWin::drawFrameBGShifted(MesWinSlot * window, u32 * chars) {
         u32 fill = frame->fill;
         u32 sz = (pitch - inset * 2) * 32;
         u32 * dst = chars + (pitch * top + inset) * 8;
-        
+
         for (s16 n = window->rows + 1 - (top + bottom); n > 0; n--) {
             cpu_fill32(dst, fill, sz);
             dst += (u16)(pitch * 8);
@@ -2126,8 +2128,8 @@ void clMesWin::writeScreen(MesWinSlot * window) {
     s16 col;
     s16 row;
 
-    u16 col0 = window->params.x >> 3;
-    u16 row0 = window->params.y >> 3;
+    u16 col0 = window->params.x / 8;
+    u16 row0 = window->params.y / 8;
 
     u16 * screen;
     u16 tile = window->tileBase;
@@ -2168,14 +2170,14 @@ void clMesWin::drawQuad(MesWinSlot * window) {
     texShift = MATH_ILog2(texShift);
 
     u32 addr = this->texAddr + window->tileBase * 32;
-    G3_TexImageParam(GX_TEXFMT_PLTT16, GX_TEXGEN_TEXCOORD, (GXTexSizeS)(texShift-2), GX_TEXSIZE_T256, GX_TEXREPEAT_NONE, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_TRNS, addr);
+    G3_TexImageParam(GX_TEXFMT_PLTT16, GX_TEXGEN_TEXCOORD, (GXTexSizeS)(texShift - 2), GX_TEXSIZE_T256, GX_TEXREPEAT_NONE, GX_TEXFLIP_NONE, GX_TEXPLTTCOLOR0_TRNS, addr);
     G3_TexPlttBase(this->texPlttAddr, GX_TEXFMT_PLTT16);
 
-    u32 vx = (window->params.width+1) << 8;
-    u32 vy = (window->params.height+1) << 8;
+    u32 vx = (window->params.width + 1) * 256;
+    u32 vy = (window->params.height + 1) * 256;
 
-    fx32 s = ((window->params.width+1) * 8) << FX32_SHIFT;
-    fx32 t = ((window->params.height+1) * 8) << FX32_SHIFT;
+    fx32 s = ((window->params.width + 1) * 8) << FX32_SHIFT;
+    fx32 t = ((window->params.height + 1) * 8) << FX32_SHIFT;
 
     G3_Begin(GX_BEGIN_QUADS);
     G3_Color(GX_RGB(31, 31, 31));
@@ -2415,7 +2417,7 @@ u32 clMesWin::calcSize(u8 style, u8 w, u8 h, u8 * str, u8 indent) {
             if (code == 0xff0a) {
                 break;
             }
-            
+
             if (code == 0xff01) {
                 lines = 1;
             } else if (code == 0xff11) {
@@ -2470,7 +2472,7 @@ u32 clMesWin::calcSize(u8 style, u8 w, u8 h, u8 * str, u8 indent) {
             width++;
         }
 
-        s16 n = width-cornerW2;
+        s16 n = width - cornerW2;
         if (n % stepW != 0) {
             width = stepW * (n / stepW + 1) + cornerW2;
         }
@@ -2514,7 +2516,7 @@ void clMesWin::addTail(MesWinSlot * window) {
 
     u32 idx = (u8)((up != 0) ? 1 : 0);
     u32 kind = params->tailKind;
-    idx += (kind-1)*2;
+    idx += (kind - 1) * 2;
 
     u8 * row = &mesTailAnims[idx * 2];
     u8 anim = row[params->tailAlt];
@@ -2533,13 +2535,13 @@ void clMesWin::addTail(MesWinSlot * window) {
             if (params->tailX != 0) {
                 x = x0 + params->tailX;
             } else {
-                x = x0 + ((params->width+1) * 8 >> 1);
+                x = x0 + (params->width + 1) * 8 / 2;
             }
 
             if (up != 0) {
                 y = y0;
             } else {
-                y = y0 + ((params->height+1) * 8);
+                y = y0 + (params->height + 1) * 8;
             }
             break;
         }
@@ -2548,13 +2550,13 @@ void clMesWin::addTail(MesWinSlot * window) {
             if (params->tailX != 0) {
                 x = x0 + params->tailX + 1;
             } else {
-                x = x0 + (((params->width+1) * 8) >> 1);
+                x = x0 + (params->width + 1) * 8 / 2;
             }
 
             if (up != 0) {
                 y = y0;
             } else {
-                y = y0 + params->height*8 + 8;
+                y = y0 + params->height * 8 + 8;
             }
         }
     }
@@ -2573,7 +2575,7 @@ void clMesWin::formatNumber(MesWinSlot * window, u8 slot, u8 digits, BOOL padded
         s32 value = window->params.numbers[slot];
         bool negative = true;
         if (value < 0) {
-            value = value * (negative-2);
+            value *= negative - 2;
         } else {
             negative = false;
         }
@@ -2582,141 +2584,119 @@ void clMesWin::formatNumber(MesWinSlot * window, u8 slot, u8 digits, BOOL padded
             value = mesNumMax[digits];
         }
 
-        u32 * place = &mesPow10[6 - (digits+1)];
+        u32 * place = &mesPow10[6 - (digits + 1)];
         char * out = num->pos;
         bool started = false;
 
         while (*place != 0) {
-            u8 digit = value / (*place);
-            value -= digit * (*place);
+            u8 digit = value / *place;
+            value -= digit * *place;
 
             if (*place++ == 1 || digit != 0) {
                 started = true;
                 if (negative) {
                     negative = false;
-                    *out++ = 0x2d;
+                    *out++ = '-';
                 }
-            } else if (started == false) {
+            } else if (!started) {
                 if (padded) {
-                    *out++ = 0x20;
+                    *out++ = ' ';
                 }
                 continue;
             }
 
-            *out++ = digit + 0x30;
+            *out++ = digit + '0';
         }
 
-        *out = 0;
+        *out = '\0';
     }
 }
 
-// NONMATCHING 84.01% -- else branch has function param setup interleaved ; (r3 < 0x100) checks don't output lo/hi instructions as expected
-static inline UnkStruct_0200b8bc_10 * lookupFont(UnkStruct_0200b8bc_10 ** fonts, u16 idx, u16 & code) {
-    if (code < 0x100) {
-        return fonts[idx * 2];
+static inline s16 drawChar(MesFont ** fonts, u16 fontIdx, u16 c, u16 x, u16 y, u8 scale, u16 cols, u32 * dst, u8 color, u32 fixedWidth, u8 mode) {
+    MesFont * font;
+    u16 ch = c;
+
+    if (ch < 0x100) {
+        font = fonts[fontIdx * 2];
+    } else {
+        font = fonts[fontIdx * 2 + 1];
+        ch -= 0x100;
     }
-    code -= 0x100;
-    return fonts[idx * 2 + 1];
+
+    s32 glyph = ((u16 *)MES_FONT_PTR(font, font->charMapOffset))[ch];
+
+    if (c < 0x100) {
+        font = fonts[fontIdx * 2];
+    } else {
+        font = fonts[fontIdx * 2 + 1];
+    }
+
+    u32 * page = MES_FONT_PTR(font, MES_FONT_WORD(font, (u8)glyph + 2));
+
+    return mesWriterDrawGlyph(x, y, scale, glyph >> 8, cols, dst, page, color, fixedWidth, mode);
 }
 
+// MATCHED 100%
 BOOL clMesWin::printNumber(MesWinSlot * window) {
-    UnkStruct_0200b8bc_10 ** fonts;
-    UnkStruct_0200b8bc_10 * font;
     UnkStruct_02013640 size;
-    u8 single;
-    u16 local1c;
-    u8 r11;
-    u16 fontIdx;
-    u8 r2;
-    u32 * chars;
-    u16 glyph;
-    u16 r0;
-    u16 tmp;
-    u32 * glyphData;
-    u32 r14;
 
     u8 slot = window->params.numbers == NULL ? 0 : window->numSlot - 1;
 
     u16 c = *(u8 *)window->nums[slot].pos;
     if (c == ' ') {
-        u8 spaceW = window->text.field0c_4;
+        u8 spaceW = window->writer.spaceWidth;
 
-        window->text.field20_0 = window->text.field08_0;
-        window->text.field20_10 = window->text.field08_10;
+        window->writer.lastX = window->writer.x;
+        window->writer.lastY = window->writer.y;
 
-        if (window->text.field1c_22 == 0x3ff) {
-            window->text.field1c_22 = window->text.field08_0;
+        if (window->writer.lineLeft == 0x3ff) {
+            window->writer.lineLeft = window->writer.x;
         }
 
-        window->text.field08_0 = spaceW + 1 + window->text.field1c_17 + window->text.field08_0;
-        window->text.field20_20 = spaceW;
+        window->writer.x = spaceW + 1 + window->writer.spacing + window->writer.x;
+        window->writer.lastWidth = spaceW;
     } else {
-        single = this->singleBuf[window->params.screen];
+        size.field00.raw = drawChar(window->writer.fonts, window->writer.font, c, window->writer.x, window->writer.y, window->writer.scale, window->writer.cols, (this->singleBuf[window->params.screen] == 0) ? window->charsBack : window->chars, window->writer.color, window->writer.fixedWidth, window->writer.mode);
+        size.s20.raw = size.field00.raw;
 
-        r14 = window->text.field1c_10;
-        u8 local18 = window->text.field14_10;
-        r11 = window->text.field0c_0;
-        chars = (single == 0) ? window->charsBack : window->chars;
-        r2 = window->text.field14_0;
-        u16 r1 = window->text.field08_10;
-        local1c = window->text.field0c_9;
-        r0 = window->text.field08_0;
-        fontIdx = window->text.field18_0;
+        *(u16 *)&size.field02 = size.field00.raw;
 
-        fonts = window->text.field10;
-
-        glyph = c;
-        font = lookupFont(fonts, fontIdx, glyph);
-
-        s32 gylphInfo = ((u16 *)PTR_10(font, font->field04))[glyph];
-
-        tmp = c;
-        font = lookupFont(fonts, fontIdx, tmp);
-
-        glyphData = PTR_10(font, WORD_10(font, (u8)gylphInfo + 2));
-
-        size.struct18.field00 = func_0200c330(r0, r1, r2, gylphInfo >> 8, local1c, (u32)chars, glyphData, r11, r14, local18);
-        size.s20.field00 = size.struct18.field00;
-
-        *(u16 *)size.struct18.field02 = size.struct18.field00;
-
-        this->copyRect(window, window->text.field08_0, window->text.field08_10, size.s20.field00b, size.s20.field01b);
+        this->copyRect(window, window->writer.x, window->writer.y, size.s20.width, size.s20.height);
 
         this->windows[(s16)window->slot].dirty = 1;
 
         this->charsDirty = 1;
 
-        window->text.field20_0 = window->text.field08_0;
-        window->text.field20_10 = window->text.field08_10;
+        window->writer.lastX = window->writer.x;
+        window->writer.lastY = window->writer.y;
 
-        if (window->text.field1c_22 == 0x3ff) {
-            window->text.field1c_22 = window->text.field08_0;
+        if (window->writer.lineLeft == 0x3ff) {
+            window->writer.lineLeft = window->writer.x;
         }
 
-        window->text.field08_0 = size.s20.field00b + 1 + window->text.field1c_17 + window->text.field08_0;
-        window->text.field20_20 = size.s20.field00b;
+        window->writer.x = size.s20.width + 1 + window->writer.spacing + window->writer.x;
+        window->writer.lastWidth = size.s20.width;
     }
 
     window->nums[slot].pos++;
 
-    return (*(u8 *)window->nums[slot].pos == 0);
+    return *(u8 *)window->nums[slot].pos == 0;
 }
 
-
 // MATCHED 100%
-u32 clMesWin::callbackNumber(clMesWin * self, UnkStruct_0200b8bc * text, BOOL draw) {
-    if (!draw) {
+u32 clMesWin::callbackNumber(clMesWin * self, MesWriter * text, BOOL measuring) {
+    if (!measuring) {
         return 0;
     }
 
     MesWinSlot * window = &self->windows[self->curSlot];
 
-    u8 slot = text->field04[2];
+    u8 slot = text->text[2];
 
     MesNumStr * num = &window->nums[slot];
 
     if (!num->ready) {
-        self->formatNumber(window, slot, text->field04[3]-1, FALSE);
+        self->formatNumber(window, slot, text->text[3] - 1, FALSE);
     }
 
     self->measureString(text, num);
@@ -2725,19 +2705,19 @@ u32 clMesWin::callbackNumber(clMesWin * self, UnkStruct_0200b8bc * text, BOOL dr
 }
 
 // MATCHED 100%
-u32 clMesWin::callbackNumberPadded(clMesWin * self, UnkStruct_0200b8bc * text, BOOL draw) {
-    if (!draw) {
+u32 clMesWin::callbackNumberPadded(clMesWin * self, MesWriter * text, BOOL measuring) {
+    if (!measuring) {
         return 0;
     }
 
     MesWinSlot * window = &self->windows[self->curSlot];
 
-    u8 slot = text->field04[2];
+    u8 slot = text->text[2];
 
     MesNumStr * num = &window->nums[slot];
 
     if (!num->ready) {
-        self->formatNumber(window, slot, text->field04[3]-1, TRUE);
+        self->formatNumber(window, slot, text->text[3] - 1, TRUE);
     }
 
     self->measureString(text, num);
@@ -2746,12 +2726,15 @@ u32 clMesWin::callbackNumberPadded(clMesWin * self, UnkStruct_0200b8bc * text, B
 }
 
 // MATCHED 100%
-void clMesWin::measureString(UnkStruct_0200b8bc * text, MesNumStr * num) {
+void clMesWin::measureString(MesWriter * text, MesNumStr * num) {
     u16 glyph;
-    UnkStruct_0200b8bc_10 * font;
-    UnkStruct_0200b8bc_10 ** fonts;
+    MesFont * font;
+    MesFont ** fonts;
     u8 size[2];
-    UnkStruct_0200bce8_18 out;
+    struct {
+        MesGlyphSize field00;
+        MesGlyphSize field02;
+    } out;
     u8 c = num->buf[0];
     u8 * p = (u8 *)num->buf;
 
@@ -2760,10 +2743,10 @@ void clMesWin::measureString(UnkStruct_0200b8bc * text, MesNumStr * num) {
         p++;
 
         if (ch == ' ') {
-            out.field02[0] = text->field0c_4;
+            out.field02.width = text->spaceWidth;
         } else {
-            fonts = text->field10;
-            u16 fontIdx = text->field18_0;
+            fonts = text->fonts;
+            u16 fontIdx = text->font;
 
             glyph = ch;
             if (ch < 0x100) {
@@ -2773,27 +2756,27 @@ void clMesWin::measureString(UnkStruct_0200b8bc * text, MesNumStr * num) {
                 glyph = ch - 0x100;
             }
 
-            s32 glyphInfo = ((u16 *)PTR_10(font, font->field04))[glyph];
-            u16 fontIdx2 = text->field18_0;
-            UnkStruct_0200b8bc_10 * font2;
+            s32 glyphInfo = ((u16 *)MES_FONT_PTR(font, font->charMapOffset))[glyph];
+            u16 fontIdx2 = text->font;
+            MesFont * font2;
             if (ch < 0x100) {
                 font2 = fonts[fontIdx2 * 2];
             } else {
                 font2 = fonts[fontIdx2 * 2 + 1];
             }
 
-            u32 * glyphData = PTR_10(font2, *(u32 *)((u8 *)font2 + ((glyphInfo & 0xff) << 2) + 8));
-            u8 row = glyphInfo >> 8;
+            u32 * page = MES_FONT_PTR(font2, *(u32 *)((u8 *)font2 + (glyphInfo & 0xff) * 4 + 8));
+            u8 glyphIdx = glyphInfo >> 8;
 
-            u8 scale = text->field14_0;
-            u8 word = (row >> 3) + 1;
-            u8 shift = (row & 7) * 4;
-            u32 header = glyphData[0];
-            u32 width = (u8)((glyphData[word] >> shift) & 0xf);
+            u8 scale = text->scale;
+            u8 word = (glyphIdx >> 3) + 1;
+            u8 shift = (glyphIdx & 7) * 4;
+            u32 header = page[0];
+            u32 width = (u8)((page[word] >> shift) & 0xf);
 
             if (((header & 0xf0) >> 4) >= 5) {
-                u8 word2 = word + ((header & 0xff000000) >> 25);
-                width = (u8)(width | ((glyphData[word2] >> shift) << 4));
+                u8 wordHi = word + ((header & 0xff000000) >> 25);
+                width = (u8)(width | ((page[wordHi] >> shift) << 4));
             }
 
             size[0] = width;
@@ -2807,28 +2790,28 @@ void clMesWin::measureString(UnkStruct_0200b8bc * text, MesNumStr * num) {
                 size[1] = (size[1] + 1) * 2 - 1;
             }
 
-            out.field00 = *(u16 *)size;
-            *(u16 *)out.field02 = out.field00;
+            out.field00.raw = *(u16 *)size;
+            *(u16 *)&out.field02 = out.field00.raw;
         }
 
-        text->field20_0 = text->field08_0;
-        text->field20_10 = text->field08_10;
+        text->lastX = text->x;
+        text->lastY = text->y;
 
-        if (text->field1c_22 == 0x3ff) {
-            text->field1c_22 = text->field08_0;
+        if (text->lineLeft == 0x3ff) {
+            text->lineLeft = text->x;
         }
 
-        text->field08_0 = out.field02[0] + 1 + text->field1c_17 + text->field08_0;
-        text->field20_20 = out.field02[0];
+        text->x = out.field02.width + 1 + text->spacing + text->x;
+        text->lastWidth = out.field02.width;
 
         c = *p;
     }
 
-    out.field02[1] += 1;
+    out.field02.height++;
 
-    if (out.field02[1] > text->field1c_11) {
-        text->field1c_11 = out.field02[1];
-        text->unkStruct24.field28_16 = text->field08_10 - text->unkStruct24.field24_18 + text->field1c_11;
+    if (out.field02.height > text->lineHeight) {
+        text->lineHeight = out.field02.height;
+        text->extents.height = text->y - text->extents.top + text->lineHeight;
     }
 
     num->pos = num->buf;
@@ -2856,7 +2839,7 @@ void clMesIcon::update() {
                 if (frame == 0) {
                     delay = frames[0].time;
                 } else {
-                    delay = frames[frame].time - frames[frame-1].time;
+                    delay = frames[frame].time - frames[frame - 1].time;
                 }
                 icon->timer = delay;
             }
@@ -2906,14 +2889,14 @@ void clMesIcon::setTexMan(nsObjSys::clObjPltVramMan * chars, nsObjSys::clObjPltV
 
 // MATCHED 100%
 void clMesIcon::loadChars(u32 screen, u32 addr) {
-    if (this->useTex == FALSE || screen == 1) {
+    if (!this->useTex || screen == 1) {
         this->loadObjChars(screen, addr);
     } else {
         this->loadTex(addr);
     }
 }
 
-// NONMATCHING 91.14 % -- r0 param is lifted above sp params in target asm
+// MATCHED 100%
 void clMesIcon::loadObjChars(u32 screen, u32 addr) {
     VramHandle ** alloc = (screen == 0) ? &this->charAllocMan : &this->charAllocSub;
 
@@ -2938,7 +2921,7 @@ void clMesIcon::loadObjChars(u32 screen, u32 addr) {
 
     u32 dst = addr + objVramBase[screen];
 
-    transferChars(dst, 0, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[screen]->offset), shift+5, 0, 0, 0);
+    transferChars(dst, 0, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[screen]->offset), shift + 5, 0, 0, 0);
 }
 
 // MATCHED 100%
@@ -2970,9 +2953,9 @@ void clMesIcon::loadTex(u32 addr) {
 
     u32 dst;
     if (addr == -1) {
-        dst = (this->charAllocMan->offset & 0x1FFFF) + texBankAddrs[this->charAllocMan->offset >> 17];
+        dst = (this->charAllocMan->offset & 0x1ffff) + texBankAddrs[this->charAllocMan->offset >> 17];
     } else {
-        dst = (addr & 0x1FFFF) + texBankAddrs[addr >> 17];
+        dst = (addr & 0x1ffff) + texBankAddrs[addr >> 17];
     }
     transferChars(dst, 1, MES_ICON_RES, mesIconChars, (u16 *)((u8 *)MES_ICON_RES + this->tileRes[0]->offset), 3, 0, 0, 0);
 
@@ -2986,7 +2969,7 @@ u32 clMesIcon::getCharSize(u32 screen) {
 
 // MATCHED 100%
 void clMesIcon::loadPltt(u32 screen, u32 addr) {
-    if (this->useTex == FALSE || screen == 1) {
+    if (!this->useTex || screen == 1) {
         this->loadObjPltt(screen, addr);
         this->plttIdx[0] = 0xff;
         this->plttIdx[1] = 0xff;
@@ -3091,7 +3074,7 @@ void clMesIcon::add(MesIcon * icon, u8 screen, s8 anim, u16 x, u16 y, u8 flip, u
     if (frame == 0) {
         delay = frames[0].time;
     } else {
-        delay = frames[frame].time - frames[frame-1].time;
+        delay = frames[frame].time - frames[frame - 1].time;
     }
 
     icon->timer = delay;
@@ -3194,7 +3177,7 @@ clMesIcon::~clMesIcon() {
     this->plttAllocSub = NULL;
 }
 
-// NONMATCHING 98.11 % -- register rotation with r1/r2/r3
+// MATCHED 100%
 void clMesIcon::drawOam(MesIcon * icon) {
     u8 * base = (u8 *)MES_ICON_RES;
 
@@ -3204,7 +3187,7 @@ void clMesIcon::drawOam(MesIcon * icon) {
     YanaResObj * obj = (YanaResObj *)RES_PTR(base, MES_ICON_RES->objOffset) + frame->cell;
 
     YanaResXform * offsets = (YanaResXform *)RES_PTR(base, MES_ICON_RES->xformOffset);
-    YanaResXform * offset = &offsets[frame->xformIdx-1];
+    YanaResXform * offset = &offsets[frame->xformIdx - 1];
 
     VramHandle * charAlloc;
     VramHandle * plttAlloc;
@@ -3225,8 +3208,9 @@ void clMesIcon::drawOam(MesIcon * icon) {
     }
 
     u32 screen = icon->screen;
+    GXOamAttr * oam;
     u16 * tiles = (u16 *)RES_PTR(base, this->tileRes[screen]->offset) + frame->cell;
-    GXOamAttr * oam = oamManager->oamEnd;
+    oam = oamManager->oamEnd;
 
     u32 charBase;
     if (charAlloc != NULL) {
@@ -3239,30 +3223,36 @@ void clMesIcon::drawOam(MesIcon * icon) {
 
     u16 plttBase;
     if (plttAlloc != NULL) {
-        if ((u16)plttAlloc->offset & 0x100) {
-            plttBase = (u8)plttAlloc->offset;
+        plttBase = plttAlloc->offset;
+        if (plttBase & 0x100) {
+            plttBase &= 0xff;
         } else {
-            plttBase = plttAlloc->offset >> 4;
+            plttBase >>= 4;
         }
     } else {
         plttBase = this->plttIdx[screen];
     }
 
-    s32 i;
     s16 x;
     s16 y;
+    u8 flip;
+    s32 i;
+    s32 w;
+    s32 h;
+    u32 shape;
+    u32 size;
     for (i = frame->numObj; i > 0; i--) {
-        u32 size = obj->size;
-        u32 shape = obj->shape;
+        size = obj->size;
+        shape = obj->shape;
 
         u8 shapeIdx = size + shape * 4;
-        s32 w = iconObjWidths[shapeIdx];
-        s32 h = iconObjHeights[shapeIdx];
+        w = iconObjWidths[shapeIdx];
+        h = iconObjHeights[shapeIdx];
 
         x = obj->x - (w >> 1);
         y = obj->y - (h >> 1);
 
-        u8 flip = obj->flip;
+        flip = obj->flip;
 
         if (frame->xformIdx != 0) {
             x += offset->x;
@@ -3285,8 +3275,9 @@ void clMesIcon::drawOam(MesIcon * icon) {
         y += icon->y;
 
         oam->attr01 = (y & 0xff) | (obj->mode << 8) | (obj->mosaic << 12) | (obj->color << 13) | (shape << 14) | ((x << 16) & 0x1ff0000) | (flip << 25) | (size << 30);
-        oam->attr2 = (*tiles++ + charBase) | (icon->priority << 10) | ((plttBase + obj->pltt) << 12);
-        
+        oam->attr2 = (*tiles + charBase) | (icon->priority << 10) | ((plttBase + obj->pltt) << 12);
+
+        tiles++;
         obj++;
         oam++;
     }
@@ -3304,7 +3295,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
     YanaResObj * obj = (YanaResObj *)RES_PTR(base, MES_ICON_RES->objOffset) + frame->cell;
     YanaResXform * offsets = (YanaResXform *)RES_PTR(base, MES_ICON_RES->xformOffset);
 
-    YanaResXform * offset = &offsets[frame->xformIdx-1];
+    YanaResXform * offset = &offsets[frame->xformIdx - 1];
 
     if (this->tileRes[0] == NULL) {
         this->tileRes[0] = RES_ENTRY(MES_ICON_RES, findCharEntry(icon->screen, 0, 0, MES_ICON_RES));
@@ -3325,9 +3316,9 @@ void clMesIcon::drawTex(MesIcon * icon) {
     u32 texOff;
     u32 fmt = ((YanaRes *)base)->texFmt;
     if (this->charAllocMan != NULL) {
-        texOff = this->charAllocMan->offset >> 3;
+        texOff = this->charAllocMan->offset / 8;
     } else {
-        texOff = this->charBase[0] >> 3;
+        texOff = this->charBase[0] / 8;
     }
 
     u32 texParam = texOff | (fmt << 26);
@@ -3362,7 +3353,7 @@ void clMesIcon::drawTex(MesIcon * icon) {
 
         G3_Translate((x << 5) * this->scale, (y << 5) * this->scale, icon->depth * this->scale);
         G3_Scale(this->scale << FX32_SHIFT, this->scale << FX32_SHIFT, this->scale << FX32_SHIFT);
-        
+
         const u32 * vtx = iconQuadVtx[shapeIdx];
         const u32 * tc = iconTexCoords[shapeIdx].field00[icon->flip];
         G3_Begin(GX_BEGIN_QUADS);

@@ -298,7 +298,7 @@ void clMesWinEff::updateEffect(MesWinSlot * window) {
         case 1: {
             if (window->effCloseReq) {
                 window->effState = 2;
-            } else if (window->text.field04 != 0 && window->paused == 0 && this->checkClose(window) == FALSE) {
+            } else if (window->writer.text != 0 && window->paused == 0 && this->checkClose(window) == FALSE) {
                 this->advanceText(window);
             }
             break;

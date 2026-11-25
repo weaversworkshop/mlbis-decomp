@@ -13,6 +13,8 @@ extern "C" {
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
+
 #include "main/tile_convert.h"
 
 // --- Struct Definitions --- //
@@ -40,11 +42,6 @@ typedef struct {
 
 extern const u8 texPlttBaseShift[8];  // 0x0204ac70
 extern const u8 texPlttSizeShift[8];  // 0x0204ac80
-
-// --- Extern Functions --- //
-
-extern void cpu_copy32_fwd(void *, void *, u32);
-extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Variable Definitions --- //
 

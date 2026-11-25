@@ -31,12 +31,12 @@ s16 getMesWinMaxY(void);  // 0x02014ff0
 u8 * getTextChunk(u32 *, u32);  // 0x02015000
 u8 * getTextLines(u32 *, u32);  // 0x0201500c
 u8 * getTextCols(u32 *, u32);  // 0x02015018
-void buildMesWinParams(MesWinParams *, clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s32, s32, u8, u32, s16, UnkStruct_0200b8bc_10 **, u32 *, u32, s32 *, s32 *, s16);  // 0x02015028
+void buildMesWinParams(MesWinParams *, clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s32, s32, u8, u32, s16, MesFont **, u32 *, u32, s32 *, s32 *, s16);  // 0x02015028
 u32 getTextLineCount(u32 *, u32);  // 0x020152c4
 u32 getTextColCount(u32 *, u32);  // 0x020152d8
 void calcMesWinPlacement(clMesWin *, MesWinRequest *, s16 *, s16 *, MesWinPlacement *);  // 0x020152ec
-void openMesWin(clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, UnkStruct_0200b8bc_10 **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015d04
-void openMesWinEff(clMesWinEff *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, s16, u8, UnkStruct_0200b8bc_10 **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015dd0
+void openMesWin(clMesWin *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, MesFont **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015d04
+void openMesWinEff(clMesWinEff *, u32, u32, s16, s16, s16, s16, s16, s16, s16, s16, s16, u8, u32, s16, u8, MesFont **, u32 *, u16, s16, s32 *, s32 *, s16);  // 0x02015dd0
 
 } // extern "C"
 
@@ -78,7 +78,7 @@ u8 * getTextCols(u32 * text, u32 textId) {
 }
 
 // MATCHED 100%
-void buildMesWinParams(MesWinParams * params, clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s32 width, s32 height, u8 persistent, u32 voice, s16 field04_28, UnkStruct_0200b8bc_10 ** font, u32 * text, u32 textId, s32 * numbers, s32 * result, s16 indent) {
+void buildMesWinParams(MesWinParams * params, clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s32 width, s32 height, u8 persistent, u32 voice, s16 color, MesFont ** fonts, u32 * text, u32 textId, s32 * numbers, s32 * result, s16 indent) {
     if (width == 0 || height == 0) {
         u8 * chunk = getTextChunk(text, textId);
         u8 cols = getTextCols(text, textId)[0] + 1;
@@ -122,7 +122,7 @@ void buildMesWinParams(MesWinParams * params, clMesWin * window, u32 screen, u32
     params->tailFlipH = tailFlipH;
     params->tailX = tailX;
     params->textId = textId;
-    params->field04_28 = field04_28;
+    params->color = color;
 
     params->persistent = persistent;
     params->x = x;
@@ -132,7 +132,7 @@ void buildMesWinParams(MesWinParams * params, clMesWin * window, u32 screen, u32
 
     params->numbers = numbers;
 
-    params->font = font;
+    params->fonts = fonts;
 
     params->text = text;
 
@@ -449,16 +449,16 @@ void calcMesWinPlacement(clMesWin * window, MesWinRequest * req, s16 * target, s
 }
 
 // MATCHED 100%
-void openMesWin(clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, UnkStruct_0200b8bc_10 ** font, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
+void openMesWin(clMesWin * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, MesFont ** fonts, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
     MesWinParams params;
-    buildMesWinParams(&params, window, screen, x, y, style, tailKind, tailAlt, tailUp, tailFlipH, tailX, width, height, persistent, voice, 0, font, text, textId, numbers, result, indent);
+    buildMesWinParams(&params, window, screen, x, y, style, tailKind, tailAlt, tailUp, tailFlipH, tailX, width, height, persistent, voice, 0, fonts, text, textId, numbers, result, indent);
     window->open(&params, slot);
 }
 
 // MATCHED 100%
-void openMesWinEff(clMesWinEff * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, s16 field24_0, u8 field24_7, UnkStruct_0200b8bc_10 ** font, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
+void openMesWinEff(clMesWinEff * window, u32 screen, u32 x, s16 y, s16 style, s16 tailKind, s16 tailAlt, s16 tailUp, s16 tailFlipH, s16 tailX, s16 width, s16 height, u8 persistent, u32 voice, s16 field24_0, u8 field24_7, MesFont ** fonts, u32 * text, u16 textId, s16 slot, s32 * numbers, s32 * result, s16 indent) {
     MesWinParams params;
-    buildMesWinParams(&params, window, screen, x, y, style, tailKind, tailAlt, tailUp, tailFlipH, tailX, width, height, persistent, voice, 0, font, text, textId, numbers, result, indent);
+    buildMesWinParams(&params, window, screen, x, y, style, tailKind, tailAlt, tailUp, tailFlipH, tailX, width, height, persistent, voice, 0, fonts, text, textId, numbers, result, indent);
 
     params.effect = field24_0;
     params.effectFast = field24_7;

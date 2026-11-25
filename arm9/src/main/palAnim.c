@@ -4,6 +4,8 @@
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
+
 #include "main/palAnim.h"
 
 // --- Struct Definitions --- //
@@ -45,14 +47,9 @@ typedef struct {
     s16 args[8];  // +0x12
 } PalAnimSimpleBlend;
 
-// --- Extern Functions --- //
-
-extern void cpu_copy32_fwd(void *, void *, u32);
-extern void cpu_copy32_rev(void *, void *, u32);
-
 // --- Function Declarations --- //
 
-s32 palAnimRun(s16 *, s32, u16 *, s32, u16 *, u32);  // 0x0201d2b4
+s32 palAnimRun(s16 *, s32, u16 *, s32, u16 *, BOOL);  // 0x0201d2b4
 s16 * palAnimRotate(s16 *, s32, u16 *, s32, u16 *);  // 0x0201d52c
 s16 * palAnimRotateBounce(s16 *, s32, u16 *, s32, u16 *);  // 0x0201d5c4
 s16 * palAnimKeySeg(s16 *, s32 *, s32 *, s32 *, s32 *);  // 0x0201d6d0
@@ -83,8 +80,8 @@ PalAnimWorker palAnimWorkers[] = {  // 0x02054d8c
 
 // --- Function Definitions --- //
 
-// NONMATCHING 98.01% -- callback param5 is stored late
-s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u32 loop) {
+// MATCHED 100%
+s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, BOOL loop) {
     u16 * pal = dstPal;
 
     if (pal != NULL && srcPal != NULL && srcPal != pal) {
@@ -122,10 +119,11 @@ s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u
             s32 period = entry->period << 8;
             s32 duration = entry->duration << 8;
             s32 cycleLen = entry->cycleLen << 8;
-            s32 kind = entry->kind;
+            s16 kind = entry->kind;
             delay = entry->delay << 8;
             s32 phase = time;
-            if (loop == 0) {
+
+            if (!loop) {
                 phase = time - delay;
                 if (phase < 0) {
                     continue;
@@ -154,7 +152,7 @@ s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u
                     }
                 }
             }
-            
+
             u16 * out = &pal[entry->dstIdx];
             s32 n = entry->count;
             if (palCount - entry->dstIdx < n) {
@@ -166,8 +164,8 @@ s32 palAnimRun(s16 * list, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u
     }
 }
 
-// NONMATCHING 96.40% -- param8 loaded early from stack before use in function call
-void palAnimRunOne(s32 kind, u16 color, u32 dur, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, u32 loop) {
+// MATCHED 100%
+void palAnimRunOne(s32 kind, u16 color, s32 dur, s32 time, u16 * dstPal, s32 palCount, u16 * srcPal, BOOL loop) {
     BOOL reverse = FALSE;
 
     if (kind < 0) {
@@ -177,10 +175,9 @@ void palAnimRunOne(s32 kind, u16 color, u32 dur, s32 time, u16 * dstPal, s32 pal
 
     s16 * list;
     if (kind == 8) {
-        PalAnimSimpleInvert * rec;
-        palAnimSimpleInvert.kind = kind;
+        PalAnimSimpleInvert * rec = &palAnimSimpleInvert;
+        rec->kind = kind;
 
-        rec = &palAnimSimpleInvert;
         if (reverse == TRUE) {
             rec->args[2] = 0;
             rec->args[5] = 0x1f;
@@ -196,12 +193,11 @@ void palAnimRunOne(s32 kind, u16 color, u32 dur, s32 time, u16 * dstPal, s32 pal
         rec->args[4] = dur;
         list = rec->list;
     } else {
-        PalAnimSimpleBlend * rec;
-        palAnimSimpleBlend.kind = kind;
-        palAnimSimpleBlend.args[1] = color;
+        PalAnimSimpleBlend * rec = &palAnimSimpleBlend;
+        rec->kind = kind;
+        rec->args[1] = color;
 
-        rec = &palAnimSimpleBlend;
-        if (reverse == 1) {
+        if (reverse == TRUE) {
             rec->args[3] = 0;
             rec->args[6] = 0x1f;
         } else {
@@ -238,6 +234,7 @@ s16 * palAnimRotate(s16 * args, s32 time, u16 * dst, s32 count, u16 * pal) {
         if (time < 0) {
             break;
         }
+
         i++;
     }
 
@@ -289,6 +286,7 @@ s16 * palAnimRotateBounce(s16 * args, s32 time, u16 * dst, s32 count, u16 * pal)
             if (i == 0) {
                 break;
             }
+
             i--;
         }
     }
@@ -304,6 +302,7 @@ s16 * palAnimRotateBounce(s16 * args, s32 time, u16 * dst, s32 count, u16 * pal)
             if (i == len-1) {
                 break;
             }
+
             i++;
         }
 
@@ -317,6 +316,7 @@ s16 * palAnimRotateBounce(s16 * args, s32 time, u16 * dst, s32 count, u16 * pal)
             if (i == 0) {
                 break;
             }
+
             i--;
         }
     }

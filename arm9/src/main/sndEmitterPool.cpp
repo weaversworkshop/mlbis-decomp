@@ -8,6 +8,8 @@
 
 extern "C" {
 
+#include "itcm/cpu_mem.h"
+
 // --- Struct Definitions --- //
 
 typedef struct {
@@ -20,11 +22,6 @@ typedef struct {
     u16 isFixed : 1;
     u8 slot;  // +0x14
 } SndEmitterRequest;
-
-// --- Extern Functions --- //
-
-extern void cpu_copy32_fwd(void *, void *, u32);
-extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Variable Definitions --- //
 

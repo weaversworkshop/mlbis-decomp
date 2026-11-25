@@ -13,7 +13,7 @@
 
 extern "C" {
     #include "main/uiUtil.h"
-    #include "main/unk_tu_0200b8bc.h"
+    #include "main/mesWriter.h"
 }
 
 class clMesWin;
@@ -57,7 +57,7 @@ typedef struct {
         u32 tailFlipH : 1;
         u32 tailX : 8;
         u32 textId : 11;
-        u32 field04_28 : 4;
+        u32 color : 4;
     };
     struct {
         u32 persistent : 1;  // +0x8
@@ -68,7 +68,7 @@ typedef struct {
         u32 : 4;
     };
     s32 * numbers;  // +0xc
-    UnkStruct_0200b8bc_10 ** font;  // +0x10
+    MesFont ** fonts;  // +0x10
     u32 * text;  // +0x14
     s32 * result;  // +0x18
     s32 voice;  // +0x1c
@@ -115,7 +115,7 @@ typedef struct MesWinSlot {
     MesWinSlot * prev;  // +0x0
     MesWinSlot * next;  // +0x4
     MesWinParams params;  // +0x8
-    UnkStruct_0200b8bc text;  // +0x30
+    MesWriter writer;  // +0x30
     MesNumStr nums[4];  // +0x60
     struct {
         u32 textX : 8;  // +0xa0
@@ -161,7 +161,7 @@ typedef struct MesWinSlot {
     struct {
         u32 choiceCount : 8;  // +0xfc
         u32 choice : 8;
-        u32 lineWidth : 16;
+        u32 textHeight : 16;
     };
     SndEmitter voice;  // +0x100
     BOOL (*effStep)(clMesWinEff *, MesWinSlot *);  // +0x148
@@ -316,7 +316,7 @@ public:
     u32 scale;  // +0x94
     MesScroll scrollMainCur;  // +0x98
     MesScroll scrollSubCur;  // +0x9c
-    UnkStruct_0200b8bc_2c textCallbacks[31];  // +0xa0
+    MesCodeHandler textCallbacks[31];  // +0xa0
 
     clMesWin(u32, u32, u32, u8, u8, u32, clMesIcon *);  // C1 0x0200e370 C2 0x0200e5f8
     ~clMesWin();  // D1 0x0200e880 D2 0x0200e964
@@ -336,7 +336,7 @@ public:
     u32 calcBufferSize(u16, u32, u32, u8, u8);  // 0x0200dee0
     void assignBuffers(MesWinSlot *);  // 0x0200dfac
     void release(void);  // 0x0200e0bc
-    u32 measureText(const char *, UnkStruct_0200b8bc_10 **);  // 0x0200e12c
+    u32 measureText(const char *, MesFont **);  // 0x0200e12c
     u16 getBorderWidth(u8, u8);  // 0x0200e1bc
     void attachTexMan(nsObjSys::clObjPltVramMan *);  // 0x0200e1d0
     void loadPalette(BOOL, u32, void *);  // 0x0200e24c
@@ -346,16 +346,16 @@ public:
     BOOL checkClose(MesWinSlot *);  // 0x0200ed74
     void stepClear(MesWinSlot *);  // 0x0200ee10
     void advanceText(MesWinSlot *);  // 0x0200ef50
-    BOOL execCode(MesWinSlot *, UnkStruct_0200b8bc *, UnkStruct_0200bce8_24);  // 0x0200f428
+    BOOL execCode(MesWinSlot *, MesWriter *, MesStepResult);  // 0x0200f428
     void setVoice(MesWinSlot *, BOOL);  // 0x0200fa40
     void playCursorSound(void);  // 0x0200fb90
     void playDecideSound(void);  // 0x0200fbf4
-    void alignLine(MesWinSlot *, UnkStruct_0200b8bc *, u32);  // 0x0200fc58
+    void alignLine(MesWinSlot *, MesWriter *, u32);  // 0x0200fc58
     void addIcon(MesWinSlot *, s16, s16, u16, u8, MesIcon *);  // 0x0200fe38
     void copyRect(MesWinSlot *, u8, u8, u8, u8);  // 0x0200ff3c
     s16 create(MesWinParams *, s16);  // 0x0201008c
 
-    void layoutText(const char *, UnkStruct_0200b8bc_10 **, UnkStruct_0200b8bc_24 *, u8);  // 0x020106fc
+    void layoutText(const char *, MesFont **, MesExtents *, u8);  // 0x020106fc
     bool destroy(s16);  // 0x020107a0
 
     void rebuildScreen(u8);  // 0x02010930
@@ -380,9 +380,9 @@ public:
     void addTail(MesWinSlot *);  // 0x020133ac
     void formatNumber(MesWinSlot *, u8, u8, BOOL);  // 0x02013540
     BOOL printNumber(MesWinSlot *);  // 0x02013640
-    static u32 callbackNumber(clMesWin *, UnkStruct_0200b8bc *, BOOL);  // 0x020139fc
-    static u32 callbackNumberPadded(clMesWin *, UnkStruct_0200b8bc *, BOOL);  // 0x02013a84
-    void measureString(UnkStruct_0200b8bc *, MesNumStr *);  // 0x02013b0c
+    static u32 callbackNumber(clMesWin *, MesWriter *, BOOL);  // 0x020139fc
+    static u32 callbackNumberPadded(clMesWin *, MesWriter *, BOOL);  // 0x02013a84
+    void measureString(MesWriter *, MesNumStr *);  // 0x02013b0c
 };
 
 #endif // __cplusplus

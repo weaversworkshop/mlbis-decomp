@@ -4,12 +4,9 @@
 
 #include <nitro.h>
 
+#include "itcm/cpu_mem.h"
+
 #include "main/copyRect.h"
-
-// --- Extern Functions --- //
-
-extern void cpu_copy32_fwd(void *, void *, u32);
-extern void cpu_copy32_rev(void *, void *, u32);
 
 // --- Function Definitions --- //
 #ifndef IDE_PARSE
