@@ -297,6 +297,8 @@ blocks over all game TUs (2026-11-15). Windows only (drives `mwccarm.exe` under 
 - `show.py <dump.jsonl> [idx...] [--grep RE] [--picks] [--edges]` — list blocks; for chosen ones print textual ->
   scheduled position, latency, height, alias (`W` = worst case) and, with `--picks`, every pick with its candidates
   and the deciding level (urgency / release / height / descriptor / pressure cost).
+- `p2sim.py <dump.jsonl> <pass-1 block idx> [vreg=physreg ...]` — replays pass 2 on a pass-1 block's output order with the
+  given physical registers: answers "would this block look like the target if pass 2 had rescheduled it?" (palAnimRunOne).
 - `cc.py` — patched compiler copies (`nosched`, `p1off`, `p2off`), created on demand under `build/schedsim/cc/`.
 - `pcsim.py` — the model (graph build, alias predicate, pick, pressure mode, ARM9 costs). `opinfo.json` = opcode names.
 - `asmcheck.py <tu...> [--vin nosched --vout p1off] [--wslots 16,20]`, `asmsim.py`, `armparse.py` — approximate
