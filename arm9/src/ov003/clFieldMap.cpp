@@ -440,9 +440,9 @@ void clFieldMap::run() {
                                     this->work.texTileBase[layer] = this->work.texTileBase[layer - 1] + (this->work.layerGfxSize[layer - 1] >> 5);
                                 }
 
-                                this->work.dpp->queueStream(&req->fs, (u32 *)this->work.layerGfxBuf[layer], NULL, 0);
+                                this->work.dpp->queueStream(&req->fs, this->work.layerGfxBuf[layer], NULL, 0);
                             } else {
-                                this->work.dpp->queueStream(&req->fs, (u32 *)this->getBgCharAddr(this->work.charBlock[layer]), NULL, 0);
+                                this->work.dpp->queueStream(&req->fs, this->getBgCharAddr(this->work.charBlock[layer]), NULL, 0);
                             }
                         } else {
                             if (dap == NULL) {
@@ -471,7 +471,7 @@ void clFieldMap::run() {
                                 this->work.texTileBase[layer] = this->work.texTileBase[layer - 1] + (this->work.layerGfxSize[layer - 1] >> 5);
                             }
 
-                            this->work.dpp->queueStream(&req->fs, (u32 *)this->work.layerGfxBuf[layer], NULL, 0);
+                            this->work.dpp->queueStream(&req->fs, this->work.layerGfxBuf[layer], NULL, 0);
                         } else if (this->work.texMode == 1 && ((this->work.infoSection.data->texLayerMask >> layer) & 1)) {
                             if (this->work.savedTexBank == GX_VRAM_TEX_NONE) {
                                 this->work.texVram = getTexVramAddr(GX_GetBankForTex());
@@ -482,13 +482,13 @@ void clFieldMap::run() {
                                 this->work.texTileBase[layer] = this->work.texTileBase[layer - 1] + (this->work.layerGfxSize[layer - 1] >> 5);
                             }
 
-                            this->work.dpp->queueStream(&req->fs, (u32 *)(this->work.texVram + this->work.texTileBase[layer] * 32), NULL, 0);
+                            this->work.dpp->queueStream(&req->fs, this->work.texVram + this->work.texTileBase[layer] * 32, NULL, 0);
                         } else {
                             if (layer > 0) {
                                 this->work.texTileBase[layer] = this->work.texTileBase[layer - 1];
                             }
 
-                            this->work.dpp->queueStream(&req->fs, (u32 *)this->getBgCharAddr(this->work.charBlock[layer]), NULL, 0);
+                            this->work.dpp->queueStream(&req->fs, this->getBgCharAddr(this->work.charBlock[layer]), NULL, 0);
                         }
                     } else {
                         if (dap == NULL) {
@@ -570,7 +570,7 @@ void clFieldMap::run() {
                         this->work.layerGfxBuf[i] = new (this->work.heapId, NULL, FALSE) u8[this->work.layerGfxSize[i]];
                         this->work.layerGfxOwned |= 1 << i;
 
-                        dap->queueJob(&req->fs, (u32 *)this->work.layerGfxBuf[i]);
+                        dap->queueJob(&req->fs, this->work.layerGfxBuf[i]);
                     } else if (this->work.texMode == 1 && ((this->work.infoSection.data->texLayerMask >> i) & 1)) {
                         if (this->work.savedTexBank == GX_VRAM_TEX_NONE) {
                             this->work.texVram = getTexVramAddr(GX_GetBankForTex());
@@ -583,9 +583,9 @@ void clFieldMap::run() {
                             this->work.texTileBase[i] = base[-1] + (this->work.layerGfxSize[i - 1] >> 5);
                         }
 
-                        dap->queueJob(&req->fs, (u32 *)(this->work.texVram + this->work.texTileBase[i] * 32));
+                        dap->queueJob(&req->fs, this->work.texVram + this->work.texTileBase[i] * 32);
                     } else {
-                        dap->queueJob(&req->fs, (u32 *)this->getBgCharAddr(this->work.charBlock[i]));
+                        dap->queueJob(&req->fs, this->getBgCharAddr(this->work.charBlock[i]));
                     }
                 } else {
                     this->work.layerGfxBuf[i] = NULL;

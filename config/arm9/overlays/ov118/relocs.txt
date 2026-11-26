@@ -156,7 +156,7 @@ from:0x020e0fe8 kind:arm_call to:0x020648d4 module:overlay(8)
 from:0x020e1038 kind:load to:0x02064f0c module:overlay(8)
 from:0x020e103c kind:load to:0x02055fe4 module:main
 from:0x020e1040 kind:load to:0x020b7f08 module:overlay(16)
-from:0x020e1044 kind:load to:0x020db054 module:overlays(4,22,49,50,112,117)
+from:0x020e1044 kind:load to:0x020db054 module:overlays(22,49,50,112,117)
 from:0x020e1048 kind:load to:0x020ce4ac module:overlay(35)
 from:0x020e1070 kind:arm_call to:0x020ac644 module:overlay(15)
 from:0x020e12a8 kind:arm_call to:0x02064a58 module:overlay(8)

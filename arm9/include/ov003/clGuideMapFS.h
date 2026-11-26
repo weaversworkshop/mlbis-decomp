@@ -12,7 +12,7 @@ public:
 
     clGuideMapFS(u8, u16);  // C2 0x0206b3ec C1 0x0206b598
     virtual ~clGuideMapFS();  // D1 0x0206b744 D0 0x0206b758 D2 0x0206b774
-    void run(void);  // 0x0206b788
+    void run(void);  // ov003 0x0206b788
 };
 
 #endif

@@ -98,8 +98,8 @@ public:
     void init3D(void);  // 0x020640a0
     void onVBlank(void);  // 0x0206457c
     BtlJob * queueJob(void (*)(BtlJob *), u32, u32, u32);  // 0x02064638
-    u8 * readChunkWait(s16, u16, u8 *, s32 *, void (*)(FSFileReq *, s32), u32, u32, u32);  // 0x0206467c
-    u8 * readChunkStreamWait(s16, u16, u8 *, s32 *, void (*)(FSFileReq *, s32), u32, u32);  // 0x02064728
+    u8 * readChunkWait(s16, u16, u8 *, s32 *, void (*)(FSFileReq *, s32), void *, u32, u32);  // 0x0206467c
+    u8 * readChunkStreamWait(s16, u16, u8 *, s32 *, void (*)(FSFileReq *, s32), void *, u32);  // 0x02064728
     FSFileReqEx * waitFreeReq(void);  // 0x020647cc
     u32 readStreamSize(u32, u32);  // 0x02064874
     BOOL isOverlayBusy(void);  // 0x020648d4

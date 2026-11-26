@@ -301,7 +301,7 @@ BtlJob * clBtlSys::queueJob(void (*fn)(BtlJob *), u32 arg0, u32 arg1, u32 arg2) 
 }
 
 // MATCHED 100%
-u8 * clBtlSys::readChunkWait(s16 slot, u16 chunkIdx, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), u32 arg, u32 heapId, u32 flags) {
+u8 * clBtlSys::readChunkWait(s16 slot, u16 chunkIdx, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), void * arg, u32 heapId, u32 flags) {
     if (this->getChunkSize(slot, chunkIdx) == 0) {
         if (fn != NULL) {
             FSFileReqEx * req = this->waitFreeReq();
@@ -319,7 +319,7 @@ u8 * clBtlSys::readChunkWait(s16 slot, u16 chunkIdx, u8 * dst, s32 * pSize, void
 }
 
 // MATCHED 100%
-u8 * clBtlSys::readChunkStreamWait(s16 slot, u16 chunkIdx, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), u32 arg, u32 heapId) {
+u8 * clBtlSys::readChunkStreamWait(s16 slot, u16 chunkIdx, u8 * dst, s32 * pSize, void (*fn)(FSFileReq *, s32), void * arg, u32 heapId) {
     if (this->getChunkSize(slot, chunkIdx) == 0) {
         if (fn != NULL) {
             FSFileReqEx * req = this->waitFreeReq();

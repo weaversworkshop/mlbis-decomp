@@ -100,7 +100,7 @@ clFSEx * openNameArchives() {
 
 // MATCHED 100%
 void loadNameMessages() {
-    u32 slot;
+    s16 slot;
     clFSEx * fs;
     u8 lang;
 
@@ -118,7 +118,7 @@ void loadNameMessages() {
 
     for (s32 i = 0; i < 4; i++) {
         u32 maxSize = 0;
-        slot = (s16)i;
+        slot = i;
 
         for (s32 chunk = 1; chunk <= 5; chunk++) {
             u32 size = fs->getChunkSize(slot, (u16)chunk);

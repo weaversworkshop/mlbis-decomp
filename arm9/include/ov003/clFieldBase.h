@@ -26,7 +26,7 @@ public:
     u8 pad_ac[0xc];
     u32 fieldb8;
     u32 fieldbc;
-    u8 pad_c0[0x2];
+    u16 fieldc0;
     u16 fadeFrames;  // +0xc2
     fx32 brightness;  // +0xc4
     s32 fadeStep;  // +0xc8

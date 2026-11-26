@@ -10,7 +10,7 @@ from:0x020c91c8 kind:load to:0x020cc2a0 module:overlay(75)
 from:0x020c91cc kind:load to:0x0204ffe0 module:main
 from:0x020c91d0 kind:load to:0x02064f08 module:overlay(8)
 from:0x020c91f8 kind:load to:0x02064f08 module:overlay(8)
-from:0x020c91fc kind:load to:0x020d722c module:overlays(4,29,30,32,33,36,39,40,42,43,45,46,47,49,50,106,107,108,109,111,112,113,114,116,117,120)
+from:0x020c91fc kind:load to:0x020d722c module:overlays(29,30,32,33,36,39,40,42,43,45,46,47,49,50,106,107,108,109,111,112,113,114,116,117,120)
 from:0x020c928c kind:arm_call to:0x020c9200 module:overlay(75)
 from:0x020c9360 kind:load to:0x0204ffe0 module:main
 from:0x020c9488 kind:load to:0x020cc2a0 module:overlay(75)

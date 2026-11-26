@@ -160,7 +160,7 @@ from:0x020ccee8 kind:arm_call to:0x0201cf78 module:main
 from:0x020ccf10 kind:arm_call to:0x02066dac module:overlay(11)
 from:0x020ccf1c kind:arm_call to:0x020ebda8 module:overlay(118)
 from:0x020ccf2c kind:load to:0x02064f08 module:overlay(8)
-from:0x020ccf38 kind:load to:0x020ebd88 module:overlays(4,118,121)
+from:0x020ccf38 kind:load to:0x020ebd88 module:overlays(118,121)
 from:0x020ccf58 kind:arm_call to:0x02066dac module:overlay(11)
 from:0x020ccfac kind:arm_call to:0x02096290 module:overlay(14)
 from:0x020ccfc0 kind:arm_call to:0x0209609c module:overlay(14)
